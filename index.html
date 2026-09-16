@@ -55,6 +55,10 @@
   .coinNum{color:var(--gold);font-weight:800;font-size:20px;}
 
   .btnRow{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+  #menu .btnRow{
+    flex-direction:column;align-items:stretch;width:min(260px,80vw);gap:12px;
+  }
+  #menu .btnRow .btn{width:100%;}
   .btn{
     border:none;cursor:pointer;font-family:inherit;font-weight:800;font-size:19px;
     color:#3a1f00;padding:13px 34px;border-radius:999px;
@@ -72,6 +76,48 @@
     font-size:14px;padding:9px 20px;font-weight:600;
   }
   .btn.ghost:active{transform:translateY(2px);box-shadow:inset 0 0 0 2px rgba(255,255,255,.28);}
+
+  #playBtn{
+    position:relative;overflow:hidden;
+    animation:playBreathe 2.2s ease-in-out infinite;
+  }
+  #playBtn::after{
+    content:'';position:absolute;top:0;left:-60%;width:40%;height:100%;
+    background:linear-gradient(115deg, transparent, rgba(255,255,255,.55), transparent);
+    transform:skewX(-18deg);
+    animation:playShimmer 2.6s ease-in-out infinite;
+  }
+  @keyframes playBreathe{
+    0%,100%{ box-shadow:0 6px 0 #c26a1d, 0 12px 22px rgba(0,0,0,.35), 0 0 0 rgba(255,178,107,0); }
+    50%{ box-shadow:0 6px 0 #c26a1d, 0 12px 26px rgba(0,0,0,.4), 0 0 22px rgba(255,178,107,.55); }
+  }
+  @keyframes playShimmer{
+    0%{ left:-60%; }
+    45%,100%{ left:130%; }
+  }
+  #settingsBtn{position:relative;}
+  #settingsBtn::before{
+    content:'⚙';display:inline-block;margin-right:6px;
+    animation:gearSpin 4.5s linear infinite;
+  }
+  @keyframes gearSpin{ from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
+
+  #shop{ position:relative; }
+  #shop::before{
+    content:'';position:absolute;inset:-2px;border-radius:22px;pointer-events:none;
+    background:linear-gradient(120deg, rgba(255,178,107,0), rgba(178,104,255,.55), rgba(255,178,107,0));
+    background-size:220% 100%;
+    -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite:xor; mask-composite:exclude;
+    padding:1.5px;
+    animation:shopShimmer 5s linear infinite;
+    opacity:.7;
+  }
+  @keyframes shopShimmer{ 0%{background-position:0% 0;} 100%{background-position:220% 0;} }
+  @media (prefers-reduced-motion:reduce){
+    #playBtn, #playBtn::after, #settingsBtn::before, #shop::before{ animation:none !important; }
+  }
 
   #shop{
     width:min(430px,95vw);
@@ -168,6 +214,19 @@
   #pauseBtn.hidden{display:none;}
   #pauseBtn svg{width:16px;height:16px;}
 
+  .ctrlBtn{
+    position:absolute;bottom:8%;z-index:6;
+    width:64px;height:64px;border-radius:50%;border:none;cursor:pointer;
+    background:rgba(21,10,43,.42);box-shadow:inset 0 0 0 2px rgba(255,255,255,.28);
+    display:flex;align-items:center;justify-content:center;
+    touch-action:none;transition:background .1s ease, transform .08s ease;
+  }
+  .ctrlBtn svg{width:26px;height:26px;pointer-events:none;}
+  .ctrlBtn.hidden{display:none;}
+  .ctrlBtn:active{background:rgba(255,178,107,.38);transform:scale(.92);}
+  #leftBtn{left:5%;}
+  #rightBtn{right:5%;}
+
   #hitBtn{
     position:absolute;left:50%;bottom:8%;transform:translateX(-50%);z-index:7;
     width:96px;height:96px;border-radius:50%;border:none;cursor:pointer;
@@ -221,6 +280,13 @@
 
   <button id="pauseBtn" class="hidden" aria-label="Пауза">
     <svg viewBox="0 0 24 24" fill="none"><rect x="6" y="4" width="4" height="16" rx="1" fill="#fdf6e8"/><rect x="14" y="4" width="4" height="16" rx="1" fill="#fdf6e8"/></svg>
+  </button>
+
+  <button id="leftBtn" class="hidden ctrlBtn" aria-label="Влево">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M15 5 L8 12 L15 19" stroke="#fdf6e8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <button id="rightBtn" class="hidden ctrlBtn" aria-label="Вправо">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M9 5 L16 12 L9 19" stroke="#fdf6e8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
   </button>
 
   <button id="hitBtn" class="hidden" data-i18n="tapPrompt">ЖМИ!</button>
@@ -559,7 +625,12 @@ const FIXED_DT = 1 / 120;
 /* Способности гардероба — работают, только если предмет КУПЛЕН.
    В примерке (не куплено) вещь надевается визуально, но эффекта не даёт —
    иначе можно было бы бесплатно пользоваться способностью. */
-const hasGlass     = () => outfit.hat === 'glass' && isOwned('hat', 'glass');
+/* glassUsedThisRun чинит эксплойт: раньше расколотое стекло можно было надеть
+   заново через паузу → гардероб (оно оставалось "купленным") и спасаться
+   бесконечно. Теперь стекло недоступно до конца ЗАБЕГА, даже если снова
+   выбрать его в гардеробе во время паузы — снимается флаг только в resetGame(). */
+let glassUsedThisRun = false;
+const hasGlass = () => outfit.hat === 'glass' && isOwned('hat', 'glass') && !glassUsedThisRun;
 const gravityMult   = () => (outfit.hat === 'propeller' && isOwned('hat', 'propeller')) ? 0.55 : 1;
 const scoreMult      = () => (outfit.acc === 'tie' && isOwned('acc', 'tie')) ? 1.25 : 1;
 
@@ -779,17 +850,22 @@ function addToast(text, x, y, color){
 }
 
 /* ---------- Монстр ---------- */
-/* Монстр появляется чуть НИЖЕ текущего нижнего края экрана и медленно
-   выползает вверх (climbSpeed), поэтому визуально буквально вылезает
-   снизу экрана, а не телепортируется откуда-то сверху. */
+/* Монстр держится на ФИКСИРОВАННОЙ позиции относительно экрана (как препятствие
+   в Geometry Dash) — его мировой Y каждый кадр пересчитывается из camY, поэтому
+   он не "убегает" от камеры и не улетает с бешеной скоростью, если игрок прыгает
+   быстрее, чем монстр карабкался. При появлении он плавно въезжает наверх
+   от нижнего края экрана (screenFrac: 1.1 → targetFrac), а дальше висит
+   на targetFrac от высоты экрана, слегка покачиваясь и патрулируя по X. */
 function spawnMonster(){
   monsters.push({
     x: rand(60, VW - 60),
-    y: camY + VH + rand(30, 90),
+    screenFrac: 1.12,               // старт: чуть ниже нижнего края экрана
+    targetFrac: rand(0.6, 0.82),    // высота на экране, где монстр "живёт"
+    y: camY + VH * 1.12,
     vx: rand(40, 80) * (Math.random() < 0.5 ? -1 : 1),
-    climbSpeed: rand(55, 85),
     bob: rand(0, 6.28),
     r: 22,
+    life: 55,                       // если так и не тронули — исчезнет сам
     frozen: false
   });
 }
@@ -837,6 +913,7 @@ function startMonsterEvent(m){
   m.frozen = true;
   monsterEvent = { monster: m, elapsed: 0 };
   hitBtn.classList.remove('hidden');
+  hideTouchControls();
   ensureAudio();
   beep(700, 0.06, 'square', 0.08);
 }
@@ -845,6 +922,7 @@ function resolveMonsterEvent(success){
   const ev = monsterEvent;
   monsterEvent = null;
   hitBtn.classList.add('hidden');
+  if (state === STATE.PLAY) showTouchControls();
   if (!ev) return;
 
   if (success) killMonster(ev.monster, true);
@@ -868,7 +946,8 @@ function handleFatalEvent(){
     flash = 0.55; flashColor = '#bdeaff';
 
     outfit.hat = 'none';
-    if (isOwned('hat', 'glass')) Store.set('hat', 'none'); // расходуется навсегда для этого забега
+    glassUsedThisRun = true; // блокирует повторную "подзарядку" через паузу до конца забега
+    if (isOwned('hat', 'glass')) Store.set('hat', 'none');
 
     hero.y = camY + VH * 0.32;
     hero.vy = JUMP_V;
@@ -890,6 +969,7 @@ function resetGame(){
   shake = 0; flash = 0; blurAmount = 0; coinPulse = 0;
   monsterTimer = MONSTER_INTERVAL;
   monsterEvent = null;
+  glassUsedThisRun = false;
   if (typeof hitBtn !== 'undefined') hitBtn.classList.add('hidden');
 
   hero.x = VW / 2;
@@ -1134,7 +1214,11 @@ function updateWorld(dt){
       m.x += m.vx * dt;
       if (m.x < m.r) { m.x = m.r; m.vx = Math.abs(m.vx); }
       if (m.x > VW - m.r) { m.x = VW - m.r; m.vx = -Math.abs(m.vx); }
-      m.y -= m.climbSpeed * dt; // медленно выползает вверх из-под низа экрана
+
+      // плавный въезд снизу, затем — фиксированная позиция на экране,
+      // которая каждый кадр пересчитывается от текущей камеры
+      m.screenFrac = approach(m.screenFrac, m.targetFrac, 2.2, dt);
+      m.y = camY + VH * m.screenFrac;
 
       if (Math.random() < dt * 10){
         addParticle({
@@ -1153,11 +1237,9 @@ function updateWorld(dt){
         }
       }
 
-      // упустили: выполз выше экрана или игрок ушёл далеко вверх без контакта
-      if (m.y - camY < -160 || hero.y < m.y - 480) { monsters.splice(i, 1); continue; }
+      m.life -= dt;
+      if (m.life <= 0) { monsters.splice(i, 1); continue; } // так и не тронули — тихо исчез
     }
-
-    if (m.y - camY > VH + 320) monsters.splice(i, 1);
   }
 
   /* Частицы */
@@ -2209,6 +2291,8 @@ const settingsEl = document.getElementById('settings');
 const overEl     = document.getElementById('over');
 const pauseBtn   = document.getElementById('pauseBtn');
 const hitBtn     = document.getElementById('hitBtn');
+const leftBtn    = document.getElementById('leftBtn');
+const rightBtn   = document.getElementById('rightBtn');
 
 hitBtn.addEventListener('pointerdown', e => {
   e.preventDefault();
@@ -2216,6 +2300,26 @@ hitBtn.addEventListener('pointerdown', e => {
   tapEvent = true;
   ensureAudio();
 });
+
+/* Видимые кнопки влево/вправо — понятнее, чем невидимое деление экрана
+   пополам, на которое жаловались игроки. Управляют теми же keys.left/right,
+   что и клавиатура, так что вся остальная физика не меняется. */
+function bindHoldButton(el, setter){
+  const start = e => { e.preventDefault(); e.stopPropagation(); setter(true); ensureAudio(); };
+  const end   = e => { e.preventDefault(); e.stopPropagation(); setter(false); };
+  el.addEventListener('pointerdown', start);
+  el.addEventListener('pointerup', end);
+  el.addEventListener('pointercancel', end);
+  el.addEventListener('pointerleave', end);
+}
+bindHoldButton(leftBtn,  v => { keys.left = v; });
+bindHoldButton(rightBtn, v => { keys.right = v; });
+
+function showTouchControls(){ leftBtn.classList.remove('hidden'); rightBtn.classList.remove('hidden'); }
+function hideTouchControls(){
+  leftBtn.classList.add('hidden'); rightBtn.classList.add('hidden');
+  keys.left = false; keys.right = false;
+}
 
 const menuBest  = document.getElementById('menuBest');
 const menuCoins = document.getElementById('menuCoins');
@@ -2447,6 +2551,7 @@ function goToMenu(){
   show(menuEl);
   reanimate(menuEl);
   pauseBtn.classList.add('hidden');
+  hideTouchControls();
   refreshLeaderboardUI();
   refreshShopState();
   document.getElementById('continueBtn').disabled = true;
@@ -2459,6 +2564,7 @@ function startGame(){
   acc = 0;
   hideAllScreens();
   pauseBtn.classList.remove('hidden');
+  showTouchControls();
 }
 
 function pauseGame(){
@@ -2467,6 +2573,7 @@ function pauseGame(){
   hideAllScreens();
   show(menuEl);
   pauseBtn.classList.add('hidden');
+  hideTouchControls();
   document.getElementById('continueBtn').disabled = false;
   refreshLeaderboardUI();
   refreshShopState();
@@ -2479,12 +2586,15 @@ function resumeGame(){
   acc = 0;
   hideAllScreens();
   pauseBtn.classList.remove('hidden');
+  showTouchControls();
 }
 
 function gameOver(){
   if (state !== STATE.PLAY) return;
   state = STATE.OVER;
   pauseBtn.classList.add('hidden');
+  hideTouchControls();
+  hitBtn.classList.add('hidden');
 
   sfxOver();
   burstSpark(hero.x, hero.y, '#ff9fb4', 24, 1.2);
@@ -2577,7 +2687,7 @@ let prevT = performance.now();
   pctx.save();
   pctx.translate(110, 114 + bob);
   pctx.rotate(tilt);
-  pctx.scale(1.85 / sq, 1.85 * sq);
+  pctx.scale(2.9 / sq, 2.9 * sq); // крупнее, чем в игре — картинка hero.png обычно с полями вокруг кота
   paintHeroBody(pctx, hero.w, hero.h, ear);
   paintAccessory(pctx, hero.w, hero.h, outfit.acc, A);
   paintHat(pctx, hero.w, hero.h, outfit.hat, A);
