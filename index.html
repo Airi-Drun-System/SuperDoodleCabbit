@@ -30,6 +30,7 @@
     gap:11px;padding:16px 16px 26px;text-align:center;z-index:10;overflow-y:auto;
   }
   .screen.hidden{display:none;}
+  .hidden{display:none;}
   #menu{background:radial-gradient(120% 90% at 50% 14%, rgba(87,45,140,.6), rgba(21,10,43,.95));}
   #settings{background:radial-gradient(120% 90% at 50% 14%, rgba(87,45,140,.65), rgba(21,10,43,.96));}
   #nickname{background:radial-gradient(120% 90% at 50% 30%, rgba(87,45,140,.65), rgba(21,10,43,.97));justify-content:center;}
@@ -101,21 +102,31 @@
   .chip[aria-pressed="true"] .idesc{opacity:.75;color:#5a3200;}
   .chip:focus-visible{outline:2px solid #fff;outline-offset:3px;}
 
-  #buyBar{
-    display:none;align-items:center;justify-content:space-between;gap:10px;
-    background:rgba(0,0,0,.25);border-radius:14px;padding:9px 10px 9px 14px;
-    font-size:13px;
+  #lockedPanel{
+    width:min(430px,95vw);display:flex;flex-direction:column;gap:8px;
   }
-  #buyBar.on{display:flex;}
-  #buyText{opacity:.85;text-align:left;line-height:1.35;}
-  #buyBtn{
-    border:none;cursor:pointer;font-family:inherit;font-weight:800;font-size:13.5px;
-    padding:8px 15px;border-radius:999px;white-space:nowrap;
+  #lockedPanel.hidden{display:none;}
+  .lockedRow{
+    display:flex;align-items:center;justify-content:space-between;gap:8px;
+    background:rgba(178,104,255,.14);border-radius:14px;padding:9px 9px 9px 14px;
+    font-size:13px;box-shadow:inset 0 0 0 1px rgba(178,104,255,.35);
+  }
+  .li-label{opacity:.9;text-align:left;line-height:1.3;}
+  .li-actions{display:flex;gap:6px;align-items:center;flex:0 0 auto;}
+  .lockedBuyOne{
+    border:none;cursor:pointer;font-family:inherit;font-weight:800;font-size:12.5px;
+    padding:8px 14px;border-radius:999px;white-space:nowrap;
     color:#3a1f00;background:linear-gradient(180deg,#ffe08a,#ffc42e);
     box-shadow:0 3px 0 #b8860b;
   }
-  #buyBtn:disabled{opacity:.45;cursor:default;box-shadow:none;}
-  #buyBtn:active:enabled{transform:translateY(2px);box-shadow:0 1px 0 #b8860b;}
+  .lockedBuyOne:disabled{opacity:.45;cursor:default;box-shadow:none;}
+  .lockedBuyOne:active:enabled{transform:translateY(2px);box-shadow:0 1px 0 #b8860b;}
+  .lockedRevert{
+    border:none;cursor:pointer;width:26px;height:26px;border-radius:50%;flex:0 0 auto;
+    background:rgba(255,255,255,.12);color:#fdf6e8;font-weight:800;font-size:13px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .lockedRevert:active{transform:scale(.9);}
 
   #leaderboard{
     width:min(340px,90vw);background:rgba(255,255,255,.05);
@@ -157,6 +168,23 @@
   #pauseBtn.hidden{display:none;}
   #pauseBtn svg{width:16px;height:16px;}
 
+  #hitBtn{
+    position:absolute;left:50%;bottom:8%;transform:translateX(-50%);z-index:7;
+    width:96px;height:96px;border-radius:50%;border:none;cursor:pointer;
+    font-family:inherit;font-weight:800;font-size:15px;color:#fff;
+    background:radial-gradient(circle at 35% 30%, #d9a6ff, #8a2be2 65%, #4b1a80);
+    box-shadow:0 0 0 6px rgba(178,104,255,.22), 0 10px 26px rgba(0,0,0,.45);
+    animation:hitPulse 0.7s ease-in-out infinite;
+    text-shadow:0 2px 4px rgba(0,0,0,.5);
+  }
+  #hitBtn.hidden{display:none;}
+  #hitBtn:active{transform:translateX(-50%) scale(.9);}
+  @keyframes hitPulse{
+    0%,100%{ box-shadow:0 0 0 6px rgba(178,104,255,.22), 0 10px 26px rgba(0,0,0,.45); }
+    50%{ box-shadow:0 0 0 14px rgba(178,104,255,.05), 0 10px 26px rgba(0,0,0,.45); }
+  }
+  @media (prefers-reduced-motion:reduce){ #hitBtn{animation:none;} }
+
   #finalScore{
     font-size:clamp(52px,17vw,96px);font-weight:800;line-height:1;
     color:var(--peach);text-shadow:0 0 40px rgba(255,159,69,.45);
@@ -195,6 +223,8 @@
     <svg viewBox="0 0 24 24" fill="none"><rect x="6" y="4" width="4" height="16" rx="1" fill="#fdf6e8"/><rect x="14" y="4" width="4" height="16" rx="1" fill="#fdf6e8"/></svg>
   </button>
 
+  <button id="hitBtn" class="hidden" data-i18n="tapPrompt">ЖМИ!</button>
+
   <div id="nickname" class="screen">
     <div id="nickBox" class="pop">
       <h2 data-i18n="nickTitle" style="font-size:20px;font-weight:800;">Как тебя зовут?</h2>
@@ -220,6 +250,7 @@
     </div>
 
     <div id="shop" class="rise d2"></div>
+    <div id="lockedPanel" class="hidden"></div>
 
     <div class="btnRow rise d3">
       <button id="playBtn" class="btn" data-i18n="play">Играть</button>
@@ -386,13 +417,13 @@ const I18N = {
     on: 'вкл', off: 'выкл',
     hint: 'Клавиши ← → или A / D. На телефоне держи палец на половине экрана. Тапни по монстру с булавой в руках — и получишь сокрушительный удар!',
     slotHat: 'На голову', slotAcc: 'Аксессуары', slotTool: 'Инструмент',
-    notEnough: 'Не хватает', coinsWord: 'монет', buyFor: 'Купить за',
+    notEnough: 'Не хватает', coinsWord: 'монет', buyFor: 'Купить за', revert: 'Снять',
     nickTitle: 'Как тебя зовут?', nickPlaceholder: 'Ник кэббита', nickConfirm: 'Готово',
     leaderboard: 'Таблица лидеров', empty: '—',
     overTitleNormal: 'Кэббит приземлился', overTitleRecord: 'Новый рекорд',
     overCoins: 'собрано монет', overRecordLabel: 'Рекорд', overNewBest: 'выше не прыгал никто',
     retry: 'Повторить', toMenu: 'В меню', scoreWord: 'рекорд',
-    smashToast: 'СОКРУШИТЕЛЬНЫЙ УДАР!', glassToast: 'СТЕКЛО СПАСЛО ТЕБЯ!',
+    smashToast: 'СОКРУШИТЕЛЬНЫЙ УДАР!', glassToast: 'СТЕКЛО СПАСЛО ТЕБЯ!', tapPrompt: 'ЖМИ!',
     items: {
       'hat:none':      { n: 'Без шляпы',        d: '' },
       'hat:tophat':     { n: 'Цилиндр',          d: 'Просто стильно.' },
@@ -414,13 +445,13 @@ const I18N = {
     on: 'on', off: 'off',
     hint: 'Arrow keys or A / D on desktop. On phone, hold either half of the screen. Tap the monster while holding the mace for a smash attack!',
     slotHat: 'Headwear', slotAcc: 'Accessories', slotTool: 'Tool',
-    notEnough: 'Need', coinsWord: 'more coins', buyFor: 'Buy for',
+    notEnough: 'Need', coinsWord: 'more coins', buyFor: 'Buy for', revert: 'Remove',
     nickTitle: 'What is your name?', nickPlaceholder: 'Cabbit nickname', nickConfirm: 'Done',
     leaderboard: 'Leaderboard', empty: '—',
     overTitleNormal: 'The cabbit has landed', overTitleRecord: 'New record',
     overCoins: 'coins collected', overRecordLabel: 'Best', overNewBest: 'nobody jumped higher',
     retry: 'Retry', toMenu: 'Menu', scoreWord: 'best',
-    smashToast: 'MACE SMASH!', glassToast: 'THE GLASS SAVED YOU!',
+    smashToast: 'MACE SMASH!', glassToast: 'THE GLASS SAVED YOU!', tapPrompt: 'TAP!',
     items: {
       'hat:none':      { n: 'No hat',           d: '' },
       'hat:tophat':     { n: 'Top Hat',          d: 'Just stylish.' },
@@ -487,7 +518,8 @@ const outfit = {
   acc:  Store.get('acc', 'none'),
   tool: Store.get('tool', 'none')
 };
-let trialSlot = null;
+// Больше нет отдельной "trialSlot": состояние "примерка / куплено" всегда
+// вычисляется заново по всем слотам разом — см. getLockedItems().
 
 function isOwned(slot, val){ return owned.has(slot + ':' + val); }
 function saveOwned(){ Store.set('owned', Array.from(owned).join(',')); }
@@ -524,11 +556,12 @@ const MOVE_MAX = 430;
 const AIR_DRAG = 0.045;
 const FIXED_DT = 1 / 120;
 
-/* Способности гардероба — активны, пока предмет НАДЕТ (даже в примерке) */
-const hasGlass     = () => outfit.hat === 'glass';
-const gravityMult   = () => outfit.hat === 'propeller' ? 0.55 : 1;
-const scoreMult      = () => outfit.acc === 'tie' ? 1.25 : 1;
-const hasMace        = () => outfit.tool === 'mace';
+/* Способности гардероба — работают, только если предмет КУПЛЕН.
+   В примерке (не куплено) вещь надевается визуально, но эффекта не даёт —
+   иначе можно было бы бесплатно пользоваться способностью. */
+const hasGlass     = () => outfit.hat === 'glass' && isOwned('hat', 'glass');
+const gravityMult   = () => (outfit.hat === 'propeller' && isOwned('hat', 'propeller')) ? 0.55 : 1;
+const scoreMult      = () => (outfit.acc === 'tie' && isOwned('acc', 'tie')) ? 1.25 : 1;
 
 /* ---------- Состояние ---------- */
 const STATE = { MENU: 0, PLAY: 1, PAUSED: 2, OVER: 3, SETTINGS: 4, NICK: 5 };
@@ -539,7 +572,8 @@ const hero = {
   x: VW / 2, y: 0, vx: 0, vy: 0,
   w: 56, h: 56,
   face: 1, sx: 1, sy: 1, tilt: 0,
-  prop: 0, ghosts: []
+  prop: 0, ghosts: [],
+  spin: 0 // визуальное кувыркание при взлёте после удара по монстру
 };
 
 let platforms = [], particles = [], coinsOnMap = [], toasts = [], monsters = [];
@@ -549,7 +583,13 @@ let shake = 0, shakeX = 0, shakeY = 0;
 let lastPlatY = 0, flash = 0, flashColor = '#fff3c4', blurAmount = 0, coinPulse = 0;
 let monsterTimer = 0;
 const MONSTER_INTERVAL = 25; // секунд; для продакшена поставь 120 (каждые 2 минуты)
-let tapEvent = false; // сбрасывается каждый кадр, ставится в true при клике/тапе/пробеле
+let tapEvent = false; // сбрасывается каждый кадр, ставится в true при клике/тапе/пробеле/кнопке удара
+
+/* Событие "встреча с монстром": пока активно, весь мир движется в замедленной
+   съёмке (SLOWMO_SCALE), а обратный отсчёт QTE_DURATION идёт в РЕАЛЬНОМ времени. */
+let monsterEvent = null; // { monster, elapsed }
+const SLOWMO_SCALE = 0.16;
+const QTE_DURATION = 20;
 
 /* ---------- Фон ---------- */
 const BAND = 1000;
@@ -591,11 +631,25 @@ function makePlatform(y, type, spring){
   };
 }
 
-const difficulty = () => clamp(score / 7000, 0, 1);
+/* Кривая сложности с явными отметками: на 5000 очков чуть сложнее,
+   на 10000 ещё чуть сложнее, дальше рост замедляется и останавливается
+   на 16000 — платформы становятся дальше друг от друга, но верхняя граница
+   разрыва (118px) всё ещё заметно меньше физического потолка прыжка (~169px),
+   так что маршрут всегда проходим. */
+function difficulty(){
+  const s = score;
+  let t;
+  if (s <= 0) t = 0;
+  else if (s < 5000)  t = (s / 5000) * 0.5;
+  else if (s < 10000) t = 0.5 + ((s - 5000) / 5000) * 0.3;
+  else if (s < 16000) t = 0.8 + ((s - 10000) / 6000) * 0.2;
+  else t = 1;
+  return clamp(t, 0, 1);
+}
 
 function gapRange(){
   const d = difficulty();
-  return [lerp(48, 62, d), lerp(84, 106, d)];
+  return [lerp(48, 70, d), lerp(62, 118, d)];
 }
 
 function addCoin(x, y, plat){
@@ -725,39 +779,87 @@ function addToast(text, x, y, color){
 }
 
 /* ---------- Монстр ---------- */
+/* Монстр появляется чуть НИЖЕ текущего нижнего края экрана и медленно
+   выползает вверх (climbSpeed), поэтому визуально буквально вылезает
+   снизу экрана, а не телепортируется откуда-то сверху. */
 function spawnMonster(){
   monsters.push({
     x: rand(60, VW - 60),
-    y: hero.y - rand(240, 380),
+    y: camY + VH + rand(30, 90),
     vx: rand(40, 80) * (Math.random() < 0.5 ? -1 : 1),
+    climbSpeed: rand(55, 85),
     bob: rand(0, 6.28),
     r: 22,
-    alive: true,
-    contact: false,
-    contactTimer: 0
+    frozen: false
   });
 }
 
-function killMonster(m, byMace){
-  m.alive = false;
+function removeMonster(m){
   const idx = monsters.indexOf(m);
   if (idx >= 0) monsters.splice(idx, 1);
+}
 
-  if (byMace){
+/* success=true — игрок тапнул вовремя: монстр разлетается в пиксели,
+   кэббита подбрасывает "в космос", как воздушный шар в оригинальной игре.
+   success=false — таймер истёк: монстр молча забирает жизнь (см. handleFatalEvent). */
+function killMonster(m, success){
+  removeMonster(m);
+
+  if (success){
     burstPixels(m.x, m.y, ['#8a2be2', '#b268ff', '#d9a6ff', '#4b1a80']);
-    burstSpark(m.x, m.y, '#e0b3ff', 18, 1.3);
+    burstSpark(m.x, m.y, '#e0b3ff', 22, 1.4);
+    burstSpark(m.x, m.y, '#fff3b0', 10, 0.8);
+    addParticle({ kind: 'ring', x: m.x, y: m.y, vx: 0, vy: 0, life: 1, decay: 1.6, r: 6, color: '#d9a6ff' });
     addToast(t('smashToast'), m.x, m.y - 30, '#d9a6ff');
     sfxSmash();
-    shake = Math.max(shake, 16);
-    flash = 0.6; flashColor = '#b268ff';
+    shake = Math.max(shake, 18);
+    flash = 0.65; flashColor = '#b268ff';
     hero.vy = MACE_LAUNCH;
-    hero.sx = 0.62; hero.sy = 1.55;
+    hero.vx *= 0.3;
+    hero.sx = 0.58; hero.sy = 1.6;
+    hero.spin = hero.face * 6.2832 * 2.5; // эффектное кувыркание при взлёте
+
+    // бонусные монеты за победу над монстром
+    const bonus = 5;
+    runCoins += bonus; coins += bonus;
+    Store.set('coins', coins);
+    coinPulse = 1;
+    addToast('+' + bonus, m.x + 26, m.y - 46, '#ffd34d');
+    sfxCoin();
   }
 }
 
-/* Общая точка для "смертельного" события: падение за экран ИЛИ контакт с монстром.
-   Если надет блок стекла — спасает один раз, разбивается, hasGlass() после этого = false. */
+/* Запускает событие "встреча с монстром": весь мир уходит в slow-motion,
+   на экране появляется кольцо обратного отсчёта и надпись "Жми!".
+   У игрока есть QTE_DURATION реальных секунд, чтобы тапнуть/кликнуть/
+   нажать кнопку удара — иначе монстр "побеждает". */
+function startMonsterEvent(m){
+  m.frozen = true;
+  monsterEvent = { monster: m, elapsed: 0 };
+  hitBtn.classList.remove('hidden');
+  ensureAudio();
+  beep(700, 0.06, 'square', 0.08);
+}
+
+function resolveMonsterEvent(success){
+  const ev = monsterEvent;
+  monsterEvent = null;
+  hitBtn.classList.add('hidden');
+  if (!ev) return;
+
+  if (success) killMonster(ev.monster, true);
+  else { removeMonster(ev.monster); handleFatalEvent(); }
+}
+
+/* Общая точка для "смертельного" события: падение за экран, провал QTE
+   с монстром. Если надет купленный блок стекла — спасает один раз. */
 function handleFatalEvent(){
+  if (monsterEvent){
+    removeMonster(monsterEvent.monster);
+    monsterEvent = null;
+    hitBtn.classList.add('hidden');
+  }
+
   if (hasGlass()){
     burstGlassShards(hero.x, hero.y);
     sfxGlass();
@@ -787,11 +889,13 @@ function resetGame(){
   camY = 0; camTarget = 0;
   shake = 0; flash = 0; blurAmount = 0; coinPulse = 0;
   monsterTimer = MONSTER_INTERVAL;
+  monsterEvent = null;
+  if (typeof hitBtn !== 'undefined') hitBtn.classList.add('hidden');
 
   hero.x = VW / 2;
   hero.y = VH - 180;
   hero.vx = 0; hero.vy = JUMP_V * 0.6;
-  hero.sx = 1; hero.sy = 1; hero.tilt = 0; hero.face = 1;
+  hero.sx = 1; hero.sy = 1; hero.tilt = 0; hero.spin = 0; hero.face = 1;
 
   startY = hero.y; minY = hero.y; score = 0; runCoins = 0;
 
@@ -847,6 +951,7 @@ cvs.addEventListener('pointerleave', dropPointer);
 window.addEventListener('blur', () => { pointers.clear(); keys.left = keys.right = false; });
 
 function inputDir(){
+  if (monsterEvent) return 0; // во время "Жми!" управление отключено — только тап решает исход
   let d = 0;
   if (keys.left)  d -= 1;
   if (keys.right) d += 1;
@@ -940,6 +1045,7 @@ function updateWorld(dt){
   hero.sx = approach(hero.sx, 1 - stretch * 0.22, 11, dt);
   hero.sy = approach(hero.sy, 1 + stretch * 0.30, 11, dt);
   hero.tilt = approach(hero.tilt, (hero.vx / MOVE_MAX) * 0.32, 9, dt);
+  hero.spin = approach(hero.spin, 0, 2.4, dt);
 
   if (outfit.hat === 'propeller')
     hero.prop += (7 + clamp(-hero.vy, 0, 1200) * 0.016) * dt * 6;
@@ -1015,43 +1121,43 @@ function updateWorld(dt){
 
   /* Монстры */
   monsterTimer -= dt;
-  if (monsterTimer <= 0 && monsters.length === 0){
+  if (monsterTimer <= 0 && monsters.length === 0 && !monsterEvent){
     spawnMonster();
     monsterTimer = MONSTER_INTERVAL;
   }
 
   for (let i = monsters.length - 1; i >= 0; i--){
     const m = monsters[i];
-    m.bob += dt * 3;
-    m.x += m.vx * dt;
-    if (m.x < m.r) { m.x = m.r; m.vx = Math.abs(m.vx); }
-    if (m.x > VW - m.r) { m.x = VW - m.r; m.vx = -Math.abs(m.vx); }
 
-    const dx = m.x - hero.x, dy = m.y - hero.y;
-    const dist2 = dx * dx + dy * dy;
-    const hitDist = m.r + hero.w * 0.32;
-    const overlapping = dist2 < hitDist * hitDist;
+    if (!m.frozen){
+      m.bob += dt * 3;
+      m.x += m.vx * dt;
+      if (m.x < m.r) { m.x = m.r; m.vx = Math.abs(m.vx); }
+      if (m.x > VW - m.r) { m.x = VW - m.r; m.vx = -Math.abs(m.vx); }
+      m.y -= m.climbSpeed * dt; // медленно выползает вверх из-под низа экрана
 
-    if (overlapping && hero.vy > 0){
-      if (!m.contact){ m.contact = true; m.contactTimer = 0; }
-      m.contactTimer += dt;
-
-      if (hasMace() && tapEvent){
-        killMonster(m, true);
-        continue;
+      if (Math.random() < dt * 10){
+        addParticle({
+          kind: 'spark', x: m.x + rand(-14, 14), y: m.y + m.r * 0.7,
+          vx: rand(-12, 12), vy: rand(20, 50),
+          life: 1, decay: rand(1.4, 2.2), r: rand(1.4, 3),
+          color: pick(['#8a2be2', '#b268ff', '#5a1a6b'])
+        });
       }
-      if (m.contactTimer > 0.15){
-        killMonster(m, false);
-        handleFatalEvent();
-        continue;
+
+      if (!monsterEvent){
+        const dx = m.x - hero.x, dy = m.y - hero.y;
+        const hitDist = m.r + hero.w * 0.32;
+        if (dx * dx + dy * dy < hitDist * hitDist && hero.vy > 0){
+          startMonsterEvent(m);
+        }
       }
-    } else if (!overlapping){
-      m.contact = false; m.contactTimer = 0;
+
+      // упустили: выполз выше экрана или игрок ушёл далеко вверх без контакта
+      if (m.y - camY < -160 || hero.y < m.y - 480) { monsters.splice(i, 1); continue; }
     }
 
-    // если игрок ушёл далеко вверх, монстр больше не нужен
-    if (hero.y < m.y - 420) { monsters.splice(i, 1); continue; }
-    if (m.y - camY > VH + 260) { monsters.splice(i, 1); }
+    if (m.y - camY > VH + 320) monsters.splice(i, 1);
   }
 
   /* Частицы */
@@ -1065,6 +1171,8 @@ function updateWorld(dt){
     } else if (q.kind === 'spark'){
       q.vy += GRAV * 0.12 * dt;
       q.vx *= Math.pow(0.15, dt);
+    } else if (q.kind === 'ring'){
+      q.r += dt * 140; // быстро расширяющаяся ударная волна
     } else {
       q.vx *= Math.pow(0.25, dt);
       q.r  += dt * 9;
@@ -1325,6 +1433,19 @@ function drawMonster(m){
   ctx.save();
   ctx.translate(m.x, y);
   ctx.scale(1, squish);
+
+  if (m.frozen){
+    const pulse = 0.5 + 0.5 * Math.sin(performance.now() / 160);
+    ctx.globalAlpha = 0.35 + 0.25 * pulse;
+    const glow = ctx.createRadialGradient(0, 0, m.r * 0.6, 0, 0, m.r * 2.2);
+    glow.addColorStop(0, 'rgba(217,166,255,.55)');
+    glow.addColorStop(1, 'rgba(217,166,255,0)');
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(0, 0, m.r * 2.2, 0, 6.2832);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+  }
 
   // шипастый ореол
   ctx.fillStyle = '#5a1a6b';
@@ -1805,12 +1926,13 @@ function drawHeroWithWrap(){
     drawHero(gph.x, gph.y - camY, gph.sx, gph.sy, gph.tilt, gph.face, a, 0, phase);
   }
 
-  drawHero(hero.x, y, hero.sx, hero.sy, hero.tilt, hero.face, 1, 0, phase);
+  const fullTilt = hero.tilt + hero.spin;
+  drawHero(hero.x, y, hero.sx, hero.sy, fullTilt, hero.face, 1, 0, phase);
 
   if (hero.x < hero.w)
-    drawHero(hero.x + VW + hero.w, y, hero.sx, hero.sy, hero.tilt, hero.face, 1, 0, phase);
+    drawHero(hero.x + VW + hero.w, y, hero.sx, hero.sy, fullTilt, hero.face, 1, 0, phase);
   else if (hero.x > VW - hero.w)
-    drawHero(hero.x - VW - hero.w, y, hero.sx, hero.sy, hero.tilt, hero.face, 1, 0, phase);
+    drawHero(hero.x - VW - hero.w, y, hero.sx, hero.sy, fullTilt, hero.face, 1, 0, phase);
 }
 
 /* ---------- Частицы (отрисовка) ---------- */
@@ -1847,6 +1969,13 @@ function drawParticles(){
       ctx.beginPath();
       ctx.arc(q.x, y, q.r * a, 0, 6.2832);
       ctx.fill();
+    } else if (q.kind === 'ring'){
+      ctx.globalAlpha = a * 0.8;
+      ctx.strokeStyle = q.color;
+      ctx.lineWidth = 3 * a;
+      ctx.beginPath();
+      ctx.arc(q.x, y, q.r, 0, 6.2832);
+      ctx.stroke();
     } else {
       ctx.globalAlpha = a * 0.4;
       ctx.fillStyle = q.color;
@@ -1928,6 +2057,53 @@ function drawHUD(){
   ctx.restore();
 }
 
+/* ---------- Оверлей встречи с монстром: кольцо обратного отсчёта + "Жми!" ---------- */
+function drawMonsterEventUI(){
+  if (!monsterEvent) return;
+
+  const remain = Math.max(0, QTE_DURATION - monsterEvent.elapsed);
+  const frac = remain / QTE_DURATION;
+  const cx = VW / 2, cy = VH * 0.34;
+  const urgent = remain < 5;
+
+  ctx.save();
+  ctx.fillStyle = 'rgba(10,5,20,.26)';
+  ctx.fillRect(0, 0, VW, VH);
+
+  ctx.lineWidth = 6;
+  ctx.lineCap = 'round';
+  ctx.strokeStyle = 'rgba(255,255,255,.18)';
+  ctx.beginPath();
+  ctx.arc(cx, cy, 42, 0, 6.2832);
+  ctx.stroke();
+
+  ctx.strokeStyle = urgent ? '#ff6f91' : '#b268ff';
+  ctx.beginPath();
+  ctx.arc(cx, cy, 42, -Math.PI / 2, -Math.PI / 2 + frac * 6.2832);
+  ctx.stroke();
+
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.font = '800 28px "Baloo 2","Segoe UI Rounded","Trebuchet MS",sans-serif';
+  ctx.fillStyle = urgent ? '#ff6f91' : '#fff';
+  ctx.fillText(Math.ceil(remain), cx, cy);
+
+  const pulse = 0.86 + 0.16 * Math.sin(performance.now() / 130);
+  ctx.save();
+  ctx.translate(cx, cy + 76);
+  ctx.scale(pulse, pulse);
+  ctx.font = '800 32px "Baloo 2","Segoe UI Rounded","Trebuchet MS",sans-serif';
+  ctx.lineJoin = 'round';
+  ctx.lineWidth = 6;
+  ctx.strokeStyle = 'rgba(21,10,43,.7)';
+  ctx.strokeText(t('tapPrompt'), 0, 0);
+  ctx.fillStyle = '#ffd34d';
+  ctx.fillText(t('tapPrompt'), 0, 0);
+  ctx.restore();
+
+  ctx.restore();
+}
+
 /* ---------- Кадр ---------- */
 function render(){
   pixelTransform();
@@ -1973,6 +2149,7 @@ function render(){
 
   worldTransform();
   if (state === STATE.PLAY) drawHUD();
+  if (state === STATE.PLAY) drawMonsterEventUI();
 }
 
 /* ---------- Цикл ---------- */
@@ -1980,11 +2157,21 @@ let last = performance.now(), acc = 0;
 
 function frame(now){
   requestAnimationFrame(frame);
-  let dt = (now - last) / 1000;
+  let realDt = (now - last) / 1000;
   last = now;
-  if (dt > 0.1) dt = 0.1;
+  if (realDt > 0.1) realDt = 0.1;
 
   if (state === STATE.PLAY){
+    let dt = realDt;
+
+    if (monsterEvent){
+      monsterEvent.elapsed += realDt; // отсчёт идёт в реальном времени, не в замедленном
+      dt = realDt * SLOWMO_SCALE;      // а вот вся физика и мир — в slow-motion
+
+      if (tapEvent) resolveMonsterEvent(true);
+      else if (monsterEvent.elapsed >= QTE_DURATION) resolveMonsterEvent(false);
+    }
+
     acc += dt;
     let steps = 0;
     while (acc >= FIXED_DT && steps < 8){
@@ -1995,13 +2182,13 @@ function frame(now){
     if (steps === 8) acc = 0;
     updateWorld(dt);
   } else if (state !== STATE.PAUSED) {
-    camY = approach(camY, camTarget, 6, dt);
-    blurAmount = approach(blurAmount, 0, 8, dt);
+    camY = approach(camY, camTarget, 6, realDt);
+    blurAmount = approach(blurAmount, 0, 8, realDt);
     for (let i = particles.length - 1; i >= 0; i--){
       const q = particles[i];
-      q.life -= q.decay * dt;
+      q.life -= q.decay * realDt;
       if (q.life <= 0){ particles.splice(i, 1); continue; }
-      q.x += q.vx * dt; q.y += q.vy * dt;
+      q.x += q.vx * realDt; q.y += q.vy * realDt;
     }
     shakeX = shakeY = 0;
   }
@@ -2021,6 +2208,14 @@ const menuEl     = document.getElementById('menu');
 const settingsEl = document.getElementById('settings');
 const overEl     = document.getElementById('over');
 const pauseBtn   = document.getElementById('pauseBtn');
+const hitBtn     = document.getElementById('hitBtn');
+
+hitBtn.addEventListener('pointerdown', e => {
+  e.preventDefault();
+  e.stopPropagation();
+  tapEvent = true;
+  ensureAudio();
+});
 
 const menuBest  = document.getElementById('menuBest');
 const menuCoins = document.getElementById('menuCoins');
@@ -2030,7 +2225,6 @@ const coinLine  = document.getElementById('coinLine');
 const overTitle = document.getElementById('overTitle');
 const blurToggle = document.getElementById('blurToggle');
 const shopEl    = document.getElementById('shop');
-const buyBarWrap = null; // полоса покупки строится динамически внутри shopEl
 
 const show = el => el.classList.remove('hidden');
 const hide = el => el.classList.add('hidden');
@@ -2130,9 +2324,8 @@ function buildShop(){
 
       chip.addEventListener('click', () => {
         outfit[slotDef.key] = val;
-        trialSlot = isOwned(slotDef.key, val) ? null : slotDef.key;
-        if (!trialSlot) Store.set(slotDef.key, val);
-        refreshShopState();
+        if (isOwned(slotDef.key, val)) Store.set(slotDef.key, val); // куплено — запоминаем выбор
+        refreshShopState();                                        // не куплено — это временная примерка
       });
 
       row.appendChild(chip);
@@ -2140,15 +2333,39 @@ function buildShop(){
     shopEl.appendChild(row);
   }
 
-  const buyBar = document.createElement('div');
-  buyBar.id = 'buyBar';
-  buyBar.innerHTML = '<span id="buyText"></span><button id="buyBtn"></button>';
-  shopEl.appendChild(buyBar);
-  document.getElementById('buyBtn').addEventListener('click', onBuyClick);
-
   refreshShopState();
 }
 
+/* Все слоты (hat/acc/tool) с надетой, но НЕ купленной вещью — а не только
+   последний тронутый слот. Это и было причиной бага: если примерить сразу
+   два непроплаченных предмета в разных слотах, второй никак не отслеживался
+   и после отмены первого игра запускалась с ним бесплатно. */
+function getLockedItems(){
+  const result = [];
+  for (const slot of Object.keys(OUTFITS)){
+    const val = outfit[slot];
+    if (val !== 'none' && !isOwned(slot, val)) result.push({ slot, val });
+  }
+  return result;
+}
+
+function buyItem(slot, val){
+  const price = OUTFITS[slot][val].price;
+  if (coins < price) return;
+
+  coins -= price;
+  Store.set('coins', coins);
+  owned.add(slot + ':' + val);
+  saveOwned();
+  Store.set(slot, val);
+  refreshShopState();
+}
+
+/* Пока хотя бы в ОДНОМ слоте надета непроплаченная вещь, играть нельзя:
+   "Играть" и "Продолжить" прячутся, вместо них — список всех неоплаченных
+   предметов с ценой, кнопкой "Купить" на каждый и кнопкой "✕", чтобы
+   мгновенно вернуть слот на "ничего" без покупки. Как только каждый слот
+   либо куплен, либо возвращён к "ничего" — кнопки запуска возвращаются. */
 function refreshShopState(){
   menuBest.textContent  = best;
   menuCoins.textContent = coins;
@@ -2167,40 +2384,60 @@ function refreshShopState(){
     chip.innerHTML = html;
   });
 
-  const buyBar = document.getElementById('buyBar');
-  const buyText = document.getElementById('buyText');
-  const buyBtn = document.getElementById('buyBtn');
-  if (!buyBar) return;
+  const playBtnEl     = document.getElementById('playBtn');
+  const continueBtnEl = document.getElementById('continueBtn');
+  const lockedPanel   = document.getElementById('lockedPanel');
+  const locked = getLockedItems();
 
-  if (trialSlot && !isOwned(trialSlot, outfit[trialSlot])){
-    const val = outfit[trialSlot];
-    const info = ti(trialSlot, val);
-    const price = OUTFITS[trialSlot][val].price;
-    const can = coins >= price;
-    buyBar.classList.add('on');
-    buyText.textContent = can
-      ? t('buyFor') + ' ' + price
-      : t('notEnough') + ' ' + (price - coins) + ' ' + t('coinsWord');
-    buyBtn.textContent = t('buyFor') + ' ' + price;
-    buyBtn.disabled = !can;
+  if (locked.length > 0){
+    playBtnEl.classList.add('hidden');
+    continueBtnEl.classList.add('hidden');
+    lockedPanel.classList.remove('hidden');
+    lockedPanel.innerHTML = '';
+
+    for (const item of locked){
+      const info = ti(item.slot, item.val);
+      const price = OUTFITS[item.slot][item.val].price;
+      const can = coins >= price;
+
+      const row = document.createElement('div');
+      row.className = 'lockedRow';
+
+      const label = document.createElement('span');
+      label.className = 'li-label';
+      label.textContent = info.n + ' — ' + (can
+        ? t('buyFor') + ' ' + price
+        : t('notEnough') + ' ' + (price - coins) + ' ' + t('coinsWord'));
+
+      const actions = document.createElement('span');
+      actions.className = 'li-actions';
+
+      const buyOne = document.createElement('button');
+      buyOne.className = 'lockedBuyOne';
+      buyOne.disabled = !can;
+      buyOne.textContent = String(price);
+      buyOne.addEventListener('click', () => buyItem(item.slot, item.val));
+
+      const revert = document.createElement('button');
+      revert.className = 'lockedRevert';
+      revert.setAttribute('aria-label', t('revert'));
+      revert.textContent = '✕';
+      revert.addEventListener('click', () => {
+        outfit[item.slot] = 'none';
+        refreshShopState();
+      });
+
+      actions.appendChild(buyOne);
+      actions.appendChild(revert);
+      row.appendChild(label);
+      row.appendChild(actions);
+      lockedPanel.appendChild(row);
+    }
   } else {
-    buyBar.classList.remove('on');
+    playBtnEl.classList.remove('hidden');
+    continueBtnEl.classList.remove('hidden');
+    lockedPanel.classList.add('hidden');
   }
-}
-
-function onBuyClick(){
-  if (!trialSlot) return;
-  const val = outfit[trialSlot];
-  const price = OUTFITS[trialSlot][val].price;
-  if (coins < price) return;
-
-  coins -= price;
-  Store.set('coins', coins);
-  owned.add(trialSlot + ':' + val);
-  saveOwned();
-  Store.set(trialSlot, val);
-  trialSlot = null;
-  refreshShopState();
 }
 
 /* ---------- Переходы между экранами ---------- */
