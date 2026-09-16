@@ -2105,7 +2105,7 @@ function drawHUD(){
   ctx.font = '600 15px "Baloo 2","Segoe UI Rounded","Trebuchet MS",sans-serif';
   ctx.globalAlpha = 0.72;
   ctx.lineWidth = 4;
-  const bl = t('scoreWord') + ' ' + best;
+  const bl = t('scoreWord') + ' ' + Math.max(best, score);
   ctx.strokeText(bl, 19, 58);
   ctx.fillText(bl, 19, 58);
   ctx.globalAlpha = 1;
