@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#150a2b">
-<title>Doodlecabbit</title>
+<title>Cabbit Jump!</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <style>
   :root{
@@ -34,12 +34,15 @@
   .hidden{display:none;}
   #menu{background:radial-gradient(120% 90% at 50% 14%, rgba(87,45,140,.6), rgba(21,10,43,.95));}
   #settings{background:radial-gradient(120% 90% at 50% 14%, rgba(87,45,140,.65), rgba(21,10,43,.96));}
+  #wardrobe{background:radial-gradient(120% 90% at 50% 14%, rgba(60,30,100,.82), rgba(12,6,24,.985));}
   #nickname{background:radial-gradient(120% 90% at 50% 30%, rgba(87,45,140,.65), rgba(21,10,43,.97));justify-content:center;}
   #over{
     justify-content:center;
-    background:rgba(21,10,43,.42);
-    backdrop-filter:blur(14px) saturate(130%);
-    -webkit-backdrop-filter:blur(14px) saturate(130%);
+    /* Фон плотнее, а размытие слабее — backdrop-filter дорого стоит слабым
+       телефонам, особенно с крупным blur-радиусом. */
+    background:rgba(21,10,43,.72);
+    backdrop-filter:blur(6px) saturate(115%);
+    -webkit-backdrop-filter:blur(6px) saturate(115%);
   }
   .spacer{flex:1 0 auto;min-height:2px;}
 
@@ -56,42 +59,35 @@
   .coinNum{color:var(--gold);font-weight:800;font-size:20px;}
 
   .btnRow{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
-
-  .badgeDot{
-    display:inline-block;width:9px;height:9px;border-radius:50%;
-    background:#ff6f91;margin-left:7px;box-shadow:0 0 7px rgba(255,111,145,.8);
-    vertical-align:middle;
+  /* Кнопки подвешены КАК качели: сверху перекладина, от неё к каждой кнопке
+     идут две верёвки, и вся кнопка тихонько раскачивается. */
+  #menu .btnRow{
+    position:relative;flex-direction:column;align-items:center;
+    width:min(300px,88vw);gap:18px;padding:12px 0 4px;
   }
-  .badgeDot.hidden{display:none;}
-
-  .menuLayout{
-    display:flex;flex-direction:column;align-items:center;gap:20px;width:100%;
+  #menu .btnRow::before{
+    content:'';position:absolute;top:4px;left:2%;right:2%;height:5px;border-radius:3px;
+    background:linear-gradient(90deg,rgba(255,178,107,0),rgba(198,128,60,.85),rgba(255,178,107,0));
+    pointer-events:none;
   }
-  .menuSide{
-    display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;
+  .swing{
+    position:relative;width:80%;padding-top:22px;display:flex;justify-content:center;
+    transform-origin:50% 0;animation:swingSway 4.4s ease-in-out infinite;
   }
-  /* "Верёвка" с висящими кнопками-табличками, как деревянный указатель в референсе */
-  .ropeColumn{
-    position:relative;display:flex;flex-direction:column;align-items:center;
-    gap:30px;padding-top:16px;
+  .swing.hidden{display:none;}
+  .swing:nth-child(even){animation-delay:-2.2s;}
+  .swing::before,.swing::after{
+    content:'';position:absolute;top:0;width:2px;height:24px;border-radius:1px;
+    background:linear-gradient(180deg,rgba(255,211,150,.25),rgba(255,211,150,.8));
   }
-  .ropeColumn::before{
-    content:'';position:absolute;top:-18px;bottom:-4px;left:50%;width:3px;
-    transform:translateX(-50%);border-radius:2px;z-index:0;
-    background:repeating-linear-gradient(180deg,#c98b4d 0 6px,#8a5a2f 6px 9px);
+  .swing::before{left:14%;}
+  .swing::after{right:14%;}
+  .swing .btn{width:100%;}
+  @keyframes swingSway{
+    0%,100%{ transform:rotate(-1.5deg); }
+    50%{ transform:rotate(1.5deg); }
   }
-  .signBtn{position:relative;z-index:1;width:230px;max-width:74vw;}
-  .signBtn::before{
-    content:'';position:absolute;top:-8px;left:50%;transform:translateX(-50%);
-    width:13px;height:13px;border-radius:50%;
-    background:#8a5a2f;box-shadow:inset 0 0 0 2px #5c3a1c;z-index:2;
-  }
-
-  @media (min-width:760px){
-    .menuLayout{flex-direction:row;align-items:center;justify-content:center;gap:70px;}
-    .menuSide{text-align:left;align-items:flex-start;max-width:320px;}
-    .ropeColumn{padding-top:26px;}
-  }
+  @media (prefers-reduced-motion:reduce){ .swing{animation:none;} }
   .btn{
     border:none;cursor:pointer;font-family:inherit;font-weight:800;font-size:19px;
     color:#3a1f00;padding:13px 34px;border-radius:999px;
@@ -110,11 +106,11 @@
   }
   .btn.ghost:active{transform:translateY(2px);box-shadow:inset 0 0 0 2px rgba(255,255,255,.28);}
 
-  #playBtn, #resumeBtn{
+  #playBtn{
     position:relative;overflow:hidden;
     animation:playBreathe 2.2s ease-in-out infinite;
   }
-  #playBtn::after, #resumeBtn::after{
+  #playBtn::after{
     content:'';position:absolute;top:0;left:-60%;width:40%;height:100%;
     background:linear-gradient(115deg, transparent, rgba(255,255,255,.55), transparent);
     transform:skewX(-18deg);
@@ -128,8 +124,8 @@
     0%{ left:-60%; }
     45%,100%{ left:130%; }
   }
-  #settingsBtn, #pauseSettingsBtn{position:relative;}
-  #settingsBtn::before, #pauseSettingsBtn::before{
+  #settingsBtn{position:relative;}
+  #settingsBtn::before{
     content:'⚙';display:inline-block;margin-right:6px;
     animation:gearSpin 4.5s linear infinite;
   }
@@ -149,7 +145,7 @@
   }
   @keyframes shopShimmer{ 0%{background-position:0% 0;} 100%{background-position:220% 0;} }
   @media (prefers-reduced-motion:reduce){
-    #playBtn, #playBtn::after, #resumeBtn, #resumeBtn::after, #settingsBtn::before, #pauseSettingsBtn::before, #shop::before{ animation:none !important; }
+    #playBtn, #playBtn::after, #settingsBtn::before, #shop::before{ animation:none !important; }
   }
 
   #shop{
@@ -207,15 +203,6 @@
   }
   .lockedRevert:active{transform:scale(.9);}
 
-  #leaderboard{
-    width:min(340px,90vw);background:rgba(255,255,255,.05);
-    border-radius:16px;padding:10px 14px;font-size:13.5px;
-    box-shadow:inset 0 0 0 1px rgba(255,255,255,.12);
-  }
-  #leaderboard h3{font-size:12px;opacity:.6;font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px;}
-  .lbRow{display:flex;justify-content:space-between;padding:2px 0;opacity:.9;}
-  .lbRow b{color:var(--gold);}
-
   .hint{font-size:12px;opacity:.5;max-width:330px;line-height:1.5;}
 
   #settingsBox{
@@ -239,7 +226,7 @@
   #nickInput:focus{outline:3px solid var(--peach);}
 
   #pauseBtn{
-    position:absolute;top:64px;right:14px;z-index:6;
+    position:absolute;top:14px;left:14px;z-index:6;
     width:42px;height:42px;border-radius:50%;border:none;cursor:pointer;
     background:rgba(21,10,43,.5);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.3);
     display:flex;align-items:center;justify-content:center;
@@ -297,11 +284,9 @@
   @keyframes rise{from{transform:translateY(14px);opacity:0}to{transform:none;opacity:1}}
   @media (prefers-reduced-motion:reduce){.pop,.rise{animation:none !important;}}
 
-  #preview{width:104px;height:104px;filter:drop-shadow(0 14px 16px rgba(0,0,0,.45));flex:0 0 auto;}
-  #wardrobePreview{width:190px;height:190px;filter:drop-shadow(0 18px 20px rgba(0,0,0,.5));flex:0 0 auto;}
+  #preview,#preview2{width:104px;height:104px;filter:drop-shadow(0 14px 16px rgba(0,0,0,.45));flex:0 0 auto;}
   @media (max-height:760px){
-    #preview{width:78px;height:78px;}
-    #wardrobePreview{width:140px;height:140px;}
+    #preview,#preview2{width:78px;height:78px;}
     .title{font-size:clamp(22px,6.6vw,34px);}
     .screen{gap:8px;}
     .btn{padding:11px 28px;font-size:17px;}
@@ -329,59 +314,43 @@
   <div id="nickname" class="screen">
     <div id="nickBox" class="pop">
       <h2 data-i18n="nickTitle" style="font-size:20px;font-weight:800;">Как тебя зовут?</h2>
-      <input id="nickInput" type="text" maxlength="14" data-i18n-placeholder="nickPlaceholder" placeholder="Ник котокролика">
+      <input id="nickInput" type="text" maxlength="14" data-i18n-placeholder="nickPlaceholder" placeholder="Ник кэббита">
       <button id="nickConfirm" class="btn" data-i18n="nickConfirm">Готово</button>
     </div>
   </div>
 
   <div id="menu" class="screen hidden">
     <div class="spacer"></div>
-    <div class="menuLayout">
-      <div class="menuSide rise d1">
-        <canvas id="preview" width="220" height="220"></canvas>
-        <h1 class="title pop">Doodlecabbit<span data-i18n="tagline">кот, кролик, одно целое</span></h1>
-        <p class="stats">
-          <span data-i18n="best">Лучший результат</span>: <b id="menuBest">0</b>
-          &nbsp;·&nbsp;
-          <span><i class="coinDot"></i><span class="coinNum" id="menuCoins">0</span></span>
-        </p>
-        <div id="leaderboard">
-          <h3 data-i18n="leaderboard">Таблица лидеров</h3>
-          <div id="lbRows"></div>
-        </div>
-      </div>
+    <canvas id="preview" width="220" height="220"></canvas>
+    <h1 class="title pop">Cabbit Jump!<span data-i18n="tagline">кот, кролик, одно целое</span></h1>
 
-      <div class="ropeColumn rise d2">
-        <button id="playBtn" class="btn signBtn" data-i18n="play">Играть</button>
-        <button id="continueBtn" class="btn signBtn" disabled data-i18n="cont">Продолжить</button>
-        <button id="settingsBtn" class="btn signBtn ghost" data-i18n="settings">Настройки</button>
-        <button id="wardrobeBtn" class="btn signBtn ghost"><span data-i18n="wardrobe">Гардероб</span><span id="wardrobeBadge" class="badgeDot hidden"></span></button>
-      </div>
+    <p class="stats rise d1">
+      <span data-i18n="best">Лучший результат</span>: <b id="menuBest">0</b>
+      &nbsp;·&nbsp;
+      <span><i class="coinDot"></i><span class="coinNum" id="menuCoins">0</span></span>
+    </p>
+
+    <div class="btnRow rise d3">
+      <div class="swing"><button id="playBtn" class="btn" data-i18n="play">Играть</button></div>
+      <div class="swing"><button id="continueBtn" class="btn" disabled data-i18n="cont">Продолжить</button></div>
+      <div class="swing"><button id="wardrobeBtn" class="btn" data-i18n="wardrobe">Гардероб</button></div>
+      <div class="swing"><button id="settingsBtn" class="btn ghost" data-i18n="settings">Настройки</button></div>
     </div>
-
-    <p class="hint rise d4" data-i18n="hint">Клавиши ← → или A / D. На телефоне держи палец на половине экрана. Тапни по монстру с булавой в руках — и получишь сокрушительный удар!</p>
+    <p class="hint rise d4" data-i18n="hint">Клавиши ← → или A / D, на телефоне — кнопки внизу. Тап по экрану: выстрел из лука или двойной прыжок. Встретил монстра — жми, пока идёт отсчёт!</p>
     <a href="https://discord.gg/H6WcNMffZ" target="_blank" rel="noopener" class="btn ghost rise d4" style="text-decoration:none;">Discord</a>
-    <div class="spacer"></div>
-  </div>
-
-  <div id="pauseMenu" class="screen hidden">
-    <div class="spacer"></div>
-    <h1 class="title pop" data-i18n="paused" style="font-size:clamp(26px,7.5vw,44px);">Пауза</h1>
-    <div class="ropeColumn rise d1">
-      <button id="resumeBtn" class="btn signBtn" data-i18n="cont">Продолжить</button>
-      <button id="pauseSettingsBtn" class="btn signBtn ghost" data-i18n="settings">Настройки</button>
-      <button id="quitBtn" class="btn signBtn ghost" data-i18n="toMenu">В меню</button>
-    </div>
     <div class="spacer"></div>
   </div>
 
   <div id="wardrobe" class="screen hidden">
     <div class="spacer"></div>
-    <canvas id="wardrobePreview" width="260" height="260"></canvas>
     <h1 class="title pop" data-i18n="wardrobe" style="font-size:clamp(24px,7vw,40px);">Гардероб</h1>
-    <div id="shop" class="rise d1"></div>
+    <canvas id="preview2" width="220" height="220"></canvas>
+    <p class="stats rise d1">
+      <span><i class="coinDot"></i><span class="coinNum" id="wardrobeCoins">0</span></span>
+    </p>
+    <div id="shop" class="rise d2"></div>
     <div id="lockedPanel" class="hidden"></div>
-    <button id="wardrobeBack" class="btn ghost rise d2" data-i18n="back">Назад</button>
+    <button id="wardrobeBack" class="btn ghost rise d3" data-i18n="back">Назад</button>
     <div class="spacer"></div>
   </div>
 
@@ -408,7 +377,7 @@
   </div>
 
   <div id="over" class="screen hidden">
-    <p id="overTitle">Котокролик приземлился</p>
+    <p id="overTitle">Кэббит приземлился</p>
     <div id="finalScore">0</div>
     <p id="coinLine"></p>
     <p id="bestLine">Рекорд: 0</p>
@@ -422,7 +391,7 @@
 <script>
 "use strict";
 /* =========================================================================
-   DOODLECABBIT — мега-патч
+   CABBIT JUMP! — мега-патч
    Canvas 2D · delta time · motion blur · монеты · гардероб со способностями ·
    ник + локальный лидерборд · пауза/продолжить · RU/EN · монстр + булава
    ========================================================================= */
@@ -535,58 +504,68 @@ window.addEventListener('keydown', ensureAudio, { once: true });
 const I18N = {
   ru: {
     tagline: 'кот, кролик, одно целое',
-    best: 'Лучший результат', settings: 'Настройки', play: 'Играть', wardrobe: 'Гардероб', paused: 'Пауза',
+    best: 'Лучший результат', settings: 'Настройки', play: 'Играть',
     cont: 'Продолжить', back: 'Назад', language: 'Язык', motionBlur: 'Motion blur',
     on: 'вкл', off: 'выкл',
-    hint: 'Клавиши ← → или A / D. На телефоне держи палец на половине экрана. Тапни по монстру с булавой в руках — и получишь сокрушительный удар!',
+    hint: 'Клавиши ← → или A / D, на телефоне — кнопки внизу. Тап по экрану: выстрел из лука или двойной прыжок. Встретил монстра — жми, пока идёт отсчёт!',
     slotHat: 'На голову', slotAcc: 'Аксессуары', slotTool: 'Инструмент',
     notEnough: 'Не хватает', coinsWord: 'монет', buyFor: 'Купить за', revert: 'Снять',
-    nickTitle: 'Как тебя зовут?', nickPlaceholder: 'Ник котокролика', nickConfirm: 'Готово',
-    leaderboard: 'Таблица лидеров', empty: '—',
-    overTitleNormal: 'Котокролик приземлился', overTitleRecord: 'Новый рекорд',
+    nickTitle: 'Как тебя зовут?', nickPlaceholder: 'Ник кэббита', nickConfirm: 'Готово',
+    leaderboard: 'Таблица лидеров', empty: '—', wardrobe: 'Гардероб',
+    overTitleNormal: 'Кэббит приземлился', overTitleRecord: 'Новый рекорд',
     overCoins: 'собрано монет', overRecordLabel: 'Рекорд', overNewBest: 'выше не прыгал никто',
     retry: 'Повторить', toMenu: 'В меню', scoreWord: 'рекорд',
-    smashToast: 'СОКРУШИТЕЛЬНЫЙ УДАР!', glassToast: 'СТЕКЛО СПАСЛО ТЕБЯ!', tapPrompt: 'ЖМИ!',
+    smashToast: 'СОКРУШИТЕЛЬНЫЙ УДАР!', kickToast: 'ПИНОК!',
+    glassToast: 'СТЕКЛО СПАСЛО ТЕБЯ!', tapPrompt: 'ЖМИ!',
     items: {
       'hat:none':      { n: 'Без шляпы',        d: '' },
       'hat:tophat':     { n: 'Цилиндр',          d: 'Просто стильно.' },
       'hat:cowboy':     { n: 'Ковбойская',       d: 'Просто стильно.' },
       'hat:propeller':  { n: 'Вертолётик',       d: 'Снижает гравитацию: падение и прыжки становятся мягче.' },
       'hat:glass':      { n: 'Блок стекла',      d: 'Спасает от одного смертельного падения, потом разбивается.' },
+      'hat:crown':      { n: 'Корона',            d: 'Каждая монета приносит вдвое больше.' },
+      'hat:halo':       { n: 'Нимб',              d: 'Притягивает монеты — они летят к тебе сами.' },
       'acc:none':       { n: 'Ничего',           d: '' },
       'acc:bowtie':     { n: 'Бабочка',          d: 'Просто стильно.' },
       'acc:glasses':    { n: 'Крутые очки',      d: 'Просто стильно.' },
       'acc:tie':        { n: 'Деловой галстук',  d: 'Очки за высоту начисляются на 25% быстрее.' },
+      'acc:backpack':   { n: 'Ранец-прыгун',      d: 'Двойной прыжок: тапни по экрану в воздухе.' },
       'tool:none':      { n: 'Пусто',            d: '' },
-      'tool:mace':      { n: 'Зачарованная булава', d: 'Падая на монстра сверху — тапни экран: сокрушительный удар выносит в космос.' }
+      'tool:mace':      { n: 'Зачарованная булава', d: 'Падая на монстра сверху — тапни экран: сокрушительный удар выносит в космос.' },
+      'tool:bow':       { n: 'Лук охотника',      d: 'На платформах заводятся монстрики. Тапай — стреляй: +3 монеты за каждого, но не наступай на них.' }
     }
   },
   en: {
     tagline: 'cat, rabbit, one and the same',
-    best: 'Best score', settings: 'Settings', play: 'Play', wardrobe: 'Wardrobe', paused: 'Paused',
+    best: 'Best score', settings: 'Settings', play: 'Play',
     cont: 'Continue', back: 'Back', language: 'Language', motionBlur: 'Motion blur',
     on: 'on', off: 'off',
-    hint: 'Arrow keys or A / D on desktop. On phone, hold either half of the screen. Tap the monster while holding the mace for a smash attack!',
+    hint: 'Arrow keys or A / D, on phone use the buttons below. Tap the screen to fire the bow or double jump. Met a monster? Tap before the timer runs out!',
     slotHat: 'Headwear', slotAcc: 'Accessories', slotTool: 'Tool',
     notEnough: 'Need', coinsWord: 'more coins', buyFor: 'Buy for', revert: 'Remove',
-    nickTitle: 'What is your name?', nickPlaceholder: 'Catbunny nickname', nickConfirm: 'Done',
-    leaderboard: 'Leaderboard', empty: '—',
-    overTitleNormal: 'The catbunny has landed', overTitleRecord: 'New record',
+    nickTitle: 'What is your name?', nickPlaceholder: 'Cabbit nickname', nickConfirm: 'Done',
+    leaderboard: 'Leaderboard', empty: '—', wardrobe: 'Wardrobe',
+    overTitleNormal: 'The cabbit has landed', overTitleRecord: 'New record',
     overCoins: 'coins collected', overRecordLabel: 'Best', overNewBest: 'nobody jumped higher',
     retry: 'Retry', toMenu: 'Menu', scoreWord: 'best',
-    smashToast: 'MACE SMASH!', glassToast: 'THE GLASS SAVED YOU!', tapPrompt: 'TAP!',
+    smashToast: 'MACE SMASH!', kickToast: 'KICKED!',
+    glassToast: 'THE GLASS SAVED YOU!', tapPrompt: 'TAP!',
     items: {
       'hat:none':      { n: 'No hat',           d: '' },
       'hat:tophat':     { n: 'Top Hat',          d: 'Just stylish.' },
       'hat:cowboy':     { n: 'Cowboy Hat',       d: 'Just stylish.' },
       'hat:propeller':  { n: 'Propeller Cap',    d: 'Lowers gravity: softer falls and jumps.' },
       'hat:glass':      { n: 'Glass Block',      d: 'Saves you from one fatal fall, then shatters.' },
+      'hat:crown':      { n: 'Crown',             d: 'Every coin is worth double.' },
+      'hat:halo':       { n: 'Halo',              d: 'Magnet: coins fly straight to you.' },
       'acc:none':       { n: 'Nothing',          d: '' },
       'acc:bowtie':     { n: 'Bowtie',           d: 'Just stylish.' },
       'acc:glasses':    { n: 'Cool Glasses',     d: 'Just stylish.' },
       'acc:tie':        { n: 'Business Tie',     d: 'Height score gained 25% faster.' },
+      'acc:backpack':   { n: 'Jump Pack',         d: 'Double jump: tap the screen in mid-air.' },
       'tool:none':      { n: 'Empty',            d: '' },
-      'tool:mace':      { n: 'Enchanted Mace',   d: 'Falling onto a monster — tap the screen for a smash that launches you into space.' }
+      'tool:mace':      { n: 'Enchanted Mace',   d: 'Falling onto a monster — tap the screen for a smash that launches you into space.' },
+      'tool:bow':       { n: "Hunter's Bow",      d: 'Critters appear on platforms. Tap to shoot: +3 coins each — but never land on one.' }
     }
   }
 };
@@ -617,18 +596,22 @@ const OUTFITS = {
     none:      { price: 0 },
     tophat:    { price: 60 },
     cowboy:    { price: 90 },
+    glass:     { price: 100 },
     propeller: { price: 200 },
-    glass:     { price: 100 }
+    crown:     { price: 450 },
+    halo:      { price: 700 }
   },
   acc: {
-    none:    { price: 0 },
-    bowtie:  { price: 0 },
-    glasses: { price: 70 },
-    tie:     { price: 120 }
+    none:     { price: 0 },
+    bowtie:   { price: 0 },
+    glasses:  { price: 70 },
+    tie:      { price: 120 },
+    backpack: { price: 320 }
   },
   tool: {
     none: { price: 0 },
-    mace: { price: 250 }
+    mace: { price: 250 },
+    bow:  { price: 380 }
   }
 };
 
@@ -643,6 +626,12 @@ const outfit = {
 };
 // Больше нет отдельной "trialSlot": состояние "примерка / куплено" всегда
 // вычисляется заново по всем слотам разом — см. getLockedItems().
+
+/* Если в сохранении осталась вещь, которой больше нет в каталоге
+   (например, удалённый плащ) — слот тихо возвращается к "ничего". */
+for (const slotKey of Object.keys(OUTFITS)){
+  if (!OUTFITS[slotKey][outfit[slotKey]]){ outfit[slotKey] = 'none'; Store.set(slotKey, 'none'); }
+}
 
 function isOwned(slot, val){ return owned.has(slot + ':' + val); }
 function saveOwned(){ Store.set('owned', Array.from(owned).join(',')); }
@@ -674,8 +663,8 @@ const GRAV       = 1850;
 const JUMP_V      = -790;   // высота прыжка = 790^2/(2*1850) ≈ 169 px
 const SPRING_V    = -1117;  // ровно вдвое выше
 const MACE_LAUNCH = -2550;  // "в космос"
-const MOVE_ACC = 2600;
-const MOVE_MAX = 430;
+const MOVE_ACC = 1750;   // разгон вбок (было 2600 — слишком резко)
+const MOVE_MAX = 340;    // максимальная скорость вбок (было 430)
 const AIR_DRAG = 0.045;
 const FIXED_DT = 1 / 120;
 
@@ -690,11 +679,16 @@ let glassUsedThisRun = false;
 const hasGlass = () => outfit.hat === 'glass' && isOwned('hat', 'glass') && !glassUsedThisRun;
 const gravityMult   = () => (outfit.hat === 'propeller' && isOwned('hat', 'propeller')) ? 0.55 : 1;
 const scoreMult      = () => (outfit.acc === 'tie' && isOwned('acc', 'tie')) ? 1.25 : 1;
+const hasMace       = () => outfit.tool === 'mace' && isOwned('tool', 'mace');
+const hasBow        = () => outfit.tool === 'bow'  && isOwned('tool', 'bow');
+const coinMult      = () => (outfit.hat === 'crown' && isOwned('hat', 'crown')) ? 2 : 1;
+const hasMagnet     = () => outfit.hat === 'halo' && isOwned('hat', 'halo');
+const hasDoubleJump = () => outfit.acc === 'backpack' && isOwned('acc', 'backpack');
 
 /* ---------- Состояние ---------- */
 const STATE = { MENU: 0, PLAY: 1, PAUSED: 2, OVER: 3, SETTINGS: 4, NICK: 5, WARDROBE: 6 };
 let state = STATE.NICK;
-let motionBlurOn = Store.get('blur', '1') === '1';
+let motionBlurOn = Store.get('blur', '0') === '1'; // выкл по умолчанию — самый тяжёлый эффект для слабых телефонов
 
 const hero = {
   x: VW / 2, y: 0, vx: 0, vy: 0,
@@ -705,19 +699,21 @@ const hero = {
 };
 
 let platforms = [], particles = [], coinsOnMap = [], toasts = [], monsters = [];
+let crawlers = [], arrows = [];      // монстрики на платформах и стрелы лука
+let shootCd = 0, airJumps = 0;       // перезарядка лука и запас прыжков в воздухе
 let camY = 0, camTarget = 0;
 let startY = 0, minY = 0, score = 0, runCoins = 0;
 let shake = 0, shakeX = 0, shakeY = 0;
-let lastPlatY = 0, flash = 0, flashColor = '#fff3c4', blurAmount = 0, coinPulse = 0;
+let lastPlatY = 0, flash = 0, flashColor = '#fff3c4', blurAmount = 0, blurWanted = 0, coinPulse = 0;
 let monsterTimer = 0;
-const MONSTER_INTERVAL = 25; // секунд; для продакшена поставь 120 (каждые 2 минуты)
+const MONSTER_INTERVAL = 90; // секунд между летающими монстрами
 let tapEvent = false; // сбрасывается каждый кадр, ставится в true при клике/тапе/пробеле/кнопке удара
 
 /* Событие "встреча с монстром": пока активно, весь мир движется в замедленной
    съёмке (SLOWMO_SCALE), а обратный отсчёт QTE_DURATION идёт в РЕАЛЬНОМ времени. */
 let monsterEvent = null; // { monster, elapsed }
 const SLOWMO_SCALE = 0.16;
-const QTE_DURATION = 20;
+const QTE_DURATION = 6;
 
 /* ---------- Фон ---------- */
 const BAND = 1000;
@@ -808,7 +804,12 @@ function spawnAbove(){
 
   platforms.push(p);
 
-  if (type !== 'broken' && !p.spring && Math.random() < 0.20)
+  /* Монстрики на платформах: заводятся, только если куплен и надет лук.
+     Их нужно расстреливать — за каждого дают монеты, а наступать нельзя. */
+  if (hasBow() && type === 'normal' && !p.spring && Math.random() < 0.24){
+    crawlers.push({ plat: p, x: p.x + p.w / 2, y: p.y - 13, phase: rand(0, 6.28) });
+  }
+  else if (type !== 'broken' && !p.spring && Math.random() < 0.20)
     addCoin(p.x + p.w / 2, p.y - 30, p);
   else if (Math.random() < 0.07)
     addCoin(rand(40, VW - 40), y - rand(20, 46), null);
@@ -817,8 +818,9 @@ function spawnAbove(){
 }
 
 /* ---------- Частицы ---------- */
+const MAX_PARTICLES = 160; // потолок на слабых телефонах — иначе взрыв частиц роняет FPS
 function addParticle(p){
-  if (particles.length > 460) particles.shift();
+  if (particles.length >= MAX_PARTICLES) return;
   particles.push(p);
 }
 
@@ -939,21 +941,27 @@ function killMonster(m, success){
   removeMonster(m);
 
   if (success){
+    /* Булава = сокрушительный удар и полёт "в космос".
+       Без булавы кэббит просто отпинывает монстра: подброс слабее пружины,
+       спецэффекты скромнее и монет меньше — булаву есть смысл покупать. */
+    const smash = hasMace();
+
     burstPixels(m.x, m.y, ['#8a2be2', '#b268ff', '#d9a6ff', '#4b1a80']);
-    burstSpark(m.x, m.y, '#e0b3ff', 22, 1.4);
-    burstSpark(m.x, m.y, '#fff3b0', 10, 0.8);
+    burstSpark(m.x, m.y, '#e0b3ff', smash ? 22 : 12, smash ? 1.4 : 0.9);
+    burstSpark(m.x, m.y, '#fff3b0', smash ? 10 : 5, 0.8);
     addParticle({ kind: 'ring', x: m.x, y: m.y, vx: 0, vy: 0, life: 1, decay: 1.6, r: 6, color: '#d9a6ff' });
-    addToast(t('smashToast'), m.x, m.y - 30, '#d9a6ff');
-    sfxSmash();
-    shake = Math.max(shake, 18);
-    flash = 0.65; flashColor = '#b268ff';
-    hero.vy = MACE_LAUNCH;
+    addToast(smash ? t('smashToast') : t('kickToast'), m.x, m.y - 30, smash ? '#d9a6ff' : '#e8d9ff');
+    if (smash) sfxSmash(); else sfxSpring();
+    shake = Math.max(shake, smash ? 18 : 8);
+    flash = smash ? 0.65 : 0.3; flashColor = '#b268ff';
+    hero.vy = smash ? MACE_LAUNCH : SPRING_V * 0.85;
     hero.vx *= 0.3;
-    hero.sx = 0.58; hero.sy = 1.6;
-    hero.spin = hero.face * 6.2832 * 2.5; // эффектное кувыркание при взлёте
+    hero.sx = smash ? 0.58 : 0.82; hero.sy = smash ? 1.6 : 1.24;
+    hero.spin = hero.face * 6.2832 * (smash ? 2.5 : 0.6);
+    airJumps = hasDoubleJump() ? 1 : 0;
 
     // бонусные монеты за победу над монстром
-    const bonus = 5;
+    const bonus = (smash ? 5 : 2) * coinMult();
     runCoins += bonus; coins += bonus;
     Store.set('coins', coins);
     coinPulse = 1;
@@ -1020,6 +1028,8 @@ function resetGame(){
   coinsOnMap.length = 0;
   toasts.length = 0;
   monsters.length = 0;
+  crawlers.length = 0;
+  arrows.length = 0;
   hero.ghosts.length = 0;
 
   camY = 0; camTarget = 0;
@@ -1027,6 +1037,8 @@ function resetGame(){
   monsterTimer = MONSTER_INTERVAL;
   monsterEvent = null;
   glassUsedThisRun = false;
+  shootCd = 0;
+  airJumps = 0;
   if (typeof hitBtn !== 'undefined') hitBtn.classList.add('hidden');
 
   hero.x = VW / 2;
@@ -1147,6 +1159,7 @@ function stepPhysics(dt){
     }
 
     hero.y = top - hero.h * 0.5;
+    airJumps = hasDoubleJump() ? 1 : 0; // ранец перезаряжается от любой платформы
     p.wobble = 1;
     hero.sx = 1.35; hero.sy = 0.66;
 
@@ -1169,6 +1182,48 @@ function stepPhysics(dt){
   }
 }
 
+/* ---------- Действие по тапу: выстрел из лука или двойной прыжок ----------
+   Приоритет у лука: если он надет, тап всегда стреляет. Ранец работает,
+   только когда лук не надет — иначе одно действие мешало бы другому. */
+function handleTapAction(){
+  if (state !== STATE.PLAY || monsterEvent) return;
+  if (hasBow()){ shootArrow(); return; }
+  if (hasDoubleJump() && airJumps > 0 && hero.vy > -140){
+    airJumps--;
+    hero.vy = JUMP_V * 0.95;
+    hero.sx = 0.78; hero.sy = 1.3;
+    burstSpark(hero.x, hero.y + hero.h * 0.4, '#bdeaff', 14, 0.9);
+    burstSpark(hero.x, hero.y + hero.h * 0.4, '#ffffff', 6, 0.5);
+    sfxJump();
+  }
+}
+
+function shootArrow(){
+  if (shootCd > 0) return;
+  shootCd = 0.34;
+
+  // автонаведение на ближайшего монстрика выше кэббита, иначе — строго вверх
+  let tx = hero.x, ty = hero.y - 300, bestD = 1e9;
+  for (const cr of crawlers){
+    if (cr.y > hero.y - 12) continue;
+    const dx = cr.x - hero.x, dy = cr.y - hero.y;
+    const d = dx * dx + dy * dy;
+    if (d < bestD && d < 560 * 560){ bestD = d; tx = cr.x; ty = cr.y; }
+  }
+
+  const dx = tx - hero.x, dy = ty - hero.y;
+  const len = Math.sqrt(dx * dx + dy * dy) || 1;
+  const sp = 1150;
+  arrows.push({
+    x: hero.x, y: hero.y - 6,
+    vx: dx / len * sp, vy: dy / len * sp,
+    ang: Math.atan2(dy, dx)
+  });
+  ensureAudio();
+  beep(560, 0.05, 'square', 0.05);
+  beep(880, 0.05, 'triangle', 0.04);
+}
+
 /* ---------- Обновление мира ---------- */
 function updateWorld(dt){
   const camT = hero.y - VH * 0.45;
@@ -1181,20 +1236,22 @@ function updateWorld(dt){
   const stretch = clamp(-hero.vy / 1100, 0, 1);
   hero.sx = approach(hero.sx, 1 - stretch * 0.22, 11, dt);
   hero.sy = approach(hero.sy, 1 + stretch * 0.30, 11, dt);
-  hero.tilt = approach(hero.tilt, (hero.vx / MOVE_MAX) * 0.32, 9, dt);
+  hero.tilt = approach(hero.tilt, (hero.vx / MOVE_MAX) * 0.20, 7, dt);
   hero.spin = approach(hero.spin, 0, 2.4, dt);
 
   if (outfit.hat === 'propeller')
     hero.prop += (7 + clamp(-hero.vy, 0, 1200) * 0.016) * dt * 6;
 
-  hero.ghosts.unshift({
-    x: hero.x, y: hero.y, sx: hero.sx, sy: hero.sy,
-    tilt: hero.tilt, face: hero.face, prop: hero.prop
-  });
-  if (hero.ghosts.length > 7) hero.ghosts.pop();
+  if (motionBlurOn){
+    hero.ghosts.unshift({
+      x: hero.x, y: hero.y, sx: hero.sx, sy: hero.sy,
+      tilt: hero.tilt, face: hero.face, prop: hero.prop
+    });
+    if (hero.ghosts.length > 7) hero.ghosts.pop();
+  }
 
-  const wanted = motionBlurOn ? clamp((Math.abs(hero.vy) - 330) / 1100, 0, 1) * 0.52 : 0;
-  blurAmount = approach(blurAmount, wanted, 14, dt);
+  blurWanted = motionBlurOn ? clamp((Math.abs(hero.vy) - 330) / 1100, 0, 1) * 0.52 : 0;
+  blurAmount = approach(blurAmount, blurWanted, 14, dt);
 
   if (hero.vy < -420 && Math.random() < dt * 55) trailPuff();
 
@@ -1242,10 +1299,23 @@ function updateWorld(dt){
       continue;
     }
 
+    /* Нимб-магнит: монета рядом отрывается от платформы и летит к кэббиту */
+    if (hasMagnet()){
+      const mdx = hero.x - c.x, mdy = hero.y - c.y;
+      const md2 = mdx * mdx + mdy * mdy;
+      if (md2 < 160 * 160){
+        c.plat = null;
+        const md = Math.sqrt(md2) || 1;
+        c.x += (mdx / md) * 340 * dt;
+        c.y += (mdy / md) * 340 * dt;
+      }
+    }
+
     const dx = c.x - hero.x, dy = (c.y + Math.sin(c.bob) * 4) - hero.y;
     if (dx * dx + dy * dy < 30 * 30){
       c.got = 0.01;
-      runCoins++; coins++;
+      const gain = coinMult();
+      runCoins += gain; coins += gain;
       Store.set('coins', coins);
       coinPulse = 1;
       burstSpark(c.x, c.y, '#ffd34d', 14, 0.8);
@@ -1254,6 +1324,59 @@ function updateWorld(dt){
       continue;
     }
     if (c.y - camY > VH + 80) coinsOnMap.splice(i, 1);
+  }
+
+  /* Монстрики на платформах (только с луком) */
+  for (let i = crawlers.length - 1; i >= 0; i--){
+    const cr = crawlers[i];
+    if (!cr.plat || cr.plat.broken){ crawlers.splice(i, 1); continue; }
+    cr.x = cr.plat.x + cr.plat.w / 2;
+    cr.y = cr.plat.y - 13;
+    cr.phase += dt * 4;
+    if (cr.y - camY > VH + 90){ crawlers.splice(i, 1); continue; }
+
+    // наступил сверху на живого монстрика — смертельное событие (стекло спасёт)
+    const cdx = cr.x - hero.x, cdy = cr.y - hero.y;
+    if (hero.vy > 0 && cdx * cdx + cdy * cdy < 24 * 24){
+      crawlers.splice(i, 1);
+      burstPixels(cr.x, cr.y, ['#6be36b', '#2f8f2f', '#bff5a0']);
+      shake = Math.max(shake, 12);
+      handleFatalEvent();
+      continue;
+    }
+  }
+
+  /* Стрелы */
+  shootCd = Math.max(0, shootCd - dt);
+  for (let i = arrows.length - 1; i >= 0; i--){
+    const a = arrows[i];
+    a.vy += GRAV * 0.22 * dt;
+    a.x  += a.vx * dt;
+    a.y  += a.vy * dt;
+    a.ang = Math.atan2(a.vy, a.vx);
+
+    let hit = false;
+    for (let j = crawlers.length - 1; j >= 0; j--){
+      const cr = crawlers[j];
+      const dx2 = cr.x - a.x, dy2 = cr.y - a.y;
+      if (dx2 * dx2 + dy2 * dy2 < 20 * 20){
+        crawlers.splice(j, 1);
+        hit = true;
+        burstPixels(cr.x, cr.y, ['#6be36b', '#2f8f2f', '#bff5a0', '#f7ffd6']);
+        burstSpark(cr.x, cr.y, '#bff5a0', 12, 1);
+        const bonus = 3 * coinMult();
+        runCoins += bonus; coins += bonus;
+        Store.set('coins', coins);
+        coinPulse = 1;
+        addToast('+' + bonus, cr.x, cr.y - 26, '#ffd34d');
+        sfxCoin();
+        shake = Math.max(shake, 5);
+        break;
+      }
+    }
+
+    if (hit || a.y - camY > VH + 60 || a.y < camY - VH * 1.5 || a.x < -50 || a.x > VW + 50)
+      arrows.splice(i, 1);
   }
 
   /* Монстры */
@@ -1656,7 +1779,36 @@ function paintHat(c, w, h, kind, A){
   c.strokeStyle = 'rgba(28,16,8,.5)';
   c.lineWidth = 1.5;
 
-  if (kind === 'tophat'){
+  if (kind === 'crown'){
+    const cw = hw * 1.7, ch = h * 0.22;
+    c.fillStyle = '#ffd34d';
+    c.strokeStyle = 'rgba(120,70,0,.6)';
+    c.beginPath();
+    c.moveTo(cx - cw / 2, ty + 1);
+    c.lineTo(cx - cw / 2, ty - ch * 0.55);
+    c.lineTo(cx - cw * 0.26, ty - ch * 0.12);
+    c.lineTo(cx, ty - ch * 1.1);
+    c.lineTo(cx + cw * 0.26, ty - ch * 0.12);
+    c.lineTo(cx + cw / 2, ty - ch * 0.55);
+    c.lineTo(cx + cw / 2, ty + 1);
+    c.closePath();
+    c.fill(); c.stroke();
+    c.fillStyle = '#ff6f91';
+    c.beginPath(); c.arc(cx, ty - ch * 0.22, 2.4, 0, 6.2832); c.fill();
+    c.fillStyle = 'rgba(255,255,255,.4)';
+    c.beginPath(); c.arc(cx - cw * 0.3, ty - ch * 0.3, 1.6, 0, 6.2832); c.fill();
+    c.beginPath(); c.arc(cx + cw * 0.3, ty - ch * 0.3, 1.6, 0, 6.2832); c.fill();
+
+  } else if (kind === 'halo'){
+    const ry = ty - h * 0.15;
+    c.strokeStyle = 'rgba(255,225,130,.28)';
+    c.lineWidth = 8;
+    c.beginPath(); c.ellipse(cx, ry, hw * 1.2, h * 0.055, 0, 0, 6.2832); c.stroke();
+    c.strokeStyle = 'rgba(255,245,190,.95)';
+    c.lineWidth = 3;
+    c.beginPath(); c.ellipse(cx, ry, hw * 1.2, h * 0.055, 0, 0, 6.2832); c.stroke();
+
+  } else if (kind === 'tophat'){
     const crownH = h * 0.36, crownW = hw * 1.42;
     c.fillStyle = '#251b30';
     rr(c, cx - hw * 2.05, ty - 3, hw * 4.1, 6.5, 3.2);
@@ -1859,12 +2011,66 @@ function paintAccessory(c, w, h, kind, A){
       c.stroke();
     }
     c.restore();
+
+  } else if (kind === 'backpack'){
+    // Ранец-прыгун: коробка сбоку + лямка через грудь
+    const y = A.neckY * h;
+    c.save();
+    c.strokeStyle = 'rgba(16,12,40,.5)';
+    c.lineWidth = 1.3;
+    c.fillStyle = '#5b6ef5';
+    rr(c, cx + w * 0.19, y + h * 0.01, w * 0.21, h * 0.27, 5);
+    c.fill(); c.stroke();
+    c.fillStyle = '#8fa0ff';
+    rr(c, cx + w * 0.225, y + h * 0.11, w * 0.14, h * 0.09, 3);
+    c.fill();
+    c.fillStyle = '#ffd34d';
+    c.beginPath(); c.arc(cx + w * 0.295, y + h * 0.055, 1.8, 0, 6.2832); c.fill();
+    c.strokeStyle = '#3b48a8';
+    c.lineWidth = 2.6;
+    c.beginPath();
+    c.moveTo(cx + w * 0.19, y + h * 0.05);
+    c.lineTo(cx - w * 0.04, y + h * 0.12);
+    c.stroke();
+    c.restore();
   }
 }
 
 /* Зачарованная булава в лапке. phase — время для анимации свечения/искр. */
 function paintTool(c, w, h, kind, A, phase){
   if (!kind || kind === 'none') return;
+
+  if (kind === 'bow'){
+    const bhx = A.handX * w, bhy = A.handY * h;
+    c.save();
+    c.translate(bhx, bhy);
+    c.rotate(-0.22 + Math.sin(phase * 1.3) * 0.05);
+    c.lineCap = 'round';
+
+    const R = 15, a0 = -1.15, a1 = 1.15;
+    c.strokeStyle = '#8b5a2b';
+    c.lineWidth = 3.2;
+    c.beginPath(); c.arc(0, -6, R, a0, a1); c.stroke();
+
+    c.strokeStyle = 'rgba(255,248,220,.85)';
+    c.lineWidth = 1.2;
+    c.beginPath();
+    c.moveTo(Math.cos(a0) * R, -6 + Math.sin(a0) * R);
+    c.lineTo(Math.cos(a1) * R, -6 + Math.sin(a1) * R);
+    c.stroke();
+
+    c.strokeStyle = '#e8d9a0';
+    c.lineWidth = 2;
+    c.beginPath(); c.moveTo(-7, -6); c.lineTo(13, -6); c.stroke();
+    c.fillStyle = '#ffd34d';
+    c.beginPath();
+    c.moveTo(19, -6); c.lineTo(12, -9.5); c.lineTo(12, -2.5);
+    c.closePath(); c.fill();
+
+    c.restore();
+    return;
+  }
+
   if (kind !== 'mace') return;
 
   const hx = A.handX * w, hy = A.handY * h;
@@ -2058,11 +2264,13 @@ function drawHeroWithWrap(){
   const y = hero.y - camY;
   const phase = performance.now() / 1000;
 
-  for (let i = hero.ghosts.length - 1; i >= 1; i--){
-    const gph = hero.ghosts[i];
-    const a = (1 - i / hero.ghosts.length) * 0.19 * (motionBlurOn ? 1 : 0.35);
-    if (a <= 0.01) continue;
-    drawHero(gph.x, gph.y - camY, gph.sx, gph.sy, gph.tilt, gph.face, a, 0, phase);
+  if (motionBlurOn){
+    for (let i = hero.ghosts.length - 1; i >= 1; i--){
+      const gph = hero.ghosts[i];
+      const a = (1 - i / hero.ghosts.length) * 0.19;
+      if (a <= 0.01) continue;
+      drawHero(gph.x, gph.y - camY, gph.sx, gph.sy, gph.tilt, gph.face, a, 0, phase);
+    }
   }
 
   const fullTilt = hero.tilt + hero.spin;
@@ -2072,6 +2280,72 @@ function drawHeroWithWrap(){
     drawHero(hero.x + VW + hero.w, y, hero.sx, hero.sy, fullTilt, hero.face, 1, 0, phase);
   else if (hero.x > VW - hero.w)
     drawHero(hero.x - VW - hero.w, y, hero.sx, hero.sy, fullTilt, hero.face, 1, 0, phase);
+}
+
+/* ---------- Монстрик на платформе и стрелы (отрисовка) ---------- */
+function drawCrawler(cr){
+  const c = ctx;
+  const wob = Math.sin(cr.phase) * 1.8;
+  c.save();
+  c.translate(cr.x, cr.y);
+  c.lineJoin = 'round';
+
+  c.strokeStyle = '#1d5c1d';
+  c.lineWidth = 2;
+  c.beginPath();
+  c.moveTo(-6, -8); c.lineTo(-9 + wob * 0.4, -15);
+  c.stroke();
+  c.beginPath();
+  c.moveTo(6, -8); c.lineTo(9 + wob * 0.4, -15);
+  c.stroke();
+
+  c.fillStyle = '#4bbd4b';
+  c.strokeStyle = '#1d5c1d';
+  c.lineWidth = 1.6;
+  c.beginPath();
+  c.ellipse(0, 0, 13, 11 + wob * 0.25, 0, 0, 6.2832);
+  c.fill(); c.stroke();
+
+  c.fillStyle = 'rgba(255,255,255,.22)';
+  c.beginPath();
+  c.ellipse(-4, -4, 4.5, 3, -0.5, 0, 6.2832);
+  c.fill();
+
+  for (const side of [-1, 1]){
+    c.fillStyle = '#fdf6e8';
+    c.beginPath(); c.arc(side * 4.6, -1.5, 3.4, 0, 6.2832); c.fill();
+    c.fillStyle = '#11220f';
+    c.beginPath(); c.arc(side * 4.6 + Math.sin(cr.phase * 0.7) * 1.1, -1.5, 1.7, 0, 6.2832); c.fill();
+  }
+
+  c.strokeStyle = '#11220f';
+  c.lineWidth = 1.4;
+  c.beginPath();
+  c.moveTo(-4, 5); c.lineTo(-1.5, 7); c.lineTo(1.5, 5); c.lineTo(4, 7);
+  c.stroke();
+  c.restore();
+}
+
+function drawArrows(){
+  const c = ctx;
+  for (const a of arrows){
+    c.save();
+    c.translate(a.x, a.y);
+    c.rotate(a.ang);
+    c.lineCap = 'round';
+    c.strokeStyle = '#e8d9a0';
+    c.lineWidth = 2.2;
+    c.beginPath(); c.moveTo(-15, 0); c.lineTo(6, 0); c.stroke();
+    c.fillStyle = '#ffd34d';
+    c.beginPath(); c.moveTo(13, 0); c.lineTo(4, -4.2); c.lineTo(4, 4.2); c.closePath(); c.fill();
+    c.strokeStyle = 'rgba(255,240,180,.6)';
+    c.lineWidth = 1.4;
+    c.beginPath();
+    c.moveTo(-15, 0); c.lineTo(-19, -4);
+    c.moveTo(-15, 0); c.lineTo(-19, 4);
+    c.stroke();
+    c.restore();
+  }
 }
 
 /* ---------- Частицы (отрисовка) ---------- */
@@ -2267,6 +2541,8 @@ function render(){
   for (const p of platforms) drawPlatform(p);
   for (const c of coinsOnMap) drawCoin(c);
   for (const m of monsters) drawMonster(m);
+  for (const cr of crawlers) drawCrawler(cr);
+  drawArrows();
   drawParticles();
   drawHeroWithWrap();
   drawToasts();
@@ -2279,7 +2555,10 @@ function render(){
     ctx.globalAlpha = 1;
   }
 
-  if (motionBlurOn){
+  /* Снимок канваса для motion blur — самая дорогая операция кадра (полное
+     копирование экрана). Делаем её только пока размытие реально видно или
+     вот-вот понадобится, а не каждый кадр подряд. */
+  if (motionBlurOn && (blurAmount > 0.01 || blurWanted > 0.01)){
     pixelTransform();
     blurCtx.setTransform(1, 0, 0, 1, 0, 0);
     blurCtx.clearRect(0, 0, blurCvs.width, blurCvs.height);
@@ -2309,6 +2588,8 @@ function frame(now){
 
       if (tapEvent) resolveMonsterEvent(true);
       else if (monsterEvent.elapsed >= QTE_DURATION) resolveMonsterEvent(false);
+    } else if (tapEvent){
+      handleTapAction();
     }
 
     acc += dt;
@@ -2342,16 +2623,15 @@ document.addEventListener('visibilitychange', () => {
 });
 
 /* ---------- Экраны ---------- */
-const nicknameEl  = document.getElementById('nickname');
-const menuEl      = document.getElementById('menu');
-const settingsEl  = document.getElementById('settings');
-const overEl      = document.getElementById('over');
-const pauseMenuEl = document.getElementById('pauseMenu');
-const wardrobeEl  = document.getElementById('wardrobe');
-const pauseBtn    = document.getElementById('pauseBtn');
-const hitBtn      = document.getElementById('hitBtn');
-const leftBtn     = document.getElementById('leftBtn');
-const rightBtn    = document.getElementById('rightBtn');
+const nicknameEl = document.getElementById('nickname');
+const menuEl     = document.getElementById('menu');
+const settingsEl = document.getElementById('settings');
+const wardrobeEl = document.getElementById('wardrobe');
+const overEl     = document.getElementById('over');
+const pauseBtn   = document.getElementById('pauseBtn');
+const hitBtn     = document.getElementById('hitBtn');
+const leftBtn    = document.getElementById('leftBtn');
+const rightBtn   = document.getElementById('rightBtn');
 
 hitBtn.addEventListener('pointerdown', e => {
   e.preventDefault();
@@ -2401,7 +2681,7 @@ function reanimate(el){
 }
 
 function hideAllScreens(){
-  hide(nicknameEl); hide(menuEl); hide(settingsEl); hide(overEl); hide(pauseMenuEl); hide(wardrobeEl);
+  hide(nicknameEl); hide(menuEl); hide(settingsEl); hide(overEl); hide(wardrobeEl);
 }
 
 /* ---------- Ник ---------- */
@@ -2411,7 +2691,7 @@ nickInput.addEventListener('keydown', e => { if (e.key === 'Enter') confirmNick(
 
 function confirmNick(){
   let nick = nickInput.value.trim();
-  if (!nick) nick = 'Котокролик' + Math.floor(Math.random() * 900 + 100);
+  if (!nick) nick = 'Кэббит' + Math.floor(Math.random() * 900 + 100);
   if (nick.length > 14) nick = nick.slice(0, 14);
   nickname = nick;
   Store.set('nick', nickname);
@@ -2438,6 +2718,7 @@ function addToLeaderboard(nick, sc){
 
 function refreshLeaderboardUI(){
   const rows = document.getElementById('lbRows');
+  if (!rows) return; // таблицы лидеров в меню больше нет — рекорды просто копятся в памяти
   const top = loadLeaderboard();
   rows.innerHTML = '';
   for (let i = 0; i < 5; i++){
@@ -2488,7 +2769,7 @@ function buildShop(){
       chip.addEventListener('click', () => {
         outfit[slotDef.key] = val;
         if (isOwned(slotDef.key, val)) Store.set(slotDef.key, val); // куплено — запоминаем выбор
-        refreshWardrobeChips();                                     // не куплено — это временная примерка
+        refreshShopState();                                        // не куплено — это временная примерка
       });
 
       row.appendChild(chip);
@@ -2496,13 +2777,13 @@ function buildShop(){
     shopEl.appendChild(row);
   }
 
-  refreshWardrobeChips();
+  refreshShopState();
 }
 
 /* Все слоты (hat/acc/tool) с надетой, но НЕ купленной вещью — а не только
-   последний тронутый слот. Это и было причиной старого бага: если примерить
-   сразу два непроплаченных предмета в разных слотах, второй никак не
-   отслеживался и после отмены первого игра запускалась с ним бесплатно. */
+   последний тронутый слот. Это и было причиной бага: если примерить сразу
+   два непроплаченных предмета в разных слотах, второй никак не отслеживался
+   и после отмены первого игра запускалась с ним бесплатно. */
 function getLockedItems(){
   const result = [];
   for (const slot of Object.keys(OUTFITS)){
@@ -2521,14 +2802,18 @@ function buyItem(slot, val){
   owned.add(slot + ':' + val);
   saveOwned();
   Store.set(slot, val);
-  refreshWardrobeChips();
+  refreshShopState();
 }
 
-/* Рисует сетку чипов гардероба и список непроплаченных вещей внизу.
-   Живёт только на экране "Гардероб" — на паузу и в главное меню больше
-   не всплывает, поэтому баг "застрял в гардеробе без Продолжить" физически
-   не может повториться: этих элементов там просто нет в разметке. */
-function refreshWardrobeChips(){
+/* Пока хотя бы в ОДНОМ слоте надета непроплаченная вещь, играть нельзя:
+   "Играть" и "Продолжить" прячутся, вместо них — список всех неоплаченных
+   предметов с ценой, кнопкой "Купить" на каждый и кнопкой "✕", чтобы
+   мгновенно вернуть слот на "ничего" без покупки. Как только каждый слот
+   либо куплен, либо возвращён к "ничего" — кнопки запуска возвращаются. */
+function refreshShopState(){
+  menuBest.textContent  = best;
+  menuCoins.textContent = coins;
+
   shopEl.querySelectorAll('.chip').forEach(chip => {
     const slot = chip.dataset.slot, val = chip.dataset.val;
     const info = ti(slot, val);
@@ -2543,10 +2828,18 @@ function refreshWardrobeChips(){
     chip.innerHTML = html;
   });
 
-  const lockedPanel = document.getElementById('lockedPanel');
+  const wCoins = document.getElementById('wardrobeCoins');
+  if (wCoins) wCoins.textContent = coins;
+
+  // прячем не саму кнопку, а её подвес .swing — иначе в меню повисали бы пустые верёвки
+  const playBtnEl     = document.getElementById('playBtn').closest('.swing');
+  const continueBtnEl = document.getElementById('continueBtn').closest('.swing');
+  const lockedPanel   = document.getElementById('lockedPanel');
   const locked = getLockedItems();
 
   if (locked.length > 0){
+    playBtnEl.classList.add('hidden');
+    continueBtnEl.classList.add('hidden');
     lockedPanel.classList.remove('hidden');
     lockedPanel.innerHTML = '';
 
@@ -2579,7 +2872,7 @@ function refreshWardrobeChips(){
       revert.textContent = '✕';
       revert.addEventListener('click', () => {
         outfit[item.slot] = 'none';
-        refreshWardrobeChips();
+        refreshShopState();
       });
 
       actions.appendChild(buyOne);
@@ -2589,47 +2882,28 @@ function refreshWardrobeChips(){
       lockedPanel.appendChild(row);
     }
   } else {
+    playBtnEl.classList.remove('hidden');
+    continueBtnEl.classList.remove('hidden');
     lockedPanel.classList.add('hidden');
   }
 }
 
-/* Играть/Продолжить теперь живут в главном меню, отдельно от гардероба.
-   Пока где-то надета непроплаченная вещь — обе кнопки просто задизейблены,
-   а на кнопке "Гардероб" загорается красная точка-подсказка, куда идти. */
-function refreshMenuButtons(){
-  menuBest.textContent  = best;
-  menuCoins.textContent = coins;
-
-  const locked = getLockedItems();
-  const playBtnEl     = document.getElementById('playBtn');
-  const continueBtnEl = document.getElementById('continueBtn');
-  const wardrobeBadge = document.getElementById('wardrobeBadge');
-
-  playBtnEl.disabled = locked.length > 0;
-  continueBtnEl.disabled = locked.length > 0 || !canContinue;
-  wardrobeBadge.classList.toggle('hidden', locked.length === 0);
-}
-
 /* ---------- Переходы между экранами ---------- */
-let canContinue = false;              // есть ли забег на паузе, к которому можно вернуться
-let settingsReturnState = STATE.MENU; // куда вернуться из настроек: в меню или в паузу
-
 function goToMenu(){
   state = STATE.MENU;
-  canContinue = false;
   hideAllScreens();
   show(menuEl);
   reanimate(menuEl);
   pauseBtn.classList.add('hidden');
   hideTouchControls();
   refreshLeaderboardUI();
-  refreshMenuButtons();
+  refreshShopState();
+  document.getElementById('continueBtn').disabled = true;
 }
 
 function startGame(){
   resetGame();
   state = STATE.PLAY;
-  canContinue = false;
   last = performance.now();
   acc = 0;
   hideAllScreens();
@@ -2637,21 +2911,16 @@ function startGame(){
   showTouchControls();
 }
 
-/* Пауза — отдельный минимальный экран БЕЗ доступа к гардеробу. Раньше пауза
-   показывала общее меню целиком, и если в нём был надет непроплаченный
-   предмет — вместо "Продолжить" вылезала панель покупки, и создавалось
-   ощущение "залип в гардеробе". Теперь так физически не может случиться:
-   играть с непроплаченной вещью нельзя (см. refreshMenuButtons), значит
-   к моменту паузы гардероб уже точно в порядке, и его тут просто нет. */
 function pauseGame(){
   if (state !== STATE.PLAY) return;
   state = STATE.PAUSED;
-  canContinue = true;
   hideAllScreens();
-  show(pauseMenuEl);
-  reanimate(pauseMenuEl);
+  show(menuEl);
   pauseBtn.classList.add('hidden');
   hideTouchControls();
+  document.getElementById('continueBtn').disabled = false;
+  refreshLeaderboardUI();
+  refreshShopState();
 }
 
 function resumeGame(){
@@ -2667,7 +2936,6 @@ function resumeGame(){
 function gameOver(){
   if (state !== STATE.PLAY) return;
   state = STATE.OVER;
-  canContinue = false;
   pauseBtn.classList.add('hidden');
   hideTouchControls();
   hitBtn.classList.add('hidden');
@@ -2698,10 +2966,33 @@ function gameOver(){
   })();
 }
 
-/* Настройки открываются и из главного меню, и из паузы — запоминаем,
-   откуда пришли, чтобы кнопка "Назад" вернула туда же, а не всегда в меню. */
+/* Гардероб — отдельный экран. Помним, откуда в него зашли: из меню или
+   из паузы, чтобы кнопка "Назад" не съедала незаконченный забег. */
+let wardrobeReturn = STATE.MENU;
+
+function openWardrobe(){
+  wardrobeReturn = (state === STATE.PAUSED) ? STATE.PAUSED : STATE.MENU;
+  state = STATE.WARDROBE;
+  hideAllScreens();
+  show(wardrobeEl);
+  reanimate(wardrobeEl);
+  refreshShopState();
+}
+
+function closeWardrobe(){
+  if (wardrobeReturn === STATE.PAUSED){
+    state = STATE.PAUSED;
+    hideAllScreens();
+    show(menuEl);
+    reanimate(menuEl);
+    document.getElementById('continueBtn').disabled = false;
+    refreshShopState();
+  } else {
+    goToMenu();
+  }
+}
+
 function openSettings(){
-  settingsReturnState = state;
   state = STATE.SETTINGS;
   hideAllScreens();
   show(settingsEl);
@@ -2709,25 +3000,6 @@ function openSettings(){
 }
 
 function closeSettings(){
-  if (settingsReturnState === STATE.PAUSED){
-    state = STATE.PAUSED;
-    hideAllScreens();
-    show(pauseMenuEl);
-  } else {
-    goToMenu();
-  }
-}
-
-/* Гардероб — отдельный экран, попасть в него можно ТОЛЬКО из главного меню. */
-function openWardrobe(){
-  state = STATE.WARDROBE;
-  hideAllScreens();
-  show(wardrobeEl);
-  reanimate(wardrobeEl);
-  refreshWardrobeChips();
-}
-
-function closeWardrobe(){
   goToMenu();
 }
 
@@ -2735,14 +3007,11 @@ function closeWardrobe(){
 document.getElementById('playBtn').addEventListener('click', startGame);
 document.getElementById('continueBtn').addEventListener('click', resumeGame);
 document.getElementById('settingsBtn').addEventListener('click', openSettings);
+document.getElementById('wardrobeBtn').addEventListener('click', openWardrobe);
+document.getElementById('wardrobeBack').addEventListener('click', closeWardrobe);
 document.getElementById('settingsBack').addEventListener('click', closeSettings);
 document.getElementById('retryBtn').addEventListener('click', startGame);
 document.getElementById('menuBtn').addEventListener('click', goToMenu);
-document.getElementById('wardrobeBtn').addEventListener('click', openWardrobe);
-document.getElementById('wardrobeBack').addEventListener('click', closeWardrobe);
-document.getElementById('resumeBtn').addEventListener('click', resumeGame);
-document.getElementById('pauseSettingsBtn').addEventListener('click', openSettings);
-document.getElementById('quitBtn').addEventListener('click', goToMenu);
 pauseBtn.addEventListener('click', pauseGame);
 
 blurToggle.addEventListener('click', () => {
@@ -2761,47 +3030,44 @@ document.querySelectorAll('.chip[data-lang]').forEach(chip => {
     Store.set('lang', lang);
     applyStaticI18n();
     buildShop();
-    refreshMenuButtons();
     refreshLeaderboardUI();
   });
 });
 
-/* ---------- Превью персонажа: общая функция для меню и для гардероба ---------- */
-const pcv  = document.getElementById('preview');
-const pctx = pcv.getContext('2d');
-const wcv  = document.getElementById('wardrobePreview');
-const wctx = wcv.getContext('2d');
-
-function paintPreview(pc, size, scale, t2){
-  pc.setTransform(1, 0, 0, 1, 0, 0);
-  pc.clearRect(0, 0, size, size);
-  pc.imageSmoothingQuality = 'high';
-
-  const bob  = Math.sin(t2 * 1.7) * (size / 22);
-  const ear  = Math.sin(t2 * 1.7 + 0.8) * 0.3;
-  const tilt = Math.sin(t2 * 0.9) * 0.07;
-  const sq   = 1 + Math.sin(t2 * 1.7 + 1.6) * 0.045;
-
-  const A = anchors();
-  pc.save();
-  pc.translate(size / 2, size / 2 + size * 0.02 + bob);
-  pc.rotate(tilt);
-  pc.scale(scale / sq, scale * sq);
-  paintHeroBody(pc, hero.w, hero.h, ear);
-  paintAccessory(pc, hero.w, hero.h, outfit.acc, A);
-  paintHat(pc, hero.w, hero.h, outfit.hat, A);
-  paintTool(pc, hero.w, hero.h, outfit.tool, A, t2);
-  pc.restore();
-}
+/* ---------- Превью в меню ---------- */
+const previewCtxs = ['preview', 'preview2']
+  .map(id => document.getElementById(id))
+  .filter(Boolean)
+  .map(cv => cv.getContext('2d'));
+let prevT = performance.now();
 
 (function previewLoop(now){
   requestAnimationFrame(previewLoop);
   const t2 = (now || performance.now()) / 1000;
+  const dt = Math.min(0.05, ((now || performance.now()) - prevT) / 1000);
+  prevT = now || performance.now();
+  if (state !== STATE.MENU && state !== STATE.PAUSED && state !== STATE.WARDROBE) return;
 
-  // крупнее, чем в игре — картинка hero.png обычно с полями вокруг кота;
-  // в гардеробе (отдельный экран, места больше) — ещё крупнее.
-  if (state === STATE.MENU) paintPreview(pctx, 220, 2.9, t2);
-  else if (state === STATE.WARDROBE) paintPreview(wctx, 260, 4.3, t2);
+  const bob  = Math.sin(t2 * 1.7) * 10;
+  const ear  = Math.sin(t2 * 1.7 + 0.8) * 0.3;
+  const tilt = Math.sin(t2 * 0.9) * 0.07;
+  const sq   = 1 + Math.sin(t2 * 1.7 + 1.6) * 0.045;
+  const A = anchors();
+
+  for (const pctx of previewCtxs){
+    pctx.setTransform(1, 0, 0, 1, 0, 0);
+    pctx.clearRect(0, 0, 220, 220);
+    pctx.imageSmoothingQuality = 'high';
+    pctx.save();
+    pctx.translate(110, 114 + bob);
+    pctx.rotate(tilt);
+    pctx.scale(2.9 / sq, 2.9 * sq); // крупнее, чем в игре — картинка hero.png обычно с полями вокруг кота
+    paintHeroBody(pctx, hero.w, hero.h, ear);
+    paintAccessory(pctx, hero.w, hero.h, outfit.acc, A);
+    paintHat(pctx, hero.w, hero.h, outfit.hat, A);
+    paintTool(pctx, hero.w, hero.h, outfit.tool, A, t2);
+    pctx.restore();
+  }
 })(performance.now());
 
 /* ---------- Инициализация ---------- */
@@ -2815,7 +3081,6 @@ if (nickname){
   hideAllScreens();
   show(menuEl);
   refreshLeaderboardUI();
-  refreshMenuButtons();
 } else {
   state = STATE.NICK;
   hideAllScreens();
