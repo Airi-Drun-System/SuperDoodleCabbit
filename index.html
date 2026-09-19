@@ -210,8 +210,29 @@
     padding:18px;display:flex;flex-direction:column;gap:16px;
     box-shadow:inset 0 0 0 1px rgba(255,255,255,.14);
   }
-  .settingRow{display:flex;flex-direction:column;gap:8px;align-items:flex-start;}
+  .settingRow{display:flex;flex-direction:column;gap:8px;align-items:flex-start;width:100%;}
   .settingLabel{font-size:13px;opacity:.7;font-weight:600;}
+
+  .cloudRow{display:flex;gap:8px;width:100%;align-items:center;}
+  .cloudCode{
+    flex:1;padding:9px 12px;border-radius:10px;background:rgba(255,255,255,.08);
+    font-family:monospace;font-size:15px;letter-spacing:2px;font-weight:700;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.14);
+  }
+  .cloudInput{
+    flex:1;min-width:0;padding:9px 12px;border-radius:10px;border:none;
+    background:rgba(255,255,255,.9);color:#2a1550;font-family:inherit;
+    font-size:14px;font-weight:600;text-align:center;text-transform:uppercase;
+  }
+  .cloudBtn{
+    border:none;cursor:pointer;padding:9px 14px;border-radius:10px;
+    background:var(--peach);color:#2a1550;font-weight:800;font-size:13px;
+    font-family:inherit;white-space:nowrap;
+  }
+  .cloudBtn:active{transform:scale(.95);}
+  .cloudStatus{font-size:12px;opacity:.75;min-height:14px;}
+  #onlineLbRows .lbRow{font-size:13px;}
+  #onlineLbRows{width:100%;}
 
   #nickBox{
     width:min(340px,92vw);background:rgba(255,255,255,.06);border-radius:20px;
@@ -226,11 +247,14 @@
   #nickInput:focus{outline:3px solid var(--peach);}
 
   #pauseBtn{
-    position:absolute;top:14px;left:14px;z-index:6;
-    width:42px;height:42px;border-radius:50%;border:none;cursor:pointer;
-    background:rgba(21,10,43,.5);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.3);
+    /* По центру верхнего края: слева счёт/рекорд, справа монеты — здесь
+       всегда пусто, так что кнопка никогда их не перекрывает. */
+    position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:6;
+    width:38px;height:38px;border-radius:50%;border:none;cursor:pointer;
+    background:rgba(21,10,43,.45);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.28);
     display:flex;align-items:center;justify-content:center;
   }
+  #pauseBtn:active{transform:translateX(-50%) scale(.9);}
   #pauseBtn.hidden{display:none;}
   #pauseBtn svg{width:16px;height:16px;}
 
@@ -370,6 +394,21 @@
         <div class="btnRow">
           <button id="blurToggle" class="chip"></button>
         </div>
+      </div>
+      <div class="settingRow" id="cloudSection" style="border-top:1px solid rgba(255,255,255,.1);padding-top:14px;">
+        <span class="settingLabel" data-i18n="cloudTitle">Онлайн-профиль</span>
+        <div class="cloudRow">
+          <span class="cloudCode" id="cloudCodeDisplay">------</span>
+          <button class="cloudBtn" id="cloudCopyBtn" data-i18n="cloudCopy">Копировать</button>
+        </div>
+        <div class="cloudRow">
+          <input class="cloudInput" id="cloudRestoreInput" maxlength="8" data-i18n-placeholder="cloudEnterCode" placeholder="КОД">
+          <button class="cloudBtn" id="cloudRestoreBtn" data-i18n="cloudRestore">Восстановить</button>
+        </div>
+        <div class="cloudStatus" id="cloudStatus"></div>
+        <span class="settingLabel" data-i18n="cloudTop">Рейтинг игроков</span>
+        <div id="onlineLbRows"></div>
+        <button class="cloudBtn" id="cloudRefreshBtn" data-i18n="cloudRefresh">Обновить рейтинг</button>
       </div>
     </div>
     <button id="settingsBack" class="btn ghost rise d2" data-i18n="back">Назад</button>
@@ -515,6 +554,10 @@ const I18N = {
     overTitleNormal: 'Кэббит приземлился', overTitleRecord: 'Новый рекорд',
     overCoins: 'собрано монет', overRecordLabel: 'Рекорд', overNewBest: 'выше не прыгал никто',
     retry: 'Повторить', toMenu: 'В меню', scoreWord: 'рекорд',
+    cloudTitle: 'Онлайн-профиль', cloudCopy: 'Копировать', cloudRestore: 'Восстановить',
+    cloudEnterCode: 'КОД', cloudTop: 'Рейтинг игроков', cloudRefresh: 'Обновить рейтинг',
+    cloudCopied: 'Код скопирован', cloudRestored: 'Прогресс восстановлен!',
+    cloudNotFound: 'Код не найден', cloudErr: 'Нет связи с сервером', cloudLoading: 'Загрузка…',
     smashToast: 'СОКРУШИТЕЛЬНЫЙ УДАР!', kickToast: 'ПИНОК!',
     glassToast: 'СТЕКЛО СПАСЛО ТЕБЯ!', tapPrompt: 'ЖМИ!',
     items: {
@@ -523,12 +566,18 @@ const I18N = {
       'hat:cowboy':     { n: 'Ковбойская',       d: 'Просто стильно.' },
       'hat:propeller':  { n: 'Вертолётик',       d: 'Снижает гравитацию: падение и прыжки становятся мягче.' },
       'hat:glass':      { n: 'Блок стекла',      d: 'Спасает от одного смертельного падения, потом разбивается.' },
+      'hat:bow':          { n: 'Бантик',            d: 'Просто мило.' },
+      'hat:flowercrown':  { n: 'Венок из цветов',    d: 'Просто мило.' },
+      'hat:sunhat':       { n: 'Соломенная шляпка',  d: 'Просто мило.' },
       'hat:crown':      { n: 'Корона',            d: 'Каждая монета приносит вдвое больше.' },
       'hat:halo':       { n: 'Нимб',              d: 'Притягивает монеты — они летят к тебе сами.' },
       'acc:none':       { n: 'Ничего',           d: '' },
       'acc:bowtie':     { n: 'Бабочка',          d: 'Просто стильно.' },
       'acc:glasses':    { n: 'Крутые очки',      d: 'Просто стильно.' },
       'acc:tie':        { n: 'Деловой галстук',  d: 'Очки за высоту начисляются на 25% быстрее.' },
+      'acc:pearls':     { n: 'Жемчужное ожерелье', d: 'Просто мило.' },
+      'acc:hearteye':   { n: 'Очки-сердечки',      d: 'Просто мило.' },
+      'acc:scarf':      { n: 'Шарфик в горошек',   d: 'Просто мило.' },
       'acc:backpack':   { n: 'Ранец-прыгун',      d: 'Двойной прыжок: тапни по экрану в воздухе.' },
       'tool:none':      { n: 'Пусто',            d: '' },
       'tool:mace':      { n: 'Зачарованная булава', d: 'Падая на монстра сверху — тапни экран: сокрушительный удар выносит в космос.' },
@@ -548,6 +597,10 @@ const I18N = {
     overTitleNormal: 'The cabbit has landed', overTitleRecord: 'New record',
     overCoins: 'coins collected', overRecordLabel: 'Best', overNewBest: 'nobody jumped higher',
     retry: 'Retry', toMenu: 'Menu', scoreWord: 'best',
+    cloudTitle: 'Online profile', cloudCopy: 'Copy', cloudRestore: 'Restore',
+    cloudEnterCode: 'CODE', cloudTop: 'Leaderboard', cloudRefresh: 'Refresh ranking',
+    cloudCopied: 'Code copied', cloudRestored: 'Progress restored!',
+    cloudNotFound: 'Code not found', cloudErr: 'Could not reach the server', cloudLoading: 'Loading…',
     smashToast: 'MACE SMASH!', kickToast: 'KICKED!',
     glassToast: 'THE GLASS SAVED YOU!', tapPrompt: 'TAP!',
     items: {
@@ -556,12 +609,18 @@ const I18N = {
       'hat:cowboy':     { n: 'Cowboy Hat',       d: 'Just stylish.' },
       'hat:propeller':  { n: 'Propeller Cap',    d: 'Lowers gravity: softer falls and jumps.' },
       'hat:glass':      { n: 'Glass Block',      d: 'Saves you from one fatal fall, then shatters.' },
+      'hat:bow':          { n: 'Bow',               d: 'Just cute.' },
+      'hat:flowercrown':  { n: 'Flower Crown',      d: 'Just cute.' },
+      'hat:sunhat':       { n: 'Sun Hat',           d: 'Just cute.' },
       'hat:crown':      { n: 'Crown',             d: 'Every coin is worth double.' },
       'hat:halo':       { n: 'Halo',              d: 'Magnet: coins fly straight to you.' },
       'acc:none':       { n: 'Nothing',          d: '' },
       'acc:bowtie':     { n: 'Bowtie',           d: 'Just stylish.' },
       'acc:glasses':    { n: 'Cool Glasses',     d: 'Just stylish.' },
       'acc:tie':        { n: 'Business Tie',     d: 'Height score gained 25% faster.' },
+      'acc:pearls':     { n: 'Pearl Necklace',     d: 'Just cute.' },
+      'acc:hearteye':   { n: 'Heart Glasses',      d: 'Just cute.' },
+      'acc:scarf':      { n: 'Polka-dot Scarf',    d: 'Just cute.' },
       'acc:backpack':   { n: 'Jump Pack',         d: 'Double jump: tap the screen in mid-air.' },
       'tool:none':      { n: 'Empty',            d: '' },
       'tool:mace':      { n: 'Enchanted Mace',   d: 'Falling onto a monster — tap the screen for a smash that launches you into space.' },
@@ -598,14 +657,20 @@ const OUTFITS = {
     cowboy:    { price: 90 },
     glass:     { price: 100 },
     propeller: { price: 200 },
-    crown:     { price: 450 },
-    halo:      { price: 700 }
+    bow:         { price: 80 },
+    flowercrown: { price: 150 },
+    sunhat:      { price: 130 },
+    crown:       { price: 450 },
+    halo:        { price: 700 }
   },
   acc: {
     none:     { price: 0 },
     bowtie:   { price: 0 },
     glasses:  { price: 70 },
     tie:      { price: 120 },
+    pearls:   { price: 90 },
+    hearteye: { price: 110 },
+    scarf:    { price: 95 },
     backpack: { price: 320 }
   },
   tool: {
@@ -662,7 +727,8 @@ const anchors = () => heroReady ? ANCHOR_SPRITE : ANCHOR_VECTOR;
 const GRAV       = 1850;
 const JUMP_V      = -790;   // высота прыжка = 790^2/(2*1850) ≈ 169 px
 const SPRING_V    = -1117;  // ровно вдвое выше
-const MACE_LAUNCH = -2550;  // "в космос"
+const MACE_LAUNCH = -2550;  // "в космос" — с булавой
+const KICK_LAUNCH = -2050;  // без булавы — тоже мощно, но заметно слабее булавы
 const MOVE_ACC = 1750;   // разгон вбок (было 2600 — слишком резко)
 const MOVE_MAX = 340;    // максимальная скорость вбок (было 430)
 const AIR_DRAG = 0.045;
@@ -924,7 +990,7 @@ function spawnMonster(){
     vx: rand(40, 80) * (Math.random() < 0.5 ? -1 : 1),
     bob: rand(0, 6.28),
     r: 22,
-    life: 55,                       // если так и не тронули — исчезнет сам
+    life: 60,                       // если так и не тронули — исчезнет сам через минуту
     frozen: false
   });
 }
@@ -947,21 +1013,21 @@ function killMonster(m, success){
     const smash = hasMace();
 
     burstPixels(m.x, m.y, ['#8a2be2', '#b268ff', '#d9a6ff', '#4b1a80']);
-    burstSpark(m.x, m.y, '#e0b3ff', smash ? 22 : 12, smash ? 1.4 : 0.9);
-    burstSpark(m.x, m.y, '#fff3b0', smash ? 10 : 5, 0.8);
+    burstSpark(m.x, m.y, '#e0b3ff', smash ? 22 : 18, smash ? 1.4 : 1.15);
+    burstSpark(m.x, m.y, '#fff3b0', smash ? 10 : 8, 0.8);
     addParticle({ kind: 'ring', x: m.x, y: m.y, vx: 0, vy: 0, life: 1, decay: 1.6, r: 6, color: '#d9a6ff' });
     addToast(smash ? t('smashToast') : t('kickToast'), m.x, m.y - 30, smash ? '#d9a6ff' : '#e8d9ff');
     if (smash) sfxSmash(); else sfxSpring();
-    shake = Math.max(shake, smash ? 18 : 8);
-    flash = smash ? 0.65 : 0.3; flashColor = '#b268ff';
-    hero.vy = smash ? MACE_LAUNCH : SPRING_V * 0.85;
+    shake = Math.max(shake, smash ? 18 : 13);
+    flash = smash ? 0.65 : 0.45; flashColor = '#b268ff';
+    hero.vy = smash ? MACE_LAUNCH : KICK_LAUNCH;
     hero.vx *= 0.3;
-    hero.sx = smash ? 0.58 : 0.82; hero.sy = smash ? 1.6 : 1.24;
-    hero.spin = hero.face * 6.2832 * (smash ? 2.5 : 0.6);
+    hero.sx = smash ? 0.58 : 0.68; hero.sy = smash ? 1.6 : 1.46;
+    hero.spin = hero.face * 6.2832 * (smash ? 2.5 : 1.4);
     airJumps = hasDoubleJump() ? 1 : 0;
 
     // бонусные монеты за победу над монстром
-    const bonus = (smash ? 5 : 2) * coinMult();
+    const bonus = (smash ? 5 : 3) * coinMult();
     runCoins += bonus; coins += bonus;
     Store.set('coins', coins);
     coinPulse = 1;
@@ -1692,9 +1758,13 @@ function drawMonster(m){
   if (y < -60 || y > VH + 60) return;
   const squish = 1 + Math.sin(m.bob) * 0.06;
 
+  // последние полторы секунды перед исчезновением монстр тает, а не пропадает рывком
+  const fade = m.life < 1.5 ? clamp(m.life / 1.5, 0, 1) : 1;
+
   ctx.save();
   ctx.translate(m.x, y);
   ctx.scale(1, squish);
+  ctx.globalAlpha *= fade;
 
   if (m.frozen){
     const pulse = 0.5 + 0.5 * Math.sin(performance.now() / 160);
@@ -1899,6 +1969,97 @@ function paintHat(c, w, h, kind, A){
     c.fill();
     c.restore();
 
+  } else if (kind === 'bow'){
+    // Большой бантик между ушками — два "крыла" + узелок с горошком
+    const bw = hw * 0.95, bh = h * 0.12;
+    c.save();
+    c.translate(cx, ty - h * 0.02);
+    c.strokeStyle = 'rgba(120,20,50,.4)';
+    c.lineWidth = 1.2;
+    c.fillStyle = '#ff6f91';
+    for (const side of [-1, 1]){
+      c.save();
+      c.scale(side, 1);
+      c.beginPath();
+      c.moveTo(0, 0);
+      c.quadraticCurveTo(bw * 0.55, -bh * 1.3, bw, -bh * 0.2);
+      c.quadraticCurveTo(bw * 0.65, bh * 0.55, bw * 0.12, bh * 0.35);
+      c.quadraticCurveTo(bw * 0.28, 0, 0, 0);
+      c.closePath();
+      c.fill(); c.stroke();
+      c.fillStyle = 'rgba(255,255,255,.28)';
+      c.beginPath();
+      c.ellipse(bw * 0.5, -bh * 0.35, bw * 0.16, bh * 0.4, 0.5, 0, 6.2832);
+      c.fill();
+      c.restore();
+      c.fillStyle = '#ff6f91';
+    }
+    c.fillStyle = '#e0466a';
+    c.beginPath();
+    c.ellipse(0, 0, bw * 0.14, bh * 0.62, 0, 0, 6.2832);
+    c.fill(); c.stroke();
+    c.fillStyle = 'rgba(255,255,255,.5)';
+    c.beginPath(); c.arc(-bw * 0.03, -bh * 0.18, 1.3, 0, 6.2832); c.fill();
+    c.restore();
+
+  } else if (kind === 'flowercrown'){
+    // Веночек из мелких цветов вдоль дуги надо лбом
+    const petals = ['#ff9fc2', '#ffd34d', '#c7a4ff', '#ff9fc2', '#ffd34d'];
+    const n = petals.length;
+    c.save();
+    c.strokeStyle = '#5a8a3a';
+    c.lineWidth = 2.4;
+    c.beginPath();
+    c.moveTo(cx - hw * 1.15, ty + 3);
+    c.quadraticCurveTo(cx, ty - h * 0.085, cx + hw * 1.15, ty + 3);
+    c.stroke();
+    for (let i = 0; i < n; i++){
+      const fx = lerp(-hw * 1.02, hw * 1.02, i / (n - 1));
+      const fy = ty + 2 - Math.sin((i / (n - 1)) * Math.PI) * h * 0.075;
+      c.save();
+      c.translate(cx + fx, fy);
+      c.fillStyle = petals[i];
+      for (let k = 0; k < 5; k++){
+        c.save();
+        c.rotate((k / 5) * 6.2832);
+        c.beginPath();
+        c.ellipse(0, -2.6, 1.7, 2.6, 0, 0, 6.2832);
+        c.fill();
+        c.restore();
+      }
+      c.fillStyle = '#ffe9a0';
+      c.beginPath(); c.arc(0, 0, 1.5, 0, 6.2832); c.fill();
+      c.restore();
+    }
+    c.restore();
+
+  } else if (kind === 'sunhat'){
+    // Соломенная шляпка с широкими полями и лентой
+    const brimW = hw * 2.3, crownH = h * 0.2;
+    c.save();
+    c.fillStyle = '#e8c27a';
+    c.beginPath();
+    c.ellipse(cx, ty + 4, brimW, h * 0.075, 0, 0, 6.2832);
+    c.fill(); c.stroke();
+    c.fillStyle = '#f0cf8e';
+    c.beginPath();
+    c.moveTo(cx - hw * 0.9, ty + 3);
+    c.quadraticCurveTo(cx - hw * 0.95, ty - crownH, cx, ty - crownH * 1.08);
+    c.quadraticCurveTo(cx + hw * 0.95, ty - crownH, cx + hw * 0.9, ty + 3);
+    c.closePath();
+    c.fill(); c.stroke();
+    c.fillStyle = '#ff9fc2';
+    rr(c, cx - hw * 0.9, ty - crownH * 0.22, hw * 1.8, crownH * 0.3, 2);
+    c.fill();
+    c.fillStyle = '#ff6f91';
+    c.beginPath();
+    c.moveTo(cx + hw * 0.55, ty + crownH * 0.05);
+    c.lineTo(cx + hw * 0.78, ty - crownH * 0.28);
+    c.lineTo(cx + hw * 0.68, ty + crownH * 0.32);
+    c.closePath();
+    c.fill();
+    c.restore();
+
   } else if (kind === 'glass'){
     // Минекрафтовский блок стекла: полупрозрачный куб с рамкой и "трещинками"
     const s = hw * 1.9;
@@ -2010,6 +2171,77 @@ function paintAccessory(c, w, h, kind, A){
       c.lineTo(cx + tailW * 0.4, yy + tailW * 0.2);
       c.stroke();
     }
+    c.restore();
+
+  } else if (kind === 'pearls'){
+    // Жемчужное ожерелье — ряд бусин дугой вдоль шеи
+    const y = A.neckY * h;
+    const n = 7, spread = w * 0.30;
+    c.save();
+    c.strokeStyle = 'rgba(255,255,255,.5)';
+    for (let i = 0; i < n; i++){
+      const tI = i / (n - 1);
+      const px = cx + lerp(-spread, spread, tI);
+      const py = y + Math.sin(tI * Math.PI) * h * 0.045;
+      const r = 2.3 - Math.abs(tI - 0.5) * 1.2;
+      const grad = c.createRadialGradient(px - r * 0.4, py - r * 0.4, 0.3, px, py, r);
+      grad.addColorStop(0, '#ffffff');
+      grad.addColorStop(1, '#d8d0e6');
+      c.fillStyle = grad;
+      c.beginPath(); c.arc(px, py, r, 0, 6.2832); c.fill();
+    }
+    c.restore();
+
+  } else if (kind === 'hearteye'){
+    // Очки-сердечки: два сердца-линзы на месте очков
+    const y  = A.eyeY * h;
+    const dx = A.eyeDX * w;
+    const s = dx * 0.85;
+    c.save();
+    c.strokeStyle = '#c22a55';
+    c.lineWidth = 1.6;
+    for (const side of [-1, 1]){
+      const hx = cx + side * dx;
+      c.fillStyle = 'rgba(255,111,145,.88)';
+      c.beginPath();
+      c.moveTo(hx, y + s * 0.75);
+      c.bezierCurveTo(hx - s * 1.3, y - s * 0.35, hx - s * 0.55, y - s * 1.15, hx, y - s * 0.35);
+      c.bezierCurveTo(hx + s * 0.55, y - s * 1.15, hx + s * 1.3, y - s * 0.35, hx, y + s * 0.75);
+      c.closePath();
+      c.fill(); c.stroke();
+      c.fillStyle = 'rgba(255,255,255,.5)';
+      c.beginPath(); c.ellipse(hx - s * 0.32, y - s * 0.42, s * 0.22, s * 0.32, -0.5, 0, 6.2832); c.fill();
+    }
+    c.strokeStyle = '#c22a55';
+    c.lineWidth = 1.6;
+    c.beginPath();
+    c.moveTo(cx - dx + s * 0.9, y - s * 0.1);
+    c.lineTo(cx + dx - s * 0.9, y - s * 0.1);
+    c.stroke();
+    c.restore();
+
+  } else if (kind === 'scarf'){
+    // Шарфик-бандана в горошек, завязан узлом сбоку
+    const y = A.neckY * h;
+    const s = w * 0.24;
+    c.save();
+    c.strokeStyle = 'rgba(30,20,60,.4)';
+    c.lineWidth = 1.2;
+    c.fillStyle = '#7fb4e6';
+    c.beginPath();
+    c.moveTo(cx - s, y - s * 0.55);
+    c.lineTo(cx + s, y - s * 0.55);
+    c.lineTo(cx + s * 0.18, y + s * 0.78);
+    c.closePath();
+    c.fill(); c.stroke();
+    c.fillStyle = 'rgba(255,255,255,.85)';
+    for (const [dxp, dyp] of [[-0.42, -0.1], [0.05, 0.15], [-0.1, 0.42], [0.35, -0.22]]){
+      c.beginPath(); c.arc(cx + dxp * s, y + dyp * s, s * 0.09, 0, 6.2832); c.fill();
+    }
+    c.fillStyle = '#5a8ec2';
+    c.beginPath();
+    c.ellipse(cx + s * 0.85, y - s * 0.3, s * 0.22, s * 0.16, 0.6, 0, 6.2832);
+    c.fill(); c.stroke();
     c.restore();
 
   } else if (kind === 'backpack'){
@@ -2803,6 +3035,7 @@ function buyItem(slot, val){
   saveOwned();
   Store.set(slot, val);
   refreshShopState();
+  cloudPushSoon();
 }
 
 /* Пока хотя бы в ОДНОМ слоте надета непроплаченная вещь, играть нельзя:
@@ -2946,6 +3179,7 @@ function gameOver(){
   const isNewBest = score > best;
   if (isNewBest){ best = score; Store.set('best', best); }
   addToLeaderboard(nickname, score);
+  cloudPushSoon();
 
   finalEl.textContent = '0';
   overTitle.textContent = isNewBest ? t('overTitleRecord') : t('overTitleNormal');
@@ -2992,11 +3226,169 @@ function closeWardrobe(){
   }
 }
 
+/* ---------- Онлайн-профиль (облако) ---------------------------------------
+   Чтобы это заработало «из коробки», один раз заведи бесплатный проект:
+   1) firebase.google.com/console -> Add project (Google Analytics не нужен)
+   2) Build -> Firestore Database -> Create database -> любой регион ->
+      режим "Start in test mode" (ниже дадим более узкие правила).
+   3) Build -> Firestore Database -> Rules -- вставить и опубликовать:
+        rules_version = '2';
+        service cloud.firestore {
+          match /databases/{database}/documents {
+            match /players/{code} {
+              allow read: if true;
+              allow write: if request.resource.data.keys().hasAll(['nick','coins','best'])
+                           && request.resource.data.coins is int
+                           && request.resource.data.best  is int
+                           && request.resource.data.nick  is string;
+            }
+          }
+        }
+      Это разрешает читать всем (нужно для рейтинга) и писать только записи
+      нужной формы -- без системы логинов, но достаточно, чтобы случайный
+      скрипт не намусорил в базе.
+   4) Значок шестерёнки -> Project settings -> General -> внизу "Your apps" ->
+      значок "</>" -> зарегистрировать веб-приложение -> скопировать из
+      появившегося firebaseConfig два значения: apiKey и projectId.
+   5) Вписать их ниже вместо пустых строк -- и пересобрать APK.
+
+   Пока apiKey/projectId пустые, весь блок ничего не делает, а секция в
+   настройках скрыта -- игра работает как обычно, без интернета. */
+const CLOUD = {
+  apiKey:    'AIzaSyCocguW-KrcPBbo5v1Me9iF1C_dDJHe-Qc',   // из google-services.json
+  projectId: 'cabbit-jump'                                 // из google-services.json
+};
+const cloudReady = () => !!(CLOUD.apiKey && CLOUD.projectId);
+const cloudBase  = () => 'https://firestore.googleapis.com/v1/projects/' + CLOUD.projectId + '/databases/(default)/documents';
+
+// Код профиля - 8 символов без похожих друг на друга букв/цифр (0/O, 1/I и т.п.)
+function makeCloudCode(){
+  const abc = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = '';
+  for (let i = 0; i < 8; i++) code += abc[Math.floor(Math.random() * abc.length)];
+  return code;
+}
+let cloudCode = Store.get('cloudCode', '') || makeCloudCode();
+Store.set('cloudCode', cloudCode);
+
+function setCloudStatus(msg){
+  const el = document.getElementById('cloudStatus');
+  if (el) el.textContent = msg || '';
+}
+
+// Отправить текущий прогресс в облако под своим кодом. Вызывается тихо -
+// без сообщений об успехе, чтобы не дёргать игрока; ошибки тоже проглатываем,
+// это фоновая подстраховка, а не обязательное действие.
+let cloudPushTimer = null;
+function cloudPushSoon(){
+  if (!cloudReady()) return;
+  clearTimeout(cloudPushTimer);
+  cloudPushTimer = setTimeout(cloudPush, 1200);
+}
+async function cloudPush(){
+  if (!cloudReady()) return;
+  try {
+    await fetch(cloudBase() + '/players/' + cloudCode + '?key=' + CLOUD.apiKey, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        fields: {
+          nick:  { stringValue: nickname || 'Кэббит' },
+          coins: { integerValue: String(coins) },
+          best:  { integerValue: String(best) }
+        }
+      })
+    });
+  } catch (e) { /* нет сети - попробуем при следующей синхронизации */ }
+}
+
+// Восстановить прогресс по чужому/старому коду (например, после переустановки APK)
+async function cloudRestore(rawCode){
+  if (!cloudReady()){ setCloudStatus(t('cloudErr')); return; }
+  const code = String(rawCode || '').trim().toUpperCase();
+  if (!code) return;
+  setCloudStatus(t('cloudLoading'));
+  try {
+    const res = await fetch(cloudBase() + '/players/' + code + '?key=' + CLOUD.apiKey);
+    if (!res.ok){ setCloudStatus(t('cloudNotFound')); return; }
+    const doc = await res.json();
+    const f = (doc && doc.fields) || {};
+    if (f.coins) { coins = parseInt(f.coins.integerValue || '0', 10) || 0; Store.set('coins', coins); }
+    if (f.best)  { best  = parseInt(f.best.integerValue  || '0', 10) || 0; Store.set('best', best); }
+    if (f.nick && f.nick.stringValue){ nickname = f.nick.stringValue; Store.set('nick', nickname); }
+    cloudCode = code;
+    Store.set('cloudCode', cloudCode);
+    refreshCloudUI();
+    refreshShopState();
+    setCloudStatus(t('cloudRestored'));
+  } catch (e) { setCloudStatus(t('cloudErr')); }
+}
+
+// Топ-20 игроков по лучшему результату
+async function cloudFetchLeaderboard(){
+  const rows = document.getElementById('onlineLbRows');
+  if (!rows || !cloudReady()) return;
+  rows.innerHTML = '<div class="lbRow"><span>' + t('cloudLoading') + '</span></div>';
+  try {
+    const res = await fetch(cloudBase() + ':runQuery?key=' + CLOUD.apiKey, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        structuredQuery: {
+          from: [{ collectionId: 'players' }],
+          orderBy: [{ field: { fieldPath: 'best' }, direction: 'DESCENDING' }],
+          limit: 20
+        }
+      })
+    });
+    const data = await res.json();
+    rows.innerHTML = '';
+    let i = 0;
+    for (const row of (Array.isArray(data) ? data : [])){
+      if (!row.document) continue;
+      const f = row.document.fields || {};
+      const nick = (f.nick && f.nick.stringValue) || '?';
+      const sc = (f.best && f.best.integerValue) || '0';
+      i++;
+      const div = document.createElement('div');
+      div.className = 'lbRow';
+      div.innerHTML = '<span>' + i + '. ' + escapeHtml(nick) + '</span><b>' + sc + '</b>';
+      rows.appendChild(div);
+    }
+    if (i === 0) rows.innerHTML = '<div class="lbRow"><span>' + t('empty') + '</span></div>';
+  } catch (e) {
+    rows.innerHTML = '<div class="lbRow"><span>' + t('cloudErr') + '</span></div>';
+  }
+}
+
+function refreshCloudUI(){
+  const section = document.getElementById('cloudSection');
+  if (!section) return;
+  section.style.display = cloudReady() ? 'flex' : 'none';
+  if (!cloudReady()) return;
+  const codeEl = document.getElementById('cloudCodeDisplay');
+  if (codeEl) codeEl.textContent = cloudCode;
+  setCloudStatus('');
+}
+
+document.getElementById('cloudCopyBtn').addEventListener('click', () => {
+  try {
+    navigator.clipboard.writeText(cloudCode);
+    setCloudStatus(t('cloudCopied'));
+  } catch (e) {}
+});
+document.getElementById('cloudRestoreBtn').addEventListener('click', () => {
+  cloudRestore(document.getElementById('cloudRestoreInput').value);
+});
+document.getElementById('cloudRefreshBtn').addEventListener('click', cloudFetchLeaderboard);
+
 function openSettings(){
   state = STATE.SETTINGS;
   hideAllScreens();
   show(settingsEl);
   reanimate(settingsEl);
+  refreshCloudUI();
+  if (cloudReady()) cloudFetchLeaderboard();
 }
 
 function closeSettings(){
