@@ -386,8 +386,6 @@
       <div class="swing"><button id="continueBtn" class="btn" disabled data-i18n="cont">Продолжить</button></div>
       <div class="swing"><button id="wardrobeBtn" class="btn" data-i18n="wardrobe">Гардероб</button></div>
       <div class="swing"><button id="settingsBtn" class="btn ghost" data-i18n="settings">Настройки</button></div>
-      <!-- Видна только по ссылке ...?admin=1 — обычные игроки её не видят -->
-      <div class="swing"><button id="adminEntryBtn" class="btn ghost hidden" style="opacity:.55;">🛠 Admin</button></div>
     </div>
     <p class="hint rise d4" data-i18n="hint">Клавиши ← → или A / D, на телефоне — кнопки внизу. Тап по экрану: выстрел из лука или двойной прыжок. Встретил монстра — жми, пока идёт отсчёт!</p>
     <a href="https://discord.gg/H6WcNMffZ" target="_blank" rel="noopener" class="btn ghost rise d4" style="text-decoration:none;">Discord</a>
@@ -412,44 +410,9 @@
     <div class="spacer"></div>
   </div>
 
-  <div id="admin" class="screen hidden">
-    <div class="spacer"></div>
-    <h1 class="title pop" style="font-size:clamp(22px,6vw,32px);">🛠 Админка</h1>
-
-    <div id="adminGate" class="rise d1" style="display:flex;flex-direction:column;gap:10px;align-items:center;">
-      <input id="adminPinInput" type="password" placeholder="PIN" inputmode="numeric"
-             style="width:180px;text-align:center;font-size:18px;padding:10px;border-radius:12px;border:none;">
-      <button id="adminPinBtn" class="btn">Войти</button>
-    </div>
-
-    <div id="adminTool" class="hidden rise d1" style="width:min(340px,90vw);display:flex;flex-direction:column;gap:10px;">
-      <div style="display:flex;gap:8px;">
-        <input id="adminCodeInput" type="text" placeholder="Код профиля игрока"
-               style="flex:1;padding:10px;border-radius:12px;border:none;text-transform:uppercase;">
-        <button id="adminLoadBtn" class="btn small">Загрузить</button>
-      </div>
-
-      <div id="adminPlayerBox" class="hidden" style="display:flex;flex-direction:column;gap:10px;">
-        <p id="adminNickLine" style="margin:0;font-weight:700;"></p>
-        <label style="display:flex;justify-content:space-between;align-items:center;">Монеты
-          <input id="adminCoinsInput" type="number" style="width:110px;padding:6px;border-radius:8px;border:none;">
-        </label>
-        <label style="display:flex;justify-content:space-between;align-items:center;">Рекорд
-          <input id="adminBestInput" type="number" style="width:110px;padding:6px;border-radius:8px;border:none;">
-        </label>
-        <div id="adminItemsGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:4px 10px;max-height:220px;overflow-y:auto;font-size:12px;"></div>
-        <button id="adminSaveBtn" class="btn">Сохранить</button>
-      </div>
-      <p id="adminStatus" style="font-size:12px;opacity:.8;min-height:14px;margin:0;"></p>
-    </div>
-
-    <button id="adminBack" class="btn ghost rise d2">Назад</button>
-    <div class="spacer"></div>
-  </div>
-
   <div id="settings" class="screen hidden">
     <div class="spacer"></div>
-    <h1 class="title pop" data-i18n="settings" style="font-size:clamp(24px,7vw,40px);">Настройки</h1>
+    <h1 id="settingsTitle" class="title pop" data-i18n="settings" style="font-size:clamp(24px,7vw,40px);">Настройки</h1>
     <div id="settingsBox" class="rise d1">
       <div class="settingRow">
         <span class="settingLabel" data-i18n="language">Язык</span>
@@ -484,6 +447,37 @@
         <span class="settingLabel" data-i18n="cloudTop">Рейтинг игроков</span>
         <div id="onlineLbRows"></div>
         <button class="cloudBtn" id="cloudRefreshBtn" data-i18n="cloudRefresh">Обновить рейтинг</button>
+      </div>
+
+      <!-- Скрытая админка: 7 быстрых тапов по заголовку "Настройки" открывают
+           PIN-запрос прямо здесь. Обычный игрок этого никогда не увидит. -->
+      <div id="adminGate" class="settingRow hidden" style="flex-direction:column;gap:8px;border-top:1px solid rgba(255,255,255,.1);padding-top:14px;">
+        <input id="adminPinInput" type="password" placeholder="PIN" inputmode="numeric"
+               style="width:160px;text-align:center;font-size:16px;padding:8px;border-radius:10px;border:none;">
+        <button id="adminPinBtn" class="btn small">Войти</button>
+      </div>
+
+      <div id="adminTool" class="settingRow hidden" style="flex-direction:column;gap:10px;align-items:stretch;border-top:1px solid rgba(255,255,255,.1);padding-top:14px;">
+        <span class="settingLabel">🛠 Админка</span>
+        <p style="font-size:11px;opacity:.6;margin:0;">Тапни по игроку в рейтинге выше, чтобы выдать ему вещи или монеты</p>
+        <div style="display:flex;gap:8px;">
+          <input id="adminCodeInput" type="text" placeholder="...или код вручную"
+                 style="flex:1;padding:8px;border-radius:10px;border:none;text-transform:uppercase;font-size:13px;">
+          <button id="adminLoadBtn" class="btn small">Загрузить</button>
+        </div>
+
+        <div id="adminPlayerBox" class="hidden" style="display:flex;flex-direction:column;gap:8px;">
+          <p id="adminNickLine" style="margin:0;font-weight:700;font-size:13px;"></p>
+          <label style="display:flex;justify-content:space-between;align-items:center;font-size:13px;">Монеты
+            <input id="adminCoinsInput" type="number" style="width:100px;padding:6px;border-radius:8px;border:none;">
+          </label>
+          <label style="display:flex;justify-content:space-between;align-items:center;font-size:13px;">Рекорд
+            <input id="adminBestInput" type="number" style="width:100px;padding:6px;border-radius:8px;border:none;">
+          </label>
+          <div id="adminItemsGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:4px 10px;max-height:180px;overflow-y:auto;font-size:11px;"></div>
+          <button id="adminSaveBtn" class="btn small">Сохранить</button>
+        </div>
+        <p id="adminStatus" style="font-size:11px;opacity:.8;min-height:14px;margin:0;"></p>
       </div>
     </div>
     <button id="settingsBack" class="btn ghost rise d2" data-i18n="back">Назад</button>
@@ -892,7 +886,7 @@ const hasMagnet     = () => outfit.hat === 'halo' && isOwned('hat', 'halo');
 const hasDoubleJump = () => outfit.acc === 'backpack' && isOwned('acc', 'backpack');
 
 /* ---------- Состояние ---------- */
-const STATE = { MENU: 0, PLAY: 1, PAUSED: 2, OVER: 3, SETTINGS: 4, NICK: 5, WARDROBE: 6, ADMIN: 7 };
+const STATE = { MENU: 0, PLAY: 1, PAUSED: 2, OVER: 3, SETTINGS: 4, NICK: 5, WARDROBE: 6 };
 let state = STATE.NICK;
 let motionBlurOn = Store.get('blur', '0') === '1'; // выкл по умолчанию — самый тяжёлый эффект для слабых телефонов
 
@@ -3020,7 +3014,6 @@ const nicknameEl = document.getElementById('nickname');
 const menuEl     = document.getElementById('menu');
 const settingsEl = document.getElementById('settings');
 const wardrobeEl = document.getElementById('wardrobe');
-const adminEl = document.getElementById('admin');
 const overEl     = document.getElementById('over');
 const pauseBtn   = document.getElementById('pauseBtn');
 const hitBtn     = document.getElementById('hitBtn');
@@ -3078,7 +3071,7 @@ function reanimate(el){
 }
 
 function hideAllScreens(){
-  hide(nicknameEl); hide(menuEl); hide(settingsEl); hide(overEl); hide(wardrobeEl); hide(adminEl);
+  hide(nicknameEl); hide(menuEl); hide(settingsEl); hide(overEl); hide(wardrobeEl);
 }
 
 /* ---------- Ник ---------- */
@@ -3601,6 +3594,13 @@ async function cloudFetchLeaderboard(){
         ? '<span class="devNick">' + escapeHtml(nick) + '</span><span class="devBadge">DEV</span>'
         : escapeHtml(nick);
       div.innerHTML = '<span>' + i + '. ' + nameHtml + '</span><b>' + sc + '</b>';
+      // В режиме админа тап по игроку сразу подгружает его в панель ниже —
+      // код вводить вручную не нужно.
+      if (adminMode){
+        div.style.cursor = 'pointer';
+        div.title = 'Тап — выдать вещи/монеты';
+        div.addEventListener('click', () => adminLoad(rowCode));
+      }
       rows.appendChild(div);
     }
     if (i === 0) rows.innerHTML = '<div class="lbRow"><span>' + t('empty') + '</span></div>';
@@ -3650,37 +3650,36 @@ document.getElementById('settingsBtn').addEventListener('click', openSettings);
 document.getElementById('wardrobeBtn').addEventListener('click', openWardrobe);
 
 /* ---------- Админ-панель ----------------------------------------------
-   Спрятана от обычных игроков: кнопка на главном экране появляется только
-   если открыть игру по ссылке с ...?admin=1 в конце. Дальше — PIN-код
-   (просто короткий пароль в самом коде, не настоящая авторизация, но
-   достаточно, чтобы случайный человек по ссылке ничего не сломал).
+   Спрятана от обычных игроков: 7 быстрых тапов по заголовку "Настройки"
+   открывают PIN-запрос прямо в настройках. Дальше — тапаешь по игроку в
+   списке рейтинга, и его данные подгружаются в панель сами.
+   PIN — просто короткий пароль в самом коде, не настоящая авторизация,
+   но достаточно, чтобы случайный человек ничего не сломал.
    Смени ADMIN_PIN на что-то своё перед публикацией. */
 const ADMIN_PIN = '2468'; // <-- смени на свой PIN
 
+let adminMode = localStorage.getItem('cabbitAdminMode') === '1';
 let adminCurrentCode = null;
+if (adminMode) document.getElementById('adminTool').classList.remove('hidden');
 
-function maybeShowAdminEntry(){
-  if (location.search.indexOf('admin=1') !== -1){
-    const btn = document.getElementById('adminEntryBtn');
-    if (btn) btn.classList.remove('hidden');
+// секретный жест: 7 тапов по заголовку "Настройки" быстрее чем за 2.5 сек
+let secretTaps = 0, secretTapTimer = null;
+document.getElementById('settingsTitle').addEventListener('click', () => {
+  if (adminMode) return; // уже разблокировано — жест больше не нужен
+  secretTaps++;
+  clearTimeout(secretTapTimer);
+  secretTapTimer = setTimeout(() => { secretTaps = 0; }, 2500);
+  if (secretTaps >= 7){
+    secretTaps = 0;
+    document.getElementById('adminGate').classList.remove('hidden');
   }
-}
-maybeShowAdminEntry();
-
-function openAdmin(){
-  state = STATE.ADMIN;
-  hideAllScreens();
-  show(adminEl);
-  reanimate(adminEl);
-}
-function closeAdmin(){ goToMenu(); }
-
-document.getElementById('adminEntryBtn').addEventListener('click', openAdmin);
-document.getElementById('adminBack').addEventListener('click', closeAdmin);
+});
 
 document.getElementById('adminPinBtn').addEventListener('click', () => {
   const input = document.getElementById('adminPinInput');
   if (input.value === ADMIN_PIN){
+    adminMode = true;
+    localStorage.setItem('cabbitAdminMode', '1');
     document.getElementById('adminGate').classList.add('hidden');
     document.getElementById('adminTool').classList.remove('hidden');
   } else {
@@ -3694,11 +3693,14 @@ function adminSetStatus(msg){
   if (el) el.textContent = msg || '';
 }
 
-async function adminLoad(){
-  const code = document.getElementById('adminCodeInput').value.trim().toUpperCase();
+// Тап по игроку в рейтинге (см. cloudFetchLeaderboard) вызывает это напрямую
+// с уже известным кодом — вводить его вручную не нужно.
+async function adminLoad(codeOverride){
+  const code = (codeOverride || document.getElementById('adminCodeInput').value).trim().toUpperCase();
   if (!code){ return; }
   if (!cloudReady()){ adminSetStatus('Облако не настроено (CLOUD.apiKey/projectId)'); return; }
 
+  document.getElementById('adminCodeInput').value = code;
   adminSetStatus('Загрузка...');
   document.getElementById('adminPlayerBox').classList.add('hidden');
   try {
@@ -3782,7 +3784,7 @@ async function adminSave(){
   }
 }
 
-document.getElementById('adminLoadBtn').addEventListener('click', adminLoad);
+document.getElementById('adminLoadBtn').addEventListener('click', () => adminLoad());
 document.getElementById('adminSaveBtn').addEventListener('click', adminSave);
 document.getElementById('wardrobeBack').addEventListener('click', closeWardrobe);
 document.getElementById('settingsBack').addEventListener('click', closeSettings);
