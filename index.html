@@ -401,6 +401,12 @@
       <button id="charNext" class="charArrow" aria-label="Следующий персонаж">›</button>
     </div>
     <div id="charInfo" class="charInfo rise d1"></div>
+
+    <div id="acc2Row" class="charSwitcher rise d1 hidden" style="margin-top:2px;">
+      <button id="acc2Prev" class="charArrow" aria-label="Предыдущий второй аксессуар">‹</button>
+      <span id="acc2Info" style="font-size:12px;opacity:.85;min-width:110px;text-align:center;"></span>
+      <button id="acc2Next" class="charArrow" aria-label="Следующий второй аксессуар">›</button>
+    </div>
     <p class="stats rise d1">
       <span><i class="coinDot"></i><span class="coinNum" id="wardrobeCoins">0</span></span>
     </p>
@@ -653,7 +659,7 @@ const I18N = {
     cont: 'Продолжить', back: 'Назад', language: 'Язык', motionBlur: 'Motion blur',
     on: 'вкл', off: 'выкл',
     hint: 'Клавиши ← → или A / D, на телефоне — кнопки внизу. Тап по экрану: выстрел из лука или двойной прыжок. Встретил монстра — жми, пока идёт отсчёт!',
-    slotHat: 'На голову', slotAcc: 'Аксессуары', slotTool: 'Инструмент',
+    slotHat: 'На голову', slotAcc: 'Аксессуары', slotTool: 'Инструмент', slotPerk: 'Слоты',
     notEnough: 'Не хватает', coinsWord: 'монет', buyFor: 'Купить за', revert: 'Снять',
     nickTitle: 'Как тебя зовут?', nickPlaceholder: 'Ник кэббита', nickConfirm: 'Готово',
     nickLabel: 'Ник', changeNickBtn: 'Изменить',
@@ -690,7 +696,9 @@ const I18N = {
       'tool:mace':      { n: 'Зачарованная булава', d: 'Падая на монстра сверху — тапни экран: сокрушительный удар выносит в космос.' },
       'tool:bow':       { n: 'Лук охотника',      d: 'На платформах заводятся монстрики. Тапай — стреляй: +3 монеты за каждого, но не наступай на них.' },
       'char:hero':      { n: 'Кэббит',            d: 'Классический котокролик.' },
-      'char:hero2':     { n: 'Кэббит №2',         d: 'Второй котокролик — просто для разнообразия.' }
+      'char:hero2':     { n: 'Кэббит №2',         d: 'Второй котокролик — просто для разнообразия.' },
+      'hat:starcrown':  { n: 'Звёздная корона',   d: 'Награда за 10 000 очков — не продаётся.' },
+      'perk:multiacc':  { n: 'Второй аксессуар',  d: 'Можно надеть сразу два аксессуара вместо одного.' }
     }
   },
   en: {
@@ -699,7 +707,7 @@ const I18N = {
     cont: 'Continue', back: 'Back', language: 'Language', motionBlur: 'Motion blur',
     on: 'on', off: 'off',
     hint: 'Arrow keys or A / D, on phone use the buttons below. Tap the screen to fire the bow or double jump. Met a monster? Tap before the timer runs out!',
-    slotHat: 'Headwear', slotAcc: 'Accessories', slotTool: 'Tool',
+    slotHat: 'Headwear', slotAcc: 'Accessories', slotTool: 'Tool', slotPerk: 'Slots',
     notEnough: 'Need', coinsWord: 'more coins', buyFor: 'Buy for', revert: 'Remove',
     nickTitle: 'What is your name?', nickPlaceholder: 'Cabbit nickname', nickConfirm: 'Done',
     nickLabel: 'Nickname', changeNickBtn: 'Change',
@@ -736,7 +744,9 @@ const I18N = {
       'tool:mace':      { n: 'Enchanted Mace',   d: 'Falling onto a monster — tap the screen for a smash that launches you into space.' },
       'tool:bow':       { n: "Hunter's Bow",      d: 'Critters appear on platforms. Tap to shoot: +3 coins each — but never land on one.' },
       'char:hero':      { n: 'Cabbit',            d: 'The classic cat-rabbit.' },
-      'char:hero2':     { n: 'Cabbit #2',         d: 'A second cat-rabbit — just for variety.' }
+      'char:hero2':     { n: 'Cabbit #2',         d: 'A second cat-rabbit — just for variety.' },
+      'hat:starcrown':  { n: 'Star Crown',        d: 'A reward for 10,000 points — not for sale.' },
+      'perk:multiacc':  { n: 'Second Accessory',  d: 'Wear two accessories at once instead of one.' }
     }
   }
 };
@@ -773,7 +783,8 @@ const OUTFITS = {
     flowercrown: { price: 150 },
     sunhat:      { price: 130 },
     crown:       { price: 450 },
-    halo:        { price: 700 }
+    halo:        { price: 700 },
+    starcrown:   { price: 0, locked: true } // награда за 10 000 очков, не продаётся
   },
   acc: {
     none:     { price: 0 },
@@ -793,18 +804,24 @@ const OUTFITS = {
   char: {
     hero:  { price: 0 },
     hero2: { price: 3000 }
+  },
+  perk: {
+    none:     { price: 0 },
+    multiacc: { price: 2500 } // второй слот аксессуара — можно носить сразу два
   }
 };
 
-const owned = new Set(String(Store.get('owned', 'hat:none,acc:none,acc:bowtie,tool:none,char:hero'))
+const owned = new Set(String(Store.get('owned', 'hat:none,acc:none,acc:bowtie,tool:none,char:hero,perk:none'))
   .split(',').filter(Boolean));
-owned.add('hat:none'); owned.add('acc:none'); owned.add('acc:bowtie'); owned.add('tool:none'); owned.add('char:hero');
+owned.add('hat:none'); owned.add('acc:none'); owned.add('acc:bowtie'); owned.add('tool:none'); owned.add('char:hero'); owned.add('perk:none');
 
 const outfit = {
   hat:  Store.get('hat', 'none'),
   acc:  Store.get('acc', 'none'),
   tool: Store.get('tool', 'none'),
-  char: Store.get('char', 'hero')
+  char: Store.get('char', 'hero'),
+  perk: Store.get('perk', 'none'),
+  acc2: Store.get('acc2', 'none') // второй аксессуар — доступен только если куплен perk:multiacc
 };
 // Больше нет отдельной "trialSlot": состояние "примерка / куплено" всегда
 // вычисляется заново по всем слотам разом — см. getLockedItems().
@@ -817,6 +834,9 @@ for (const slotKey of Object.keys(OUTFITS)){
     Store.set(slotKey, outfit[slotKey]);
   }
 }
+// acc2 берёт значения из того же каталога, что и acc (это не отдельная вещь,
+// а просто второй выбор из уже купленных аксессуаров)
+if (!OUTFITS.acc[outfit.acc2]) { outfit.acc2 = 'none'; Store.set('acc2', 'none'); }
 
 function isOwned(slot, val){ return owned.has(slot + ':' + val); }
 function saveOwned(){ Store.set('owned', Array.from(owned).join(',')); }
@@ -923,6 +943,42 @@ const QTE_DURATION = 6;
 /* ---------- Фон ---------- */
 const BAND = 1000;
 let layers = [];
+
+/* ---------- Миры ----------------------------------------------------------
+   Каждые 3000 очков — новая палитра: фон и цвет монстров меняются разом.
+   Массив зациклен, так что на очень больших высотах темы просто повторяются. */
+const WORLD_THEMES = [
+  { name: 'Сумерки',   bg1: [30, 18, 58],  bg2: [96, 52, 132], glow: 'rgba(255,150,90,.22)',
+    monster: { light: '#c56bd6', dark: '#6f1f85', spike: '#5a1a6b', stroke: '#3a0f4a',
+               burst: ['#8a2be2', '#b268ff', '#d9a6ff', '#4b1a80'] } },
+  { name: 'Ледяной мир', bg1: [8, 26, 52],  bg2: [26, 92, 132], glow: 'rgba(120,210,255,.24)',
+    monster: { light: '#5fc9e8', dark: '#175a78', spike: '#12455c', stroke: '#0a2f3e',
+               burst: ['#2ba8c9', '#7fe0ff', '#c9f6ff', '#0d5064'] } },
+  { name: 'Огненный мир', bg1: [48, 10, 10], bg2: [138, 42, 20], glow: 'rgba(255,120,40,.28)',
+    monster: { light: '#ff9a5c', dark: '#8a2a10', spike: '#6b2008', stroke: '#3f1204',
+               burst: ['#ff5a2b', '#ffb26b', '#ffe3b0', '#7a1f06'] } },
+  { name: 'Ядовитый мир', bg1: [8, 38, 16], bg2: [38, 108, 48], glow: 'rgba(140,255,120,.22)',
+    monster: { light: '#8fe06a', dark: '#286b1e', spike: '#1d5c1d', stroke: '#123a12',
+               burst: ['#4bbd4b', '#a6ff8a', '#eaffd6', '#1d5c1d'] } },
+  { name: 'Космос',    bg1: [6, 6, 26],    bg2: [34, 22, 74],  glow: 'rgba(180,150,255,.26)',
+    monster: { light: '#a08cf0', dark: '#3a2a7a', spike: '#2c1f5c', stroke: '#180f38',
+               burst: ['#6a5acd', '#b0a4ff', '#e6dcff', '#2c1f5c'] } }
+];
+const worldIndex   = () => Math.floor(Math.max(0, score) / 3000) % WORLD_THEMES.length;
+const currentWorld = () => WORLD_THEMES[worldIndex()];
+let lastWorldIdx = 0;
+
+/* Разовая награда за 10 000 очков: эксклюзивная "Звёздная корона" —
+   не продаётся за монеты, выдаётся автоматически прямо посреди забега. */
+function checkWorldMilestone(){
+  if (score >= 10000 && !owned.has('hat:starcrown')){
+    owned.add('hat:starcrown');
+    saveOwned();
+    addToast('🌟 Новый мир! Получена Звёздная корона', hero.x, hero.y - 90, '#ffd34d');
+    shake = Math.max(shake, 14);
+    cloudPushSoon();
+  }
+}
 
 function buildLayers(){
   const stars = { kind: 0, factor: 0.14, items: [] };
@@ -1151,7 +1207,7 @@ function killMonster(m, success){
        спецэффекты скромнее и монет меньше — булаву есть смысл покупать. */
     const smash = hasMace();
 
-    burstPixels(m.x, m.y, ['#8a2be2', '#b268ff', '#d9a6ff', '#4b1a80']);
+    burstPixels(m.x, m.y, currentWorld().monster.burst);
     burstSpark(m.x, m.y, '#e0b3ff', smash ? 22 : 18, smash ? 1.4 : 1.15);
     burstSpark(m.x, m.y, '#fff3b0', smash ? 10 : 8, 0.8);
     addParticle({ kind: 'ring', x: m.x, y: m.y, vx: 0, vy: 0, life: 1, decay: 1.6, r: 6, color: '#d9a6ff' });
@@ -1236,6 +1292,7 @@ function resetGame(){
   crawlers.length = 0;
   arrows.length = 0;
   comboCount = 0; comboTimer = 0;
+  lastWorldIdx = 0;
   hero.ghosts.length = 0;
 
   camY = 0; camTarget = 0;
@@ -1414,7 +1471,7 @@ function shootArrow(){
     if (cr.y > hero.y - 12) continue;
     const dx = cr.x - hero.x, dy = cr.y - hero.y;
     const d = dx * dx + dy * dy;
-    if (d < bestD && d < 560 * 560){ bestD = d; tx = cr.x; ty = cr.y; }
+    if (d < bestD && d < 280 * 280){ bestD = d; tx = cr.x; ty = cr.y; }
   }
 
   const dx = tx - hero.x, dy = ty - hero.y;
@@ -1438,6 +1495,18 @@ function updateWorld(dt){
 
   if (hero.y < minY) minY = hero.y;
   score = Math.max(0, Math.floor((startY - minY) / 10 * scoreMult()));
+
+  // Смена мира каждые 3000 очков — фон и монстры уже перекрашены в render(),
+  // тут просто ловим момент перехода, чтобы отпраздновать тостом.
+  const wIdx = worldIndex();
+  if (wIdx !== lastWorldIdx){
+    lastWorldIdx = wIdx;
+    if (score > 100){ // не праздновать на самом старте забега
+      addToast('🌍 ' + WORLD_THEMES[wIdx].name + '!', hero.x, hero.y - 70, '#ffd34d');
+      flash = 0.4; flashColor = '#ffffff';
+    }
+  }
+  checkWorldMilestone();
 
   const stretch = clamp(-hero.vy / 1100, 0, 1);
   hero.sx = approach(hero.sx, 1 - stretch * 0.22, 11, dt);
@@ -1628,7 +1697,7 @@ function updateWorld(dt){
           kind: 'spark', x: m.x + rand(-14, 14), y: m.y + m.r * 0.7,
           vx: rand(-12, 12), vy: rand(20, 50),
           life: 1, decay: rand(1.4, 2.2), r: rand(1.4, 3),
-          color: pick(['#8a2be2', '#b268ff', '#5a1a6b'])
+          color: pick([currentWorld().monster.light, currentWorld().monster.dark, currentWorld().monster.spike])
         });
       }
 
@@ -1687,9 +1756,9 @@ function updateWorld(dt){
 
 /* ---------- Фон ---------- */
 function drawBackground(){
-  const alt = clamp((startY - minY) / 9000, 0, 1);
-  const c1 = 'rgb(' + (lerp(30,12,alt)|0) + ',' + (lerp(18,8,alt)|0) + ',' + (lerp(58,40,alt)|0) + ')';
-  const c2 = 'rgb(' + (lerp(96,40,alt)|0) + ',' + (lerp(52,24,alt)|0) + ',' + (lerp(132,92,alt)|0) + ')';
+  const w = currentWorld();
+  const c1 = 'rgb(' + w.bg1[0] + ',' + w.bg1[1] + ',' + w.bg1[2] + ')';
+  const c2 = 'rgb(' + w.bg2[0] + ',' + w.bg2[1] + ',' + w.bg2[2] + ')';
 
   const g = ctx.createLinearGradient(0, 0, 0, VH);
   g.addColorStop(0, c1);
@@ -1698,8 +1767,8 @@ function drawBackground(){
   ctx.fillRect(0, 0, VW, VH);
 
   const gl = ctx.createRadialGradient(VW * 0.5, VH * 1.05, 20, VW * 0.5, VH * 1.05, VH * 0.85);
-  gl.addColorStop(0, 'rgba(255,150,90,.22)');
-  gl.addColorStop(1, 'rgba(255,150,90,0)');
+  gl.addColorStop(0, w.glow);
+  gl.addColorStop(1, w.glow.replace(/,[.\d]+\)$/, ',0)'));
   ctx.fillStyle = gl;
   ctx.fillRect(0, 0, VW, VH);
 
@@ -1936,8 +2005,10 @@ function drawMonster(m){
     ctx.globalAlpha = 1;
   }
 
+  const wm = currentWorld().monster;
+
   // шипастый ореол
-  ctx.fillStyle = '#5a1a6b';
+  ctx.fillStyle = wm.spike;
   for (let i = 0; i < 8; i++){
     const a = (i / 8) * 6.2832 + m.bob * 0.3;
     ctx.save();
@@ -1953,10 +2024,10 @@ function drawMonster(m){
 
   // тело
   const g = ctx.createRadialGradient(-6, -6, 3, 0, 0, m.r);
-  g.addColorStop(0, '#c56bd6');
-  g.addColorStop(1, '#6f1f85');
+  g.addColorStop(0, wm.light);
+  g.addColorStop(1, wm.dark);
   ctx.fillStyle = g;
-  ctx.strokeStyle = '#3a0f4a';
+  ctx.strokeStyle = wm.stroke;
   ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.arc(0, 0, m.r, 0, 6.2832);
@@ -2645,6 +2716,7 @@ function drawHero(x, y, sx, sy, tilt, face, alpha, ear, phase){
   ctx.scale(face * sx, sy);
   paintHeroBody(ctx, hero.w, hero.h, ear);
   paintAccessory(ctx, hero.w, hero.h, outfit.acc, A);
+  if (outfit.acc2 !== 'none' && isOwned('perk', 'multiacc')) paintAccessory(ctx, hero.w, hero.h, outfit.acc2, A);
   paintHat(ctx, hero.w, hero.h, outfit.hat, A);
   paintTool(ctx, hero.w, hero.h, outfit.tool, A, phase);
   ctx.restore();
@@ -3153,7 +3225,8 @@ function buildShop(){
   const slots = [
     { key: 'hat',  label: t('slotHat') },
     { key: 'acc',  label: t('slotAcc') },
-    { key: 'tool', label: t('slotTool') }
+    { key: 'tool', label: t('slotTool') },
+    { key: 'perk', label: t('slotPerk') }
   ];
 
   for (const slotDef of slots){
@@ -3165,8 +3238,9 @@ function buildShop(){
     row.appendChild(label);
 
     for (const val of Object.keys(OUTFITS[slotDef.key])){
-      const info = ti(slotDef.key, val);
       const priceInfo = OUTFITS[slotDef.key][val];
+      if (priceInfo.locked) continue; // достижения не продаются за монеты — их сюда не выводим
+      const info = ti(slotDef.key, val);
       const chip = document.createElement('button');
       chip.className = 'chip';
       chip.dataset.slot = slotDef.key;
@@ -3242,6 +3316,7 @@ function refreshShopState(){
   const wCoins = document.getElementById('wardrobeCoins');
   if (wCoins) wCoins.textContent = coins;
   updateCharInfo();
+  updateAcc2Info();
 
   // прячем не саму кнопку, а её подвес .swing — иначе в меню повисали бы пустые верёвки
   const playBtnEl     = document.getElementById('playBtn').closest('.swing');
@@ -3408,6 +3483,34 @@ function updateCharInfo(){
 document.getElementById('charPrev').addEventListener('click', () => charStep(-1));
 document.getElementById('charNext').addEventListener('click', () => charStep(1));
 
+/* ---------- Второй аксессуар (после покупки perk:multiacc) ----------
+   Не отдельная вещь — просто второй выбор из уже купленных аксессуаров
+   (тех же, что в основном слоте acc), поэтому платить за них ещё раз
+   не нужно, покупка perk:multiacc открывает только сам второй слот. */
+function acc2List(){
+  return Object.keys(OUTFITS.acc).filter(v => v === 'none' || isOwned('acc', v));
+}
+function acc2Step(delta){
+  const list = acc2List();
+  const idx = Math.max(0, list.indexOf(outfit.acc2));
+  const nextIdx = (idx + delta + list.length) % list.length;
+  outfit.acc2 = list[nextIdx];
+  Store.set('acc2', outfit.acc2);
+  updateAcc2Info();
+  cloudPushSoon();
+}
+function updateAcc2Info(){
+  const row = document.getElementById('acc2Row');
+  if (!row) return;
+  const unlocked = isOwned('perk', 'multiacc');
+  row.classList.toggle('hidden', !unlocked);
+  if (!unlocked) return;
+  if (!OUTFITS.acc[outfit.acc2]) outfit.acc2 = 'none';
+  document.getElementById('acc2Info').textContent = '+ ' + ti('acc', outfit.acc2).n;
+}
+document.getElementById('acc2Prev').addEventListener('click', () => acc2Step(-1));
+document.getElementById('acc2Next').addEventListener('click', () => acc2Step(1));
+
 /* Гардероб — отдельный экран. Помним, откуда в него зашли: из меню или
    из паузы, чтобы кнопка "Назад" не съедала незаконченный забег. */
 let wardrobeReturn = STATE.MENU;
@@ -3515,7 +3618,9 @@ async function cloudPush(){
           hat:   { stringValue: outfit.hat  },
           acc:   { stringValue: outfit.acc  },
           tool:  { stringValue: outfit.tool },
-          char:  { stringValue: outfit.char }
+          char:  { stringValue: outfit.char },
+          perk:  { stringValue: outfit.perk },
+          acc2:  { stringValue: outfit.acc2 }
         }
       })
     });
@@ -3545,12 +3650,19 @@ async function cloudRestore(rawCode){
       }
       saveOwned();
     }
-    for (const slotKey of ['hat', 'acc', 'tool', 'char']){
+    for (const slotKey of ['hat', 'acc', 'tool', 'char', 'perk']){
       const val = f[slotKey] && f[slotKey].stringValue;
       if (val && OUTFITS[slotKey] && OUTFITS[slotKey][val]){
         outfit[slotKey] = val;
         Store.set(slotKey, val);
       }
+    }
+    // acc2 — не отдельная вещь, а выбор из каталога acc, поэтому проверяем
+    // именно по OUTFITS.acc, а не по несуществующему OUTFITS.acc2
+    const acc2Val = f.acc2 && f.acc2.stringValue;
+    if (acc2Val && OUTFITS.acc[acc2Val]){
+      outfit.acc2 = acc2Val;
+      Store.set('acc2', acc2Val);
     }
 
     cloudCode = code;
@@ -3720,7 +3832,9 @@ async function adminLoad(codeOverride){
       hat:  (f.hat  && f.hat.stringValue)  || 'none',
       acc:  (f.acc  && f.acc.stringValue)  || 'none',
       tool: (f.tool && f.tool.stringValue) || 'none',
-      char: (f.char && f.char.stringValue) || 'hero'
+      char: (f.char && f.char.stringValue) || 'hero',
+      perk: (f.perk && f.perk.stringValue) || 'none',
+      acc2: (f.acc2 && f.acc2.stringValue) || 'none'
     };
     document.getElementById('adminCodeLine').textContent = 'Код: ' + code;
     document.getElementById('adminNickInput').value = (f.nick && f.nick.stringValue) || '';
@@ -3791,11 +3905,33 @@ async function adminSave(){
           hat:   { stringValue: (adminCurrentEquipped && adminCurrentEquipped.hat)  || 'none' },
           acc:   { stringValue: (adminCurrentEquipped && adminCurrentEquipped.acc)  || 'none' },
           tool:  { stringValue: (adminCurrentEquipped && adminCurrentEquipped.tool) || 'none' },
-          char:  { stringValue: (adminCurrentEquipped && adminCurrentEquipped.char) || 'hero' }
+          char:  { stringValue: (adminCurrentEquipped && adminCurrentEquipped.char) || 'hero' },
+          perk:  { stringValue: (adminCurrentEquipped && adminCurrentEquipped.perk) || 'none' },
+          acc2:  { stringValue: (adminCurrentEquipped && adminCurrentEquipped.acc2) || 'none' }
         }
       })
     });
-    adminSetStatus(res.ok ? 'Сохранено ✓ — игрок получит это, когда откроет Настройки → Восстановить со своим кодом' : 'Не удалось сохранить');
+    if (res.ok){
+      // Редактируем СВОЙ же профиль на этом устройстве — применяем изменения
+      // не только в облако, но и локально прямо сейчас. Иначе игра при
+      // следующем действии тихо перезапишет облако старыми локальными
+      // значениями (обычная автосинхронизация), и правки как будто "слетят".
+      if (adminCurrentCode === cloudCode){
+        coins = coinsVal; Store.set('coins', coins);
+        best  = bestVal;  Store.set('best', best);
+        nickname = nickMatch; Store.set('nick', nickname);
+        owned.clear();
+        for (const it of ownedList) owned.add(it);
+        owned.add('hat:none'); owned.add('acc:none'); owned.add('acc:bowtie'); owned.add('tool:none'); owned.add('char:hero');
+        saveOwned();
+        refreshShopState();
+        adminSetStatus('Сохранено ✓ (и применено локально — это твой же профиль)');
+      } else {
+        adminSetStatus('Сохранено ✓ — игрок получит это, когда откроет Настройки → Восстановить со своим кодом');
+      }
+    } else {
+      adminSetStatus('Не удалось сохранить');
+    }
   } catch (e){
     adminSetStatus('Ошибка связи при сохранении');
   }
@@ -3859,6 +3995,7 @@ let prevT = performance.now();
     pctx.scale(2.9 / sq, 2.9 * sq); // крупнее, чем в игре — картинка hero.png обычно с полями вокруг кота
     paintHeroBody(pctx, hero.w, hero.h, ear);
     paintAccessory(pctx, hero.w, hero.h, outfit.acc, A);
+    if (outfit.acc2 !== 'none' && isOwned('perk', 'multiacc')) paintAccessory(pctx, hero.w, hero.h, outfit.acc2, A);
     paintHat(pctx, hero.w, hero.h, outfit.hat, A);
     paintTool(pctx, hero.w, hero.h, outfit.tool, A, t2);
     pctx.restore();
