@@ -237,6 +237,18 @@
   }
   #onlineLbRows .lbRow span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
   #onlineLbRows .lbRow b{color:var(--gold);flex:0 0 auto;}
+  .devNick{
+    background:linear-gradient(90deg,#c084fc,#8a2be2,#ff6f91,#8a2be2,#c084fc);
+    background-size:200% auto;
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    font-weight:800; animation:devShine 3.5s linear infinite;
+  }
+  .devBadge{
+    display:inline-block; margin-left:5px; padding:1px 5px; border-radius:5px;
+    background:rgba(138,43,226,.35); color:#e0c3ff; font-size:9px; font-weight:800;
+    letter-spacing:.5px; vertical-align:middle;
+  }
+  @keyframes devShine{ to{ background-position:200% center; } }
   #onlineLbRows{width:100%;}
 
   #nickBox{
@@ -315,6 +327,14 @@
   @keyframes rise{from{transform:translateY(14px);opacity:0}to{transform:none;opacity:1}}
   @media (prefers-reduced-motion:reduce){.pop,.rise{animation:none !important;}}
 
+  .charSwitcher{display:flex;align-items:center;justify-content:center;gap:14px;}
+  .charArrow{
+    width:38px;height:38px;border-radius:50%;border:none;cursor:pointer;
+    background:rgba(255,255,255,.08);color:var(--cream,#fdf6e8);font-size:20px;font-weight:800;
+    box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.25);flex:0 0 auto;
+  }
+  .charArrow:active{background:rgba(255,178,107,.35);}
+  #charInfo{font-size:13px;opacity:.85;text-align:center;min-height:16px;}
   #preview,#preview2{width:104px;height:104px;filter:drop-shadow(0 14px 16px rgba(0,0,0,.45));flex:0 0 auto;}
   @media (max-height:760px){
     #preview,#preview2{width:78px;height:78px;}
@@ -366,6 +386,8 @@
       <div class="swing"><button id="continueBtn" class="btn" disabled data-i18n="cont">Продолжить</button></div>
       <div class="swing"><button id="wardrobeBtn" class="btn" data-i18n="wardrobe">Гардероб</button></div>
       <div class="swing"><button id="settingsBtn" class="btn ghost" data-i18n="settings">Настройки</button></div>
+      <!-- Видна только по ссылке ...?admin=1 — обычные игроки её не видят -->
+      <div class="swing"><button id="adminEntryBtn" class="btn ghost hidden" style="opacity:.55;">🛠 Admin</button></div>
     </div>
     <p class="hint rise d4" data-i18n="hint">Клавиши ← → или A / D, на телефоне — кнопки внизу. Тап по экрану: выстрел из лука или двойной прыжок. Встретил монстра — жми, пока идёт отсчёт!</p>
     <a href="https://discord.gg/H6WcNMffZ" target="_blank" rel="noopener" class="btn ghost rise d4" style="text-decoration:none;">Discord</a>
@@ -375,13 +397,53 @@
   <div id="wardrobe" class="screen hidden">
     <div class="spacer"></div>
     <h1 class="title pop" data-i18n="wardrobe" style="font-size:clamp(24px,7vw,40px);">Гардероб</h1>
-    <canvas id="preview2" width="220" height="220"></canvas>
+    <div class="charSwitcher rise d1">
+      <button id="charPrev" class="charArrow" aria-label="Предыдущий персонаж">‹</button>
+      <canvas id="preview2" width="220" height="220"></canvas>
+      <button id="charNext" class="charArrow" aria-label="Следующий персонаж">›</button>
+    </div>
+    <div id="charInfo" class="charInfo rise d1"></div>
     <p class="stats rise d1">
       <span><i class="coinDot"></i><span class="coinNum" id="wardrobeCoins">0</span></span>
     </p>
     <div id="shop" class="rise d2"></div>
     <div id="lockedPanel" class="hidden"></div>
     <button id="wardrobeBack" class="btn ghost rise d3" data-i18n="back">Назад</button>
+    <div class="spacer"></div>
+  </div>
+
+  <div id="admin" class="screen hidden">
+    <div class="spacer"></div>
+    <h1 class="title pop" style="font-size:clamp(22px,6vw,32px);">🛠 Админка</h1>
+
+    <div id="adminGate" class="rise d1" style="display:flex;flex-direction:column;gap:10px;align-items:center;">
+      <input id="adminPinInput" type="password" placeholder="PIN" inputmode="numeric"
+             style="width:180px;text-align:center;font-size:18px;padding:10px;border-radius:12px;border:none;">
+      <button id="adminPinBtn" class="btn">Войти</button>
+    </div>
+
+    <div id="adminTool" class="hidden rise d1" style="width:min(340px,90vw);display:flex;flex-direction:column;gap:10px;">
+      <div style="display:flex;gap:8px;">
+        <input id="adminCodeInput" type="text" placeholder="Код профиля игрока"
+               style="flex:1;padding:10px;border-radius:12px;border:none;text-transform:uppercase;">
+        <button id="adminLoadBtn" class="btn small">Загрузить</button>
+      </div>
+
+      <div id="adminPlayerBox" class="hidden" style="display:flex;flex-direction:column;gap:10px;">
+        <p id="adminNickLine" style="margin:0;font-weight:700;"></p>
+        <label style="display:flex;justify-content:space-between;align-items:center;">Монеты
+          <input id="adminCoinsInput" type="number" style="width:110px;padding:6px;border-radius:8px;border:none;">
+        </label>
+        <label style="display:flex;justify-content:space-between;align-items:center;">Рекорд
+          <input id="adminBestInput" type="number" style="width:110px;padding:6px;border-radius:8px;border:none;">
+        </label>
+        <div id="adminItemsGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:4px 10px;max-height:220px;overflow-y:auto;font-size:12px;"></div>
+        <button id="adminSaveBtn" class="btn">Сохранить</button>
+      </div>
+      <p id="adminStatus" style="font-size:12px;opacity:.8;min-height:14px;margin:0;"></p>
+    </div>
+
+    <button id="adminBack" class="btn ghost rise d2">Назад</button>
     <div class="spacer"></div>
   </div>
 
@@ -629,7 +691,9 @@ const I18N = {
       'acc:backpack':   { n: 'Ранец-прыгун',      d: 'Двойной прыжок: тапни по экрану в воздухе.' },
       'tool:none':      { n: 'Пусто',            d: '' },
       'tool:mace':      { n: 'Зачарованная булава', d: 'Падая на монстра сверху — тапни экран: сокрушительный удар выносит в космос.' },
-      'tool:bow':       { n: 'Лук охотника',      d: 'На платформах заводятся монстрики. Тапай — стреляй: +3 монеты за каждого, но не наступай на них.' }
+      'tool:bow':       { n: 'Лук охотника',      d: 'На платформах заводятся монстрики. Тапай — стреляй: +3 монеты за каждого, но не наступай на них.' },
+      'char:hero':      { n: 'Кэббит',            d: 'Классический котокролик.' },
+      'char:hero2':     { n: 'Кэббит №2',         d: 'Второй котокролик — просто для разнообразия.' }
     }
   },
   en: {
@@ -673,7 +737,9 @@ const I18N = {
       'acc:backpack':   { n: 'Jump Pack',         d: 'Double jump: tap the screen in mid-air.' },
       'tool:none':      { n: 'Empty',            d: '' },
       'tool:mace':      { n: 'Enchanted Mace',   d: 'Falling onto a monster — tap the screen for a smash that launches you into space.' },
-      'tool:bow':       { n: "Hunter's Bow",      d: 'Critters appear on platforms. Tap to shoot: +3 coins each — but never land on one.' }
+      'tool:bow':       { n: "Hunter's Bow",      d: 'Critters appear on platforms. Tap to shoot: +3 coins each — but never land on one.' },
+      'char:hero':      { n: 'Cabbit',            d: 'The classic cat-rabbit.' },
+      'char:hero2':     { n: 'Cabbit #2',         d: 'A second cat-rabbit — just for variety.' }
     }
   }
 };
@@ -726,17 +792,22 @@ const OUTFITS = {
     none: { price: 0 },
     mace: { price: 250 },
     bow:  { price: 380 }
+  },
+  char: {
+    hero:  { price: 0 },
+    hero2: { price: 3000 }
   }
 };
 
-const owned = new Set(String(Store.get('owned', 'hat:none,acc:none,acc:bowtie,tool:none'))
+const owned = new Set(String(Store.get('owned', 'hat:none,acc:none,acc:bowtie,tool:none,char:hero'))
   .split(',').filter(Boolean));
-owned.add('hat:none'); owned.add('acc:none'); owned.add('acc:bowtie'); owned.add('tool:none');
+owned.add('hat:none'); owned.add('acc:none'); owned.add('acc:bowtie'); owned.add('tool:none'); owned.add('char:hero');
 
 const outfit = {
   hat:  Store.get('hat', 'none'),
   acc:  Store.get('acc', 'none'),
-  tool: Store.get('tool', 'none')
+  tool: Store.get('tool', 'none'),
+  char: Store.get('char', 'hero')
 };
 // Больше нет отдельной "trialSlot": состояние "примерка / куплено" всегда
 // вычисляется заново по всем слотам разом — см. getLockedItems().
@@ -744,18 +815,29 @@ const outfit = {
 /* Если в сохранении осталась вещь, которой больше нет в каталоге
    (например, удалённый плащ) — слот тихо возвращается к "ничего". */
 for (const slotKey of Object.keys(OUTFITS)){
-  if (!OUTFITS[slotKey][outfit[slotKey]]){ outfit[slotKey] = 'none'; Store.set(slotKey, 'none'); }
+  if (!OUTFITS[slotKey][outfit[slotKey]]){
+    outfit[slotKey] = (slotKey === 'char') ? 'hero' : 'none';
+    Store.set(slotKey, outfit[slotKey]);
+  }
 }
 
 function isOwned(slot, val){ return owned.has(slot + ':' + val); }
 function saveOwned(){ Store.set('owned', Array.from(owned).join(',')); }
 
-/* ---------- Спрайт ---------- */
-const heroImg = new Image();
-let heroReady = false;
-heroImg.onload  = () => { if (heroImg.naturalWidth > 0) heroReady = true; };
-heroImg.onerror = () => { heroReady = false; };
-heroImg.src = 'hero.png';
+/* ---------- Спрайты персонажей ----------
+   Каждый персонаж — отдельный файл рядом с index.html. Чтобы добавить ещё
+   одного, впиши его в OUTFITS.char выше и добавь сюда loadCharImage(id).
+   Если файла нет или он не загрузился — рисуется векторный фолбэк. */
+const charImgs = {};
+function loadCharImage(id){
+  const rec = { img: new Image(), ready: false };
+  rec.img.onload  = () => { if (rec.img.naturalWidth > 0) rec.ready = true; };
+  rec.img.onerror = () => { rec.ready = false; };
+  rec.img.src = id + '.png';
+  charImgs[id] = rec;
+}
+for (const id of Object.keys(OUTFITS.char)) loadCharImage(id);
+const currentCharReady = () => !!(charImgs[outfit.char] && charImgs[outfit.char].ready);
 
 /* Своя картинка булавы: положи mace.png рядом с index.html.
    Рисуй вертикально — рукоять внизу картинки, голова булавы вверху,
@@ -770,7 +852,16 @@ maceImg.src = 'mace.png';
    handX/handY — точка, где рисуется предмет "в лапке" (булава). */
 const ANCHOR_SPRITE = { topY: -0.345, cx: 0.015, hw: 0.235, eyeY: -0.155, eyeDX: 0.085, neckY: 0.145, handX: 0.27, handY: 0.30 };
 const ANCHOR_VECTOR = { topY: -0.400, cx: 0.000, hw: 0.290, eyeY: -0.040, eyeDX: 0.150, neckY: 0.330, handX: 0.21, handY: 0.38 };
-const anchors = () => heroReady ? ANCHOR_SPRITE : ANCHOR_VECTOR;
+/* У каждого персонажа своя компоновка кадра (где голова, где лапки), так
+   что точки крепления шляпы/аксессуара/инструмента подбираются отдельно.
+   Нет записи для персонажа — используется ANCHOR_SPRITE по умолчанию. */
+const CHAR_ANCHORS = {
+  hero2: { topY: -0.46, cx: 0.0, hw: 0.30, eyeY: -0.30, eyeDX: 0.10, neckY: 0.10, handX: 0.18, handY: 0.15 }
+};
+const anchors = () => {
+  if (!currentCharReady()) return ANCHOR_VECTOR;
+  return CHAR_ANCHORS[outfit.char] || ANCHOR_SPRITE;
+};
 
 /* ---------- Физика ---------- */
 const GRAV       = 1850;
@@ -801,7 +892,7 @@ const hasMagnet     = () => outfit.hat === 'halo' && isOwned('hat', 'halo');
 const hasDoubleJump = () => outfit.acc === 'backpack' && isOwned('acc', 'backpack');
 
 /* ---------- Состояние ---------- */
-const STATE = { MENU: 0, PLAY: 1, PAUSED: 2, OVER: 3, SETTINGS: 4, NICK: 5, WARDROBE: 6 };
+const STATE = { MENU: 0, PLAY: 1, PAUSED: 2, OVER: 3, SETTINGS: 4, NICK: 5, WARDROBE: 6, ADMIN: 7 };
 let state = STATE.NICK;
 let motionBlurOn = Store.get('blur', '0') === '1'; // выкл по умолчанию — самый тяжёлый эффект для слабых телефонов
 
@@ -823,7 +914,6 @@ let lastPlatY = 0, flash = 0, flashColor = '#fff3c4', blurAmount = 0, blurWanted
 let monsterTimer = 0;
 let comboCount = 0, comboTimer = 0;          // серия быстрых подборов монет
 const COMBO_WINDOW = 1.3;                     // секунд на следующий подбор, чтобы не сбить комбо
-let wind = { vx: 0, target: 0, timer: rand(5, 9) }; // лёгкие порывы ветра на высоте
 const MONSTER_INTERVAL = 90; // секунд между летающими монстрами
 let tapEvent = false; // сбрасывается каждый кадр, ставится в true при клике/тапе/пробеле/кнопке удара
 
@@ -1149,7 +1239,6 @@ function resetGame(){
   crawlers.length = 0;
   arrows.length = 0;
   comboCount = 0; comboTimer = 0;
-  wind.vx = 0; wind.target = 0; wind.timer = rand(5, 9);
   hero.ghosts.length = 0;
 
   camY = 0; camTarget = 0;
@@ -1244,7 +1333,7 @@ function stepPhysics(dt){
   const prevBottom = hero.y + hero.h * 0.5;
 
   hero.vy += GRAV * gravityMult() * dt;
-  hero.x  += (hero.vx + wind.vx) * dt; // + лёгкий снос ветром, отдельно от разгона игрока
+  hero.x  += hero.vx * dt;
   hero.y  += hero.vy * dt;
 
   if (hero.x < -hero.w * 0.5) hero.x += VW + hero.w;
@@ -1515,19 +1604,6 @@ function updateWorld(dt){
     comboTimer -= dt;
     if (comboTimer <= 0) comboCount = 0;
   }
-
-  /* Лёгкий ветер на высоте — по чуть-чуть сносит кэббита в сторону,
-     добавляя разнообразия без резких скачков. Появляется не сразу,
-     чтобы не путать новичков в первые секунды забега. */
-  wind.timer -= dt;
-  if (wind.timer <= 0){
-    const strong = score > 3000;
-    wind.target = strong ? rand(-150, 150) : 0;
-    wind.timer = rand(5, 9);
-    if (Math.abs(wind.target) > 90)
-      addToast('💨 Порыв ветра!', hero.x, hero.y - 60, '#bdeaff');
-  }
-  wind.vx = approach(wind.vx, wind.target, 2.2, dt);
 
   /* Монстры */
   monsterTimer -= dt;
@@ -2558,7 +2634,8 @@ function paintCabbitVector(c, w, h, ear){
 }
 
 function paintHeroBody(c, w, h, ear){
-  if (heroReady) c.drawImage(heroImg, -w / 2, -h / 2, w, h);
+  const rec = charImgs[outfit.char];
+  if (rec && rec.ready) c.drawImage(rec.img, -w / 2, -h / 2, w, h);
   else paintCabbitVector(c, w, h, ear);
 }
 
@@ -2943,6 +3020,7 @@ const nicknameEl = document.getElementById('nickname');
 const menuEl     = document.getElementById('menu');
 const settingsEl = document.getElementById('settings');
 const wardrobeEl = document.getElementById('wardrobe');
+const adminEl = document.getElementById('admin');
 const overEl     = document.getElementById('over');
 const pauseBtn   = document.getElementById('pauseBtn');
 const hitBtn     = document.getElementById('hitBtn');
@@ -3000,7 +3078,7 @@ function reanimate(el){
 }
 
 function hideAllScreens(){
-  hide(nicknameEl); hide(menuEl); hide(settingsEl); hide(overEl); hide(wardrobeEl);
+  hide(nicknameEl); hide(menuEl); hide(settingsEl); hide(overEl); hide(wardrobeEl); hide(adminEl);
 }
 
 /* ---------- Ник ---------- */
@@ -3167,6 +3245,7 @@ function refreshShopState(){
 
   const wCoins = document.getElementById('wardrobeCoins');
   if (wCoins) wCoins.textContent = coins;
+  updateCharInfo();
 
   // прячем не саму кнопку, а её подвес .swing — иначе в меню повисали бы пустые верёвки
   const playBtnEl     = document.getElementById('playBtn').closest('.swing');
@@ -3208,7 +3287,8 @@ function refreshShopState(){
       revert.setAttribute('aria-label', t('revert'));
       revert.textContent = '✕';
       revert.addEventListener('click', () => {
-        outfit[item.slot] = 'none';
+        outfit[item.slot] = (item.slot === 'char') ? 'hero' : 'none';
+        if (item.slot === 'char') updateCharInfo();
         refreshShopState();
       });
 
@@ -3304,6 +3384,34 @@ function gameOver(){
   })();
 }
 
+/* ---------- Выбор персонажа: стрелки вокруг превью в гардеробе ----------
+   Работает через тот же механизм "примерки", что и шляпы/аксессуары:
+   стрелка меняет outfit.char сразу же, а если персонаж не куплен —
+   снизу появится обычная панель "купить или вернуть", как для любой
+   другой непроплаченной вещи. */
+const CHAR_LIST = Object.keys(OUTFITS.char);
+
+function charStep(delta){
+  const idx = CHAR_LIST.indexOf(outfit.char);
+  const nextIdx = (idx + delta + CHAR_LIST.length) % CHAR_LIST.length;
+  const val = CHAR_LIST[nextIdx];
+  outfit.char = val;
+  if (isOwned('char', val)) Store.set('char', val); // куплено — запоминаем выбор насовсем
+  refreshShopState();
+}
+
+function updateCharInfo(){
+  const el = document.getElementById('charInfo');
+  if (!el) return;
+  const info = ti('char', outfit.char);
+  const price = OUTFITS.char[outfit.char].price;
+  const own = isOwned('char', outfit.char);
+  el.textContent = info.n + (own ? '' : ' — ' + price + ' 🪙');
+}
+
+document.getElementById('charPrev').addEventListener('click', () => charStep(-1));
+document.getElementById('charNext').addEventListener('click', () => charStep(1));
+
 /* Гардероб — отдельный экран. Помним, откуда в него зашли: из меню или
    из паузы, чтобы кнопка "Назад" не съедала незаконченный забег. */
 let wardrobeReturn = STATE.MENU;
@@ -3365,6 +3473,11 @@ const CLOUD = {
 const cloudReady = () => !!(CLOUD.apiKey && CLOUD.projectId);
 const cloudBase  = () => 'https://firestore.googleapis.com/v1/projects/' + CLOUD.projectId + '/databases/(default)/documents';
 
+/* Твой личный код профиля (Настройки -> Онлайн-профиль -> "Копировать"),
+   чтобы твой ник в рейтинге у ВСЕХ игроков подсвечивался фиолетовым
+   градиентом и меткой "DEV". Впиши сюда свой код и пересобери игру. */
+const DEV_CODE = 'C4N3TAU5';
+
 // Код профиля - 8 символов без похожих друг на друга букв/цифр (0/O, 1/I и т.п.)
 function makeCloudCode(){
   const abc = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -3405,7 +3518,8 @@ async function cloudPush(){
           owned: { arrayValue: { values: Array.from(owned).map(v => ({ stringValue: v })) } },
           hat:   { stringValue: outfit.hat  },
           acc:   { stringValue: outfit.acc  },
-          tool:  { stringValue: outfit.tool }
+          tool:  { stringValue: outfit.tool },
+          char:  { stringValue: outfit.char }
         }
       })
     });
@@ -3435,7 +3549,7 @@ async function cloudRestore(rawCode){
       }
       saveOwned();
     }
-    for (const slotKey of ['hat', 'acc', 'tool']){
+    for (const slotKey of ['hat', 'acc', 'tool', 'char']){
       const val = f[slotKey] && f[slotKey].stringValue;
       if (val && OUTFITS[slotKey] && OUTFITS[slotKey][val]){
         outfit[slotKey] = val;
@@ -3476,10 +3590,17 @@ async function cloudFetchLeaderboard(){
       const f = row.document.fields || {};
       const nick = (f.nick && f.nick.stringValue) || '?';
       const sc = (f.best && f.best.integerValue) || '0';
+      // код документа — последний кусок пути ".../players/{code}"
+      const path = row.document.name || '';
+      const rowCode = path.substring(path.lastIndexOf('/') + 1);
+      const isDev = DEV_CODE && rowCode === DEV_CODE;
       i++;
       const div = document.createElement('div');
       div.className = 'lbRow';
-      div.innerHTML = '<span>' + i + '. ' + escapeHtml(nick) + '</span><b>' + sc + '</b>';
+      const nameHtml = isDev
+        ? '<span class="devNick">' + escapeHtml(nick) + '</span><span class="devBadge">DEV</span>'
+        : escapeHtml(nick);
+      div.innerHTML = '<span>' + i + '. ' + nameHtml + '</span><b>' + sc + '</b>';
       rows.appendChild(div);
     }
     if (i === 0) rows.innerHTML = '<div class="lbRow"><span>' + t('empty') + '</span></div>';
@@ -3527,6 +3648,142 @@ document.getElementById('playBtn').addEventListener('click', startGame);
 document.getElementById('continueBtn').addEventListener('click', resumeGame);
 document.getElementById('settingsBtn').addEventListener('click', openSettings);
 document.getElementById('wardrobeBtn').addEventListener('click', openWardrobe);
+
+/* ---------- Админ-панель ----------------------------------------------
+   Спрятана от обычных игроков: кнопка на главном экране появляется только
+   если открыть игру по ссылке с ...?admin=1 в конце. Дальше — PIN-код
+   (просто короткий пароль в самом коде, не настоящая авторизация, но
+   достаточно, чтобы случайный человек по ссылке ничего не сломал).
+   Смени ADMIN_PIN на что-то своё перед публикацией. */
+const ADMIN_PIN = '2468'; // <-- смени на свой PIN
+
+let adminCurrentCode = null;
+
+function maybeShowAdminEntry(){
+  if (location.search.indexOf('admin=1') !== -1){
+    const btn = document.getElementById('adminEntryBtn');
+    if (btn) btn.classList.remove('hidden');
+  }
+}
+maybeShowAdminEntry();
+
+function openAdmin(){
+  state = STATE.ADMIN;
+  hideAllScreens();
+  show(adminEl);
+  reanimate(adminEl);
+}
+function closeAdmin(){ goToMenu(); }
+
+document.getElementById('adminEntryBtn').addEventListener('click', openAdmin);
+document.getElementById('adminBack').addEventListener('click', closeAdmin);
+
+document.getElementById('adminPinBtn').addEventListener('click', () => {
+  const input = document.getElementById('adminPinInput');
+  if (input.value === ADMIN_PIN){
+    document.getElementById('adminGate').classList.add('hidden');
+    document.getElementById('adminTool').classList.remove('hidden');
+  } else {
+    input.value = '';
+    input.placeholder = 'Неверный PIN';
+  }
+});
+
+function adminSetStatus(msg){
+  const el = document.getElementById('adminStatus');
+  if (el) el.textContent = msg || '';
+}
+
+async function adminLoad(){
+  const code = document.getElementById('adminCodeInput').value.trim().toUpperCase();
+  if (!code){ return; }
+  if (!cloudReady()){ adminSetStatus('Облако не настроено (CLOUD.apiKey/projectId)'); return; }
+
+  adminSetStatus('Загрузка...');
+  document.getElementById('adminPlayerBox').classList.add('hidden');
+  try {
+    const res = await fetch(cloudBase() + '/players/' + code + '?key=' + CLOUD.apiKey);
+    if (!res.ok){ adminSetStatus('Игрок с таким кодом не найден'); return; }
+    const doc = await res.json();
+    const f = doc.fields || {};
+
+    adminCurrentCode = code;
+    document.getElementById('adminNickLine').textContent =
+      'Игрок: ' + ((f.nick && f.nick.stringValue) || '?') + '  ·  код ' + code;
+    document.getElementById('adminCoinsInput').value = parseInt((f.coins && f.coins.integerValue) || '0', 10);
+    document.getElementById('adminBestInput').value  = parseInt((f.best  && f.best.integerValue)  || '0', 10);
+
+    const ownedSet = new Set();
+    if (f.owned && f.owned.arrayValue && Array.isArray(f.owned.arrayValue.values)){
+      for (const v of f.owned.arrayValue.values) if (v && v.stringValue) ownedSet.add(v.stringValue);
+    }
+    renderAdminItemsGrid(ownedSet);
+
+    document.getElementById('adminPlayerBox').classList.remove('hidden');
+    adminSetStatus('');
+  } catch (e){
+    adminSetStatus('Ошибка связи с облаком');
+  }
+}
+
+function renderAdminItemsGrid(ownedSet){
+  const grid = document.getElementById('adminItemsGrid');
+  grid.innerHTML = '';
+  const slotTitles = { hat: 'ШЛЯПЫ', acc: 'АКСЕССУАРЫ', tool: 'ИНСТРУМЕНТЫ', char: 'ПЕРСОНАЖИ' };
+  for (const slot of Object.keys(OUTFITS)){
+    const title = document.createElement('div');
+    title.style.cssText = 'grid-column:1/-1;font-weight:800;opacity:.6;margin-top:6px;font-size:10px;letter-spacing:.5px;';
+    title.textContent = slotTitles[slot] || slot;
+    grid.appendChild(title);
+
+    for (const val of Object.keys(OUTFITS[slot])){
+      const key = slot + ':' + val;
+      const label = document.createElement('label');
+      label.style.cssText = 'display:flex;align-items:center;gap:5px;cursor:pointer;';
+      const cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.dataset.item = key;
+      cb.checked = ownedSet.has(key);
+      const span = document.createElement('span');
+      span.textContent = ti(slot, val).n;
+      label.appendChild(cb);
+      label.appendChild(span);
+      grid.appendChild(label);
+    }
+  }
+}
+
+async function adminSave(){
+  if (!adminCurrentCode || !cloudReady()) return;
+  const coinsVal = parseInt(document.getElementById('adminCoinsInput').value, 10) || 0;
+  const bestVal  = parseInt(document.getElementById('adminBestInput').value, 10) || 0;
+  const ownedList = Array.from(document.querySelectorAll('#adminItemsGrid input[type=checkbox]:checked'))
+    .map(cb => cb.dataset.item);
+  const nickLine = document.getElementById('adminNickLine').textContent || '';
+  const nickMatch = nickLine.replace('Игрок: ', '').split('  ·  код ')[0] || 'Кэббит';
+
+  adminSetStatus('Сохранение...');
+  try {
+    const res = await fetch(cloudBase() + '/players/' + adminCurrentCode + '?key=' + CLOUD.apiKey, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        fields: {
+          nick:  { stringValue: nickMatch },
+          coins: { integerValue: String(coinsVal) },
+          best:  { integerValue: String(bestVal) },
+          owned: { arrayValue: { values: ownedList.map(v => ({ stringValue: v })) } }
+        }
+      })
+    });
+    adminSetStatus(res.ok ? 'Сохранено ✓' : 'Не удалось сохранить');
+  } catch (e){
+    adminSetStatus('Ошибка связи при сохранении');
+  }
+}
+
+document.getElementById('adminLoadBtn').addEventListener('click', adminLoad);
+document.getElementById('adminSaveBtn').addEventListener('click', adminSave);
 document.getElementById('wardrobeBack').addEventListener('click', closeWardrobe);
 document.getElementById('settingsBack').addEventListener('click', closeSettings);
 document.getElementById('retryBtn').addEventListener('click', startGame);
