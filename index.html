@@ -334,6 +334,15 @@
     box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.25);flex:0 0 auto;
   }
   .charArrow:active{background:rgba(255,178,107,.35);}
+  /* Круглые кнопки-иконки для админки (загрузить/сохранить) — фиксированный
+     размер, не растягиваются текстом и не вылезают за край экрана на телефоне. */
+  .adminIconBtn{
+    width:40px;height:40px;min-width:40px;border-radius:50%;border:none;cursor:pointer;
+    background:var(--gold);font-size:18px;line-height:1;flex:0 0 auto;
+    box-shadow:0 3px 0 #b8862c,0 5px 10px rgba(0,0,0,.3);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .adminIconBtn:active{transform:translateY(2px);box-shadow:0 1px 0 #b8862c,0 2px 5px rgba(0,0,0,.25);}
   #charInfo{font-size:13px;opacity:.85;text-align:center;min-height:16px;}
   #preview,#preview2{width:104px;height:104px;filter:drop-shadow(0 14px 16px rgba(0,0,0,.45));flex:0 0 auto;}
   @media (max-height:760px){
@@ -401,12 +410,6 @@
       <button id="charNext" class="charArrow" aria-label="Следующий персонаж">›</button>
     </div>
     <div id="charInfo" class="charInfo rise d1"></div>
-
-    <div id="acc2Row" class="charSwitcher rise d1 hidden" style="margin-top:2px;">
-      <button id="acc2Prev" class="charArrow" aria-label="Предыдущий второй аксессуар">‹</button>
-      <span id="acc2Info" style="font-size:12px;opacity:.85;min-width:110px;text-align:center;"></span>
-      <button id="acc2Next" class="charArrow" aria-label="Следующий второй аксессуар">›</button>
-    </div>
     <p class="stats rise d1">
       <span><i class="coinDot"></i><span class="coinNum" id="wardrobeCoins">0</span></span>
     </p>
@@ -459,17 +462,17 @@
            PIN-запрос прямо здесь. Обычный игрок этого никогда не увидит. -->
       <div id="adminGate" class="settingRow hidden" style="flex-direction:column;gap:8px;border-top:1px solid rgba(255,255,255,.1);padding-top:14px;">
         <input id="adminPinInput" type="password" placeholder="PIN" inputmode="numeric"
-               style="width:160px;text-align:center;font-size:16px;padding:8px;border-radius:10px;border:none;">
+               style="width:160px;text-align:center;font-size:16px;padding:8px;border-radius:12px;border:none;background:var(--gold);color:#150a2b;font-weight:700;">
         <button id="adminPinBtn" class="btn small">Войти</button>
       </div>
 
       <div id="adminTool" class="settingRow hidden" style="flex-direction:column;gap:10px;align-items:stretch;border-top:1px solid rgba(255,255,255,.1);padding-top:14px;">
         <span class="settingLabel">🛠 Админка</span>
         <p style="font-size:11px;opacity:.6;margin:0;">Тапни по игроку в рейтинге выше, чтобы выдать ему вещи или монеты</p>
-        <div style="display:flex;gap:8px;">
+        <div style="display:flex;gap:8px;align-items:center;">
           <input id="adminCodeInput" type="text" placeholder="...или код вручную"
-                 style="flex:1;padding:8px;border-radius:10px;border:none;text-transform:uppercase;font-size:13px;">
-          <button id="adminLoadBtn" class="btn small">Загрузить</button>
+                 style="flex:1;min-width:0;padding:8px 10px;border-radius:12px;border:none;text-transform:uppercase;font-size:13px;background:var(--gold);color:#150a2b;font-weight:700;text-align:center;">
+          <button id="adminLoadBtn" class="adminIconBtn" aria-label="Загрузить">📥</button>
         </div>
 
         <div id="adminPlayerBox" class="hidden" style="display:flex;flex-direction:column;gap:8px;">
@@ -484,7 +487,9 @@
             <input id="adminBestInput" type="number" style="width:100px;padding:6px;border-radius:8px;border:none;">
           </label>
           <div id="adminItemsGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:4px 10px;max-height:180px;overflow-y:auto;font-size:11px;"></div>
-          <button id="adminSaveBtn" class="btn small">Сохранить</button>
+          <div style="display:flex;justify-content:center;">
+            <button id="adminSaveBtn" class="adminIconBtn" aria-label="Сохранить">✅</button>
+          </div>
         </div>
         <p id="adminStatus" style="font-size:11px;opacity:.8;min-height:14px;margin:0;"></p>
       </div>
@@ -698,7 +703,9 @@ const I18N = {
       'char:hero':      { n: 'Кэббит',            d: 'Классический котокролик.' },
       'char:hero2':     { n: 'Кэббит №2',         d: 'Второй котокролик — просто для разнообразия.' },
       'hat:starcrown':  { n: 'Звёздная корона',   d: 'Награда за 10 000 очков — не продаётся.' },
-      'perk:multiacc':  { n: 'Второй аксессуар',  d: 'Можно надеть сразу два аксессуара вместо одного.' }
+      'perk:multiacc':  { n: 'Второй предмет',    d: 'Можно надеть сразу два в шляпах и в аксессуарах.' },
+      'hat:none': { n: 'Ничего', d: '' }, 'acc:none': { n: 'Ничего', d: '' },
+      'tool:none': { n: 'Ничего', d: '' }, 'perk:none': { n: 'Ничего', d: '' }
     }
   },
   en: {
@@ -746,7 +753,9 @@ const I18N = {
       'char:hero':      { n: 'Cabbit',            d: 'The classic cat-rabbit.' },
       'char:hero2':     { n: 'Cabbit #2',         d: 'A second cat-rabbit — just for variety.' },
       'hat:starcrown':  { n: 'Star Crown',        d: 'A reward for 10,000 points — not for sale.' },
-      'perk:multiacc':  { n: 'Second Accessory',  d: 'Wear two accessories at once instead of one.' }
+      'perk:multiacc':  { n: 'Second Item',       d: 'Wear two hats and two accessories at once.' },
+      'hat:none': { n: 'None', d: '' }, 'acc:none': { n: 'None', d: '' },
+      'tool:none': { n: 'None', d: '' }, 'perk:none': { n: 'None', d: '' }
     }
   }
 };
@@ -821,7 +830,8 @@ const outfit = {
   tool: Store.get('tool', 'none'),
   char: Store.get('char', 'hero'),
   perk: Store.get('perk', 'none'),
-  acc2: Store.get('acc2', 'none') // второй аксессуар — доступен только если куплен perk:multiacc
+  hat2: Store.get('hat2', 'none'), // второй головной убор — доступен только если куплен perk:multiacc
+  acc2: Store.get('acc2', 'none')  // второй аксессуар — то же самое
 };
 // Больше нет отдельной "trialSlot": состояние "примерка / куплено" всегда
 // вычисляется заново по всем слотам разом — см. getLockedItems().
@@ -834,8 +844,9 @@ for (const slotKey of Object.keys(OUTFITS)){
     Store.set(slotKey, outfit[slotKey]);
   }
 }
-// acc2 берёт значения из того же каталога, что и acc (это не отдельная вещь,
-// а просто второй выбор из уже купленных аксессуаров)
+// hat2/acc2 берут значения из тех же каталогов, что hat/acc (это не отдельные
+// вещи, а просто второй выбор из уже купленного)
+if (!OUTFITS.hat[outfit.hat2]) { outfit.hat2 = 'none'; Store.set('hat2', 'none'); }
 if (!OUTFITS.acc[outfit.acc2]) { outfit.acc2 = 'none'; Store.set('acc2', 'none'); }
 
 function isOwned(slot, val){ return owned.has(slot + ':' + val); }
@@ -2718,6 +2729,13 @@ function drawHero(x, y, sx, sy, tilt, face, alpha, ear, phase){
   paintAccessory(ctx, hero.w, hero.h, outfit.acc, A);
   if (outfit.acc2 !== 'none' && isOwned('perk', 'multiacc')) paintAccessory(ctx, hero.w, hero.h, outfit.acc2, A);
   paintHat(ctx, hero.w, hero.h, outfit.hat, A);
+  if (outfit.hat2 !== 'none' && isOwned('perk', 'multiacc')){
+    ctx.save();
+    ctx.translate(hero.w * 0.30, hero.h * 0.015);
+    ctx.scale(0.78, 0.78);
+    paintHat(ctx, hero.w, hero.h, outfit.hat2, A);
+    ctx.restore();
+  }
   paintTool(ctx, hero.w, hero.h, outfit.tool, A, phase);
   ctx.restore();
 }
@@ -3251,8 +3269,31 @@ function buildShop(){
       chip.innerHTML = html;
 
       chip.addEventListener('click', () => {
-        outfit[slotDef.key] = val;
-        if (isOwned(slotDef.key, val)) Store.set(slotDef.key, val); // куплено — запоминаем выбор
+        const multi = (slotDef.key === 'hat' || slotDef.key === 'acc') && isOwned('perk', 'multiacc');
+        const secKey = slotDef.key + '2';
+
+        if (multi){
+          if (outfit[slotDef.key] === val){
+            // сняли первый — второй (если был) становится первым
+            outfit[slotDef.key] = outfit[secKey];
+            outfit[secKey] = 'none';
+          } else if (outfit[secKey] === val){
+            // сняли второй
+            outfit[secKey] = 'none';
+          } else if (outfit[slotDef.key] === 'none'){
+            outfit[slotDef.key] = val;
+          } else if (outfit[secKey] === 'none'){
+            outfit[secKey] = val;
+          } else {
+            // оба слота заняты — новый выбор занимает второй
+            outfit[secKey] = val;
+          }
+          if (isOwned(slotDef.key, outfit[slotDef.key]) || outfit[slotDef.key] === 'none') Store.set(slotDef.key, outfit[slotDef.key]);
+          if (isOwned(slotDef.key, outfit[secKey]) || outfit[secKey] === 'none') Store.set(secKey, outfit[secKey]);
+        } else {
+          outfit[slotDef.key] = val;
+          if (isOwned(slotDef.key, val)) Store.set(slotDef.key, val); // куплено — запоминаем выбор
+        }
         refreshShopState();                                        // не куплено — это временная примерка
       });
 
@@ -3272,12 +3313,19 @@ function getLockedItems(){
   const result = [];
   for (const slot of Object.keys(OUTFITS)){
     const val = outfit[slot];
-    if (val !== 'none' && !isOwned(slot, val)) result.push({ slot, val });
+    if (val !== 'none' && !isOwned(slot, val)) result.push({ slot, val, displaySlot: slot });
+  }
+  // второй слот (hat2/acc2) — те же каталоги, что hat/acc, просто другое поле хранения
+  for (const baseSlot of ['hat', 'acc']){
+    const secKey = baseSlot + '2';
+    const val = outfit[secKey];
+    if (val && val !== 'none' && !isOwned(baseSlot, val)) result.push({ slot: baseSlot, val, displaySlot: secKey });
   }
   return result;
 }
 
-function buyItem(slot, val){
+function buyItem(slot, val, field){
+  field = field || slot;
   const price = OUTFITS[slot][val].price;
   if (coins < price) return;
 
@@ -3285,7 +3333,7 @@ function buyItem(slot, val){
   Store.set('coins', coins);
   owned.add(slot + ':' + val);
   saveOwned();
-  Store.set(slot, val);
+  Store.set(field, val);
   refreshShopState();
   cloudPushSoon();
 }
@@ -3305,7 +3353,8 @@ function refreshShopState(){
     const priceInfo = OUTFITS[slot][val];
     const own = isOwned(slot, val);
 
-    chip.setAttribute('aria-pressed', outfit[slot] === val ? 'true' : 'false');
+    const isSecondary = (slot === 'hat' || slot === 'acc') && val !== 'none' && outfit[slot + '2'] === val;
+    chip.setAttribute('aria-pressed', (outfit[slot] === val || isSecondary) ? 'true' : 'false');
 
     let html = '<span class="iname">' + escapeHtml(info.n) + '</span>';
     if (info.d) html += '<span class="idesc">' + escapeHtml(info.d) + '</span>';
@@ -3316,7 +3365,6 @@ function refreshShopState(){
   const wCoins = document.getElementById('wardrobeCoins');
   if (wCoins) wCoins.textContent = coins;
   updateCharInfo();
-  updateAcc2Info();
 
   // прячем не саму кнопку, а её подвес .swing — иначе в меню повисали бы пустые верёвки
   const playBtnEl     = document.getElementById('playBtn').closest('.swing');
@@ -3340,7 +3388,7 @@ function refreshShopState(){
 
       const label = document.createElement('span');
       label.className = 'li-label';
-      label.textContent = info.n + ' — ' + (can
+      label.textContent = info.n + (item.displaySlot && item.displaySlot.endsWith('2') ? ' (2-й)' : '') + ' — ' + (can
         ? t('buyFor') + ' ' + price
         : t('notEnough') + ' ' + (price - coins) + ' ' + t('coinsWord'));
 
@@ -3351,15 +3399,16 @@ function refreshShopState(){
       buyOne.className = 'lockedBuyOne';
       buyOne.disabled = !can;
       buyOne.textContent = String(price);
-      buyOne.addEventListener('click', () => buyItem(item.slot, item.val));
+      buyOne.addEventListener('click', () => buyItem(item.slot, item.val, item.displaySlot));
 
       const revert = document.createElement('button');
       revert.className = 'lockedRevert';
       revert.setAttribute('aria-label', t('revert'));
       revert.textContent = '✕';
       revert.addEventListener('click', () => {
-        outfit[item.slot] = (item.slot === 'char') ? 'hero' : 'none';
-        if (item.slot === 'char') updateCharInfo();
+        const field = item.displaySlot;
+        outfit[field] = (field === 'char') ? 'hero' : 'none';
+        if (field === 'char') updateCharInfo();
         refreshShopState();
       });
 
@@ -3483,34 +3532,6 @@ function updateCharInfo(){
 document.getElementById('charPrev').addEventListener('click', () => charStep(-1));
 document.getElementById('charNext').addEventListener('click', () => charStep(1));
 
-/* ---------- Второй аксессуар (после покупки perk:multiacc) ----------
-   Не отдельная вещь — просто второй выбор из уже купленных аксессуаров
-   (тех же, что в основном слоте acc), поэтому платить за них ещё раз
-   не нужно, покупка perk:multiacc открывает только сам второй слот. */
-function acc2List(){
-  return Object.keys(OUTFITS.acc).filter(v => v === 'none' || isOwned('acc', v));
-}
-function acc2Step(delta){
-  const list = acc2List();
-  const idx = Math.max(0, list.indexOf(outfit.acc2));
-  const nextIdx = (idx + delta + list.length) % list.length;
-  outfit.acc2 = list[nextIdx];
-  Store.set('acc2', outfit.acc2);
-  updateAcc2Info();
-  cloudPushSoon();
-}
-function updateAcc2Info(){
-  const row = document.getElementById('acc2Row');
-  if (!row) return;
-  const unlocked = isOwned('perk', 'multiacc');
-  row.classList.toggle('hidden', !unlocked);
-  if (!unlocked) return;
-  if (!OUTFITS.acc[outfit.acc2]) outfit.acc2 = 'none';
-  document.getElementById('acc2Info').textContent = '+ ' + ti('acc', outfit.acc2).n;
-}
-document.getElementById('acc2Prev').addEventListener('click', () => acc2Step(-1));
-document.getElementById('acc2Next').addEventListener('click', () => acc2Step(1));
-
 /* Гардероб — отдельный экран. Помним, откуда в него зашли: из меню или
    из паузы, чтобы кнопка "Назад" не съедала незаконченный забег. */
 let wardrobeReturn = STATE.MENU;
@@ -3620,6 +3641,7 @@ async function cloudPush(){
           tool:  { stringValue: outfit.tool },
           char:  { stringValue: outfit.char },
           perk:  { stringValue: outfit.perk },
+          hat2:  { stringValue: outfit.hat2 },
           acc2:  { stringValue: outfit.acc2 }
         }
       })
@@ -3657,8 +3679,13 @@ async function cloudRestore(rawCode){
         Store.set(slotKey, val);
       }
     }
-    // acc2 — не отдельная вещь, а выбор из каталога acc, поэтому проверяем
-    // именно по OUTFITS.acc, а не по несуществующему OUTFITS.acc2
+    // hat2/acc2 — не отдельные вещи, а второй выбор из каталогов hat/acc,
+    // поэтому проверяем именно по OUTFITS.hat/OUTFITS.acc
+    const hat2Val = f.hat2 && f.hat2.stringValue;
+    if (hat2Val && OUTFITS.hat[hat2Val]){
+      outfit.hat2 = hat2Val;
+      Store.set('hat2', hat2Val);
+    }
     const acc2Val = f.acc2 && f.acc2.stringValue;
     if (acc2Val && OUTFITS.acc[acc2Val]){
       outfit.acc2 = acc2Val;
@@ -3834,6 +3861,7 @@ async function adminLoad(codeOverride){
       tool: (f.tool && f.tool.stringValue) || 'none',
       char: (f.char && f.char.stringValue) || 'hero',
       perk: (f.perk && f.perk.stringValue) || 'none',
+      hat2: (f.hat2 && f.hat2.stringValue) || 'none',
       acc2: (f.acc2 && f.acc2.stringValue) || 'none'
     };
     document.getElementById('adminCodeLine').textContent = 'Код: ' + code;
@@ -3907,6 +3935,7 @@ async function adminSave(){
           tool:  { stringValue: (adminCurrentEquipped && adminCurrentEquipped.tool) || 'none' },
           char:  { stringValue: (adminCurrentEquipped && adminCurrentEquipped.char) || 'hero' },
           perk:  { stringValue: (adminCurrentEquipped && adminCurrentEquipped.perk) || 'none' },
+          hat2:  { stringValue: (adminCurrentEquipped && adminCurrentEquipped.hat2) || 'none' },
           acc2:  { stringValue: (adminCurrentEquipped && adminCurrentEquipped.acc2) || 'none' }
         }
       })
@@ -3997,6 +4026,13 @@ let prevT = performance.now();
     paintAccessory(pctx, hero.w, hero.h, outfit.acc, A);
     if (outfit.acc2 !== 'none' && isOwned('perk', 'multiacc')) paintAccessory(pctx, hero.w, hero.h, outfit.acc2, A);
     paintHat(pctx, hero.w, hero.h, outfit.hat, A);
+    if (outfit.hat2 !== 'none' && isOwned('perk', 'multiacc')){
+      pctx.save();
+      pctx.translate(hero.w * 0.30, hero.h * 0.015);
+      pctx.scale(0.78, 0.78);
+      paintHat(pctx, hero.w, hero.h, outfit.hat2, A);
+      pctx.restore();
+    }
     paintTool(pctx, hero.w, hero.h, outfit.tool, A, t2);
     pctx.restore();
   }
