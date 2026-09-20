@@ -31,7 +31,7 @@
     gap:11px;padding:16px 16px 26px;text-align:center;z-index:10;overflow-y:auto;
   }
   .screen.hidden{display:none;}
-  .hidden{display:none;}
+  .hidden{display:none !important;}
   #menu{background:radial-gradient(120% 90% at 50% 14%, rgba(87,45,140,.6), rgba(21,10,43,.95));}
   #settings{background:radial-gradient(120% 90% at 50% 14%, rgba(87,45,140,.65), rgba(21,10,43,.96));}
   #wardrobe{background:radial-gradient(120% 90% at 50% 14%, rgba(60,30,100,.82), rgba(12,6,24,.985));}
@@ -467,7 +467,10 @@
         </div>
 
         <div id="adminPlayerBox" class="hidden" style="display:flex;flex-direction:column;gap:8px;">
-          <p id="adminNickLine" style="margin:0;font-weight:700;font-size:13px;"></p>
+          <p id="adminCodeLine" style="margin:0;font-size:11px;opacity:.6;"></p>
+          <label style="display:flex;justify-content:space-between;align-items:center;font-size:13px;">Ник
+            <input id="adminNickInput" type="text" maxlength="14" style="width:140px;padding:6px;border-radius:8px;border:none;">
+          </label>
           <label style="display:flex;justify-content:space-between;align-items:center;font-size:13px;">Монеты
             <input id="adminCoinsInput" type="number" style="width:100px;padding:6px;border-radius:8px;border:none;">
           </label>
@@ -3660,6 +3663,7 @@ const ADMIN_PIN = '2468'; // <-- смени на свой PIN
 
 let adminMode = localStorage.getItem('cabbitAdminMode') === '1';
 let adminCurrentCode = null;
+let adminCurrentEquipped = null;
 if (adminMode) document.getElementById('adminTool').classList.remove('hidden');
 
 // секретный жест: 7 тапов по заголовку "Настройки" быстрее чем за 2.5 сек
@@ -3710,8 +3714,16 @@ async function adminLoad(codeOverride){
     const f = doc.fields || {};
 
     adminCurrentCode = code;
-    document.getElementById('adminNickLine').textContent =
-      'Игрок: ' + ((f.nick && f.nick.stringValue) || '?') + '  ·  код ' + code;
+    // запоминаем, что было надето — PATCH без updateMask заменяет ВЕСЬ документ
+    // теми полями, что мы отправим, так что при сохранении их нужно вернуть как есть
+    adminCurrentEquipped = {
+      hat:  (f.hat  && f.hat.stringValue)  || 'none',
+      acc:  (f.acc  && f.acc.stringValue)  || 'none',
+      tool: (f.tool && f.tool.stringValue) || 'none',
+      char: (f.char && f.char.stringValue) || 'hero'
+    };
+    document.getElementById('adminCodeLine').textContent = 'Код: ' + code;
+    document.getElementById('adminNickInput').value = (f.nick && f.nick.stringValue) || '';
     document.getElementById('adminCoinsInput').value = parseInt((f.coins && f.coins.integerValue) || '0', 10);
     document.getElementById('adminBestInput').value  = parseInt((f.best  && f.best.integerValue)  || '0', 10);
 
@@ -3761,8 +3773,9 @@ async function adminSave(){
   const bestVal  = parseInt(document.getElementById('adminBestInput').value, 10) || 0;
   const ownedList = Array.from(document.querySelectorAll('#adminItemsGrid input[type=checkbox]:checked'))
     .map(cb => cb.dataset.item);
-  const nickLine = document.getElementById('adminNickLine').textContent || '';
-  const nickMatch = nickLine.replace('Игрок: ', '').split('  ·  код ')[0] || 'Кэббит';
+  let nickMatch = document.getElementById('adminNickInput').value.trim();
+  if (!nickMatch) nickMatch = 'Кэббит';
+  if (nickMatch.length > 14) nickMatch = nickMatch.slice(0, 14);
 
   adminSetStatus('Сохранение...');
   try {
@@ -3774,11 +3787,15 @@ async function adminSave(){
           nick:  { stringValue: nickMatch },
           coins: { integerValue: String(coinsVal) },
           best:  { integerValue: String(bestVal) },
-          owned: { arrayValue: { values: ownedList.map(v => ({ stringValue: v })) } }
+          owned: { arrayValue: { values: ownedList.map(v => ({ stringValue: v })) } },
+          hat:   { stringValue: (adminCurrentEquipped && adminCurrentEquipped.hat)  || 'none' },
+          acc:   { stringValue: (adminCurrentEquipped && adminCurrentEquipped.acc)  || 'none' },
+          tool:  { stringValue: (adminCurrentEquipped && adminCurrentEquipped.tool) || 'none' },
+          char:  { stringValue: (adminCurrentEquipped && adminCurrentEquipped.char) || 'hero' }
         }
       })
     });
-    adminSetStatus(res.ok ? 'Сохранено ✓' : 'Не удалось сохранить');
+    adminSetStatus(res.ok ? 'Сохранено ✓ — игрок получит это, когда откроет Настройки → Восстановить со своим кодом' : 'Не удалось сохранить');
   } catch (e){
     adminSetStatus('Ошибка связи при сохранении');
   }
