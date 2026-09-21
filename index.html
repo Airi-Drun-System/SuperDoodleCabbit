@@ -394,6 +394,8 @@
     <p data-i18n="rotateMsg">Переверни телефон вертикально</p>
   </div>
 
+  <div id="achBanner" class="hidden" style="position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:400;background:rgba(20,10,40,.92);color:#ffd34d;padding:10px 18px;border-radius:14px;font-weight:800;font-size:13px;pointer-events:none;transition:opacity .3s;max-width:88vw;text-align:center;"></div>
+
   <button id="pauseBtn" class="hidden" aria-label="Пауза">
     <svg viewBox="0 0 24 24" fill="none"><rect x="6" y="4" width="4" height="16" rx="1" fill="#fdf6e8"/><rect x="14" y="4" width="4" height="16" rx="1" fill="#fdf6e8"/></svg>
   </button>
@@ -436,6 +438,7 @@
       <div class="swing"><button id="continueBtn" class="btn" disabled data-i18n="cont">Продолжить</button></div>
       <div class="swing"><button id="wardrobeBtn" class="btn" data-i18n="wardrobe">Гардероб</button></div>
       <div class="swing"><button id="hockeyBtn" class="btn" data-i18n="hockeyBtn">Аэрохоккей</button></div>
+      <div class="swing"><button id="achBtn" class="btn ghost" data-i18n="achievementsBtn">Достижения</button></div>
       <div class="swing"><button id="settingsBtn" class="btn ghost" data-i18n="settings">Настройки</button></div>
     </div>
     <p class="hint rise d4" data-i18n="hint">Клавиши ← → или A / D, на телефоне — кнопки внизу. Тап по экрану: выстрел из лука или двойной прыжок. Встретил монстра — жми, пока идёт отсчёт!</p>
@@ -471,6 +474,14 @@
     <div id="shop" class="rise d2"></div>
     <div id="lockedPanel" class="hidden"></div>
     <button id="wardrobeBack" class="btn ghost rise d3" data-i18n="back">Назад</button>
+    <div class="spacer"></div>
+  </div>
+
+  <div id="achievements" class="screen hidden">
+    <div class="spacer"></div>
+    <h1 class="title pop" data-i18n="achievementsBtn" style="font-size:clamp(24px,7vw,40px);">Достижения</h1>
+    <div id="achList" class="rise d2" style="width:100%;max-width:440px;display:flex;flex-direction:column;gap:10px;max-height:60vh;overflow-y:auto;padding:2px 4px;"></div>
+    <button id="achBack" class="btn ghost rise d3" data-i18n="back">Назад</button>
     <div class="spacer"></div>
   </div>
 
@@ -759,6 +770,17 @@ const I18N = {
     hockeyVsAi: 'Против ИИ', hockeyVs2p: 'Вдвоём',
     hockeyHint2p: 'В режиме «Вдвоём» каждый водит своей рукой со своей половины стола.',
     leaderboard: 'Таблица лидеров', empty: '—', wardrobe: 'Гардероб',
+    achievementsBtn: 'Достижения', achUnlockedToast: 'Достижение получено',
+    ach_climb1_n: 'Первые высоты', ach_climb1_d: 'Наберите 500 очков за один забег',
+    ach_climb2_n: 'Верхолаз', ach_climb2_d: 'Наберите 2000 очков за один забег',
+    ach_climb3_n: 'Покоритель небес', ach_climb3_d: 'Наберите 5000 очков за один забег',
+    ach_hunter_n: 'Охотник', ach_hunter_d: 'Победите 25 монстров',
+    ach_smasher_n: 'Крушитель', ach_smasher_d: 'Разбейте булавой 15 монстров',
+    ach_sniper_n: 'Снайпер', ach_sniper_d: 'Подстрелите из лука 30 существ',
+    ach_hockeyfan_n: 'Чемпион стола', ach_hockeyfan_d: 'Выиграйте 5 матчей в аэрохоккей',
+    ach_fashionista_n: 'Модник', ach_fashionista_d: 'Купите 5 разных вещей в гардеробе',
+    ach_collector_n: 'Коллекционер', ach_collector_d: 'Купите весь гардероб',
+    ach_richie_n: 'Богач', ach_richie_d: 'Накопите 1000 монет',
     overTitleNormal: 'Кэббит приземлился', overTitleRecord: 'Новый рекорд',
     overCoins: 'собрано монет', overRecordLabel: 'Рекорд', overNewBest: 'выше не прыгал никто',
     retry: 'Повторить', toMenu: 'В меню', scoreWord: 'рекорд',
@@ -813,6 +835,17 @@ const I18N = {
     hockeyVsAi: 'Vs Computer', hockeyVs2p: 'Two Players',
     hockeyHint2p: 'In Two Players mode, each player controls their paddle from their own side.',
     leaderboard: 'Leaderboard', empty: '—', wardrobe: 'Wardrobe',
+    achievementsBtn: 'Achievements', achUnlockedToast: 'Achievement unlocked',
+    ach_climb1_n: 'First Heights', ach_climb1_d: 'Score 500 points in a single run',
+    ach_climb2_n: 'Sky Climber', ach_climb2_d: 'Score 2000 points in a single run',
+    ach_climb3_n: 'Sky Conqueror', ach_climb3_d: 'Score 5000 points in a single run',
+    ach_hunter_n: 'Hunter', ach_hunter_d: 'Defeat 25 monsters',
+    ach_smasher_n: 'Smasher', ach_smasher_d: 'Smash 15 monsters with the mace',
+    ach_sniper_n: 'Sniper', ach_sniper_d: 'Shoot down 30 critters with the bow',
+    ach_hockeyfan_n: 'Table Champion', ach_hockeyfan_d: 'Win 5 air hockey matches',
+    ach_fashionista_n: 'Fashionista', ach_fashionista_d: 'Buy 5 different wardrobe items',
+    ach_collector_n: 'Collector', ach_collector_d: 'Buy the entire wardrobe',
+    ach_richie_n: 'Big Saver', ach_richie_d: 'Save up 1000 coins',
     overTitleNormal: 'The cabbit has landed', overTitleRecord: 'New record',
     overCoins: 'coins collected', overRecordLabel: 'Best', overNewBest: 'nobody jumped higher',
     retry: 'Retry', toMenu: 'Menu', scoreWord: 'best',
@@ -943,6 +976,67 @@ if (!OUTFITS.acc[outfit.acc2]) { outfit.acc2 = 'none'; Store.set('acc2', 'none')
 function isOwned(slot, val){ return owned.has(slot + ':' + val); }
 function saveOwned(){ Store.set('owned', Array.from(owned).join(',')); }
 
+let stats = { kills: 0, killsMace: 0, killsBow: 0, hockeyWins: 0 };
+try { Object.assign(stats, JSON.parse(Store.get('stats', '{}'))); } catch (e) {}
+function saveStats(){ Store.set('stats', JSON.stringify(stats)); }
+
+const achUnlocked = new Set(String(Store.get('achUnlocked', '')).split(',').filter(Boolean));
+function saveAchUnlocked(){ Store.set('achUnlocked', Array.from(achUnlocked).join(',')); }
+
+function purchasableKeys(){
+  const keys = [];
+  for (const slot of Object.keys(OUTFITS)){
+    for (const val of Object.keys(OUTFITS[slot])){
+      if (OUTFITS[slot][val].price > 0) keys.push(slot + ':' + val);
+    }
+  }
+  return keys;
+}
+const ownedPurchasedCount  = () => purchasableKeys().filter(k => owned.has(k)).length;
+const totalPurchasableCount = () => purchasableKeys().length;
+
+const ACHIEVEMENTS = [
+  { id: 'climb1',      goal: 500,  reward: 20,  progress: () => best },
+  { id: 'climb2',      goal: 2000, reward: 40,  progress: () => best },
+  { id: 'climb3',      goal: 5000, reward: 80,  progress: () => best },
+  { id: 'hunter',      goal: 25,   reward: 30,  progress: () => stats.kills },
+  { id: 'smasher',     goal: 15,   reward: 35,  progress: () => stats.killsMace },
+  { id: 'sniper',      goal: 30,   reward: 35,  progress: () => stats.killsBow },
+  { id: 'hockeyfan',   goal: 5,    reward: 40,  progress: () => stats.hockeyWins },
+  { id: 'fashionista', goal: 5,    reward: 25,  progress: () => ownedPurchasedCount() },
+  { id: 'collector',   goal: totalPurchasableCount(), reward: 150, progress: () => ownedPurchasedCount() },
+  { id: 'richie',      goal: 1000, reward: 0,   progress: () => coins }
+];
+
+const achBanner = document.getElementById('achBanner');
+let achBannerTimer = null;
+function showAchToast(text){
+  achBanner.textContent = text;
+  achBanner.classList.remove('hidden');
+  achBanner.style.opacity = '1';
+  clearTimeout(achBannerTimer);
+  achBannerTimer = setTimeout(() => {
+    achBanner.style.opacity = '0';
+    setTimeout(() => achBanner.classList.add('hidden'), 300);
+  }, 2200);
+}
+
+function checkAchievements(){
+  for (const a of ACHIEVEMENTS){
+    if (achUnlocked.has(a.id)) continue;
+    if (a.progress() >= a.goal){
+      achUnlocked.add(a.id);
+      saveAchUnlocked();
+      if (a.reward > 0){
+        coins += a.reward;
+        Store.set('coins', coins);
+      }
+      showAchToast(t('achUnlockedToast') + ': ' + t('ach_' + a.id + '_n'));
+      sfxCoin();
+    }
+  }
+}
+
 
 const charImgs = {};
 function loadCharImage(id){
@@ -1002,7 +1096,7 @@ const hasMagnet     = () => hasHat('halo');
 const hasDoubleJump = () => hasAcc('backpack');
 
 
-const STATE = { MENU: 0, PLAY: 1, PAUSED: 2, OVER: 3, SETTINGS: 4, NICK: 5, WARDROBE: 6, MINI: 7 };
+const STATE = { MENU: 0, PLAY: 1, PAUSED: 2, OVER: 3, SETTINGS: 4, NICK: 5, WARDROBE: 6, MINI: 7, ACH: 8 };
 let state = STATE.NICK;
 let motionBlurOn = Store.get('blur', '0') === '1'; 
 
@@ -1022,7 +1116,8 @@ let startY = 0, minY = 0, score = 0, runCoins = 0;
 let shake = 0, shakeX = 0, shakeY = 0;
 let lastPlatY = 0, flash = 0, flashColor = '#fff3c4', blurAmount = 0, blurWanted = 0, coinPulse = 0;
 let monsterTimer = 0;
-const MONSTER_INTERVAL = 90; 
+const MONSTER_INTERVAL = 120;
+let maceSwing = 0;
 let tapEvent = false; 
 
 
@@ -1279,6 +1374,11 @@ function killMonster(m, success){
   if (success){
     
     const smash = hasMace();
+    if (smash) maceSwing = 1;
+    stats.kills++;
+    if (smash) stats.killsMace++;
+    saveStats();
+    checkAchievements();
 
     burstPixels(m.x, m.y, currentWorld().monster.burst);
     burstSpark(m.x, m.y, '#e0b3ff', smash ? 22 : 18, smash ? 1.4 : 1.15);
@@ -1369,6 +1469,7 @@ function resetGame(){
   monsterEvent = null;
   glassUsedThisRun = false;
   fallSoundPlayed = false;
+  maceSwing = 0;
   shootCd = 0;
   airJumps = 0;
   if (typeof hitBtn !== 'undefined') hitBtn.classList.add('hidden');
@@ -1712,6 +1813,9 @@ function updateWorld(dt){
       if (dx2 * dx2 + dy2 * dy2 < 20 * 20){
         crawlers.splice(j, 1);
         hit = true;
+        stats.killsBow++;
+        saveStats();
+        checkAchievements();
         burstPixels(cr.x, cr.y, ['#6be36b', '#2f8f2f', '#bff5a0', '#f7ffd6']);
         burstSpark(cr.x, cr.y, '#bff5a0', 12, 1);
         const bonus = 3 * coinMult();
@@ -1806,11 +1910,13 @@ function updateWorld(dt){
   shakeY = rand(-shake, shake);
   flash  = Math.max(0, flash - dt * 2.2);
   coinPulse = Math.max(0, coinPulse - dt * 2.4);
+  maceSwing = Math.max(0, maceSwing - dt * 3.1);
 
   if (!fallSoundPlayed && hero.y - camY > VH){
     fallSoundPlayed = true;
     sfxOver();
   }
+  if (coins >= 1000) checkAchievements();
   if (hero.y - camY > VH + 70) handleFatalEvent();
 
   tapEvent = false;
@@ -1877,32 +1983,14 @@ function drawBackground(){
 
 
 function drawShadows(){
-  const bgY = hero.y - camY + 150;
-  if (bgY < VH + 60){
-    ctx.globalAlpha = 0.13;
-    ctx.fillStyle = '#000';
-    ctx.beginPath();
-    ctx.ellipse(hero.x + 26, bgY, hero.w * 0.58, hero.w * 0.19, 0, 0, 6.2832);
-    ctx.fill();
-    ctx.globalAlpha = 1;
-  }
-
-  let target = null, bestD = 1e9;
-  for (const p of platforms){
-    if (p.broken) continue;
-    const d = p.y - (hero.y + hero.h * 0.5);
-    if (d >= -4 && d < bestD && d < 330){ bestD = d; target = p; }
-  }
-  if (target){
-    const tt = 1 - bestD / 330;
-    ctx.globalAlpha = 0.07 + tt * 0.3;
-    ctx.fillStyle = '#000';
-    ctx.beginPath();
-    ctx.ellipse(clamp(hero.x + bestD * 0.06, 0, VW), target.y - camY + 3,
-                lerp(hero.w * 0.8, hero.w * 0.38, tt), lerp(9, 5, tt), 0, 0, 6.2832);
-    ctx.fill();
-    ctx.globalAlpha = 1;
-  }
+  const sy = hero.y - camY + hero.h * 0.42;
+  if (sy < -40 || sy > VH + 40) return;
+  ctx.globalAlpha = 0.16;
+  ctx.fillStyle = '#000';
+  ctx.beginPath();
+  ctx.ellipse(hero.x, sy, hero.w * 0.42, hero.w * 0.14, 0, 0, 6.2832);
+  ctx.fill();
+  ctx.globalAlpha = 1;
 }
 
 
@@ -2592,9 +2680,16 @@ function paintTool(c, w, h, kind, A, phase){
 
   c.save();
   c.translate(hx, hy);
-  c.rotate(0.30 + Math.sin(phase * 1.4) * 0.05);
+  if (maceSwing > 0.001){
+    const st = clamp(1 - maceSwing, 0, 1);
+    const c4 = (2 * Math.PI) / 3;
+    const ease = st <= 0 ? 0 : st >= 1 ? 1 : Math.pow(2, -10 * st) * Math.sin((st * 10 - 0.75) * c4) + 1;
+    c.rotate(-2.5 + (0.30 - -2.5) * ease);
+  } else {
+    c.rotate(0.30 + Math.sin(phase * 1.4) * 0.05);
+  }
 
-  let headY; 
+  let headY;
 
   if (maceReady){
     
@@ -3188,6 +3283,8 @@ const menuEl     = document.getElementById('menu');
 const settingsEl = document.getElementById('settings');
 const wardrobeEl = document.getElementById('wardrobe');
 const hockeyModesEl = document.getElementById('hockeyModes');
+const achievementsEl = document.getElementById('achievements');
+const achListEl = document.getElementById('achList');
 const overEl     = document.getElementById('over');
 const pauseBtn   = document.getElementById('pauseBtn');
 const miniBackBtn = document.getElementById('miniBackBtn');
@@ -3244,7 +3341,7 @@ function reanimate(el){
 }
 
 function hideAllScreens(){
-  hide(nicknameEl); hide(menuEl); hide(settingsEl); hide(overEl); hide(wardrobeEl); hide(hockeyModesEl);
+  hide(nicknameEl); hide(menuEl); hide(settingsEl); hide(overEl); hide(wardrobeEl); hide(hockeyModesEl); hide(achievementsEl);
 }
 
 
@@ -3435,6 +3532,7 @@ function buyItem(slot, val, field){
   Store.set(field, val);
   refreshShopState();
   cloudPushSoon();
+  checkAchievements();
 }
 
 
@@ -3582,6 +3680,7 @@ function gameOver(){
   if (isNewBest){ best = score; Store.set('best', best); }
   addToLeaderboard(nickname, score);
   cloudPushSoon();
+  checkAchievements();
 
   finalEl.textContent = '0';
   overTitle.textContent = isNewBest ? t('overTitleRecord') : t('overTitleNormal');
@@ -3670,6 +3769,9 @@ function hockeyGoal(scoredByPlayer){
       const winBonus = 25;
       coins += winBonus; Store.set('coins', coins);
       hockeySetMessage(t('hockeyWin') + ' +' + winBonus, '#9fe89f');
+      stats.hockeyWins++;
+      saveStats();
+      checkAchievements();
     } else {
       hockeySetMessage(t('hockeyLose'), '#ff9fb4');
     }
@@ -3963,6 +4065,75 @@ function closeWardrobe(){
   }
 }
 
+function renderAchievements(){
+  achListEl.innerHTML = '';
+  for (const a of ACHIEVEMENTS){
+    const unlocked = achUnlocked.has(a.id);
+    const cur = Math.min(a.progress(), a.goal);
+    const pct = a.goal > 0 ? clamp(cur / a.goal, 0, 1) : 1;
+
+    const row = document.createElement('div');
+    row.dataset.achId = a.id;
+    row.style.cssText = 'background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,' + (unlocked ? '.35' : '.12') + ');border-radius:14px;padding:10px 12px;opacity:' + (unlocked ? '1' : '.82') + ';';
+
+    const top = document.createElement('div');
+    top.style.cssText = 'display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;font-weight:800;';
+    const name = document.createElement('span');
+    name.textContent = (unlocked ? '✓ ' : '') + t('ach_' + a.id + '_n');
+    name.style.color = unlocked ? '#ffd34d' : '#fdf6e8';
+    top.appendChild(name);
+    if (a.reward > 0){
+      const rw = document.createElement('span');
+      rw.style.cssText = 'font-size:11px;opacity:.8;white-space:nowrap;';
+      rw.textContent = '+' + a.reward + ' ¤';
+      top.appendChild(rw);
+    }
+    row.appendChild(top);
+
+    const desc = document.createElement('div');
+    desc.style.cssText = 'font-size:11px;opacity:.75;margin-top:2px;';
+    desc.textContent = t('ach_' + a.id + '_d');
+    row.appendChild(desc);
+
+    const barWrap = document.createElement('div');
+    barWrap.style.cssText = 'margin-top:8px;height:7px;border-radius:5px;background:rgba(255,255,255,.12);overflow:hidden;';
+    const bar = document.createElement('div');
+    bar.style.cssText = 'height:100%;border-radius:5px;background:' + (unlocked ? '#ffd34d' : '#b268ff') + ';width:' + (pct * 100) + '%;';
+    barWrap.appendChild(bar);
+    row.appendChild(barWrap);
+
+    const prog = document.createElement('div');
+    prog.style.cssText = 'font-size:10px;opacity:.6;margin-top:4px;text-align:right;';
+    prog.textContent = cur + ' / ' + a.goal;
+    row.appendChild(prog);
+
+    achListEl.appendChild(row);
+  }
+}
+
+let achReturn = STATE.MENU;
+
+function openAchievements(){
+  achReturn = (state === STATE.PAUSED) ? STATE.PAUSED : STATE.MENU;
+  state = STATE.ACH;
+  hideAllScreens();
+  renderAchievements();
+  show(achievementsEl);
+  reanimate(achievementsEl);
+}
+
+function closeAchievements(){
+  if (achReturn === STATE.PAUSED){
+    state = STATE.PAUSED;
+    hideAllScreens();
+    show(menuEl);
+    reanimate(menuEl);
+    document.getElementById('continueBtn').disabled = false;
+  } else {
+    goToMenu();
+  }
+}
+
 
 const CLOUD = {
   apiKey:    'AIzaSyCocguW-KrcPBbo5v1Me9iF1C_dDJHe-Qc',   
@@ -4202,6 +4373,7 @@ document.getElementById('playBtn').addEventListener('click', startGame);
 document.getElementById('continueBtn').addEventListener('click', resumeGame);
 document.getElementById('settingsBtn').addEventListener('click', openSettings);
 document.getElementById('wardrobeBtn').addEventListener('click', openWardrobe);
+document.getElementById('achBtn').addEventListener('click', openAchievements);
 
 
 const ADMIN_PIN = '1337';
@@ -4413,6 +4585,7 @@ async function adminSave(){
 document.getElementById('adminLoadBtn').addEventListener('click', () => adminLoad());
 document.getElementById('adminSaveBtn').addEventListener('click', adminSave);
 document.getElementById('wardrobeBack').addEventListener('click', closeWardrobe);
+document.getElementById('achBack').addEventListener('click', closeAchievements);
 document.getElementById('settingsBack').addEventListener('click', closeSettings);
 document.getElementById('retryBtn').addEventListener('click', startGame);
 document.getElementById('menuBtn').addEventListener('click', goToMenu);
@@ -4435,6 +4608,7 @@ document.querySelectorAll('.chip[data-lang]').forEach(chip => {
     applyStaticI18n();
     buildShop();
     refreshLeaderboardUI();
+    if (state === STATE.ACH) renderAchievements();
   });
 });
 
