@@ -3602,8 +3602,8 @@ let hockey = null;
 function newHockeyPuck(dir){
   return {
     x: HK_W / 2, y: HK_H / 2,
-    vx: (Math.random() - 0.5) * 60,
-    vy: (dir || (Math.random() < 0.5 ? -1 : 1)) * 180,
+    vx: (Math.random() - 0.5) * 80,
+    vy: (dir || (Math.random() < 0.5 ? -1 : 1)) * 210,
     r: 11
   };
 }
@@ -3681,18 +3681,18 @@ function updateMiniGame(dt){
 
   if (hk.msgTimer > 0) hk.msgTimer -= dt;
 
-  hk.px = approach(hk.px, hk.ptx, 22, dt);
-  hk.py = approach(hk.py, hk.pty, 22, dt);
+  hk.px = approach(hk.px, hk.ptx, 34, dt);
+  hk.py = approach(hk.py, hk.pty, 34, dt);
   hk.px = clamp(hk.px, hk.pr, HK_W - hk.pr);
   hk.py = clamp(hk.py, HK_H * 0.52 + hk.pr, HK_H - hk.pr);
 
   if (!hk.over){
     if (hk.mode === '2p'){
-      hk.ax = approach(hk.ax, hk.atx, 22, dt);
-      hk.ay = approach(hk.ay, hk.aty, 22, dt);
+      hk.ax = approach(hk.ax, hk.atx, 34, dt);
+      hk.ay = approach(hk.ay, hk.aty, 34, dt);
     } else {
       const targetAx = clamp(hk.puck.x, hk.ar, HK_W - hk.ar);
-      hk.ax = approach(hk.ax, targetAx, 5.5, dt);
+      hk.ax = approach(hk.ax, targetAx, 6.5, dt);
       hk.ay = approach(hk.ay, HK_H * 0.18, 4, dt);
     }
     hk.ax = clamp(hk.ax, hk.ar, HK_W - hk.ar);
@@ -3707,8 +3707,8 @@ function updateMiniGame(dt){
   const p = hk.puck;
   p.x += p.vx * dt;
   p.y += p.vy * dt;
-  p.vx *= Math.pow(0.994, dt * 60);
-  p.vy *= Math.pow(0.994, dt * 60);
+  p.vx *= Math.pow(0.998, dt * 60);
+  p.vy *= Math.pow(0.998, dt * 60);
 
   if (p.x - p.r < 0){ p.x = p.r; p.vx = Math.abs(p.vx); }
   if (p.x + p.r > HK_W){ p.x = HK_W - p.r; p.vx = -Math.abs(p.vx); }
@@ -3731,43 +3731,33 @@ function updateMiniGame(dt){
       const nx = dx / dist, ny = dy / dist;
       p.x = paddle.x + nx * minDist;
       p.y = paddle.y + ny * minDist;
-      const speed = Math.max(260, Math.sqrt(p.vx * p.vx + p.vy * p.vy) * 1.15);
+      const speed = Math.max(320, Math.sqrt(p.vx * p.vx + p.vy * p.vy) * 1.25);
       p.vx = nx * speed;
       p.vy = ny * speed;
       sfxJump();
-      shake = Math.max(shake, 3);
       break;
     }
   }
 
-  const maxSpeed = 640;
+  const maxSpeed = 720;
   const sp = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
   if (sp > maxSpeed){ p.vx = p.vx / sp * maxSpeed; p.vy = p.vy / sp * maxSpeed; }
 }
 
-function drawHockeyPaddle(cx, cy, r, furColor, darkColor){
-  ctx.save();
-  ctx.translate(cx, cy);
-
-  ctx.fillStyle = 'rgba(21,10,43,.35)';
-  ctx.beginPath(); ctx.arc(0, r * 0.1, r * 1.02, 0, 6.2832); ctx.fill();
-
+function drawHockeyPaddleFace(r, furColor, darkColor){
   ctx.fillStyle = furColor;
   for (const side of [-1, 1]){
     ctx.beginPath();
     ctx.ellipse(side * r * 0.55, -r * 0.72, r * 0.28, r * 0.4, side * 0.3, 0, 6.2832);
     ctx.fill();
   }
-
   ctx.fillStyle = furColor;
   ctx.beginPath(); ctx.arc(0, 0, r, 0, 6.2832); ctx.fill();
-  ctx.strokeStyle = 'rgba(255,255,255,.4)'; ctx.lineWidth = 2; ctx.stroke();
 
   ctx.fillStyle = darkColor;
   for (const side of [-1, 1]){
     ctx.beginPath(); ctx.arc(side * r * 0.32, -r * 0.08, r * 0.11, 0, 6.2832); ctx.fill();
   }
-
   ctx.strokeStyle = darkColor;
   ctx.lineWidth = Math.max(1.2, r * 0.07);
   ctx.lineCap = 'round';
@@ -3776,6 +3766,33 @@ function drawHockeyPaddle(cx, cy, r, furColor, darkColor){
   ctx.lineTo(0, r * 0.4);
   ctx.lineTo(r * 0.14, r * 0.3);
   ctx.stroke();
+}
+
+function drawHockeyPaddle(cx, cy, r, ringColor, imgRec){
+  ctx.save();
+  ctx.translate(cx, cy);
+
+  ctx.fillStyle = 'rgba(21,10,43,.35)';
+  ctx.beginPath(); ctx.arc(0, r * 0.1, r * 1.02, 0, 6.2832); ctx.fill();
+
+  if (imgRec && imgRec.ready){
+    ctx.save();
+    ctx.beginPath(); ctx.arc(0, 0, r, 0, 6.2832); ctx.clip();
+    ctx.fillStyle = '#2a1550';
+    ctx.fillRect(-r, -r, r * 2, r * 2);
+    const s = r * 2.3;
+    ctx.drawImage(imgRec.img, -s / 2, -s / 2 + r * 0.12, s, s);
+    ctx.restore();
+  } else {
+    drawHockeyPaddleFace(r, ringColor, '#2a1150');
+  }
+
+  ctx.strokeStyle = ringColor;
+  ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.arc(0, 0, r, 0, 6.2832); ctx.stroke();
+  ctx.strokeStyle = 'rgba(255,255,255,.35)';
+  ctx.lineWidth = 1.2;
+  ctx.beginPath(); ctx.arc(0, 0, r - 2.5, 0, 6.2832); ctx.stroke();
 
   ctx.restore();
 }
@@ -3815,8 +3832,8 @@ function renderMiniGame(){
   ctx.fillStyle = 'rgba(159,232,159,.35)';
   ctx.fillRect(ox + (HK_W - HK_GOAL_W) / 2, oy + HK_H, HK_GOAL_W, 6);
 
-  drawHockeyPaddle(ox + hk.ax, oy + hk.ay, hk.ar, '#8a2be2', '#2a1150');
-  drawHockeyPaddle(ox + hk.px, oy + hk.py, hk.pr, '#ffb26b', '#5a3200');
+  drawHockeyPaddle(ox + hk.ax, oy + hk.ay, hk.ar, '#8a2be2', charImgs['hero']);
+  drawHockeyPaddle(ox + hk.px, oy + hk.py, hk.pr, '#ffb26b', charImgs[outfit.char]);
 
   ctx.fillStyle = '#151020';
   ctx.beginPath(); ctx.arc(ox + hk.puck.x, oy + hk.puck.y, hk.puck.r, 0, 6.2832); ctx.fill();
