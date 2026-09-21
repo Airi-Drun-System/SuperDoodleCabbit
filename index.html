@@ -545,6 +545,12 @@
         </div>
       </div>
       <div class="settingRow">
+        <span class="settingLabel" data-i18n="musicLabel">Музыка</span>
+        <div class="btnRow">
+          <button id="musicToggle" class="chip"></button>
+        </div>
+      </div>
+      <div class="settingRow">
         <span class="settingLabel" data-i18n="nickLabel">Ник</span>
         <div class="btnRow">
           <button id="changeNickBtn" class="chip" data-i18n="changeNickBtn">Изменить</button>
@@ -749,8 +755,25 @@ const sfxGlass = () => { beep(1400, 0.05, 'square', 0.12); beep(200, 0.18, 'sawt
 const sfxSmash = () => { if (playCustomSfx('kill')) return; beep(90, 0.22, 'sawtooth', 0.22); beep(660, 0.12, 'square', 0.14); };
 const sfxOver  = () => { if (playCustomSfx('fall')) return; beep(160, 0.35, 'sawtooth', 0.14); };
 
+let musicOn = Store.get('music', '1') === '1';
+let ambientReady = true;
+const ambientAudio = new Audio('ambient-music.mp3');
+ambientAudio.loop = true;
+ambientAudio.volume = 0.28;
+ambientAudio.preload = 'auto';
+ambientAudio.addEventListener('error', () => { ambientReady = false; });
+function startAmbient(){
+  if (!musicOn || !ambientReady) return;
+  const p = ambientAudio.play();
+  if (p && p.catch) p.catch(() => {});
+}
+function stopAmbient(){ ambientAudio.pause(); }
+function ensureAmbient(){ if (musicOn) startAmbient(); }
+
 window.addEventListener('pointerdown', ensureAudio, { once: true });
 window.addEventListener('keydown', ensureAudio, { once: true });
+window.addEventListener('pointerdown', ensureAmbient, { once: true });
+window.addEventListener('keydown', ensureAmbient, { once: true });
 
 
 const I18N = {
@@ -758,6 +781,7 @@ const I18N = {
     tagline: 'кот, кролик, одно целое',
     best: 'Лучший результат', settings: 'Настройки', play: 'Играть',
     cont: 'Продолжить', back: 'Назад', language: 'Язык', motionBlur: 'Motion blur',
+    musicLabel: 'Музыка',
     on: 'вкл', off: 'выкл',
     hint: 'Клавиши ← → или A / D, на телефоне — кнопки внизу. Тап по экрану: выстрел из лука или двойной прыжок. Встретил монстра — жми, пока идёт отсчёт!',
     slotHat: 'На голову', slotAcc: 'Аксессуары', slotTool: 'Инструмент', slotPerk: 'Слоты',
@@ -823,6 +847,7 @@ const I18N = {
     tagline: 'cat, rabbit, one and the same',
     best: 'Best score', settings: 'Settings', play: 'Play',
     cont: 'Continue', back: 'Back', language: 'Language', motionBlur: 'Motion blur',
+    musicLabel: 'Music',
     on: 'on', off: 'off',
     hint: 'Arrow keys or A / D, on phone use the buttons below. Tap the screen to fire the bow or double jump. Met a monster? Tap before the timer runs out!',
     slotHat: 'Headwear', slotAcc: 'Accessories', slotTool: 'Tool', slotPerk: 'Slots',
@@ -904,6 +929,10 @@ function applyStaticI18n(){
   });
   blurToggle.textContent = t('motionBlur') + ': ' + (motionBlurOn ? t('on') : t('off'));
   blurToggle.setAttribute('aria-pressed', motionBlurOn ? 'true' : 'false');
+  if (typeof musicToggle !== 'undefined'){
+    musicToggle.textContent = t('musicLabel') + ': ' + (musicOn ? t('on') : t('off'));
+    musicToggle.setAttribute('aria-pressed', musicOn ? 'true' : 'false');
+  }
 }
 
 
@@ -3254,8 +3283,8 @@ function frame(now){
 }
 
 document.addEventListener('visibilitychange', () => {
-  if (!document.hidden){ last = performance.now(); acc = 0; }
-  else if (state === STATE.PLAY){ pauseGame(); }
+  if (!document.hidden){ last = performance.now(); acc = 0; ensureAmbient(); }
+  else { if (state === STATE.PLAY) pauseGame(); stopAmbient(); }
 });
 
 const rotateOverlayEl = document.getElementById('rotateOverlay');
@@ -4598,6 +4627,14 @@ blurToggle.addEventListener('click', () => {
     blurAmount = 0;
     blurCtx.clearRect(0, 0, blurCvs.width, blurCvs.height);
   }
+  applyStaticI18n();
+});
+
+const musicToggle = document.getElementById('musicToggle');
+musicToggle.addEventListener('click', () => {
+  musicOn = !musicOn;
+  Store.set('music', musicOn ? '1' : '0');
+  if (musicOn) startAmbient(); else stopAmbient();
   applyStaticI18n();
 });
 
