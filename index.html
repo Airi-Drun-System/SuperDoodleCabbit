@@ -23,7 +23,16 @@
     user-select:none;-webkit-user-select:none;
   }
   #wrap{position:fixed;inset:0;}
-  canvas#game{display:block;width:100%;height:100%;}
+  #rotateOverlay{
+    position:fixed;inset:0;z-index:9999;background:#150a2b;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+    padding:20px;text-align:center;color:#fdf6e8;
+  }
+  #rotateOverlay.hidden{display:none;}
+  #rotateOverlay .rotateIcon{font-size:52px;animation:rotateHint 1.6s ease-in-out infinite;}
+  #rotateOverlay p{font-size:16px;font-weight:600;max-width:280px;opacity:.85;}
+  @keyframes rotateHint{ 0%,100%{transform:rotate(0deg);} 50%{transform:rotate(-90deg);} }
+  canvas#game{display:block;width:100%;height:100%;touch-action:none;}
 
   .screen{
     position:absolute;inset:0;
@@ -38,8 +47,7 @@
   #nickname{background:radial-gradient(120% 90% at 50% 30%, rgba(87,45,140,.65), rgba(21,10,43,.97));justify-content:center;}
   #over{
     justify-content:center;
-    /* Фон плотнее, а размытие слабее — backdrop-filter дорого стоит слабым
-       телефонам, особенно с крупным blur-радиусом. */
+    
     background:rgba(21,10,43,.72);
     backdrop-filter:blur(6px) saturate(115%);
     -webkit-backdrop-filter:blur(6px) saturate(115%);
@@ -59,8 +67,7 @@
   .coinNum{color:var(--gold);font-weight:800;font-size:20px;}
 
   .btnRow{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
-  /* Кнопки подвешены КАК качели: сверху перекладина, от неё к каждой кнопке
-     идут две верёвки, и вся кнопка тихонько раскачивается. */
+  
   #menu .btnRow{
     position:relative;flex-direction:column;align-items:center;
     width:min(300px,88vw);gap:18px;padding:12px 0 4px;
@@ -155,8 +162,25 @@
     border-radius:20px;padding:12px 12px 14px;
     display:flex;flex-direction:column;gap:9px;
   }
-  .wrow{display:flex;align-items:flex-start;gap:6px;flex-wrap:wrap;justify-content:center;}
-  .wlabel{font-size:12px;opacity:.55;width:100%;text-align:left;padding-left:5px;}
+  .ownedTag{color:#9fe89f;font-weight:800;display:block;margin-top:2px;}
+
+  .shopTabs{display:flex;gap:6px;width:min(430px,95vw);justify-content:center;flex-wrap:wrap;}
+  .shopTab{
+    border:none;cursor:pointer;font-family:inherit;font-weight:700;font-size:12.5px;
+    color:#e8d9ff;background:rgba(255,255,255,.07);padding:9px 16px;border-radius:14px;
+    box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.16);
+  }
+  .shopTab.active{
+    background:linear-gradient(180deg,#ffd08a,#ff9f45);color:#3a1f00;box-shadow:0 3px 0 #c26a1d;
+  }
+  .shopPanel{display:none;}
+  .shopPanel.active{
+    display:grid;grid-template-columns:repeat(2,1fr);gap:8px;
+  }
+  .shopPanel .chip{
+    max-width:none;width:100%;box-sizing:border-box;
+    min-height:66px;display:flex;flex-direction:column;justify-content:center;
+  }
   .chip{
     position:relative;border:none;cursor:pointer;font-family:inherit;font-size:12.5px;font-weight:600;
     color:#e8d9ff;background:rgba(255,255,255,.07);
@@ -264,8 +288,7 @@
   #nickInput:focus{outline:3px solid var(--peach);}
 
   #pauseBtn{
-    /* По центру верхнего края: слева счёт/рекорд, справа монеты — здесь
-       всегда пусто, так что кнопка никогда их не перекрывает. */
+    
     position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:6;
     width:38px;height:38px;border-radius:50%;border:none;cursor:pointer;
     background:rgba(21,10,43,.45);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.28);
@@ -275,9 +298,18 @@
   #pauseBtn.hidden{display:none;}
   #pauseBtn svg{width:16px;height:16px;}
 
+  #miniBackBtn{
+    position:absolute;top:10px;left:10px;z-index:6;
+    width:38px;height:38px;border-radius:50%;border:none;cursor:pointer;
+    background:rgba(21,10,43,.45);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.28);
+    display:flex;align-items:center;justify-content:center;
+  }
+  #miniBackBtn:active{transform:scale(.9);}
+  #miniBackBtn.hidden{display:none;}
+  #miniBackBtn svg{width:16px;height:16px;}
+
   .ctrlBtn{
-    /* Держим стрелки ближе к середине экрана по высоте — так до них проще
-       дотянуться большим пальцем, не отрывая руку от нижней части телефона. */
+    
     position:absolute;top:50%;transform:translateY(-50%);z-index:6;
     width:64px;height:64px;border-radius:50%;border:none;cursor:pointer;
     background:rgba(21,10,43,.42);box-shadow:inset 0 0 0 2px rgba(255,255,255,.28);
@@ -334,8 +366,7 @@
     box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.25);flex:0 0 auto;
   }
   .charArrow:active{background:rgba(255,178,107,.35);}
-  /* Круглые кнопки-иконки для админки (загрузить/сохранить) — фиксированный
-     размер, не растягиваются текстом и не вылезают за край экрана на телефоне. */
+  
   .adminIconBtn{
     width:40px;height:40px;min-width:40px;border-radius:50%;border:none;cursor:pointer;
     background:var(--gold);font-size:18px;line-height:1;flex:0 0 auto;
@@ -358,8 +389,17 @@
 <div id="wrap">
   <canvas id="game"></canvas>
 
+  <div id="rotateOverlay" class="hidden">
+    <div class="rotateIcon">⟲</div>
+    <p data-i18n="rotateMsg">Переверни телефон вертикально</p>
+  </div>
+
   <button id="pauseBtn" class="hidden" aria-label="Пауза">
     <svg viewBox="0 0 24 24" fill="none"><rect x="6" y="4" width="4" height="16" rx="1" fill="#fdf6e8"/><rect x="14" y="4" width="4" height="16" rx="1" fill="#fdf6e8"/></svg>
+  </button>
+
+  <button id="miniBackBtn" class="hidden" aria-label="Назад">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M15 5 L8 12 L15 19" stroke="#fdf6e8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
   </button>
 
   <button id="leftBtn" class="hidden ctrlBtn" aria-label="Влево">
@@ -380,6 +420,7 @@
   </div>
 
   <div id="menu" class="screen hidden">
+    <div id="secretZone" style="position:absolute;top:0;left:0;width:48px;height:48px;z-index:50;"></div>
     <div class="spacer"></div>
     <canvas id="preview" width="220" height="220"></canvas>
     <h1 class="title pop">Cabbit Jump!<span data-i18n="tagline">кот, кролик, одно целое</span></h1>
@@ -394,10 +435,23 @@
       <div class="swing"><button id="playBtn" class="btn" data-i18n="play">Играть</button></div>
       <div class="swing"><button id="continueBtn" class="btn" disabled data-i18n="cont">Продолжить</button></div>
       <div class="swing"><button id="wardrobeBtn" class="btn" data-i18n="wardrobe">Гардероб</button></div>
+      <div class="swing"><button id="hockeyBtn" class="btn" data-i18n="hockeyBtn">Аэрохоккей</button></div>
       <div class="swing"><button id="settingsBtn" class="btn ghost" data-i18n="settings">Настройки</button></div>
     </div>
     <p class="hint rise d4" data-i18n="hint">Клавиши ← → или A / D, на телефоне — кнопки внизу. Тап по экрану: выстрел из лука или двойной прыжок. Встретил монстра — жми, пока идёт отсчёт!</p>
     <a href="https://discord.gg/H6WcNMffZ" target="_blank" rel="noopener" class="btn ghost rise d4" style="text-decoration:none;">Discord</a>
+    <div class="spacer"></div>
+  </div>
+
+  <div id="hockeyModes" class="screen hidden">
+    <div class="spacer"></div>
+    <h1 class="title pop" data-i18n="hockeyBtn" style="font-size:clamp(24px,7vw,40px);">Аэрохоккей</h1>
+    <div class="btnRow rise d2">
+      <div class="swing"><button id="hockeyVsAiBtn" class="btn" data-i18n="hockeyVsAi">Против ИИ</button></div>
+      <div class="swing"><button id="hockeyVs2pBtn" class="btn" data-i18n="hockeyVs2p">Вдвоём</button></div>
+    </div>
+    <p class="hint rise d3" data-i18n="hockeyHint2p">В режиме «Вдвоём» каждый водит своей рукой со своей половины стола.</p>
+    <button id="hockeyModesBack" class="btn ghost rise d4" data-i18n="back">Назад</button>
     <div class="spacer"></div>
   </div>
 
@@ -413,6 +467,7 @@
     <p class="stats rise d1">
       <span><i class="coinDot"></i><span class="coinNum" id="wardrobeCoins">0</span></span>
     </p>
+    <div id="shopTabs" class="shopTabs rise d2"></div>
     <div id="shop" class="rise d2"></div>
     <div id="lockedPanel" class="hidden"></div>
     <button id="wardrobeBack" class="btn ghost rise d3" data-i18n="back">Назад</button>
@@ -430,6 +485,47 @@
           <button class="chip" data-lang="en">English</button>
         </div>
       </div>
+
+      <div id="adminGate" class="settingRow hidden" style="flex-direction:column;gap:8px;background:rgba(255,211,77,.08);border:1px solid rgba(255,211,77,.28);border-radius:16px;padding:14px;">
+        <input id="adminPinInput" type="password" placeholder="PIN" inputmode="numeric"
+               style="width:160px;text-align:center;font-size:16px;padding:8px;border-radius:12px;border:none;background:rgba(255,255,255,.9);color:#2a1550;font-weight:600;">
+        <button id="adminPinBtn" class="btn small">Войти</button>
+      </div>
+
+      <div id="adminTool" class="settingRow hidden" style="flex-direction:column;gap:10px;align-items:stretch;background:rgba(255,211,77,.08);border:1px solid rgba(255,211,77,.28);border-radius:16px;padding:14px;">
+        <span class="settingLabel">⚒ Админка</span>
+        <p style="font-size:11px;opacity:.6;margin:0;">Тапни по игроку в рейтинге ниже, чтобы выдать ему вещи или монеты</p>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <input id="adminCodeInput" type="text" placeholder="...или код вручную"
+                 style="flex:1;min-width:0;padding:8px 10px;border-radius:12px;border:none;text-transform:uppercase;font-size:13px;background:rgba(255,255,255,.9);color:#2a1550;font-weight:600;text-align:center;">
+          <button id="adminLoadBtn" class="adminIconBtn" aria-label="Загрузить">↓</button>
+        </div>
+
+        <div id="adminPlayerBox" class="hidden" style="display:flex;flex-direction:column;gap:8px;">
+          <p id="adminCodeLine" style="margin:0;font-size:11px;opacity:.6;"></p>
+          <label style="display:flex;justify-content:space-between;align-items:center;font-size:13px;">Ник
+            <input id="adminNickInput" type="text" maxlength="14" style="width:140px;padding:6px;border-radius:8px;border:none;">
+          </label>
+          <label style="display:flex;justify-content:space-between;align-items:center;font-size:13px;">Монеты
+            <input id="adminCoinsInput" type="number" style="width:100px;padding:6px;border-radius:8px;border:none;">
+          </label>
+          <label style="display:flex;justify-content:space-between;align-items:center;font-size:13px;">Рекорд
+            <input id="adminBestInput" type="number" style="width:100px;padding:6px;border-radius:8px;border:none;">
+          </label>
+          <label style="display:flex;justify-content:space-between;align-items:center;font-size:13px;">Титул
+            <input id="adminTitleInput" type="text" maxlength="16" placeholder="слово" style="width:140px;padding:6px;border-radius:8px;border:none;">
+          </label>
+          <label style="display:flex;justify-content:space-between;align-items:center;font-size:13px;">Цвет/градиент
+            <input id="adminTitleColorInput" type="text" placeholder="#ffd34d или linear-gradient(...)" style="width:140px;padding:6px;border-radius:8px;border:none;font-size:11px;">
+          </label>
+          <div id="adminItemsGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:4px 10px;max-height:180px;overflow-y:auto;font-size:11px;"></div>
+          <div style="display:flex;justify-content:center;">
+            <button id="adminSaveBtn" class="adminIconBtn" aria-label="Сохранить">✓</button>
+          </div>
+        </div>
+        <p id="adminStatus" style="font-size:11px;opacity:.8;min-height:14px;margin:0;"></p>
+      </div>
+
       <div class="settingRow">
         <span class="settingLabel" data-i18n="motionBlur">Motion blur</span>
         <div class="btnRow">
@@ -440,6 +536,12 @@
         <span class="settingLabel" data-i18n="nickLabel">Ник</span>
         <div class="btnRow">
           <button id="changeNickBtn" class="chip" data-i18n="changeNickBtn">Изменить</button>
+        </div>
+      </div>
+      <div class="settingRow">
+        <span class="settingLabel" data-i18n="supportLabel">Поддержка</span>
+        <div class="btnRow">
+          <button id="supportBtn" class="chip" data-i18n="supportBtn">Написать</button>
         </div>
       </div>
       <div class="settingRow" id="cloudSection" style="border-top:1px solid rgba(255,255,255,.1);padding-top:14px;">
@@ -456,42 +558,6 @@
         <span class="settingLabel" data-i18n="cloudTop">Рейтинг игроков</span>
         <div id="onlineLbRows"></div>
         <button class="cloudBtn" id="cloudRefreshBtn" data-i18n="cloudRefresh">Обновить рейтинг</button>
-      </div>
-
-      <!-- Скрытая админка: 7 быстрых тапов по заголовку "Настройки" открывают
-           PIN-запрос прямо здесь. Обычный игрок этого никогда не увидит. -->
-      <div id="adminGate" class="settingRow hidden" style="flex-direction:column;gap:8px;border-top:1px solid rgba(255,255,255,.1);padding-top:14px;">
-        <input id="adminPinInput" type="password" placeholder="PIN" inputmode="numeric"
-               style="width:160px;text-align:center;font-size:16px;padding:8px;border-radius:12px;border:none;background:var(--gold);color:#150a2b;font-weight:700;">
-        <button id="adminPinBtn" class="btn small">Войти</button>
-      </div>
-
-      <div id="adminTool" class="settingRow hidden" style="flex-direction:column;gap:10px;align-items:stretch;border-top:1px solid rgba(255,255,255,.1);padding-top:14px;">
-        <span class="settingLabel">🛠 Админка</span>
-        <p style="font-size:11px;opacity:.6;margin:0;">Тапни по игроку в рейтинге выше, чтобы выдать ему вещи или монеты</p>
-        <div style="display:flex;gap:8px;align-items:center;">
-          <input id="adminCodeInput" type="text" placeholder="...или код вручную"
-                 style="flex:1;min-width:0;padding:8px 10px;border-radius:12px;border:none;text-transform:uppercase;font-size:13px;background:var(--gold);color:#150a2b;font-weight:700;text-align:center;">
-          <button id="adminLoadBtn" class="adminIconBtn" aria-label="Загрузить">📥</button>
-        </div>
-
-        <div id="adminPlayerBox" class="hidden" style="display:flex;flex-direction:column;gap:8px;">
-          <p id="adminCodeLine" style="margin:0;font-size:11px;opacity:.6;"></p>
-          <label style="display:flex;justify-content:space-between;align-items:center;font-size:13px;">Ник
-            <input id="adminNickInput" type="text" maxlength="14" style="width:140px;padding:6px;border-radius:8px;border:none;">
-          </label>
-          <label style="display:flex;justify-content:space-between;align-items:center;font-size:13px;">Монеты
-            <input id="adminCoinsInput" type="number" style="width:100px;padding:6px;border-radius:8px;border:none;">
-          </label>
-          <label style="display:flex;justify-content:space-between;align-items:center;font-size:13px;">Рекорд
-            <input id="adminBestInput" type="number" style="width:100px;padding:6px;border-radius:8px;border:none;">
-          </label>
-          <div id="adminItemsGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:4px 10px;max-height:180px;overflow-y:auto;font-size:11px;"></div>
-          <div style="display:flex;justify-content:center;">
-            <button id="adminSaveBtn" class="adminIconBtn" aria-label="Сохранить">✅</button>
-          </div>
-        </div>
-        <p id="adminStatus" style="font-size:11px;opacity:.8;min-height:14px;margin:0;"></p>
       </div>
     </div>
     <button id="settingsBack" class="btn ghost rise d2" data-i18n="back">Назад</button>
@@ -512,13 +578,9 @@
 
 <script>
 "use strict";
-/* =========================================================================
-   CABBIT JUMP! — мега-патч
-   Canvas 2D · delta time · motion blur · монеты · гардероб со способностями ·
-   ник + локальный лидерборд · пауза/продолжить · RU/EN · монстр + булава
-   ========================================================================= */
 
-/* ---------- Канвас ---------- */
+
+
 const cvs = document.getElementById('game');
 const ctx = cvs.getContext('2d', { alpha: false });
 const blurCvs = document.createElement('canvas');
@@ -528,33 +590,34 @@ const VW = 420;
 let   VH = 740;
 let   DPR = 1, S = 1, cssW = 0, cssH = 0;
 
-/* На компьютере управление клавишами, стрелки на экране только мешают —
-   показываем их только когда устройство реально сенсорное. */
+
 const isTouchDevice = (navigator.maxTouchPoints > 0) ||
   (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) ||
   ('ontouchstart' in window);
 
 function resize(){
-  cssW = window.innerWidth;
-  cssH = window.innerHeight;
+  cssW = window.innerWidth  || cssW || VW;
+  cssH = window.innerHeight || cssH || VH;
+  if (!(cssW > 0)) cssW = VW;
+  if (!(cssH > 0)) cssH = VH;
   DPR  = Math.min(window.devicePixelRatio || 1, 2);
   cvs.width  = Math.round(cssW * DPR);
   cvs.height = Math.round(cssH * DPR);
   blurCvs.width  = cvs.width;
   blurCvs.height = cvs.height;
   S  = cssW / VW;
+  if (!(S > 0) || !isFinite(S)) S = 1;
   VH = cssH / S;
+  if (!(VH > 0) || !isFinite(VH)) VH = 740;
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = 'high';
 }
-window.addEventListener('resize', resize);
-window.addEventListener('orientationchange', () => setTimeout(resize, 120));
 resize();
 
 const worldTransform = () => ctx.setTransform(S * DPR, 0, 0, S * DPR, 0, 0);
 const pixelTransform = () => ctx.setTransform(1, 0, 0, 1, 0, 0);
 
-/* ---------- Утилиты ---------- */
+
 const clamp = (v, a, b) => v < a ? a : (v > b ? b : v);
 const lerp  = (a, b, t) => a + (b - a) * t;
 const rand  = (a, b) => a + Math.random() * (b - a);
@@ -576,7 +639,7 @@ function rr(c, x, y, w, h, r){
   c.closePath();
 }
 
-/* ---------- LocalStorage ---------- */
+
 const Store = {
   mem: {},
   get(key, def){
@@ -595,7 +658,7 @@ let best  = parseInt(Store.get('best', '0'), 10) || 0;
 let coins = parseInt(Store.get('coins', '0'), 10) || 0;
 let nickname = Store.get('nick', '');
 
-/* ---------- Звук (простые синтезированные сигналы, без файлов) ---------- */
+
 let actx = null;
 function ensureAudio(){
   if (actx) return;
@@ -608,9 +671,9 @@ function beep(freq, dur, type, gainPeak){
     gainPeak = gainPeak != null ? gainPeak : 0.18;
     const t0 = actx.currentTime;
 
-    // Фильтр срезает острые верхние гармоники "квадрата"/"пилы" и плавно
-    // прикрывается к концу ноты — вместо резкого чиптюна получается
-    // мягкий, "сливочный" тон, похожий на аналоговый синтезатор.
+    
+    
+    
     const filter = actx.createBiquadFilter();
     filter.type = 'lowpass';
     filter.frequency.setValueAtTime(Math.max(freq * 3.4, 900), t0);
@@ -635,8 +698,8 @@ function beep(freq, dur, type, gainPeak){
       osc.stop(t0 + dur + 0.05);
     }
     const baseType = type || 'sine';
-    // резкие волны смягчаем "треугольным" подголоском — толще и теплее,
-    // без потери исходного характера звука
+    
+    
     const softType = (baseType === 'square' || baseType === 'sawtooth') ? 'triangle' : baseType;
     layer(0, 1, baseType);
     layer(7, 0.30, softType);
@@ -646,17 +709,38 @@ function beep(freq, dur, type, gainPeak){
     gain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
   } catch (e) {}
 }
+const CUSTOM_SFX = {};
+function loadCustomSfx(key, filename){
+  const a = new Audio(filename);
+  a.preload = 'auto';
+  const state = { audio: a, ok: true };
+  a.addEventListener('error', () => { state.ok = false; });
+  CUSTOM_SFX[key] = state;
+}
+loadCustomSfx('kill', 'sfx-monster-kill.mp3');
+loadCustomSfx('fall', 'sfx-fall.mp3');
+function playCustomSfx(key, volume){
+  const s = CUSTOM_SFX[key];
+  if (!s || !s.ok) return false;
+  try {
+    const node = s.audio.cloneNode();
+    node.volume = volume != null ? volume : 1;
+    const p = node.play();
+    if (p && p.catch) p.catch(() => { s.ok = false; });
+    return true;
+  } catch (e) { return false; }
+}
 const sfxCoin  = () => beep(920, 0.10, 'triangle', 0.14);
 const sfxJump  = () => beep(300, 0.08, 'square', 0.05);
 const sfxSpring= () => { beep(500, 0.12, 'sawtooth', 0.12); beep(760, 0.14, 'sawtooth', 0.10); };
 const sfxGlass = () => { beep(1400, 0.05, 'square', 0.12); beep(200, 0.18, 'sawtooth', 0.10); };
-const sfxSmash = () => { beep(90, 0.22, 'sawtooth', 0.22); beep(660, 0.12, 'square', 0.14); };
-const sfxOver  = () => beep(160, 0.35, 'sawtooth', 0.14);
+const sfxSmash = () => { if (playCustomSfx('kill')) return; beep(90, 0.22, 'sawtooth', 0.22); beep(660, 0.12, 'square', 0.14); };
+const sfxOver  = () => { if (playCustomSfx('fall')) return; beep(160, 0.35, 'sawtooth', 0.14); };
 
 window.addEventListener('pointerdown', ensureAudio, { once: true });
 window.addEventListener('keydown', ensureAudio, { once: true });
 
-/* ---------- Локализация ---------- */
+
 const I18N = {
   ru: {
     tagline: 'кот, кролик, одно целое',
@@ -668,6 +752,11 @@ const I18N = {
     notEnough: 'Не хватает', coinsWord: 'монет', buyFor: 'Купить за', revert: 'Снять',
     nickTitle: 'Как тебя зовут?', nickPlaceholder: 'Ник кэббита', nickConfirm: 'Готово',
     nickLabel: 'Ник', changeNickBtn: 'Изменить',
+    supportLabel: 'Поддержка', supportBtn: 'Написать',
+    rotateMsg: 'Переверни телефон вертикально',
+    hockeyBtn: 'Аэрохоккей', hockeyWin: 'Победа!', hockeyLose: 'Поражение', hockeyGoal: 'Гол!',
+    hockeyVsAi: 'Против ИИ', hockeyVs2p: 'Вдвоём',
+    hockeyHint2p: 'В режиме «Вдвоём» каждый водит своей рукой со своей половины стола.',
     leaderboard: 'Таблица лидеров', empty: '—', wardrobe: 'Гардероб',
     overTitleNormal: 'Кэббит приземлился', overTitleRecord: 'Новый рекорд',
     overCoins: 'собрано монет', overRecordLabel: 'Рекорд', overNewBest: 'выше не прыгал никто',
@@ -691,7 +780,6 @@ const I18N = {
       'hat:halo':       { n: 'Нимб',              d: 'Притягивает монеты — они летят к тебе сами.' },
       'acc:none':       { n: 'Ничего',           d: '' },
       'acc:bowtie':     { n: 'Бабочка',          d: 'Просто стильно.' },
-      'acc:glasses':    { n: 'Крутые очки',      d: 'Просто стильно.' },
       'acc:tie':        { n: 'Деловой галстук',  d: 'Очки за высоту начисляются на 25% быстрее.' },
       'acc:pearls':     { n: 'Жемчужное ожерелье', d: 'Просто мило.' },
       'acc:hearteye':   { n: 'Очки-сердечки',      d: 'Просто мило.' },
@@ -718,6 +806,11 @@ const I18N = {
     notEnough: 'Need', coinsWord: 'more coins', buyFor: 'Buy for', revert: 'Remove',
     nickTitle: 'What is your name?', nickPlaceholder: 'Cabbit nickname', nickConfirm: 'Done',
     nickLabel: 'Nickname', changeNickBtn: 'Change',
+    supportLabel: 'Support', supportBtn: 'Message',
+    rotateMsg: 'Please rotate your phone back to portrait',
+    hockeyBtn: 'Air Hockey', hockeyWin: 'You win!', hockeyLose: 'You lose', hockeyGoal: 'Goal!',
+    hockeyVsAi: 'Vs Computer', hockeyVs2p: 'Two Players',
+    hockeyHint2p: 'In Two Players mode, each player controls their paddle from their own side.',
     leaderboard: 'Leaderboard', empty: '—', wardrobe: 'Wardrobe',
     overTitleNormal: 'The cabbit has landed', overTitleRecord: 'New record',
     overCoins: 'coins collected', overRecordLabel: 'Best', overNewBest: 'nobody jumped higher',
@@ -741,7 +834,6 @@ const I18N = {
       'hat:halo':       { n: 'Halo',              d: 'Magnet: coins fly straight to you.' },
       'acc:none':       { n: 'Nothing',          d: '' },
       'acc:bowtie':     { n: 'Bowtie',           d: 'Just stylish.' },
-      'acc:glasses':    { n: 'Cool Glasses',     d: 'Just stylish.' },
       'acc:tie':        { n: 'Business Tie',     d: 'Height score gained 25% faster.' },
       'acc:pearls':     { n: 'Pearl Necklace',     d: 'Just cute.' },
       'acc:hearteye':   { n: 'Heart Glasses',      d: 'Just cute.' },
@@ -780,7 +872,7 @@ function applyStaticI18n(){
   blurToggle.setAttribute('aria-pressed', motionBlurOn ? 'true' : 'false');
 }
 
-/* ---------- Гардероб: каталог и владение ---------- */
+
 const OUTFITS = {
   hat: {
     none:      { price: 0 },
@@ -793,12 +885,11 @@ const OUTFITS = {
     sunhat:      { price: 130 },
     crown:       { price: 450 },
     halo:        { price: 700 },
-    starcrown:   { price: 0, locked: true } // награда за 10 000 очков, не продаётся
+    starcrown:   { price: 0, locked: true } 
   },
   acc: {
     none:     { price: 0 },
     bowtie:   { price: 0 },
-    glasses:  { price: 70 },
     tie:      { price: 120 },
     pearls:   { price: 90 },
     hearteye: { price: 110 },
@@ -816,7 +907,7 @@ const OUTFITS = {
   },
   perk: {
     none:     { price: 0 },
-    multiacc: { price: 2500 } // второй слот аксессуара — можно носить сразу два
+    multiacc: { price: 2500 } 
   }
 };
 
@@ -830,32 +921,28 @@ const outfit = {
   tool: Store.get('tool', 'none'),
   char: Store.get('char', 'hero'),
   perk: Store.get('perk', 'none'),
-  hat2: Store.get('hat2', 'none'), // второй головной убор — доступен только если куплен perk:multiacc
-  acc2: Store.get('acc2', 'none')  // второй аксессуар — то же самое
+  hat2: Store.get('hat2', 'none'), 
+  acc2: Store.get('acc2', 'none')  
 };
-// Больше нет отдельной "trialSlot": состояние "примерка / куплено" всегда
-// вычисляется заново по всем слотам разом — см. getLockedItems().
 
-/* Если в сохранении осталась вещь, которой больше нет в каталоге
-   (например, удалённый плащ) — слот тихо возвращается к "ничего". */
+
+
+
 for (const slotKey of Object.keys(OUTFITS)){
   if (!OUTFITS[slotKey][outfit[slotKey]]){
     outfit[slotKey] = (slotKey === 'char') ? 'hero' : 'none';
     Store.set(slotKey, outfit[slotKey]);
   }
 }
-// hat2/acc2 берут значения из тех же каталогов, что hat/acc (это не отдельные
-// вещи, а просто второй выбор из уже купленного)
+
+
 if (!OUTFITS.hat[outfit.hat2]) { outfit.hat2 = 'none'; Store.set('hat2', 'none'); }
 if (!OUTFITS.acc[outfit.acc2]) { outfit.acc2 = 'none'; Store.set('acc2', 'none'); }
 
 function isOwned(slot, val){ return owned.has(slot + ':' + val); }
 function saveOwned(){ Store.set('owned', Array.from(owned).join(',')); }
 
-/* ---------- Спрайты персонажей ----------
-   Каждый персонаж — отдельный файл рядом с index.html. Чтобы добавить ещё
-   одного, впиши его в OUTFITS.char выше и добавь сюда loadCharImage(id).
-   Если файла нет или он не загрузился — рисуется векторный фолбэк. */
+
 const charImgs = {};
 function loadCharImage(id){
   const rec = { img: new Image(), ready: false };
@@ -867,22 +954,17 @@ function loadCharImage(id){
 for (const id of Object.keys(OUTFITS.char)) loadCharImage(id);
 const currentCharReady = () => !!(charImgs[outfit.char] && charImgs[outfit.char].ready);
 
-/* Своя картинка булавы: положи mace.png рядом с index.html.
-   Рисуй вертикально — рукоять внизу картинки, голова булавы вверху,
-   прозрачный фон. Если файла нет — рисуется векторный фолбэк. */
+
 const maceImg = new Image();
 let maceReady = false;
 maceImg.onload  = () => { if (maceImg.naturalWidth > 0) maceReady = true; };
 maceImg.onerror = () => { maceReady = false; };
 maceImg.src = 'mace.png';
 
-/* Точки крепления аксессуаров и инструмента.
-   handX/handY — точка, где рисуется предмет "в лапке" (булава). */
+
 const ANCHOR_SPRITE = { topY: -0.345, cx: 0.015, hw: 0.235, eyeY: -0.155, eyeDX: 0.085, neckY: 0.145, handX: 0.27, handY: 0.30 };
 const ANCHOR_VECTOR = { topY: -0.400, cx: 0.000, hw: 0.290, eyeY: -0.040, eyeDX: 0.150, neckY: 0.330, handX: 0.21, handY: 0.38 };
-/* У каждого персонажа своя компоновка кадра (где голова, где лапки), так
-   что точки крепления шляпы/аксессуара/инструмента подбираются отдельно.
-   Нет записи для персонажа — используется ANCHOR_SPRITE по умолчанию. */
+
 const CHAR_ANCHORS = {
   hero2: { topY: -0.46, cx: 0.0, hw: 0.30, eyeY: -0.30, eyeDX: 0.10, neckY: 0.10, handX: 0.18, handY: 0.15 }
 };
@@ -891,73 +973,66 @@ const anchors = () => {
   return CHAR_ANCHORS[outfit.char] || ANCHOR_SPRITE;
 };
 
-/* ---------- Физика ---------- */
+
 const GRAV       = 1850;
-const JUMP_V      = -790;   // высота прыжка = 790^2/(2*1850) ≈ 169 px
-const SPRING_V    = -1117;  // ровно вдвое выше
-const MACE_LAUNCH = -2550;  // "в космос" — с булавой
-const KICK_LAUNCH = -2050;  // без булавы — тоже мощно, но заметно слабее булавы
-const MOVE_ACC = 1750;   // разгон вбок (было 2600 — слишком резко)
-const MOVE_MAX = 340;    // максимальная скорость вбок (было 430)
+const JUMP_V      = -790;   
+const SPRING_V    = -1117;  
+const MACE_LAUNCH = -2550;  
+const KICK_LAUNCH = -2050;  
+const MOVE_ACC = 1750;   
+const MOVE_MAX = 340;    
 const AIR_DRAG = 0.045;
 const FIXED_DT = 1 / 120;
 
-/* Способности гардероба — работают, только если предмет КУПЛЕН.
-   В примерке (не куплено) вещь надевается визуально, но эффекта не даёт —
-   иначе можно было бы бесплатно пользоваться способностью. */
-/* glassUsedThisRun чинит эксплойт: раньше расколотое стекло можно было надеть
-   заново через паузу → гардероб (оно оставалось "купленным") и спасаться
-   бесконечно. Теперь стекло недоступно до конца ЗАБЕГА, даже если снова
-   выбрать его в гардеробе во время паузы — снимается флаг только в resetGame(). */
+
+
 let glassUsedThisRun = false;
-const hasGlass = () => outfit.hat === 'glass' && isOwned('hat', 'glass') && !glassUsedThisRun;
-const gravityMult   = () => (outfit.hat === 'propeller' && isOwned('hat', 'propeller')) ? 0.55 : 1;
-const scoreMult      = () => (outfit.acc === 'tie' && isOwned('acc', 'tie')) ? 1.25 : 1;
+const multiOn = () => isOwned('perk', 'multiacc');
+const hasHat  = (v) => (outfit.hat === v || (multiOn() && outfit.hat2 === v)) && isOwned('hat', v);
+const hasAcc  = (v) => (outfit.acc === v || (multiOn() && outfit.acc2 === v)) && isOwned('acc', v);
+const hasGlass = () => hasHat('glass') && !glassUsedThisRun;
+const gravityMult   = () => hasHat('propeller') ? 0.55 : 1;
+const scoreMult      = () => hasAcc('tie') ? 1.25 : 1;
 const hasMace       = () => outfit.tool === 'mace' && isOwned('tool', 'mace');
 const hasBow        = () => outfit.tool === 'bow'  && isOwned('tool', 'bow');
-const coinMult      = () => (outfit.hat === 'crown' && isOwned('hat', 'crown')) ? 2 : 1;
-const hasMagnet     = () => outfit.hat === 'halo' && isOwned('hat', 'halo');
-const hasDoubleJump = () => outfit.acc === 'backpack' && isOwned('acc', 'backpack');
+const coinMult      = () => hasHat('crown') ? 2 : 1;
+const hasMagnet     = () => hasHat('halo');
+const hasDoubleJump = () => hasAcc('backpack');
 
-/* ---------- Состояние ---------- */
-const STATE = { MENU: 0, PLAY: 1, PAUSED: 2, OVER: 3, SETTINGS: 4, NICK: 5, WARDROBE: 6 };
+
+const STATE = { MENU: 0, PLAY: 1, PAUSED: 2, OVER: 3, SETTINGS: 4, NICK: 5, WARDROBE: 6, MINI: 7 };
 let state = STATE.NICK;
-let motionBlurOn = Store.get('blur', '0') === '1'; // выкл по умолчанию — самый тяжёлый эффект для слабых телефонов
+let motionBlurOn = Store.get('blur', '0') === '1'; 
 
 const hero = {
   x: VW / 2, y: 0, vx: 0, vy: 0,
   w: 56, h: 56,
   face: 1, sx: 1, sy: 1, tilt: 0,
   prop: 0, ghosts: [],
-  spin: 0 // визуальное кувыркание при взлёте после удара по монстру
+  spin: 0 
 };
 
 let platforms = [], particles = [], coinsOnMap = [], toasts = [], monsters = [];
-let crawlers = [], arrows = [];      // монстрики на платформах и стрелы лука
-let shootCd = 0, airJumps = 0;       // перезарядка лука и запас прыжков в воздухе
+let crawlers = [], arrows = [];      
+let shootCd = 0, airJumps = 0;       
 let camY = 0, camTarget = 0;
 let startY = 0, minY = 0, score = 0, runCoins = 0;
 let shake = 0, shakeX = 0, shakeY = 0;
 let lastPlatY = 0, flash = 0, flashColor = '#fff3c4', blurAmount = 0, blurWanted = 0, coinPulse = 0;
 let monsterTimer = 0;
-let comboCount = 0, comboTimer = 0;          // серия быстрых подборов монет
-const COMBO_WINDOW = 1.3;                     // секунд на следующий подбор, чтобы не сбить комбо
-const MONSTER_INTERVAL = 90; // секунд между летающими монстрами
-let tapEvent = false; // сбрасывается каждый кадр, ставится в true при клике/тапе/пробеле/кнопке удара
+const MONSTER_INTERVAL = 90; 
+let tapEvent = false; 
 
-/* Событие "встреча с монстром": пока активно, весь мир движется в замедленной
-   съёмке (SLOWMO_SCALE), а обратный отсчёт QTE_DURATION идёт в РЕАЛЬНОМ времени. */
-let monsterEvent = null; // { monster, elapsed }
+
+let monsterEvent = null; 
 const SLOWMO_SCALE = 0.16;
 const QTE_DURATION = 6;
 
-/* ---------- Фон ---------- */
+
 const BAND = 1000;
 let layers = [];
 
-/* ---------- Миры ----------------------------------------------------------
-   Каждые 3000 очков — новая палитра: фон и цвет монстров меняются разом.
-   Массив зациклен, так что на очень больших высотах темы просто повторяются. */
+
 const WORLD_THEMES = [
   { name: 'Сумерки',   bg1: [30, 18, 58],  bg2: [96, 52, 132], glow: 'rgba(255,150,90,.22)',
     monster: { light: '#c56bd6', dark: '#6f1f85', spike: '#5a1a6b', stroke: '#3a0f4a',
@@ -979,13 +1054,12 @@ const worldIndex   = () => Math.floor(Math.max(0, score) / 3000) % WORLD_THEMES.
 const currentWorld = () => WORLD_THEMES[worldIndex()];
 let lastWorldIdx = 0;
 
-/* Разовая награда за 10 000 очков: эксклюзивная "Звёздная корона" —
-   не продаётся за монеты, выдаётся автоматически прямо посреди забега. */
+
 function checkWorldMilestone(){
   if (score >= 10000 && !owned.has('hat:starcrown')){
     owned.add('hat:starcrown');
     saveOwned();
-    addToast('🌟 Новый мир! Получена Звёздная корона', hero.x, hero.y - 90, '#ffd34d');
+    addToast('★ Новый мир! Получена Звёздная корона', hero.x, hero.y - 90, '#ffd34d');
     shake = Math.max(shake, 14);
     cloudPushSoon();
   }
@@ -1012,7 +1086,7 @@ function buildLayers(){
 }
 buildLayers();
 
-/* ---------- Платформы ---------- */
+
 const PW = 76, PH = 16;
 
 function makePlatform(y, type, spring){
@@ -1027,11 +1101,7 @@ function makePlatform(y, type, spring){
   };
 }
 
-/* Кривая сложности с явными отметками: на 5000 очков чуть сложнее,
-   на 10000 ещё чуть сложнее, дальше рост замедляется и останавливается
-   на 16000 — платформы становятся дальше друг от друга, но верхняя граница
-   разрыва (118px) всё ещё заметно меньше физического потолка прыжка (~169px),
-   так что маршрут всегда проходим. */
+
 function difficulty(){
   const s = score;
   let t;
@@ -1076,8 +1146,7 @@ function spawnAbove(){
 
   platforms.push(p);
 
-  /* Монстрики на платформах: заводятся, только если куплен и надет лук.
-     Их нужно расстреливать — за каждого дают монеты, а наступать нельзя. */
+  
   if (hasBow() && type === 'normal' && !p.spring && Math.random() < 0.24){
     crawlers.push({ plat: p, x: p.x + p.w / 2, y: p.y - 13, phase: rand(0, 6.28) });
   }
@@ -1089,8 +1158,8 @@ function spawnAbove(){
   lastPlatY = y;
 }
 
-/* ---------- Частицы ---------- */
-const MAX_PARTICLES = 160; // потолок на слабых телефонах — иначе взрыв частиц роняет FPS
+
+const MAX_PARTICLES = 160; 
 function addParticle(p){
   if (particles.length >= MAX_PARTICLES) return;
   particles.push(p);
@@ -1142,7 +1211,7 @@ function burstShards(p){
   }
 }
 
-/* Разлёт монстра "в пиксели" — квадратные частицы, в стиле блоков */
+
 function burstPixels(x, y, colors){
   for (let i = 0; i < 26; i++){
     addParticle({
@@ -1180,23 +1249,18 @@ function addToast(text, x, y, color){
   toasts.push({ text, x, y, life: 1, color: color || '#fff' });
 }
 
-/* ---------- Монстр ---------- */
-/* Монстр держится на ФИКСИРОВАННОЙ позиции относительно экрана (как препятствие
-   в Geometry Dash) — его мировой Y каждый кадр пересчитывается из camY, поэтому
-   он не "убегает" от камеры и не улетает с бешеной скоростью, если игрок прыгает
-   быстрее, чем монстр карабкался. При появлении он плавно въезжает наверх
-   от нижнего края экрана (screenFrac: 1.1 → targetFrac), а дальше висит
-   на targetFrac от высоты экрана, слегка покачиваясь и патрулируя по X. */
+
+
 function spawnMonster(){
   monsters.push({
     x: rand(60, VW - 60),
-    screenFrac: 1.12,               // старт: чуть ниже нижнего края экрана
-    targetFrac: rand(0.6, 0.82),    // высота на экране, где монстр "живёт"
+    screenFrac: 1.12,               
+    targetFrac: rand(0.6, 0.82),    
     y: camY + VH * 1.12,
     vx: rand(40, 80) * (Math.random() < 0.5 ? -1 : 1),
     bob: rand(0, 6.28),
     r: 22,
-    life: 60,                       // если так и не тронули — исчезнет сам через минуту
+    life: 60,                       
     frozen: false
   });
 }
@@ -1206,16 +1270,12 @@ function removeMonster(m){
   if (idx >= 0) monsters.splice(idx, 1);
 }
 
-/* success=true — игрок тапнул вовремя: монстр разлетается в пиксели,
-   кэббита подбрасывает "в космос", как воздушный шар в оригинальной игре.
-   success=false — таймер истёк: монстр молча забирает жизнь (см. handleFatalEvent). */
+
 function killMonster(m, success){
   removeMonster(m);
 
   if (success){
-    /* Булава = сокрушительный удар и полёт "в космос".
-       Без булавы кэббит просто отпинывает монстра: подброс слабее пружины,
-       спецэффекты скромнее и монет меньше — булаву есть смысл покупать. */
+    
     const smash = hasMace();
 
     burstPixels(m.x, m.y, currentWorld().monster.burst);
@@ -1232,7 +1292,7 @@ function killMonster(m, success){
     hero.spin = hero.face * 6.2832 * (smash ? 2.5 : 1.4);
     airJumps = hasDoubleJump() ? 1 : 0;
 
-    // бонусные монеты за победу над монстром
+    
     const bonus = (smash ? 5 : 3) * coinMult();
     runCoins += bonus; coins += bonus;
     Store.set('coins', coins);
@@ -1242,10 +1302,7 @@ function killMonster(m, success){
   }
 }
 
-/* Запускает событие "встреча с монстром": весь мир уходит в slow-motion,
-   на экране появляется кольцо обратного отсчёта и надпись "Жми!".
-   У игрока есть QTE_DURATION реальных секунд, чтобы тапнуть/кликнуть/
-   нажать кнопку удара — иначе монстр "побеждает". */
+
 function startMonsterEvent(m){
   m.frozen = true;
   monsterEvent = { monster: m, elapsed: 0 };
@@ -1266,8 +1323,7 @@ function resolveMonsterEvent(success){
   else { removeMonster(ev.monster); handleFatalEvent(); }
 }
 
-/* Общая точка для "смертельного" события: падение за экран, провал QTE
-   с монстром. Если надет купленный блок стекла — спасает один раз. */
+
 function handleFatalEvent(){
   if (monsterEvent){
     removeMonster(monsterEvent.monster);
@@ -1283,7 +1339,7 @@ function handleFatalEvent(){
     flash = 0.55; flashColor = '#bdeaff';
 
     outfit.hat = 'none';
-    glassUsedThisRun = true; // блокирует повторную "подзарядку" через паузу до конца забега
+    glassUsedThisRun = true; 
     if (isOwned('hat', 'glass')) Store.set('hat', 'none');
 
     hero.y = camY + VH * 0.32;
@@ -1293,7 +1349,7 @@ function handleFatalEvent(){
   gameOver();
 }
 
-/* ---------- Старт ---------- */
+
 function resetGame(){
   platforms.length = 0;
   particles.length = 0;
@@ -1302,7 +1358,6 @@ function resetGame(){
   monsters.length = 0;
   crawlers.length = 0;
   arrows.length = 0;
-  comboCount = 0; comboTimer = 0;
   lastWorldIdx = 0;
   hero.ghosts.length = 0;
 
@@ -1340,7 +1395,7 @@ function resetGame(){
   buildLayers();
 }
 
-/* ---------- Управление ---------- */
+
 const keys = { left: false, right: false };
 const pointers = new Map();
 
@@ -1374,7 +1429,7 @@ cvs.addEventListener('pointerleave', dropPointer);
 window.addEventListener('blur', () => { pointers.clear(); keys.left = keys.right = false; });
 
 function inputDir(){
-  if (monsterEvent) return 0; // во время "Жми!" управление отключено — только тап решает исход
+  if (monsterEvent) return 0; 
   let d = 0;
   if (keys.left)  d -= 1;
   if (keys.right) d += 1;
@@ -1384,7 +1439,7 @@ function inputDir(){
   return clamp(sum, -1, 1);
 }
 
-/* ---------- Физика ---------- */
+
 function stepPhysics(dt){
   const dir = inputDir();
   if (dir !== 0){
@@ -1404,7 +1459,7 @@ function stepPhysics(dt){
   if (hero.x < -hero.w * 0.5) hero.x += VW + hero.w;
   else if (hero.x > VW + hero.w * 0.5) hero.x -= VW + hero.w;
 
-  if (hero.vy <= 0) return; // вверх — сквозь платформы
+  if (hero.vy <= 0) return; 
 
   const bottom = hero.y + hero.h * 0.5;
   const L = hero.x - hero.w * 0.26, R = hero.x + hero.w * 0.26;
@@ -1429,11 +1484,11 @@ function stepPhysics(dt){
       burstShards(p);
       shake = Math.max(shake, 6);
       hero.sx = 1.16; hero.sy = 0.86;
-      return; // hero.vy не меняется — падение продолжается сквозь платформу
+      return; 
     }
 
     hero.y = top - hero.h * 0.5;
-    airJumps = hasDoubleJump() ? 1 : 0; // ранец перезаряжается от любой платформы
+    airJumps = hasDoubleJump() ? 1 : 0; 
     p.wobble = 1;
     hero.sx = 1.35; hero.sy = 0.66;
 
@@ -1456,9 +1511,7 @@ function stepPhysics(dt){
   }
 }
 
-/* ---------- Действие по тапу: выстрел из лука или двойной прыжок ----------
-   Приоритет у лука: если он надет, тап всегда стреляет. Ранец работает,
-   только когда лук не надет — иначе одно действие мешало бы другому. */
+
 function handleTapAction(){
   if (state !== STATE.PLAY || monsterEvent) return;
   if (hasBow()){ shootArrow(); return; }
@@ -1476,7 +1529,7 @@ function shootArrow(){
   if (shootCd > 0) return;
   shootCd = 0.34;
 
-  // автонаведение на ближайшего монстрика выше кэббита, иначе — строго вверх
+  
   let tx = hero.x, ty = hero.y - 300, bestD = 1e9;
   for (const cr of crawlers){
     if (cr.y > hero.y - 12) continue;
@@ -1498,7 +1551,7 @@ function shootArrow(){
   beep(880, 0.05, 'triangle', 0.04);
 }
 
-/* ---------- Обновление мира ---------- */
+
 function updateWorld(dt){
   const camT = hero.y - VH * 0.45;
   if (camT < camTarget) camTarget = camT;
@@ -1507,13 +1560,13 @@ function updateWorld(dt){
   if (hero.y < minY) minY = hero.y;
   score = Math.max(0, Math.floor((startY - minY) / 10 * scoreMult()));
 
-  // Смена мира каждые 3000 очков — фон и монстры уже перекрашены в render(),
-  // тут просто ловим момент перехода, чтобы отпраздновать тостом.
+  
+  
   const wIdx = worldIndex();
   if (wIdx !== lastWorldIdx){
     lastWorldIdx = wIdx;
-    if (score > 100){ // не праздновать на самом старте забега
-      addToast('🌍 ' + WORLD_THEMES[wIdx].name + '!', hero.x, hero.y - 70, '#ffd34d');
+    if (score > 100){ 
+      addToast('✦ ' + WORLD_THEMES[wIdx].name + '!', hero.x, hero.y - 70, '#ffd34d');
       flash = 0.4; flashColor = '#ffffff';
     }
   }
@@ -1525,7 +1578,7 @@ function updateWorld(dt){
   hero.tilt = approach(hero.tilt, (hero.vx / MOVE_MAX) * 0.20, 7, dt);
   hero.spin = approach(hero.spin, 0, 2.4, dt);
 
-  if (outfit.hat === 'propeller')
+  if (hasHat('propeller'))
     hero.prop += (7 + clamp(-hero.vy, 0, 1200) * 0.016) * dt * 6;
 
   if (motionBlurOn){
@@ -1541,7 +1594,7 @@ function updateWorld(dt){
 
   if (hero.vy < -420 && Math.random() < dt * 55) trailPuff();
 
-  /* Платформы */
+  
   for (let i = platforms.length - 1; i >= 0; i--){
     const p = platforms[i];
 
@@ -1568,7 +1621,7 @@ function updateWorld(dt){
   let guard = 0;
   while (lastPlatY > camY - 140 && guard++ < 40) spawnAbove();
 
-  /* Монеты */
+  
   for (let i = coinsOnMap.length - 1; i >= 0; i--){
     const c = coinsOnMap[i];
     c.phase += dt * 3.2;
@@ -1585,7 +1638,7 @@ function updateWorld(dt){
       continue;
     }
 
-    /* Нимб-магнит: монета рядом отрывается от платформы и летит к кэббиту */
+    
     if (hasMagnet()){
       const mdx = hero.x - c.x, mdy = hero.y - c.y;
       const md2 = mdx * mdx + mdy * mdy;
@@ -1601,29 +1654,19 @@ function updateWorld(dt){
     if (dx * dx + dy * dy < 30 * 30){
       c.got = 0.01;
 
-      // Комбо: монеты подряд без паузы длиннее COMBO_WINDOW наращивают серию
-      // и с 3-го подбора начинают приносить бонусные монеты сверху.
-      comboCount = (comboTimer > 0) ? comboCount + 1 : 1;
-      comboTimer = COMBO_WINDOW;
-      const comboBonus = Math.max(0, Math.floor(comboCount / 3));
-      const gain = coinMult() + comboBonus;
+      const gain = coinMult();
       runCoins += gain; coins += gain;
       Store.set('coins', coins);
       coinPulse = 1;
       burstSpark(c.x, c.y, '#ffd34d', 14, 0.8);
       burstSpark(c.x, c.y, '#fff3b0', 8, 0.5);
       sfxCoin();
-      if (comboCount >= 3 && comboCount % 3 === 0){
-        burstSpark(c.x, c.y, '#ff9fc2', 16, 1.1);
-        addToast('КОМБО ×' + comboCount + '!', hero.x, hero.y - 50, '#ff9fc2');
-        shake = Math.max(shake, 6);
-      }
       continue;
     }
     if (c.y - camY > VH + 80) coinsOnMap.splice(i, 1);
   }
 
-  /* Монстрики на платформах (только с луком) */
+  
   for (let i = crawlers.length - 1; i >= 0; i--){
     const cr = crawlers[i];
     if (!cr.plat || cr.plat.broken){ crawlers.splice(i, 1); continue; }
@@ -1632,7 +1675,7 @@ function updateWorld(dt){
     cr.phase += dt * 4;
     if (cr.y - camY > VH + 90){ crawlers.splice(i, 1); continue; }
 
-    // наступил сверху на живого монстрика — смертельное событие (стекло спасёт)
+    
     const cdx = cr.x - hero.x, cdy = cr.y - hero.y;
     if (hero.vy > 0 && cdx * cdx + cdy * cdy < 24 * 24){
       crawlers.splice(i, 1);
@@ -1643,8 +1686,15 @@ function updateWorld(dt){
     }
   }
 
-  /* Стрелы */
+  
   shootCd = Math.max(0, shootCd - dt);
+  if (hasBow() && shootCd <= 0 && state === STATE.PLAY && !monsterEvent){
+    for (const cr of crawlers){
+      if (cr.y > hero.y - 12) continue;
+      const dxa = cr.x - hero.x, dya = cr.y - hero.y;
+      if (dxa * dxa + dya * dya < 280 * 280){ shootArrow(); break; }
+    }
+  }
   for (let i = arrows.length - 1; i >= 0; i--){
     const a = arrows[i];
     a.vy += GRAV * 0.22 * dt;
@@ -1676,13 +1726,7 @@ function updateWorld(dt){
       arrows.splice(i, 1);
   }
 
-  /* Комбо монет угасает, если долго не подбирать следующую */
-  if (comboTimer > 0){
-    comboTimer -= dt;
-    if (comboTimer <= 0) comboCount = 0;
-  }
 
-  /* Монстры */
   monsterTimer -= dt;
   if (monsterTimer <= 0 && monsters.length === 0 && !monsterEvent){
     spawnMonster();
@@ -1698,8 +1742,8 @@ function updateWorld(dt){
       if (m.x < m.r) { m.x = m.r; m.vx = Math.abs(m.vx); }
       if (m.x > VW - m.r) { m.x = VW - m.r; m.vx = -Math.abs(m.vx); }
 
-      // плавный въезд снизу, затем — фиксированная позиция на экране,
-      // которая каждый кадр пересчитывается от текущей камеры
+      
+      
       m.screenFrac = approach(m.screenFrac, m.targetFrac, 2.2, dt);
       m.y = camY + VH * m.screenFrac;
 
@@ -1721,11 +1765,11 @@ function updateWorld(dt){
       }
 
       m.life -= dt;
-      if (m.life <= 0) { monsters.splice(i, 1); continue; } // так и не тронули — тихо исчез
+      if (m.life <= 0) { monsters.splice(i, 1); continue; } 
     }
   }
 
-  /* Частицы */
+  
   for (let i = particles.length - 1; i >= 0; i--){
     const q = particles[i];
     q.life -= q.decay * dt;
@@ -1737,7 +1781,7 @@ function updateWorld(dt){
       q.vy += GRAV * 0.12 * dt;
       q.vx *= Math.pow(0.15, dt);
     } else if (q.kind === 'ring'){
-      q.r += dt * 140; // быстро расширяющаяся ударная волна
+      q.r += dt * 140; 
     } else {
       q.vx *= Math.pow(0.25, dt);
       q.r  += dt * 9;
@@ -1746,7 +1790,7 @@ function updateWorld(dt){
     q.y += q.vy * dt;
   }
 
-  /* Тосты */
+  
   for (let i = toasts.length - 1; i >= 0; i--){
     const tst = toasts[i];
     tst.life -= dt * 0.7;
@@ -1765,7 +1809,7 @@ function updateWorld(dt){
   tapEvent = false;
 }
 
-/* ---------- Фон ---------- */
+
 function drawBackground(){
   const w = currentWorld();
   const c1 = 'rgb(' + w.bg1[0] + ',' + w.bg1[1] + ',' + w.bg1[2] + ')';
@@ -1824,7 +1868,7 @@ function drawBackground(){
   ctx.globalAlpha = 1;
 }
 
-/* ---------- Тени ---------- */
+
 function drawShadows(){
   const bgY = hero.y - camY + 150;
   if (bgY < VH + 60){
@@ -1854,7 +1898,7 @@ function drawShadows(){
   }
 }
 
-/* ---------- Платформы ---------- */
+
 function drawPlatform(p){
   const y = p.y - camY;
   if (y < -70 || y > VH + 70) return;
@@ -1927,7 +1971,7 @@ function drawPlatform(p){
   ctx.restore();
 }
 
-/* ---------- Монеты ---------- */
+
 function drawCoin(c){
   const bob = Math.sin(c.bob) * 4;
   const y = c.y - camY + bob;
@@ -1989,13 +2033,13 @@ function drawCoin(c){
   ctx.restore();
 }
 
-/* ---------- Монстр (отрисовка) ---------- */
+
 function drawMonster(m){
   const y = m.y - camY;
   if (y < -60 || y > VH + 60) return;
   const squish = 1 + Math.sin(m.bob) * 0.06;
 
-  // последние полторы секунды перед исчезновением монстр тает, а не пропадает рывком
+  
   const fade = m.life < 1.5 ? clamp(m.life / 1.5, 0, 1) : 1;
 
   ctx.save();
@@ -2018,7 +2062,7 @@ function drawMonster(m){
 
   const wm = currentWorld().monster;
 
-  // шипастый ореол
+  
   ctx.fillStyle = wm.spike;
   for (let i = 0; i < 8; i++){
     const a = (i / 8) * 6.2832 + m.bob * 0.3;
@@ -2033,7 +2077,7 @@ function drawMonster(m){
     ctx.restore();
   }
 
-  // тело
+  
   const g = ctx.createRadialGradient(-6, -6, 3, 0, 0, m.r);
   g.addColorStop(0, wm.light);
   g.addColorStop(1, wm.dark);
@@ -2044,7 +2088,7 @@ function drawMonster(m){
   ctx.arc(0, 0, m.r, 0, 6.2832);
   ctx.fill(); ctx.stroke();
 
-  // злые глаза
+  
   ctx.fillStyle = '#fff';
   ctx.beginPath();
   ctx.ellipse(-7, -3, 5, 6, -0.2, 0, 6.2832);
@@ -2056,7 +2100,7 @@ function drawMonster(m){
   ctx.arc(8, -2, 2.6, 0, 6.2832);
   ctx.fill();
 
-  // зигзаг-рот
+  
   ctx.strokeStyle = '#20081f';
   ctx.lineWidth = 2;
   ctx.beginPath();
@@ -2067,15 +2111,11 @@ function drawMonster(m){
   ctx.restore();
 }
 
-/* =========================================================================
-   АКСЕССУАРЫ, ИНСТРУМЕНТ И КЭББИТ
-   Всё рисуется в локальных координатах уже внутри scale(face*sx, sy) и
-   rotate(tilt), поэтому зеркалится, сжимается и наклоняется само собой.
-   ========================================================================= */
+
 
 const FUR = '#c9c9d4', FUR_LIT = '#eceaf2', FUR_DARK = '#a9a9b8', INK = '#4a4450', PINK = '#e59db0';
 
-function paintEarsGap(){} // заглушка не используется — оставлено для совместимости
+function paintEarsGap(){} 
 
 function paintHat(c, w, h, kind, A){
   if (!kind || kind === 'none') return;
@@ -2209,7 +2249,7 @@ function paintHat(c, w, h, kind, A){
     c.restore();
 
   } else if (kind === 'bow'){
-    // Большой бантик между ушками — два "крыла" + узелок с горошком
+    
     const bw = hw * 0.95, bh = h * 0.12;
     c.save();
     c.translate(cx, ty - h * 0.02);
@@ -2242,7 +2282,7 @@ function paintHat(c, w, h, kind, A){
     c.restore();
 
   } else if (kind === 'flowercrown'){
-    // Веночек из мелких цветов вдоль дуги надо лбом
+    
     const petals = ['#ff9fc2', '#ffd34d', '#c7a4ff', '#ff9fc2', '#ffd34d'];
     const n = petals.length;
     c.save();
@@ -2273,7 +2313,7 @@ function paintHat(c, w, h, kind, A){
     c.restore();
 
   } else if (kind === 'sunhat'){
-    // Соломенная шляпка с широкими полями и лентой
+    
     const brimW = hw * 2.3, crownH = h * 0.2;
     c.save();
     c.fillStyle = '#e8c27a';
@@ -2300,7 +2340,7 @@ function paintHat(c, w, h, kind, A){
     c.restore();
 
   } else if (kind === 'glass'){
-    // Минекрафтовский блок стекла: полупрозрачный куб с рамкой и "трещинками"
+    
     const s = hw * 1.9;
     const bx = cx - s / 2, by = ty - s * 0.92;
     c.fillStyle = 'rgba(180,225,240,.38)';
@@ -2327,40 +2367,10 @@ function paintHat(c, w, h, kind, A){
 
 function paintAccessory(c, w, h, kind, A){
   if (!kind || kind === 'none') return;
+  if (!A || !isFinite(w) || !isFinite(h)) return;
   const cx = A.cx * w;
 
-  if (kind === 'glasses'){
-    const y  = A.eyeY * h;
-    const dx = A.eyeDX * w;
-    const lensW = dx * 1.55, lensH = h * 0.125;
-    c.save();
-    c.fillStyle = 'rgba(22,16,32,.9)';
-    c.strokeStyle = '#141020';
-    c.lineWidth = 2;
-    rr(c, cx - dx - lensW * 0.55, y - lensH * 0.5, lensW, lensH, lensH * 0.4); c.fill();
-    rr(c, cx + dx - lensW * 0.45, y - lensH * 0.5, lensW, lensH, lensH * 0.4); c.fill();
-    c.beginPath();
-    c.moveTo(cx - dx + lensW * 0.45, y);
-    c.lineTo(cx + dx - lensW * 0.45, y);
-    c.moveTo(cx - dx - lensW * 0.55, y - 1);
-    c.lineTo(cx - dx - lensW * 0.98, y - 3);
-    c.moveTo(cx + dx + lensW * 0.55, y - 1);
-    c.lineTo(cx + dx + lensW * 0.98, y - 3);
-    c.stroke();
-    c.fillStyle = 'rgba(255,255,255,.32)';
-    for (const side of [-1, 1]){
-      const bx = cx + side * dx + (side < 0 ? -lensW * 0.1 : lensW * 0.02);
-      c.beginPath();
-      c.moveTo(bx - lensW * 0.22, y + lensH * 0.36);
-      c.lineTo(bx - lensW * 0.02, y - lensH * 0.4);
-      c.lineTo(bx + lensW * 0.1,  y - lensH * 0.4);
-      c.lineTo(bx - lensW * 0.1,  y + lensH * 0.36);
-      c.closePath();
-      c.fill();
-    }
-    c.restore();
-
-  } else if (kind === 'bowtie'){
+  if (kind === 'bowtie'){
     const y = A.neckY * h;
     const s = w * 0.2;
     c.save();
@@ -2383,7 +2393,7 @@ function paintAccessory(c, w, h, kind, A){
     c.restore();
 
   } else if (kind === 'tie'){
-    // Деловой галстук: узел у шеи + длинная полоса вниз, в полоску
+    
     const y = A.neckY * h;
     const knotW = w * 0.10, knotH = h * 0.09;
     const tailW = w * 0.09, tailLen = h * 0.34;
@@ -2413,7 +2423,7 @@ function paintAccessory(c, w, h, kind, A){
     c.restore();
 
   } else if (kind === 'pearls'){
-    // Жемчужное ожерелье — ряд бусин дугой вдоль шеи
+    
     const y = A.neckY * h;
     const n = 7, spread = w * 0.30;
     c.save();
@@ -2432,7 +2442,7 @@ function paintAccessory(c, w, h, kind, A){
     c.restore();
 
   } else if (kind === 'hearteye'){
-    // Очки-сердечки: два сердца-линзы на месте очков
+    
     const y  = A.eyeY * h;
     const dx = A.eyeDX * w;
     const s = dx * 0.85;
@@ -2460,7 +2470,7 @@ function paintAccessory(c, w, h, kind, A){
     c.restore();
 
   } else if (kind === 'scarf'){
-    // Шарфик-бандана в горошек, завязан узлом сбоку
+    
     const y = A.neckY * h;
     const s = w * 0.24;
     c.save();
@@ -2484,30 +2494,57 @@ function paintAccessory(c, w, h, kind, A){
     c.restore();
 
   } else if (kind === 'backpack'){
-    // Ранец-прыгун: коробка сбоку + лямка через грудь
     const y = A.neckY * h;
+    const bx = cx + w * 0.235;
+    const tankW = w * 0.09, tankH = h * 0.26, gapX = w * 0.06;
     c.save();
     c.strokeStyle = 'rgba(16,12,40,.5)';
     c.lineWidth = 1.3;
-    c.fillStyle = '#5b6ef5';
-    rr(c, cx + w * 0.19, y + h * 0.01, w * 0.21, h * 0.27, 5);
+
+    c.fillStyle = '#5a6472';
+    rr(c, bx - gapX * 0.5 - tankW * 1.05, y - h * 0.03, gapX * 1.1, tankH * 0.5, 4);
     c.fill(); c.stroke();
-    c.fillStyle = '#8fa0ff';
-    rr(c, cx + w * 0.225, y + h * 0.11, w * 0.14, h * 0.09, 3);
-    c.fill();
-    c.fillStyle = '#ffd34d';
-    c.beginPath(); c.arc(cx + w * 0.295, y + h * 0.055, 1.8, 0, 6.2832); c.fill();
+
+    for (const side of [-1, 1]){
+      const tx = bx + side * (tankW * 0.5 + gapX * 0.5);
+      const grad = c.createLinearGradient(tx - tankW / 2, y, tx + tankW / 2, y);
+      grad.addColorStop(0, '#7d8797');
+      grad.addColorStop(0.5, '#dfe5ec');
+      grad.addColorStop(1, '#7d8797');
+      c.fillStyle = grad;
+      rr(c, tx - tankW / 2, y - h * 0.02, tankW, tankH, tankW * 0.4);
+      c.fill(); c.stroke();
+
+      c.fillStyle = '#ffd34d';
+      c.beginPath(); c.arc(tx, y + tankH * 0.16, 1.7, 0, 6.2832); c.fill();
+
+      c.save();
+      c.globalAlpha = 0.85;
+      const flameGrad = c.createLinearGradient(tx, y + tankH * 0.85, tx, y + tankH * 1.35);
+      flameGrad.addColorStop(0, '#ffe58a');
+      flameGrad.addColorStop(0.55, '#ff9f45');
+      flameGrad.addColorStop(1, 'rgba(255,90,45,0)');
+      c.fillStyle = flameGrad;
+      c.beginPath();
+      c.moveTo(tx - tankW * 0.32, y + tankH * 0.88);
+      c.lineTo(tx, y + tankH * 1.4);
+      c.lineTo(tx + tankW * 0.32, y + tankH * 0.88);
+      c.closePath();
+      c.fill();
+      c.restore();
+    }
+
     c.strokeStyle = '#3b48a8';
     c.lineWidth = 2.6;
     c.beginPath();
-    c.moveTo(cx + w * 0.19, y + h * 0.05);
+    c.moveTo(bx - tankW * 1.1, y + h * 0.04);
     c.lineTo(cx - w * 0.04, y + h * 0.12);
     c.stroke();
     c.restore();
   }
 }
 
-/* Зачарованная булава в лапке. phase — время для анимации свечения/искр. */
+
 function paintTool(c, w, h, kind, A, phase){
   if (!kind || kind === 'none') return;
 
@@ -2550,17 +2587,17 @@ function paintTool(c, w, h, kind, A, phase){
   c.translate(hx, hy);
   c.rotate(0.30 + Math.sin(phase * 1.4) * 0.05);
 
-  let headY; // точка, вокруг которой крутятся искры зачарования
+  let headY; 
 
   if (maceReady){
-    // Своя картинка: рукоять внизу изображения — держим этот край у лапки,
-    // головка тянется вверх. Ширина подгоняется под размер персонажа.
+    
+    
     const mw = w * 0.62;
     const mh = mw * (maceImg.naturalHeight / maceImg.naturalWidth);
     c.drawImage(maceImg, -mw / 2, 8 - mh, mw, mh);
     headY = 8 - mh * 0.88;
   } else {
-    // Векторный фолбэк, пока mace.png не подложен
+    
     headY = -24;
 
     c.fillStyle = '#6b4423';
@@ -2596,7 +2633,7 @@ function paintTool(c, w, h, kind, A, phase){
     }
   }
 
-  // фиолетовое зачарованное свечение — одинаковое для картинки и фолбэка
+  
   const pulse = 0.5 + 0.5 * Math.sin(phase * 4);
   c.globalAlpha = 0.32 + 0.22 * pulse;
   const glow = c.createRadialGradient(0, headY, 2, 0, headY, 16);
@@ -2608,7 +2645,7 @@ function paintTool(c, w, h, kind, A, phase){
   c.fill();
   c.globalAlpha = 1;
 
-  // орбитальные искры зачарования
+  
   for (let i = 0; i < 3; i++){
     const a = phase * 2 + i * 2.1;
     const radius = 11 + Math.sin(phase * 3 + i) * 2;
@@ -2762,12 +2799,14 @@ function drawHeroWithWrap(){
     drawHero(hero.x - VW - hero.w, y, hero.sx, hero.sy, fullTilt, hero.face, 1, 0, phase);
 }
 
-/* ---------- Монстрик на платформе и стрелы (отрисовка) ---------- */
+
 function drawCrawler(cr){
   const c = ctx;
+  const y = cr.y - camY;
+  if (y < -60 || y > VH + 60) return;
   const wob = Math.sin(cr.phase) * 1.8;
   c.save();
-  c.translate(cr.x, cr.y);
+  c.translate(cr.x, y);
   c.lineJoin = 'round';
 
   c.strokeStyle = '#1d5c1d';
@@ -2809,8 +2848,10 @@ function drawCrawler(cr){
 function drawArrows(){
   const c = ctx;
   for (const a of arrows){
+    const y = a.y - camY;
+    if (y < -60 || y > VH + 60) continue;
     c.save();
-    c.translate(a.x, a.y);
+    c.translate(a.x, y);
     c.rotate(a.ang);
     c.lineCap = 'round';
     c.strokeStyle = '#e8d9a0';
@@ -2828,7 +2869,7 @@ function drawArrows(){
   }
 }
 
-/* ---------- Частицы (отрисовка) ---------- */
+
 function drawParticles(){
   for (const q of particles){
     const y = q.y - camY;
@@ -2899,7 +2940,7 @@ function drawToasts(){
   ctx.restore();
 }
 
-/* ---------- HUD ---------- */
+
 function drawHUD(){
   ctx.save();
   ctx.textBaseline = 'top';
@@ -2950,7 +2991,7 @@ function drawHUD(){
   ctx.restore();
 }
 
-/* ---------- Оверлей встречи с монстром: кольцо обратного отсчёта + "Жми!" ---------- */
+
 function drawMonsterEventUI(){
   if (!monsterEvent) return;
 
@@ -2997,7 +3038,7 @@ function drawMonsterEventUI(){
   ctx.restore();
 }
 
-/* ---------- Кадр ---------- */
+
 function render(){
   pixelTransform();
   ctx.globalAlpha = 1;
@@ -3006,6 +3047,12 @@ function render(){
   ctx.save();
   drawBackground();
   ctx.restore();
+
+  if (state === STATE.MINI){
+    worldTransform();
+    renderMiniGame();
+    return;
+  }
 
   if (blurAmount > 0.01){
     pixelTransform();
@@ -3035,9 +3082,7 @@ function render(){
     ctx.globalAlpha = 1;
   }
 
-  /* Снимок канваса для motion blur — самая дорогая операция кадра (полное
-     копирование экрана). Делаем её только пока размытие реально видно или
-     вот-вот понадобится, а не каждый кадр подряд. */
+  
   if (motionBlurOn && (blurAmount > 0.01 || blurWanted > 0.01)){
     pixelTransform();
     blurCtx.setTransform(1, 0, 0, 1, 0, 0);
@@ -3050,7 +3095,7 @@ function render(){
   if (state === STATE.PLAY) drawMonsterEventUI();
 }
 
-/* ---------- Цикл ---------- */
+
 let last = performance.now(), acc = 0;
 
 function frame(now){
@@ -3063,8 +3108,8 @@ function frame(now){
     let dt = realDt;
 
     if (monsterEvent){
-      monsterEvent.elapsed += realDt; // отсчёт идёт в реальном времени, не в замедленном
-      dt = realDt * SLOWMO_SCALE;      // а вот вся физика и мир — в slow-motion
+      monsterEvent.elapsed += realDt; 
+      dt = realDt * SLOWMO_SCALE;      
 
       if (tapEvent) resolveMonsterEvent(true);
       else if (monsterEvent.elapsed >= QTE_DURATION) resolveMonsterEvent(false);
@@ -3081,6 +3126,15 @@ function frame(now){
     }
     if (steps === 8) acc = 0;
     updateWorld(dt);
+  } else if (state === STATE.MINI) {
+    if (!inLandscape) updateMiniGame(realDt);
+    if (shake > 0){
+      shakeX = rand(-shake, shake);
+      shakeY = rand(-shake, shake);
+      shake = Math.max(0, shake - realDt * 30);
+    } else {
+      shakeX = shakeY = 0;
+    }
   } else if (state !== STATE.PAUSED) {
     camY = approach(camY, camTarget, 6, realDt);
     blurAmount = approach(blurAmount, 0, 8, realDt);
@@ -3102,13 +3156,34 @@ document.addEventListener('visibilitychange', () => {
   else if (state === STATE.PLAY){ pauseGame(); }
 });
 
-/* ---------- Экраны ---------- */
+const rotateOverlayEl = document.getElementById('rotateOverlay');
+let inLandscape = false;
+function checkOrientation(){
+  const landscape = window.innerWidth > window.innerHeight;
+  if (landscape){
+    if (state === STATE.PLAY) pauseGame();
+    if (rotateOverlayEl) rotateOverlayEl.classList.remove('hidden');
+    inLandscape = true;
+  } else {
+    if (rotateOverlayEl) rotateOverlayEl.classList.add('hidden');
+    if (inLandscape){ last = performance.now(); acc = 0; }
+    inLandscape = false;
+    resize();
+  }
+}
+window.addEventListener('resize', checkOrientation);
+window.addEventListener('orientationchange', () => setTimeout(checkOrientation, 120));
+checkOrientation();
+
+
 const nicknameEl = document.getElementById('nickname');
 const menuEl     = document.getElementById('menu');
 const settingsEl = document.getElementById('settings');
 const wardrobeEl = document.getElementById('wardrobe');
+const hockeyModesEl = document.getElementById('hockeyModes');
 const overEl     = document.getElementById('over');
 const pauseBtn   = document.getElementById('pauseBtn');
+const miniBackBtn = document.getElementById('miniBackBtn');
 const hitBtn     = document.getElementById('hitBtn');
 const leftBtn    = document.getElementById('leftBtn');
 const rightBtn   = document.getElementById('rightBtn');
@@ -3120,9 +3195,7 @@ hitBtn.addEventListener('pointerdown', e => {
   ensureAudio();
 });
 
-/* Видимые кнопки влево/вправо — понятнее, чем невидимое деление экрана
-   пополам, на которое жаловались игроки. Управляют теми же keys.left/right,
-   что и клавиатура, так что вся остальная физика не меняется. */
+
 function bindHoldButton(el, setter){
   const start = e => { e.preventDefault(); e.stopPropagation(); setter(true); ensureAudio(); };
   const end   = e => { e.preventDefault(); e.stopPropagation(); setter(false); };
@@ -3135,7 +3208,7 @@ bindHoldButton(leftBtn,  v => { keys.left = v; });
 bindHoldButton(rightBtn, v => { keys.right = v; });
 
 function showTouchControls(){
-  if (!isTouchDevice) return; // на компьютере стрелки не нужны — управление клавишами
+  if (!isTouchDevice) return; 
   leftBtn.classList.remove('hidden'); rightBtn.classList.remove('hidden');
 }
 function hideTouchControls(){
@@ -3164,16 +3237,16 @@ function reanimate(el){
 }
 
 function hideAllScreens(){
-  hide(nicknameEl); hide(menuEl); hide(settingsEl); hide(overEl); hide(wardrobeEl);
+  hide(nicknameEl); hide(menuEl); hide(settingsEl); hide(overEl); hide(wardrobeEl); hide(hockeyModesEl);
 }
 
-/* ---------- Ник ---------- */
+
 const nickInput = document.getElementById('nickInput');
 document.getElementById('nickConfirm').addEventListener('click', confirmNick);
 nickInput.addEventListener('keydown', e => { if (e.key === 'Enter') confirmNick(); });
 
-// Экран ника используется дважды: при первом запуске (тогда после ввода —
-// в меню) и при смене ника из настроек (тогда нужно вернуться в настройки).
+
+
 let nickReturnToSettings = false;
 
 function openNicknameScreen(fromSettings){
@@ -3197,8 +3270,10 @@ function confirmNick(){
 }
 
 document.getElementById('changeNickBtn').addEventListener('click', () => openNicknameScreen(true));
+const SUPPORT_URL = 'https://t.me/CabbitJumpSupportBot';
+document.getElementById('supportBtn').addEventListener('click', () => window.open(SUPPORT_URL, '_blank'));
 
-/* ---------- Лидерборд ---------- */
+
 function loadLeaderboard(){
   try {
     const raw = Store.get('leaderboard', '[]');
@@ -3218,7 +3293,7 @@ function addToLeaderboard(nick, sc){
 
 function refreshLeaderboardUI(){
   const rows = document.getElementById('lbRows');
-  if (!rows) return; // таблицы лидеров в меню больше нет — рекорды просто копятся в памяти
+  if (!rows) return; 
   const top = loadLeaderboard();
   rows.innerHTML = '';
   for (let i = 0; i < 5; i++){
@@ -3236,9 +3311,13 @@ function escapeHtml(s){
   return String(s).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 }
 
-/* ---------- Магазин (динамическая сборка под текущий язык) ---------- */
+
+let shopActiveSlot = 'hat';
+
 function buildShop(){
   shopEl.innerHTML = '';
+  const tabsEl = document.getElementById('shopTabs');
+  tabsEl.innerHTML = '';
 
   const slots = [
     { key: 'hat',  label: t('slotHat') },
@@ -3246,18 +3325,24 @@ function buildShop(){
     { key: 'tool', label: t('slotTool') },
     { key: 'perk', label: t('slotPerk') }
   ];
+  if (!slots.some(s => s.key === shopActiveSlot)) shopActiveSlot = slots[0].key;
 
   for (const slotDef of slots){
+    const tab = document.createElement('button');
+    tab.className = 'shopTab';
+    tab.type = 'button';
+    tab.textContent = slotDef.label;
+    tab.dataset.slot = slotDef.key;
+    tab.addEventListener('click', () => { shopActiveSlot = slotDef.key; refreshShopTabs(); });
+    tabsEl.appendChild(tab);
+
     const row = document.createElement('div');
-    row.className = 'wrow';
-    const label = document.createElement('span');
-    label.className = 'wlabel';
-    label.textContent = slotDef.label;
-    row.appendChild(label);
+    row.className = 'shopPanel';
+    row.dataset.slot = slotDef.key;
 
     for (const val of Object.keys(OUTFITS[slotDef.key])){
       const priceInfo = OUTFITS[slotDef.key][val];
-      if (priceInfo.locked) continue; // достижения не продаются за монеты — их сюда не выводим
+      if (priceInfo.locked) continue; 
       const info = ti(slotDef.key, val);
       const chip = document.createElement('button');
       chip.className = 'chip';
@@ -3274,27 +3359,27 @@ function buildShop(){
 
         if (multi){
           if (outfit[slotDef.key] === val){
-            // сняли первый — второй (если был) становится первым
+            
             outfit[slotDef.key] = outfit[secKey];
             outfit[secKey] = 'none';
           } else if (outfit[secKey] === val){
-            // сняли второй
+            
             outfit[secKey] = 'none';
           } else if (outfit[slotDef.key] === 'none'){
             outfit[slotDef.key] = val;
           } else if (outfit[secKey] === 'none'){
             outfit[secKey] = val;
           } else {
-            // оба слота заняты — новый выбор занимает второй
+            
             outfit[secKey] = val;
           }
           if (isOwned(slotDef.key, outfit[slotDef.key]) || outfit[slotDef.key] === 'none') Store.set(slotDef.key, outfit[slotDef.key]);
           if (isOwned(slotDef.key, outfit[secKey]) || outfit[secKey] === 'none') Store.set(secKey, outfit[secKey]);
         } else {
           outfit[slotDef.key] = val;
-          if (isOwned(slotDef.key, val)) Store.set(slotDef.key, val); // куплено — запоминаем выбор
+          if (isOwned(slotDef.key, val)) Store.set(slotDef.key, val); 
         }
-        refreshShopState();                                        // не куплено — это временная примерка
+        refreshShopState();                                        
       });
 
       row.appendChild(chip);
@@ -3302,20 +3387,27 @@ function buildShop(){
     shopEl.appendChild(row);
   }
 
+  refreshShopTabs();
   refreshShopState();
 }
 
-/* Все слоты (hat/acc/tool) с надетой, но НЕ купленной вещью — а не только
-   последний тронутый слот. Это и было причиной бага: если примерить сразу
-   два непроплаченных предмета в разных слотах, второй никак не отслеживался
-   и после отмены первого игра запускалась с ним бесплатно. */
+function refreshShopTabs(){
+  document.querySelectorAll('.shopTab').forEach(tab => {
+    tab.classList.toggle('active', tab.dataset.slot === shopActiveSlot);
+  });
+  document.querySelectorAll('.shopPanel').forEach(panel => {
+    panel.classList.toggle('active', panel.dataset.slot === shopActiveSlot);
+  });
+}
+
+
 function getLockedItems(){
   const result = [];
   for (const slot of Object.keys(OUTFITS)){
     const val = outfit[slot];
     if (val !== 'none' && !isOwned(slot, val)) result.push({ slot, val, displaySlot: slot });
   }
-  // второй слот (hat2/acc2) — те же каталоги, что hat/acc, просто другое поле хранения
+  
   for (const baseSlot of ['hat', 'acc']){
     const secKey = baseSlot + '2';
     const val = outfit[secKey];
@@ -3338,11 +3430,7 @@ function buyItem(slot, val, field){
   cloudPushSoon();
 }
 
-/* Пока хотя бы в ОДНОМ слоте надета непроплаченная вещь, играть нельзя:
-   "Играть" и "Продолжить" прячутся, вместо них — список всех неоплаченных
-   предметов с ценой, кнопкой "Купить" на каждый и кнопкой "✕", чтобы
-   мгновенно вернуть слот на "ничего" без покупки. Как только каждый слот
-   либо куплен, либо возвращён к "ничего" — кнопки запуска возвращаются. */
+
 function refreshShopState(){
   menuBest.textContent  = best;
   menuCoins.textContent = coins;
@@ -3354,11 +3442,14 @@ function refreshShopState(){
     const own = isOwned(slot, val);
 
     const isSecondary = (slot === 'hat' || slot === 'acc') && val !== 'none' && outfit[slot + '2'] === val;
-    chip.setAttribute('aria-pressed', (outfit[slot] === val || isSecondary) ? 'true' : 'false');
+    const isEquipped = outfit[slot] === val || isSecondary;
+    chip.setAttribute('aria-pressed', isEquipped ? 'true' : 'false');
 
-    let html = '<span class="iname">' + escapeHtml(info.n) + '</span>';
+    const mark = isEquipped ? ('✓ ' + (isSecondary ? '· ' : '')) : '';
+    let html = '<span class="iname">' + mark + escapeHtml(info.n) + '</span>';
     if (info.d) html += '<span class="idesc">' + escapeHtml(info.d) + '</span>';
     if (!own && priceInfo.price > 0) html += '<span class="price">' + priceInfo.price + '</span>';
+    else if (own && !isEquipped && priceInfo.price > 0) html += '<span class="ownedTag">✓</span>';
     chip.innerHTML = html;
   });
 
@@ -3366,7 +3457,7 @@ function refreshShopState(){
   if (wCoins) wCoins.textContent = coins;
   updateCharInfo();
 
-  // прячем не саму кнопку, а её подвес .swing — иначе в меню повисали бы пустые верёвки
+  
   const playBtnEl     = document.getElementById('playBtn').closest('.swing');
   const continueBtnEl = document.getElementById('continueBtn').closest('.swing');
   const lockedPanel   = document.getElementById('lockedPanel');
@@ -3425,7 +3516,7 @@ function refreshShopState(){
   }
 }
 
-/* ---------- Переходы между экранами ---------- */
+
 function goToMenu(){
   state = STATE.MENU;
   hideAllScreens();
@@ -3504,11 +3595,302 @@ function gameOver(){
   })();
 }
 
-/* ---------- Выбор персонажа: стрелки вокруг превью в гардеробе ----------
-   Работает через тот же механизм "примерки", что и шляпы/аксессуары:
-   стрелка меняет outfit.char сразу же, а если персонаж не куплен —
-   снизу появится обычная панель "купить или вернуть", как для любой
-   другой непроплаченной вещи. */
+
+const HK_W = 300, HK_H = 460, HK_GOAL_W = 110, HK_WIN = 5;
+let hockey = null;
+
+function newHockeyPuck(dir){
+  return {
+    x: HK_W / 2, y: HK_H / 2,
+    vx: (Math.random() - 0.5) * 60,
+    vy: (dir || (Math.random() < 0.5 ? -1 : 1)) * 180,
+    r: 11
+  };
+}
+
+function startMiniGame(mode){
+  hockeyPointers.clear();
+  hockey = {
+    mode: mode === '2p' ? '2p' : 'ai',
+    px: HK_W / 2, py: HK_H * 0.82, pr: 24,
+    ax: HK_W / 2, ay: HK_H * 0.18, ar: 24,
+    ptx: HK_W / 2, pty: HK_H * 0.82,
+    atx: HK_W / 2, aty: HK_H * 0.18,
+    puck: newHockeyPuck(),
+    scorePlayer: 0, scoreAi: 0,
+    serveTimer: 0.6,
+    over: false,
+    msg: '', msgColor: '#fff', msgTimer: 0,
+    ox: (VW - HK_W) / 2, oy: (VH - HK_H) / 2
+  };
+  state = STATE.MINI;
+  hideAllScreens();
+  hideTouchControls();
+  pauseBtn.classList.add('hidden');
+  hitBtn.classList.add('hidden');
+  miniBackBtn.classList.remove('hidden');
+}
+
+function exitMiniGame(){
+  hockey = null;
+  hockeyPointers.clear();
+  miniBackBtn.classList.add('hidden');
+  goToMenu();
+}
+
+function hockeySetMessage(text, color){
+  hockey.msg = text;
+  hockey.msgColor = color;
+  hockey.msgTimer = 1.4;
+}
+
+function hockeyGoal(scoredByPlayer){
+  if (!hockey || hockey.over) return;
+  if (scoredByPlayer) hockey.scorePlayer++; else hockey.scoreAi++;
+
+  if (scoredByPlayer){
+    const bonus = 4;
+    coins += bonus; Store.set('coins', coins);
+  }
+  sfxCoin();
+  hockeySetMessage(t('hockeyGoal'), '#ff9fc2');
+  shake = Math.max(shake, 8);
+
+  if (hockey.scorePlayer >= HK_WIN || hockey.scoreAi >= HK_WIN){
+    hockey.over = true;
+    const won = hockey.scorePlayer > hockey.scoreAi;
+    if (won){
+      const winBonus = 25;
+      coins += winBonus; Store.set('coins', coins);
+      hockeySetMessage(t('hockeyWin') + ' +' + winBonus, '#9fe89f');
+    } else {
+      hockeySetMessage(t('hockeyLose'), '#ff9fb4');
+    }
+    refreshShopState();
+    hockey.serveTimer = 999;
+    return;
+  }
+
+  hockey.puck = newHockeyPuck(scoredByPlayer ? -1 : 1);
+  hockey.serveTimer = 0.6;
+}
+
+function updateMiniGame(dt){
+  if (!hockey) return;
+  const hk = hockey;
+
+  if (hk.msgTimer > 0) hk.msgTimer -= dt;
+
+  hk.px = approach(hk.px, hk.ptx, 22, dt);
+  hk.py = approach(hk.py, hk.pty, 22, dt);
+  hk.px = clamp(hk.px, hk.pr, HK_W - hk.pr);
+  hk.py = clamp(hk.py, HK_H * 0.52 + hk.pr, HK_H - hk.pr);
+
+  if (!hk.over){
+    if (hk.mode === '2p'){
+      hk.ax = approach(hk.ax, hk.atx, 22, dt);
+      hk.ay = approach(hk.ay, hk.aty, 22, dt);
+    } else {
+      const targetAx = clamp(hk.puck.x, hk.ar, HK_W - hk.ar);
+      hk.ax = approach(hk.ax, targetAx, 5.5, dt);
+      hk.ay = approach(hk.ay, HK_H * 0.18, 4, dt);
+    }
+    hk.ax = clamp(hk.ax, hk.ar, HK_W - hk.ar);
+    hk.ay = clamp(hk.ay, hk.ar, HK_H * 0.48 - hk.ar);
+  }
+
+  if (hk.serveTimer > 0){
+    hk.serveTimer -= dt;
+    return;
+  }
+
+  const p = hk.puck;
+  p.x += p.vx * dt;
+  p.y += p.vy * dt;
+  p.vx *= Math.pow(0.994, dt * 60);
+  p.vy *= Math.pow(0.994, dt * 60);
+
+  if (p.x - p.r < 0){ p.x = p.r; p.vx = Math.abs(p.vx); }
+  if (p.x + p.r > HK_W){ p.x = HK_W - p.r; p.vx = -Math.abs(p.vx); }
+
+  const inGoalX = p.x > (HK_W - HK_GOAL_W) / 2 && p.x < (HK_W + HK_GOAL_W) / 2;
+  if (p.y - p.r < 0){
+    if (inGoalX && p.y < -p.r){ hockeyGoal(true); return; }
+    if (!inGoalX){ p.y = p.r; p.vy = Math.abs(p.vy); }
+  }
+  if (p.y + p.r > HK_H){
+    if (inGoalX && p.y > HK_H + p.r){ hockeyGoal(false); return; }
+    if (!inGoalX){ p.y = HK_H - p.r; p.vy = -Math.abs(p.vy); }
+  }
+
+  for (const paddle of [{ x: hk.px, y: hk.py, r: hk.pr }, { x: hk.ax, y: hk.ay, r: hk.ar }]){
+    const dx = p.x - paddle.x, dy = p.y - paddle.y;
+    const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+    const minDist = p.r + paddle.r;
+    if (dist < minDist){
+      const nx = dx / dist, ny = dy / dist;
+      p.x = paddle.x + nx * minDist;
+      p.y = paddle.y + ny * minDist;
+      const speed = Math.max(260, Math.sqrt(p.vx * p.vx + p.vy * p.vy) * 1.15);
+      p.vx = nx * speed;
+      p.vy = ny * speed;
+      sfxJump();
+      shake = Math.max(shake, 3);
+      break;
+    }
+  }
+
+  const maxSpeed = 640;
+  const sp = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+  if (sp > maxSpeed){ p.vx = p.vx / sp * maxSpeed; p.vy = p.vy / sp * maxSpeed; }
+}
+
+function drawHockeyPaddle(cx, cy, r, furColor, darkColor){
+  ctx.save();
+  ctx.translate(cx, cy);
+
+  ctx.fillStyle = 'rgba(21,10,43,.35)';
+  ctx.beginPath(); ctx.arc(0, r * 0.1, r * 1.02, 0, 6.2832); ctx.fill();
+
+  ctx.fillStyle = furColor;
+  for (const side of [-1, 1]){
+    ctx.beginPath();
+    ctx.ellipse(side * r * 0.55, -r * 0.72, r * 0.28, r * 0.4, side * 0.3, 0, 6.2832);
+    ctx.fill();
+  }
+
+  ctx.fillStyle = furColor;
+  ctx.beginPath(); ctx.arc(0, 0, r, 0, 6.2832); ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,.4)'; ctx.lineWidth = 2; ctx.stroke();
+
+  ctx.fillStyle = darkColor;
+  for (const side of [-1, 1]){
+    ctx.beginPath(); ctx.arc(side * r * 0.32, -r * 0.08, r * 0.11, 0, 6.2832); ctx.fill();
+  }
+
+  ctx.strokeStyle = darkColor;
+  ctx.lineWidth = Math.max(1.2, r * 0.07);
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(-r * 0.14, r * 0.3);
+  ctx.lineTo(0, r * 0.4);
+  ctx.lineTo(r * 0.14, r * 0.3);
+  ctx.stroke();
+
+  ctx.restore();
+}
+
+function renderMiniGame(){
+  if (!hockey) return;
+  const hk = hockey;
+  const ox = hk.ox, oy = hk.oy;
+
+  ctx.save();
+  ctx.translate(shakeX, shakeY);
+
+  const bg = ctx.createLinearGradient(0, oy, 0, oy + HK_H);
+  bg.addColorStop(0, '#2a1550');
+  bg.addColorStop(1, '#150a2b');
+  ctx.fillStyle = bg;
+  rr(ctx, ox, oy, HK_W, HK_H, 18);
+  ctx.fill();
+
+  ctx.strokeStyle = 'rgba(255,255,255,.35)';
+  ctx.lineWidth = 3;
+  rr(ctx, ox + 3, oy + 3, HK_W - 6, HK_H - 6, 16);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(ox, oy + HK_H / 2);
+  ctx.lineTo(ox + HK_W, oy + HK_H / 2);
+  ctx.strokeStyle = 'rgba(255,255,255,.2)';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(ox + HK_W / 2, oy + HK_H / 2, 44, 0, 6.2832);
+  ctx.stroke();
+
+  ctx.fillStyle = 'rgba(255,159,178,.35)';
+  ctx.fillRect(ox + (HK_W - HK_GOAL_W) / 2, oy - 6, HK_GOAL_W, 6);
+  ctx.fillStyle = 'rgba(159,232,159,.35)';
+  ctx.fillRect(ox + (HK_W - HK_GOAL_W) / 2, oy + HK_H, HK_GOAL_W, 6);
+
+  drawHockeyPaddle(ox + hk.ax, oy + hk.ay, hk.ar, '#8a2be2', '#2a1150');
+  drawHockeyPaddle(ox + hk.px, oy + hk.py, hk.pr, '#ffb26b', '#5a3200');
+
+  ctx.fillStyle = '#151020';
+  ctx.beginPath(); ctx.arc(ox + hk.puck.x, oy + hk.puck.y, hk.puck.r, 0, 6.2832); ctx.fill();
+  ctx.fillStyle = 'rgba(255,255,255,.18)';
+  ctx.beginPath(); ctx.arc(ox + hk.puck.x - 3, oy + hk.puck.y - 3, hk.puck.r * 0.4, 0, 6.2832); ctx.fill();
+
+  ctx.font = '700 26px system-ui, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#fdf6e8';
+  ctx.fillText(hk.scoreAi + '  :  ' + hk.scorePlayer, VW / 2, oy - 18);
+
+  if (hk.msgTimer > 0){
+    ctx.globalAlpha = clamp(hk.msgTimer / 0.4, 0, 1);
+    ctx.font = '800 22px system-ui, sans-serif';
+    ctx.lineWidth = 5;
+    ctx.strokeStyle = 'rgba(21,10,43,.7)';
+    ctx.strokeText(hk.msg, VW / 2, oy + HK_H / 2);
+    ctx.fillStyle = hk.msgColor;
+    ctx.fillText(hk.msg, VW / 2, oy + HK_H / 2);
+    ctx.globalAlpha = 1;
+  }
+
+  ctx.restore();
+}
+
+function openHockeyModes(){
+  state = STATE.SETTINGS;
+  hideAllScreens();
+  show(hockeyModesEl);
+  reanimate(hockeyModesEl);
+}
+document.getElementById('hockeyBtn').addEventListener('click', openHockeyModes);
+document.getElementById('hockeyVsAiBtn').addEventListener('click', () => startMiniGame('ai'));
+document.getElementById('hockeyVs2pBtn').addEventListener('click', () => startMiniGame('2p'));
+document.getElementById('hockeyModesBack').addEventListener('click', goToMenu);
+document.getElementById('miniBackBtn').addEventListener('click', exitMiniGame);
+
+const hockeyPointers = new Map();
+
+function hockeyLocalXY(e){
+  const rect = cvs.getBoundingClientRect();
+  return {
+    x: (e.clientX - rect.left) / S - hockey.ox,
+    y: (e.clientY - rect.top) / S - hockey.oy
+  };
+}
+
+function hockeyApplyPointer(side, x, y){
+  if (side === 'top'){ hockey.atx = x; hockey.aty = y; }
+  else { hockey.ptx = x; hockey.pty = y; }
+}
+
+function hockeyPointerDown(e){
+  if (state !== STATE.MINI || !hockey) return;
+  const pos = hockeyLocalXY(e);
+  const side = (hockey.mode === '2p' && pos.y < HK_H / 2) ? 'top' : 'bottom';
+  hockeyPointers.set(e.pointerId, side);
+  hockeyApplyPointer(side, pos.x, pos.y);
+}
+function hockeyPointerMove(e){
+  if (state !== STATE.MINI || !hockey) return;
+  const side = hockeyPointers.get(e.pointerId);
+  if (!side) return;
+  const pos = hockeyLocalXY(e);
+  hockeyApplyPointer(side, pos.x, pos.y);
+}
+function hockeyPointerUp(e){ hockeyPointers.delete(e.pointerId); }
+
+cvs.addEventListener('pointerdown', hockeyPointerDown);
+cvs.addEventListener('pointermove', hockeyPointerMove);
+cvs.addEventListener('pointerup', hockeyPointerUp);
+cvs.addEventListener('pointercancel', hockeyPointerUp);
+
+
 const CHAR_LIST = Object.keys(OUTFITS.char);
 
 function charStep(delta){
@@ -3516,7 +3898,7 @@ function charStep(delta){
   const nextIdx = (idx + delta + CHAR_LIST.length) % CHAR_LIST.length;
   const val = CHAR_LIST[nextIdx];
   outfit.char = val;
-  if (isOwned('char', val)) Store.set('char', val); // куплено — запоминаем выбор насовсем
+  if (isOwned('char', val)) Store.set('char', val); 
   refreshShopState();
 }
 
@@ -3526,14 +3908,13 @@ function updateCharInfo(){
   const info = ti('char', outfit.char);
   const price = OUTFITS.char[outfit.char].price;
   const own = isOwned('char', outfit.char);
-  el.textContent = info.n + (own ? '' : ' — ' + price + ' 🪙');
+  el.textContent = info.n + (own ? '' : ' — ' + price + ' ¤');
 }
 
 document.getElementById('charPrev').addEventListener('click', () => charStep(-1));
 document.getElementById('charNext').addEventListener('click', () => charStep(1));
 
-/* Гардероб — отдельный экран. Помним, откуда в него зашли: из меню или
-   из паузы, чтобы кнопка "Назад" не съедала незаконченный забег. */
+
 let wardrobeReturn = STATE.MENU;
 
 function openWardrobe(){
@@ -3558,47 +3939,18 @@ function closeWardrobe(){
   }
 }
 
-/* ---------- Онлайн-профиль (облако) ---------------------------------------
-   Чтобы это заработало «из коробки», один раз заведи бесплатный проект:
-   1) firebase.google.com/console -> Add project (Google Analytics не нужен)
-   2) Build -> Firestore Database -> Create database -> любой регион ->
-      режим "Start in test mode" (ниже дадим более узкие правила).
-   3) Build -> Firestore Database -> Rules -- вставить и опубликовать:
-        rules_version = '2';
-        service cloud.firestore {
-          match /databases/{database}/documents {
-            match /players/{code} {
-              allow read: if true;
-              allow write: if request.resource.data.keys().hasAll(['nick','coins','best'])
-                           && request.resource.data.coins is int
-                           && request.resource.data.best  is int
-                           && request.resource.data.nick  is string;
-            }
-          }
-        }
-      Это разрешает читать всем (нужно для рейтинга) и писать только записи
-      нужной формы -- без системы логинов, но достаточно, чтобы случайный
-      скрипт не намусорил в базе.
-   4) Значок шестерёнки -> Project settings -> General -> внизу "Your apps" ->
-      значок "</>" -> зарегистрировать веб-приложение -> скопировать из
-      появившегося firebaseConfig два значения: apiKey и projectId.
-   5) Вписать их ниже вместо пустых строк -- и пересобрать APK.
 
-   Пока apiKey/projectId пустые, весь блок ничего не делает, а секция в
-   настройках скрыта -- игра работает как обычно, без интернета. */
 const CLOUD = {
-  apiKey:    'AIzaSyCocguW-KrcPBbo5v1Me9iF1C_dDJHe-Qc',   // из google-services.json
-  projectId: 'cabbit-jump'                                 // из google-services.json
+  apiKey:    'AIzaSyCocguW-KrcPBbo5v1Me9iF1C_dDJHe-Qc',   
+  projectId: 'cabbit-jump'                                 
 };
 const cloudReady = () => !!(CLOUD.apiKey && CLOUD.projectId);
 const cloudBase  = () => 'https://firestore.googleapis.com/v1/projects/' + CLOUD.projectId + '/databases/(default)/documents';
 
-/* Твой личный код профиля (Настройки -> Онлайн-профиль -> "Копировать"),
-   чтобы твой ник в рейтинге у ВСЕХ игроков подсвечивался фиолетовым
-   градиентом и меткой "DEV". Впиши сюда свой код и пересобери игру. */
+
 const DEV_CODE = 'C4N3TAU5';
 
-// Код профиля - 8 символов без похожих друг на друга букв/цифр (0/O, 1/I и т.п.)
+
 function makeCloudCode(){
   const abc = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   let code = '';
@@ -3607,15 +3959,31 @@ function makeCloudCode(){
 }
 let cloudCode = Store.get('cloudCode', '') || makeCloudCode();
 Store.set('cloudCode', cloudCode);
+let myTitle = Store.get('titleText', '');
+let myTitleColor = Store.get('titleColor', '');
+
+async function cloudFetchOwnTitle(){
+  if (!cloudReady()) return;
+  try {
+    const res = await fetch(cloudBase() + '/players/' + cloudCode + '?key=' + CLOUD.apiKey);
+    if (!res.ok) return;
+    const doc = await res.json();
+    const f = (doc && doc.fields) || {};
+    myTitle = (f.title && f.title.stringValue) || '';
+    myTitleColor = (f.titleColor && f.titleColor.stringValue) || '';
+    Store.set('titleText', myTitle);
+    Store.set('titleColor', myTitleColor);
+  } catch (e) {}
+}
 
 function setCloudStatus(msg){
   const el = document.getElementById('cloudStatus');
   if (el) el.textContent = msg || '';
 }
 
-// Отправить текущий прогресс в облако под своим кодом. Вызывается тихо -
-// без сообщений об успехе, чтобы не дёргать игрока; ошибки тоже проглатываем,
-// это фоновая подстраховка, а не обязательное действие.
+
+
+
 let cloudPushTimer = null;
 function cloudPushSoon(){
   if (!cloudReady()) return;
@@ -3633,8 +4001,8 @@ async function cloudPush(){
           nick:  { stringValue: nickname || 'Кэббит' },
           coins: { integerValue: String(coins) },
           best:  { integerValue: String(best) },
-          // купленные вещи и то, что сейчас надето — чтобы восстановление
-          // по коду возвращало гардероб целиком, а не только монеты и рекорд
+          
+          
           owned: { arrayValue: { values: Array.from(owned).map(v => ({ stringValue: v })) } },
           hat:   { stringValue: outfit.hat  },
           acc:   { stringValue: outfit.acc  },
@@ -3642,14 +4010,16 @@ async function cloudPush(){
           char:  { stringValue: outfit.char },
           perk:  { stringValue: outfit.perk },
           hat2:  { stringValue: outfit.hat2 },
-          acc2:  { stringValue: outfit.acc2 }
+          acc2:  { stringValue: outfit.acc2 },
+          title:      { stringValue: myTitle || '' },
+          titleColor: { stringValue: myTitleColor || '' }
         }
       })
     });
-  } catch (e) { /* нет сети - попробуем при следующей синхронизации */ }
+  } catch (e) {  }
 }
 
-// Восстановить прогресс по чужому/старому коду (например, после переустановки APK)
+
 async function cloudRestore(rawCode){
   if (!cloudReady()){ setCloudStatus(t('cloudErr')); return; }
   const code = String(rawCode || '').trim().toUpperCase();
@@ -3664,8 +4034,8 @@ async function cloudRestore(rawCode){
     if (f.best)  { best  = parseInt(f.best.integerValue  || '0', 10) || 0; Store.set('best', best); }
     if (f.nick && f.nick.stringValue){ nickname = f.nick.stringValue; Store.set('nick', nickname); }
 
-    // купленные вещи из облака — добавляем к тому, что уже куплено локально
-    // (никогда не отнимаем, только объединяем, на случай покупок с двух устройств)
+    
+    
     if (f.owned && f.owned.arrayValue && Array.isArray(f.owned.arrayValue.values)){
       for (const v of f.owned.arrayValue.values){
         if (v && v.stringValue) owned.add(v.stringValue);
@@ -3679,8 +4049,8 @@ async function cloudRestore(rawCode){
         Store.set(slotKey, val);
       }
     }
-    // hat2/acc2 — не отдельные вещи, а второй выбор из каталогов hat/acc,
-    // поэтому проверяем именно по OUTFITS.hat/OUTFITS.acc
+    
+    
     const hat2Val = f.hat2 && f.hat2.stringValue;
     if (hat2Val && OUTFITS.hat[hat2Val]){
       outfit.hat2 = hat2Val;
@@ -3691,6 +4061,10 @@ async function cloudRestore(rawCode){
       outfit.acc2 = acc2Val;
       Store.set('acc2', acc2Val);
     }
+    myTitle = (f.title && f.title.stringValue) || '';
+    myTitleColor = (f.titleColor && f.titleColor.stringValue) || '';
+    Store.set('titleText', myTitle);
+    Store.set('titleColor', myTitleColor);
 
     cloudCode = code;
     Store.set('cloudCode', cloudCode);
@@ -3700,7 +4074,7 @@ async function cloudRestore(rawCode){
   } catch (e) { setCloudStatus(t('cloudErr')); }
 }
 
-// Топ-100 игроков по лучшему результату
+
 async function cloudFetchLeaderboard(){
   const rows = document.getElementById('onlineLbRows');
   if (!rows || !cloudReady()) return;
@@ -3725,19 +4099,33 @@ async function cloudFetchLeaderboard(){
       const f = row.document.fields || {};
       const nick = (f.nick && f.nick.stringValue) || '?';
       const sc = (f.best && f.best.integerValue) || '0';
-      // код документа — последний кусок пути ".../players/{code}"
+      
       const path = row.document.name || '';
       const rowCode = path.substring(path.lastIndexOf('/') + 1);
       const isDev = DEV_CODE && rowCode === DEV_CODE;
+      const titleText = (f.title && f.title.stringValue) || '';
+      const titleColor = (f.titleColor && f.titleColor.stringValue) || '';
       i++;
       const div = document.createElement('div');
       div.className = 'lbRow';
-      const nameHtml = isDev
-        ? '<span class="devNick">' + escapeHtml(nick) + '</span><span class="devBadge">DEV</span>'
-        : escapeHtml(nick);
+      let nameHtml;
+      if (isDev){
+        nameHtml = '<span class="devNick">' + escapeHtml(nick) + '</span><span class="devBadge">DEV</span>';
+      } else if (titleText && titleColor){
+        const isGrad = /gradient\(/i.test(titleColor);
+        const nickStyle = isGrad
+          ? 'background:' + titleColor + ';background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800;'
+          : 'color:' + titleColor + ';font-weight:800;';
+        const badgeStyle = isGrad
+          ? 'background:' + titleColor + ';background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;'
+          : 'color:' + titleColor + ';';
+        nameHtml = '<span style="' + nickStyle + '">' + escapeHtml(nick) + '</span><span class="devBadge" style="' + badgeStyle + '">' + escapeHtml(titleText) + '</span>';
+      } else {
+        nameHtml = escapeHtml(nick);
+      }
       div.innerHTML = '<span>' + i + '. ' + nameHtml + '</span><b>' + sc + '</b>';
-      // В режиме админа тап по игроку сразу подгружает его в панель ниже —
-      // код вводить вручную не нужно.
+      
+      
       if (adminMode){
         div.style.cursor = 'pointer';
         div.title = 'Тап — выдать вещи/монеты';
@@ -3785,35 +4173,30 @@ function closeSettings(){
   goToMenu();
 }
 
-/* ---------- Кнопки ---------- */
+
 document.getElementById('playBtn').addEventListener('click', startGame);
 document.getElementById('continueBtn').addEventListener('click', resumeGame);
 document.getElementById('settingsBtn').addEventListener('click', openSettings);
 document.getElementById('wardrobeBtn').addEventListener('click', openWardrobe);
 
-/* ---------- Админ-панель ----------------------------------------------
-   Спрятана от обычных игроков: 7 быстрых тапов по заголовку "Настройки"
-   открывают PIN-запрос прямо в настройках. Дальше — тапаешь по игроку в
-   списке рейтинга, и его данные подгружаются в панель сами.
-   PIN — просто короткий пароль в самом коде, не настоящая авторизация,
-   но достаточно, чтобы случайный человек ничего не сломал.
-   Смени ADMIN_PIN на что-то своё перед публикацией. */
-const ADMIN_PIN = '2468'; // <-- смени на свой PIN
+
+const ADMIN_PIN = '1337';
 
 let adminMode = localStorage.getItem('cabbitAdminMode') === '1';
 let adminCurrentCode = null;
 let adminCurrentEquipped = null;
 if (adminMode) document.getElementById('adminTool').classList.remove('hidden');
 
-// секретный жест: 7 тапов по заголовку "Настройки" быстрее чем за 2.5 сек
+
 let secretTaps = 0, secretTapTimer = null;
-document.getElementById('settingsTitle').addEventListener('click', () => {
-  if (adminMode) return; // уже разблокировано — жест больше не нужен
+document.getElementById('secretZone').addEventListener('click', () => {
+  if (adminMode) return;
   secretTaps++;
   clearTimeout(secretTapTimer);
-  secretTapTimer = setTimeout(() => { secretTaps = 0; }, 2500);
-  if (secretTaps >= 7){
+  secretTapTimer = setTimeout(() => { secretTaps = 0; }, 2000);
+  if (secretTaps >= 5){
     secretTaps = 0;
+    openSettings();
     document.getElementById('adminGate').classList.remove('hidden');
   }
 });
@@ -3836,8 +4219,8 @@ function adminSetStatus(msg){
   if (el) el.textContent = msg || '';
 }
 
-// Тап по игроку в рейтинге (см. cloudFetchLeaderboard) вызывает это напрямую
-// с уже известным кодом — вводить его вручную не нужно.
+
+
 async function adminLoad(codeOverride){
   const code = (codeOverride || document.getElementById('adminCodeInput').value).trim().toUpperCase();
   if (!code){ return; }
@@ -3853,8 +4236,8 @@ async function adminLoad(codeOverride){
     const f = doc.fields || {};
 
     adminCurrentCode = code;
-    // запоминаем, что было надето — PATCH без updateMask заменяет ВЕСЬ документ
-    // теми полями, что мы отправим, так что при сохранении их нужно вернуть как есть
+    
+    
     adminCurrentEquipped = {
       hat:  (f.hat  && f.hat.stringValue)  || 'none',
       acc:  (f.acc  && f.acc.stringValue)  || 'none',
@@ -3868,6 +4251,8 @@ async function adminLoad(codeOverride){
     document.getElementById('adminNickInput').value = (f.nick && f.nick.stringValue) || '';
     document.getElementById('adminCoinsInput').value = parseInt((f.coins && f.coins.integerValue) || '0', 10);
     document.getElementById('adminBestInput').value  = parseInt((f.best  && f.best.integerValue)  || '0', 10);
+    document.getElementById('adminTitleInput').value = (f.title && f.title.stringValue) || '';
+    document.getElementById('adminTitleColorInput').value = (f.titleColor && f.titleColor.stringValue) || '';
 
     const ownedSet = new Set();
     if (f.owned && f.owned.arrayValue && Array.isArray(f.owned.arrayValue.values)){
@@ -3918,6 +4303,9 @@ async function adminSave(){
   let nickMatch = document.getElementById('adminNickInput').value.trim();
   if (!nickMatch) nickMatch = 'Кэббит';
   if (nickMatch.length > 14) nickMatch = nickMatch.slice(0, 14);
+  let titleVal = document.getElementById('adminTitleInput').value.trim();
+  if (titleVal.length > 16) titleVal = titleVal.slice(0, 16);
+  const titleColorVal = document.getElementById('adminTitleColorInput').value.trim();
 
   adminSetStatus('Сохранение...');
   try {
@@ -3936,19 +4324,23 @@ async function adminSave(){
           char:  { stringValue: (adminCurrentEquipped && adminCurrentEquipped.char) || 'hero' },
           perk:  { stringValue: (adminCurrentEquipped && adminCurrentEquipped.perk) || 'none' },
           hat2:  { stringValue: (adminCurrentEquipped && adminCurrentEquipped.hat2) || 'none' },
-          acc2:  { stringValue: (adminCurrentEquipped && adminCurrentEquipped.acc2) || 'none' }
+          acc2:  { stringValue: (adminCurrentEquipped && adminCurrentEquipped.acc2) || 'none' },
+          title:      { stringValue: titleVal },
+          titleColor: { stringValue: titleColorVal }
         }
       })
     });
     if (res.ok){
-      // Редактируем СВОЙ же профиль на этом устройстве — применяем изменения
-      // не только в облако, но и локально прямо сейчас. Иначе игра при
-      // следующем действии тихо перезапишет облако старыми локальными
-      // значениями (обычная автосинхронизация), и правки как будто "слетят".
+
+
+
+
       if (adminCurrentCode === cloudCode){
         coins = coinsVal; Store.set('coins', coins);
         best  = bestVal;  Store.set('best', best);
         nickname = nickMatch; Store.set('nick', nickname);
+        myTitle = titleVal; Store.set('titleText', myTitle);
+        myTitleColor = titleColorVal; Store.set('titleColor', myTitleColor);
         owned.clear();
         for (const it of ownedList) owned.add(it);
         owned.add('hat:none'); owned.add('acc:none'); owned.add('acc:bowtie'); owned.add('tool:none'); owned.add('char:hero');
@@ -3994,7 +4386,7 @@ document.querySelectorAll('.chip[data-lang]').forEach(chip => {
   });
 });
 
-/* ---------- Превью в меню ---------- */
+
 const previewCtxs = ['preview', 'preview2']
   .map(id => document.getElementById(id))
   .filter(Boolean)
@@ -4021,7 +4413,7 @@ let prevT = performance.now();
     pctx.save();
     pctx.translate(110, 114 + bob);
     pctx.rotate(tilt);
-    pctx.scale(2.9 / sq, 2.9 * sq); // крупнее, чем в игре — картинка hero.png обычно с полями вокруг кота
+    pctx.scale(2.9 / sq, 2.9 * sq); 
     paintHeroBody(pctx, hero.w, hero.h, ear);
     paintAccessory(pctx, hero.w, hero.h, outfit.acc, A);
     if (outfit.acc2 !== 'none' && isOwned('perk', 'multiacc')) paintAccessory(pctx, hero.w, hero.h, outfit.acc2, A);
@@ -4038,11 +4430,12 @@ let prevT = performance.now();
   }
 })(performance.now());
 
-/* ---------- Инициализация ---------- */
+
 resetGame();
 camY = camTarget = 0;
 buildShop();
 applyStaticI18n();
+if (cloudReady()) cloudFetchOwnTitle();
 
 if (nickname){
   state = STATE.MENU;
