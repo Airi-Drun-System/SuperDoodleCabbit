@@ -518,6 +518,7 @@
           <label style="display:flex;justify-content:space-between;align-items:center;font-size:13px;">Цвет/градиент
             <input id="adminTitleColorInput" type="text" placeholder="#ffd34d или linear-gradient(...)" style="width:140px;padding:6px;border-radius:8px;border:none;font-size:11px;">
           </label>
+          <div id="adminGradientPresets" style="display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end;"></div>
           <div id="adminItemsGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:4px 10px;max-height:180px;overflow-y:auto;font-size:11px;"></div>
           <div style="display:flex;justify-content:center;">
             <button id="adminSaveBtn" class="adminIconBtn" aria-label="Сохранить">✓</button>
@@ -987,6 +988,7 @@ const FIXED_DT = 1 / 120;
 
 
 let glassUsedThisRun = false;
+let fallSoundPlayed = false;
 const multiOn = () => isOwned('perk', 'multiacc');
 const hasHat  = (v) => (outfit.hat === v || (multiOn() && outfit.hat2 === v)) && isOwned('hat', v);
 const hasAcc  = (v) => (outfit.acc === v || (multiOn() && outfit.acc2 === v)) && isOwned('acc', v);
@@ -1366,6 +1368,7 @@ function resetGame(){
   monsterTimer = MONSTER_INTERVAL;
   monsterEvent = null;
   glassUsedThisRun = false;
+  fallSoundPlayed = false;
   shootCd = 0;
   airJumps = 0;
   if (typeof hitBtn !== 'undefined') hitBtn.classList.add('hidden');
@@ -1804,6 +1807,10 @@ function updateWorld(dt){
   flash  = Math.max(0, flash - dt * 2.2);
   coinPulse = Math.max(0, coinPulse - dt * 2.4);
 
+  if (!fallSoundPlayed && hero.y - camY > VH){
+    fallSoundPlayed = true;
+    sfxOver();
+  }
   if (hero.y - camY > VH + 70) handleFatalEvent();
 
   tapEvent = false;
@@ -3568,7 +3575,7 @@ function gameOver(){
   hideTouchControls();
   hitBtn.classList.add('hidden');
 
-  sfxOver();
+  if (!fallSoundPlayed){ fallSoundPlayed = true; sfxOver(); }
   burstSpark(hero.x, hero.y, '#ff9fb4', 24, 1.2);
 
   const isNewBest = score > best;
@@ -4310,6 +4317,34 @@ function renderAdminItemsGrid(ownedSet){
     }
   }
 }
+
+const ADMIN_GRADIENT_PRESETS = [
+  { n: 'Золото', v: 'linear-gradient(90deg,#ffe08a,#ffb43d,#ffe08a)' },
+  { n: 'Огонь', v: 'linear-gradient(90deg,#ff6a3d,#ffb43d,#ff3d5a)' },
+  { n: 'Лёд', v: 'linear-gradient(90deg,#9be8ff,#4fc3ff,#c8f2ff)' },
+  { n: 'Радуга', v: 'linear-gradient(90deg,#ff5a5a,#ffd34d,#5aff8a,#5ab4ff,#c05aff)' },
+  { n: 'Яд', v: 'linear-gradient(90deg,#8aff5a,#3dcc5a,#8aff5a)' },
+  { n: 'Розовый', v: 'linear-gradient(90deg,#ff9fd0,#ff5ab0,#ff9fd0)' },
+  { n: 'Тьма', v: 'linear-gradient(90deg,#7a5aff,#3d1d8a,#7a5aff)' },
+  { n: 'Сталь', v: 'linear-gradient(90deg,#dfe6ea,#8fa0aa,#dfe6ea)' }
+];
+
+function renderAdminGradientPresets(){
+  const box = document.getElementById('adminGradientPresets');
+  box.innerHTML = '';
+  for (const p of ADMIN_GRADIENT_PRESETS){
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.textContent = p.n;
+    btn.dataset.grad = p.v;
+    btn.style.cssText = 'padding:5px 9px;border-radius:10px;border:none;font-size:10px;font-weight:700;cursor:pointer;color:#1a1a1a;background:' + p.v + ';';
+    btn.addEventListener('click', () => {
+      document.getElementById('adminTitleColorInput').value = p.v;
+    });
+    box.appendChild(btn);
+  }
+}
+renderAdminGradientPresets();
 
 async function adminSave(){
   if (!adminCurrentCode || !cloudReady()) return;
