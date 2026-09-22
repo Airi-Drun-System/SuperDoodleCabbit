@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#150a2b">
-<title>Котокролик!</title>
+<title>Cabbit Jump!</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <style>
   :root{
@@ -57,7 +57,6 @@
   .title{
     font-size:clamp(28px,8.4vw,52px);font-weight:800;line-height:.95;
     text-shadow:0 6px 0 rgba(0,0,0,.28), 0 0 34px rgba(255,178,107,.35);
-    animation:titleGlow 3.6s ease-in-out infinite;
   }
 
   .stats{display:flex;gap:16px;align-items:center;justify-content:center;font-size:15px;color:#e8d9ff;}
@@ -77,25 +76,26 @@
   }
   .menuBtnWrap .btn{width:100%;}
   .titleSwing{
-    position:relative;padding-top:26px;display:flex;justify-content:center;
-    transform-origin:50% 0;animation:swingSway 4.4s ease-in-out infinite;
+    --ropeLen:140px; --titleAngle:0deg; --titleOffX:0px; --titleOffY:0px;
+    position:relative;display:flex;justify-content:center;padding-top:4px;
   }
-  .titleSwing::before,.titleSwing::after{
-    content:'';position:absolute;top:0;width:2px;height:26px;border-radius:1px;
-    background:linear-gradient(180deg,rgba(255,211,150,.25),rgba(255,211,150,.85));
+  #titleSign{
+    position:relative;display:inline-block;cursor:grab;touch-action:none;
+    transform:translate(var(--titleOffX), var(--titleOffY)) rotate(var(--titleAngle));
+    transform-origin:50% 50%;
+    will-change:transform;
   }
-  .titleSwing::before{left:26%;}
-  .titleSwing::after{right:26%;}
-  @keyframes swingSway{
-    0%,100%{ transform:rotate(-1.5deg); }
-    50%{ transform:rotate(1.5deg); }
+  #titleSign:active{cursor:grabbing;}
+  .woodSign{
+    padding:14px 30px;border-radius:10px;color:#ffe9c2;
+    background-image:
+      repeating-linear-gradient(90deg, rgba(0,0,0,.08) 0 2px, transparent 2px 20px),
+      linear-gradient(180deg,#c1874c,#8a5228 55%,#6b3d1c);
+    border:4px solid #4f2c14;
+    box-shadow:0 8px 0 rgba(0,0,0,.35), 0 14px 20px rgba(0,0,0,.35),
+      inset 0 2px 3px rgba(255,255,255,.3), inset 0 -5px 10px rgba(0,0,0,.4);
+    text-shadow:0 2px 0 rgba(0,0,0,.55);
   }
-  @media (prefers-reduced-motion:reduce){ .titleSwing{animation:none;} }
-  @keyframes titleGlow{
-    0%,100%{ text-shadow:0 6px 0 rgba(0,0,0,.28), 0 0 34px rgba(255,178,107,.35); }
-    50%{ text-shadow:0 6px 0 rgba(0,0,0,.28), 0 0 52px rgba(255,211,150,.65); }
-  }
-  @media (prefers-reduced-motion:reduce){ .title{animation:none !important;} }
   .btn{
     border:none;cursor:pointer;font-family:inherit;font-weight:800;font-size:19px;
     color:#3a1f00;padding:13px 34px;border-radius:999px;
@@ -420,8 +420,17 @@
   <div id="menu" class="screen hidden">
     <div id="secretZone" style="position:absolute;top:0;left:0;width:48px;height:48px;z-index:50;"></div>
     <div class="spacer"></div>
-    <canvas id="preview" width="220" height="220"></canvas>
-    <div class="titleSwing"><h1 class="title pop">Котокролик!</h1></div>
+    <svg id="titleRopeSvg" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;">
+      <defs>
+        <linearGradient id="ropeGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#b98247"></stop>
+          <stop offset="1" stop-color="#5c3a1c"></stop>
+        </linearGradient>
+      </defs>
+      <polyline id="ropeL" fill="none" stroke="url(#ropeGrad)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></polyline>
+      <polyline id="ropeR" fill="none" stroke="url(#ropeGrad)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></polyline>
+    </svg>
+    <div class="titleSwing" id="titleSwing"><h1 class="title woodSign" id="titleSign">Cabbit Jump!</h1></div>
 
     <p class="stats rise d1">
       <span data-i18n="best">Лучший результат</span>: <b id="menuBest">0</b>
@@ -3135,6 +3144,8 @@ function frame(now){
   last = now;
   if (realDt > 0.1) realDt = 0.1;
 
+  updateTitlePhysics(realDt);
+
   if (state === STATE.PLAY){
     let dt = realDt;
 
@@ -3196,6 +3207,175 @@ function checkOrientation(){
 window.addEventListener('resize', checkOrientation);
 window.addEventListener('orientationchange', () => setTimeout(checkOrientation, 120));
 checkOrientation();
+
+const titleSwingEl = document.getElementById('titleSwing');
+const titleSignEl = document.getElementById('titleSign');
+const ropePolyL = document.getElementById('ropeL');
+const ropePolyR = document.getElementById('ropeR');
+let titleDragging = false;
+let titleDragPointerId = null;
+let titleDragSide = null;
+
+let currentRopeLen = 140;
+let ropeSegLen = 20;
+let ropeAnchorLX = 0, ropeAnchorRX = 0, ropeAnchorY = 8;
+
+const ROPE_POINTS = 9;
+const ROPE_SLACK = 1.045;
+const ROPE_GRAVITY = 1500;
+const ROPE_DAMPING = 0.965;
+const ROPE_ITER = 8;
+const CORNER_STIFFNESS = 10;
+const CORNER_DAMPING = 2.6;
+let ropeL = null, ropeR = null;
+let cornerL = { x: 0, y: 0 };
+let cornerR = { x: 0, y: 0 };
+let cornerOffL = { x: 0, y: 0, vx: 0, vy: 0 };
+let cornerOffR = { x: 0, y: 0, vx: 0, vy: 0 };
+let titleIdleTime = 0;
+
+function updateTitleRopeLen(){
+  if (!titleSwingEl) return;
+  const rect = titleSwingEl.getBoundingClientRect();
+  const ropeLen = Math.max(40, Math.round(rect.top));
+  currentRopeLen = ropeLen;
+  ropeSegLen = (ropeLen * ROPE_SLACK) / (ROPE_POINTS - 1);
+  titleSwingEl.style.setProperty('--ropeLen', ropeLen + 'px');
+  ropeAnchorLX = rect.left + rect.width * 0.16;
+  ropeAnchorRX = rect.left + rect.width * 0.84;
+}
+
+function makeRopePoint(x, y){
+  return { x, y, px: x, py: y };
+}
+
+function stepCornerOffset(off, ambientAx, dt){
+  const ax = -CORNER_STIFFNESS * off.x - CORNER_DAMPING * off.vx + ambientAx;
+  const ay = -CORNER_STIFFNESS * off.y - CORNER_DAMPING * off.vy;
+  off.vx += ax * dt; off.x += off.vx * dt;
+  off.vy += ay * dt; off.y += off.vy * dt;
+}
+
+function initRopeChain(anchorX, anchorY, attachX, attachY){
+  const pts = [];
+  for (let i = 0; i < ROPE_POINTS; i++){
+    const t = i / (ROPE_POINTS - 1);
+    pts.push(makeRopePoint(anchorX + (attachX - anchorX) * t, anchorY + (attachY - anchorY) * t));
+  }
+  return pts;
+}
+
+function stepRopeChain(pts, anchor, attach, dt){
+  for (let i = 1; i < pts.length - 1; i++){
+    const p = pts[i];
+    const vx = (p.x - p.px) * ROPE_DAMPING;
+    const vy = (p.y - p.py) * ROPE_DAMPING;
+    const nx = p.x + vx;
+    const ny = p.y + vy + ROPE_GRAVITY * dt * dt;
+    p.px = p.x; p.py = p.y;
+    p.x = nx; p.y = ny;
+  }
+  pts[0].x = anchor.x; pts[0].y = anchor.y; pts[0].px = anchor.x; pts[0].py = anchor.y;
+  const last = pts[pts.length - 1];
+  last.x = attach.x; last.y = attach.y; last.px = attach.x; last.py = attach.y;
+
+  for (let iter = 0; iter < ROPE_ITER; iter++){
+    for (let i = 0; i < pts.length - 1; i++){
+      const a = pts[i], b = pts[i + 1];
+      const dx = b.x - a.x, dy = b.y - a.y;
+      const dist = Math.hypot(dx, dy) || 0.0001;
+      const diff = (dist - ropeSegLen) / dist;
+      const offX = dx * 0.5 * diff, offY = dy * 0.5 * diff;
+      if (i !== 0){ a.x += offX; a.y += offY; }
+      if (i + 1 !== pts.length - 1){ b.x -= offX; b.y -= offY; }
+    }
+    pts[0].x = anchor.x; pts[0].y = anchor.y;
+    last.x = attach.x; last.y = attach.y;
+  }
+}
+
+function renderRopeChain(polylineEl, pts){
+  if (!polylineEl) return;
+  let str = '';
+  for (let i = 0; i < pts.length; i++){
+    str += (i ? ' ' : '') + pts[i].x.toFixed(1) + ',' + pts[i].y.toFixed(1);
+  }
+  polylineEl.setAttribute('points', str);
+}
+
+function updateRopePhysics(dt){
+  if (!titleSwingEl || state !== STATE.MENU) return;
+  if (!ropeL || !ropeR){
+    ropeL = initRopeChain(ropeAnchorLX, ropeAnchorY, cornerL.x, cornerL.y);
+    ropeR = initRopeChain(ropeAnchorRX, ropeAnchorY, cornerR.x, cornerR.y);
+  }
+  stepRopeChain(ropeL, { x: ropeAnchorLX, y: ropeAnchorY }, cornerL, dt);
+  stepRopeChain(ropeR, { x: ropeAnchorRX, y: ropeAnchorY }, cornerR, dt);
+  renderRopeChain(ropePolyL, ropeL);
+  renderRopeChain(ropePolyR, ropeR);
+}
+
+function updateTitlePhysics(dt){
+  if (!titleSignEl) return;
+  if (state === STATE.MENU) updateTitleRopeLen();
+  const clampedDt = Math.min(dt, 1 / 30);
+  titleIdleTime += clampedDt;
+
+  const restY = ropeAnchorY + currentRopeLen;
+  const ambientL = Math.sin(titleIdleTime * 0.7) * 3 + Math.sin(titleIdleTime * 1.3 + 0.6) * 1.6;
+  const ambientR = Math.sin(titleIdleTime * 0.7 + 1.1) * 3 + Math.sin(titleIdleTime * 1.3 + 2.0) * 1.6;
+
+  const draggingL = titleDragging && titleDragSide === 'L';
+  const draggingR = titleDragging && titleDragSide === 'R';
+
+  if (!draggingL) stepCornerOffset(cornerOffL, ambientL, clampedDt);
+  if (!draggingR) stepCornerOffset(cornerOffR, ambientR, clampedDt);
+
+  cornerL.x = ropeAnchorLX + cornerOffL.x; cornerL.y = restY + cornerOffL.y;
+  cornerR.x = ropeAnchorRX + cornerOffR.x; cornerR.y = restY + cornerOffR.y;
+
+  const centerX = (cornerL.x + cornerR.x) / 2;
+  const centerY = (cornerL.y + cornerR.y) / 2;
+  const restCenterX = (ropeAnchorLX + ropeAnchorRX) / 2;
+  const angleDeg = Math.atan2(cornerR.y - cornerL.y, cornerR.x - cornerL.x) * 180 / Math.PI;
+
+  titleSwingEl.style.setProperty('--titleOffX', (centerX - restCenterX).toFixed(2) + 'px');
+  titleSwingEl.style.setProperty('--titleOffY', (centerY - restY).toFixed(2) + 'px');
+  titleSwingEl.style.setProperty('--titleAngle', angleDeg.toFixed(3) + 'deg');
+
+  updateRopePhysics(clampedDt);
+}
+
+if (titleSignEl){
+  titleSignEl.addEventListener('pointerdown', (e) => {
+    titleDragging = true;
+    titleDragPointerId = e.pointerId;
+    try { titleSignEl.setPointerCapture(e.pointerId); } catch (err) {}
+    const centerX = (cornerL.x + cornerR.x) / 2;
+    titleDragSide = e.clientX < centerX ? 'L' : 'R';
+  });
+  titleSignEl.addEventListener('pointermove', (e) => {
+    if (!titleDragging || e.pointerId !== titleDragPointerId) return;
+    const restY = ropeAnchorY + currentRopeLen;
+    const off = titleDragSide === 'L' ? cornerOffL : cornerOffR;
+    const anchorX = titleDragSide === 'L' ? ropeAnchorLX : ropeAnchorRX;
+    off.x = e.clientX - anchorX;
+    off.y = e.clientY - restY;
+    off.vx = 0; off.vy = 0;
+  });
+  const endTitleDrag = (e) => {
+    if (!titleDragging || (e && e.pointerId !== titleDragPointerId)) return;
+    titleDragging = false;
+    titleDragPointerId = null;
+    titleDragSide = null;
+  };
+  titleSignEl.addEventListener('pointerup', endTitleDrag);
+  titleSignEl.addEventListener('pointercancel', endTitleDrag);
+}
+
+updateTitleRopeLen();
+window.addEventListener('resize', updateTitleRopeLen);
+window.addEventListener('orientationchange', () => setTimeout(updateTitleRopeLen, 150));
 
 
 const nicknameEl = document.getElementById('nickname');
@@ -3548,6 +3728,7 @@ function goToMenu(){
   refreshShopState();
   document.getElementById('continueBtn').disabled = true;
   if (cloudReady()) checkPendingGrant();
+  requestAnimationFrame(updateTitleRopeLen);
 }
 
 function startGame(){
