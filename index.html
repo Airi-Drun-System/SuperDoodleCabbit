@@ -519,8 +519,9 @@
           </label>
           <div id="adminGradientPresets" style="display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end;"></div>
           <div id="adminItemsGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:4px 10px;max-height:180px;overflow-y:auto;font-size:11px;"></div>
-          <div style="display:flex;justify-content:center;">
+          <div style="display:flex;justify-content:center;gap:10px;">
             <button id="adminSaveBtn" class="adminIconBtn" aria-label="Сохранить">✓</button>
+            <button id="adminDeleteBtn" type="button" style="border:none;cursor:pointer;font-family:inherit;font-weight:800;font-size:13px;padding:9px 16px;border-radius:999px;color:#fff;background:linear-gradient(180deg,#ff6a6a,#c62828);box-shadow:0 4px 0 #8e1c1c;">Удалить аккаунт</button>
           </div>
         </div>
         <p id="adminStatus" style="font-size:11px;opacity:.8;min-height:14px;margin:0;"></p>
@@ -3192,7 +3193,7 @@ document.addEventListener('visibilitychange', () => {
 const rotateOverlayEl = document.getElementById('rotateOverlay');
 let inLandscape = false;
 function checkOrientation(){
-  const landscape = window.innerWidth > window.innerHeight;
+  const landscape = isTouchDevice && window.innerWidth > window.innerHeight;
   if (landscape){
     if (state === STATE.PLAY) pauseGame();
     if (rotateOverlayEl) rotateOverlayEl.classList.remove('hidden');
@@ -4184,6 +4185,7 @@ async function adminLoad(codeOverride){
   const code = (codeOverride || document.getElementById('adminCodeInput').value).trim().toUpperCase();
   if (!code){ return; }
   if (!cloudReady()){ adminSetStatus('Облако не настроено (CLOUD.apiKey/projectId)'); return; }
+  adminResetDeleteArm();
 
   document.getElementById('adminCodeInput').value = code;
   adminSetStatus('Загрузка...');
@@ -4343,8 +4345,54 @@ async function adminSave(){
   }
 }
 
+let adminDeleteArmedCode = null;
+let adminDeleteArmTimer = null;
+const adminDeleteBtnEl = document.getElementById('adminDeleteBtn');
+
+function adminResetDeleteArm(){
+  adminDeleteArmedCode = null;
+  if (adminDeleteArmTimer){ clearTimeout(adminDeleteArmTimer); adminDeleteArmTimer = null; }
+  if (adminDeleteBtnEl){
+    adminDeleteBtnEl.textContent = 'Удалить аккаунт';
+    adminDeleteBtnEl.style.background = 'linear-gradient(180deg,#ff6a6a,#c62828)';
+  }
+}
+
+async function adminDeleteAccount(){
+  if (!adminCurrentCode || !cloudReady()) return;
+  if (adminDeleteArmedCode !== adminCurrentCode){
+    adminDeleteArmedCode = adminCurrentCode;
+    if (adminDeleteArmTimer) clearTimeout(adminDeleteArmTimer);
+    adminDeleteArmTimer = setTimeout(adminResetDeleteArm, 4000);
+    if (adminDeleteBtnEl){
+      adminDeleteBtnEl.textContent = 'Точно удалить? Нажми ещё раз';
+      adminDeleteBtnEl.style.background = 'linear-gradient(180deg,#ff2d2d,#8e1c1c)';
+    }
+    return;
+  }
+  adminResetDeleteArm();
+  adminSetStatus('Удаление...');
+  try {
+    const res = await fetch(cloudBase() + '/players/' + adminCurrentCode + '?key=' + CLOUD.apiKey, {
+      method: 'DELETE'
+    });
+    if (res.ok){
+      document.getElementById('adminPlayerBox').classList.add('hidden');
+      document.getElementById('adminCodeInput').value = '';
+      adminCurrentCode = null;
+      adminSetStatus('Аккаунт удалён ✓');
+      if (cloudReady()) cloudFetchLeaderboard();
+    } else {
+      adminSetStatus('Не удалось удалить аккаунт');
+    }
+  } catch (e){
+    adminSetStatus('Ошибка связи при удалении');
+  }
+}
+
 document.getElementById('adminLoadBtn').addEventListener('click', () => adminLoad());
 document.getElementById('adminSaveBtn').addEventListener('click', adminSave);
+if (adminDeleteBtnEl) adminDeleteBtnEl.addEventListener('click', adminDeleteAccount);
 document.getElementById('wardrobeBack').addEventListener('click', closeWardrobe);
 document.getElementById('settingsBack').addEventListener('click', closeSettings);
 document.getElementById('retryBtn').addEventListener('click', startGame);
