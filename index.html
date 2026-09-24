@@ -42,6 +42,13 @@
   .screen.hidden{display:none;}
   .hidden{display:none !important;}
   #menu{background:radial-gradient(120% 90% at 50% 14%, rgba(87,45,140,.6), rgba(21,10,43,.95));}
+  #menu.paused{
+    background:rgba(10,6,20,.88);
+    backdrop-filter:blur(8px) saturate(110%);
+    -webkit-backdrop-filter:blur(8px) saturate(110%);
+    justify-content:center;
+  }
+  #menu.paused .titleSwing, #menu.paused .stats, #menu.paused .hint, #menu.paused > a.btn, #menu.paused .spacer{display:none;}
   #settings{background:radial-gradient(120% 90% at 50% 14%, rgba(87,45,140,.65), rgba(21,10,43,.96));}
   #wardrobe{background:radial-gradient(120% 90% at 50% 14%, rgba(60,30,100,.82), rgba(12,6,24,.985));}
   #nickname{background:radial-gradient(120% 90% at 50% 30%, rgba(87,45,140,.65), rgba(21,10,43,.97));justify-content:center;}
@@ -410,7 +417,7 @@
 
     <div class="btnRow rise d3">
       <div class="menuBtnWrap"><button id="playBtn" class="btn" data-i18n="play">Играть</button></div>
-      <div class="menuBtnWrap"><button id="pauseMenuBtn" class="btn ghost hidden" data-i18n="pauseMenu">Меню</button></div>
+      <div class="menuBtnWrap"><button id="pauseMenuBtn" class="btn hidden" data-i18n="pauseMenu">Меню</button></div>
       <div class="menuBtnWrap"><button id="continueBtn" class="btn hidden" disabled data-i18n="cont">Продолжить</button></div>
       <div class="menuBtnWrap"><button id="wardrobeBtn" class="btn" data-i18n="wardrobe">Гардероб</button></div>
       <div class="menuBtnWrap"><button id="settingsBtn" class="btn ghost" data-i18n="settings">Настройки</button></div>
@@ -3625,6 +3632,7 @@ function refreshShopState(){
 function goToMenu(){
   state = STATE.MENU;
   hideAllScreens();
+  menuEl.classList.remove('paused');
   show(menuEl);
   reanimate(menuEl);
   pauseBtn.classList.add('hidden');
@@ -3649,11 +3657,11 @@ function pauseGame(){
   if (state !== STATE.PLAY) return;
   state = STATE.PAUSED;
   hideAllScreens();
+  menuEl.classList.add('paused');
   show(menuEl);
   pauseBtn.classList.add('hidden');
   hideTouchControls();
   document.getElementById('continueBtn').disabled = false;
-  refreshLeaderboardUI();
   refreshShopState();
 }
 
@@ -3663,6 +3671,7 @@ function resumeGame(){
   last = performance.now();
   acc = 0;
   hideAllScreens();
+  menuEl.classList.remove('paused');
   pauseBtn.classList.remove('hidden');
   showTouchControls();
 }
