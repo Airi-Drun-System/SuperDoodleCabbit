@@ -76,25 +76,10 @@
   }
   .menuBtnWrap .btn{width:100%;}
   .titleSwing{
-    --ropeLen:140px; --titleAngle:0deg; --titleOffX:0px; --titleOffY:0px;
-    position:relative;display:flex;justify-content:center;padding-top:4px;
+    display:flex;justify-content:center;padding-top:4px;
   }
   #titleSign{
-    position:relative;display:inline-block;cursor:grab;touch-action:none;
-    transform:translate(var(--titleOffX), var(--titleOffY)) rotate(var(--titleAngle));
-    transform-origin:50% 50%;
-    will-change:transform;
-  }
-  #titleSign:active{cursor:grabbing;}
-  .woodSign{
-    padding:14px 30px;border-radius:10px;color:#ffe9c2;
-    background-image:
-      repeating-linear-gradient(90deg, rgba(0,0,0,.08) 0 2px, transparent 2px 20px),
-      linear-gradient(180deg,#c1874c,#8a5228 55%,#6b3d1c);
-    border:4px solid #4f2c14;
-    box-shadow:0 8px 0 rgba(0,0,0,.35), 0 14px 20px rgba(0,0,0,.35),
-      inset 0 2px 3px rgba(255,255,255,.3), inset 0 -5px 10px rgba(0,0,0,.4);
-    text-shadow:0 2px 0 rgba(0,0,0,.55);
+    display:inline-block;
   }
   .btn{
     border:none;cursor:pointer;font-family:inherit;font-weight:800;font-size:19px;
@@ -116,44 +101,17 @@
 
   #playBtn{
     position:relative;overflow:hidden;
-    animation:playBreathe 2.2s ease-in-out infinite;
-  }
-  #playBtn::after{
-    content:'';position:absolute;top:0;left:-60%;width:40%;height:100%;
-    background:linear-gradient(115deg, transparent, rgba(255,255,255,.55), transparent);
-    transform:skewX(-18deg);
-    animation:playShimmer 2.6s ease-in-out infinite;
-  }
-  @keyframes playBreathe{
-    0%,100%{ box-shadow:0 6px 0 #c26a1d, 0 12px 22px rgba(0,0,0,.35), 0 0 0 rgba(255,178,107,0); }
-    50%{ box-shadow:0 6px 0 #c26a1d, 0 12px 26px rgba(0,0,0,.4), 0 0 22px rgba(255,178,107,.55); }
-  }
-  @keyframes playShimmer{
-    0%{ left:-60%; }
-    45%,100%{ left:130%; }
   }
   #settingsBtn{position:relative;}
   #settingsBtn::before{
     content:'⚙';display:inline-block;margin-right:6px;
-    animation:gearSpin 4.5s linear infinite;
   }
-  @keyframes gearSpin{ from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
 
   #shop{ position:relative; }
   #shop::before{
     content:'';position:absolute;inset:-2px;border-radius:22px;pointer-events:none;
     background:linear-gradient(120deg, rgba(255,178,107,0), rgba(178,104,255,.55), rgba(255,178,107,0));
-    background-size:220% 100%;
-    -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite:xor; mask-composite:exclude;
-    padding:1.5px;
-    animation:shopShimmer 5s linear infinite;
-    opacity:.7;
-  }
-  @keyframes shopShimmer{ 0%{background-position:0% 0;} 100%{background-position:220% 0;} }
-  @media (prefers-reduced-motion:reduce){
-    #playBtn, #playBtn::after, #settingsBtn::before, #shop::before{ animation:none !important; }
+    opacity:.5;
   }
 
   #shop{
@@ -420,17 +378,7 @@
   <div id="menu" class="screen hidden">
     <div id="secretZone" style="position:absolute;top:0;left:0;width:48px;height:48px;z-index:50;"></div>
     <div class="spacer"></div>
-    <svg id="titleRopeSvg" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;">
-      <defs>
-        <linearGradient id="ropeGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#b98247"></stop>
-          <stop offset="1" stop-color="#5c3a1c"></stop>
-        </linearGradient>
-      </defs>
-      <polyline id="ropeL" fill="none" stroke="url(#ropeGrad)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></polyline>
-      <polyline id="ropeR" fill="none" stroke="url(#ropeGrad)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></polyline>
-    </svg>
-    <div class="titleSwing" id="titleSwing"><h1 class="title woodSign" id="titleSign">Cabbit Jump!</h1></div>
+    <div class="titleSwing" id="titleSwing"><h1 class="title" id="titleSign">Cabbit Jump!</h1></div>
 
     <p class="stats rise d1">
       <span data-i18n="best">Лучший результат</span>: <b id="menuBest">0</b>
@@ -440,7 +388,8 @@
 
     <div class="btnRow rise d3">
       <div class="menuBtnWrap"><button id="playBtn" class="btn" data-i18n="play">Играть</button></div>
-      <div class="menuBtnWrap"><button id="continueBtn" class="btn" disabled data-i18n="cont">Продолжить</button></div>
+      <div class="menuBtnWrap"><button id="pauseMenuBtn" class="btn ghost hidden" data-i18n="pauseMenu">Меню</button></div>
+      <div class="menuBtnWrap"><button id="continueBtn" class="btn hidden" disabled data-i18n="cont">Продолжить</button></div>
       <div class="menuBtnWrap"><button id="wardrobeBtn" class="btn" data-i18n="wardrobe">Гардероб</button></div>
       <div class="menuBtnWrap"><button id="settingsBtn" class="btn ghost" data-i18n="settings">Настройки</button></div>
     </div>
@@ -777,6 +726,7 @@ const I18N = {
   ru: {
     best: 'Лучший результат', settings: 'Настройки', play: 'Играть',
     cont: 'Продолжить', back: 'Назад', language: 'Язык', motionBlur: 'Motion blur',
+    pauseMenu: 'Меню',
     musicLabel: 'Музыка', musicVolumeLabel: 'Громкость музыки',
     on: 'вкл', off: 'выкл',
     hint: 'Клавиши ← → или A / D, на телефоне — кнопки внизу. Тап по экрану: выстрел из лука или двойной прыжок. Встретил монстра — жми, пока идёт отсчёт!',
@@ -828,6 +778,7 @@ const I18N = {
   en: {
     best: 'Best score', settings: 'Settings', play: 'Play',
     cont: 'Continue', back: 'Back', language: 'Language', motionBlur: 'Motion blur',
+    pauseMenu: 'Menu',
     musicLabel: 'Music', musicVolumeLabel: 'Music volume',
     on: 'on', off: 'off',
     hint: 'Arrow keys or A / D, on phone use the buttons below. Tap the screen to fire the bow or double jump. Met a monster? Tap before the timer runs out!',
@@ -1064,7 +1015,7 @@ let startY = 0, minY = 0, score = 0, runCoins = 0;
 let shake = 0, shakeX = 0, shakeY = 0;
 let lastPlatY = 0, flash = 0, flashColor = '#fff3c4', blurAmount = 0, blurWanted = 0, coinPulse = 0;
 let monsterTimer = 0;
-const MONSTER_INTERVAL = 120;
+const MONSTER_INTERVAL = 55;
 let maceSwing = 0;
 let tapEvent = false; 
 
@@ -1204,14 +1155,14 @@ function spawnAbove(){
 }
 
 
-const MAX_PARTICLES = 160; 
+const MAX_PARTICLES = 70;
 function addParticle(p){
   if (particles.length >= MAX_PARTICLES) return;
   particles.push(p);
 }
 
 function burstLeaves(x, y, power){
-  const n = Math.round(7 * power);
+  const n = Math.round(4 * power);
   for (let i = 0; i < n; i++){
     const a = rand(-Math.PI, 0) + rand(-0.4, 0.4);
     const sp = rand(70, 210) * power;
@@ -1238,7 +1189,7 @@ function burstSpark(x, y, color, n, spread){
 }
 
 function burstShards(p){
-  for (let i = 0; i < 18; i++){
+  for (let i = 0; i < 10; i++){
     addParticle({
       kind: 'shard', x: p.x + rand(0, p.w), y: p.y + rand(0, p.h),
       vx: rand(-210, 210), vy: rand(-250, -20),
@@ -1247,7 +1198,7 @@ function burstShards(p){
       color: pick(['#a9713f', '#8a5730', '#c98d55', '#7a4a28', '#6d4322'])
     });
   }
-  for (let i = 0; i < 9; i++){
+  for (let i = 0; i < 5; i++){
     addParticle({
       kind: 'puff', x: p.x + p.w / 2 + rand(-26, 26), y: p.y + rand(-4, 6),
       vx: rand(-70, 70), vy: rand(-30, 20),
@@ -1258,7 +1209,7 @@ function burstShards(p){
 
 
 function burstPixels(x, y, colors){
-  for (let i = 0; i < 26; i++){
+  for (let i = 0; i < 14; i++){
     addParticle({
       kind: 'pixel', x: x + rand(-16, 16), y: y + rand(-16, 16),
       vx: rand(-260, 260), vy: rand(-320, -40),
@@ -1270,7 +1221,7 @@ function burstPixels(x, y, colors){
 }
 
 function burstGlassShards(x, y){
-  for (let i = 0; i < 20; i++){
+  for (let i = 0; i < 12; i++){
     addParticle({
       kind: 'shard', x: x + rand(-16, 16), y: y + rand(-16, 16),
       vx: rand(-220, 220), vy: rand(-260, -30),
@@ -1640,7 +1591,7 @@ function updateWorld(dt){
   blurWanted = motionBlurOn ? clamp((Math.abs(hero.vy) - 330) / 1100, 0, 1) * 0.52 : 0;
   blurAmount = approach(blurAmount, blurWanted, 14, dt);
 
-  if (hero.vy < -420 && Math.random() < dt * 55) trailPuff();
+  if (hero.vy < -420 && Math.random() < dt * 22) trailPuff();
 
   
   for (let i = platforms.length - 1; i >= 0; i--){
@@ -3145,8 +3096,6 @@ function frame(now){
   last = now;
   if (realDt > 0.1) realDt = 0.1;
 
-  updateTitlePhysics(realDt);
-
   if (state === STATE.PLAY){
     let dt = realDt;
 
@@ -3208,176 +3157,6 @@ function checkOrientation(){
 window.addEventListener('resize', checkOrientation);
 window.addEventListener('orientationchange', () => setTimeout(checkOrientation, 120));
 checkOrientation();
-
-const titleSwingEl = document.getElementById('titleSwing');
-const titleSignEl = document.getElementById('titleSign');
-const ropePolyL = document.getElementById('ropeL');
-const ropePolyR = document.getElementById('ropeR');
-let titleDragging = false;
-let titleDragPointerId = null;
-let titleDragSide = null;
-
-let currentRopeLen = 140;
-let ropeSegLen = 20;
-let ropeAnchorLX = 0, ropeAnchorRX = 0, ropeAnchorY = 8;
-
-const ROPE_POINTS = 9;
-const ROPE_SLACK = 1.045;
-const ROPE_GRAVITY = 1500;
-const ROPE_DAMPING = 0.965;
-const ROPE_ITER = 8;
-const CORNER_STIFFNESS = 10;
-const CORNER_DAMPING = 2.6;
-let ropeL = null, ropeR = null;
-let cornerL = { x: 0, y: 0 };
-let cornerR = { x: 0, y: 0 };
-let cornerOffL = { x: 0, y: 0, vx: 0, vy: 0 };
-let cornerOffR = { x: 0, y: 0, vx: 0, vy: 0 };
-let titleIdleTime = 0;
-
-function updateTitleRopeLen(){
-  if (!titleSwingEl) return;
-  const rect = titleSwingEl.getBoundingClientRect();
-  const ropeLen = Math.max(40, Math.round(rect.top));
-  currentRopeLen = ropeLen;
-  ropeSegLen = (ropeLen * ROPE_SLACK) / (ROPE_POINTS - 1);
-  titleSwingEl.style.setProperty('--ropeLen', ropeLen + 'px');
-  ropeAnchorLX = rect.left + rect.width * 0.16;
-  ropeAnchorRX = rect.left + rect.width * 0.84;
-}
-
-function makeRopePoint(x, y){
-  return { x, y, px: x, py: y };
-}
-
-function stepCornerOffset(off, ambientAx, dt){
-  const ax = -CORNER_STIFFNESS * off.x - CORNER_DAMPING * off.vx + ambientAx;
-  const ay = -CORNER_STIFFNESS * off.y - CORNER_DAMPING * off.vy;
-  off.vx += ax * dt; off.x += off.vx * dt;
-  off.vy += ay * dt; off.y += off.vy * dt;
-}
-
-function initRopeChain(anchorX, anchorY, attachX, attachY){
-  const pts = [];
-  for (let i = 0; i < ROPE_POINTS; i++){
-    const t = i / (ROPE_POINTS - 1);
-    pts.push(makeRopePoint(anchorX + (attachX - anchorX) * t, anchorY + (attachY - anchorY) * t));
-  }
-  return pts;
-}
-
-function stepRopeChain(pts, anchor, attach, dt){
-  for (let i = 1; i < pts.length - 1; i++){
-    const p = pts[i];
-    const vx = (p.x - p.px) * ROPE_DAMPING;
-    const vy = (p.y - p.py) * ROPE_DAMPING;
-    const nx = p.x + vx;
-    const ny = p.y + vy + ROPE_GRAVITY * dt * dt;
-    p.px = p.x; p.py = p.y;
-    p.x = nx; p.y = ny;
-  }
-  pts[0].x = anchor.x; pts[0].y = anchor.y; pts[0].px = anchor.x; pts[0].py = anchor.y;
-  const last = pts[pts.length - 1];
-  last.x = attach.x; last.y = attach.y; last.px = attach.x; last.py = attach.y;
-
-  for (let iter = 0; iter < ROPE_ITER; iter++){
-    for (let i = 0; i < pts.length - 1; i++){
-      const a = pts[i], b = pts[i + 1];
-      const dx = b.x - a.x, dy = b.y - a.y;
-      const dist = Math.hypot(dx, dy) || 0.0001;
-      const diff = (dist - ropeSegLen) / dist;
-      const offX = dx * 0.5 * diff, offY = dy * 0.5 * diff;
-      if (i !== 0){ a.x += offX; a.y += offY; }
-      if (i + 1 !== pts.length - 1){ b.x -= offX; b.y -= offY; }
-    }
-    pts[0].x = anchor.x; pts[0].y = anchor.y;
-    last.x = attach.x; last.y = attach.y;
-  }
-}
-
-function renderRopeChain(polylineEl, pts){
-  if (!polylineEl) return;
-  let str = '';
-  for (let i = 0; i < pts.length; i++){
-    str += (i ? ' ' : '') + pts[i].x.toFixed(1) + ',' + pts[i].y.toFixed(1);
-  }
-  polylineEl.setAttribute('points', str);
-}
-
-function updateRopePhysics(dt){
-  if (!titleSwingEl || state !== STATE.MENU) return;
-  if (!ropeL || !ropeR){
-    ropeL = initRopeChain(ropeAnchorLX, ropeAnchorY, cornerL.x, cornerL.y);
-    ropeR = initRopeChain(ropeAnchorRX, ropeAnchorY, cornerR.x, cornerR.y);
-  }
-  stepRopeChain(ropeL, { x: ropeAnchorLX, y: ropeAnchorY }, cornerL, dt);
-  stepRopeChain(ropeR, { x: ropeAnchorRX, y: ropeAnchorY }, cornerR, dt);
-  renderRopeChain(ropePolyL, ropeL);
-  renderRopeChain(ropePolyR, ropeR);
-}
-
-function updateTitlePhysics(dt){
-  if (!titleSignEl) return;
-  if (state === STATE.MENU) updateTitleRopeLen();
-  const clampedDt = Math.min(dt, 1 / 30);
-  titleIdleTime += clampedDt;
-
-  const restY = ropeAnchorY + currentRopeLen;
-  const ambientL = Math.sin(titleIdleTime * 0.7) * 3 + Math.sin(titleIdleTime * 1.3 + 0.6) * 1.6;
-  const ambientR = Math.sin(titleIdleTime * 0.7 + 1.1) * 3 + Math.sin(titleIdleTime * 1.3 + 2.0) * 1.6;
-
-  const draggingL = titleDragging && titleDragSide === 'L';
-  const draggingR = titleDragging && titleDragSide === 'R';
-
-  if (!draggingL) stepCornerOffset(cornerOffL, ambientL, clampedDt);
-  if (!draggingR) stepCornerOffset(cornerOffR, ambientR, clampedDt);
-
-  cornerL.x = ropeAnchorLX + cornerOffL.x; cornerL.y = restY + cornerOffL.y;
-  cornerR.x = ropeAnchorRX + cornerOffR.x; cornerR.y = restY + cornerOffR.y;
-
-  const centerX = (cornerL.x + cornerR.x) / 2;
-  const centerY = (cornerL.y + cornerR.y) / 2;
-  const restCenterX = (ropeAnchorLX + ropeAnchorRX) / 2;
-  const angleDeg = Math.atan2(cornerR.y - cornerL.y, cornerR.x - cornerL.x) * 180 / Math.PI;
-
-  titleSwingEl.style.setProperty('--titleOffX', (centerX - restCenterX).toFixed(2) + 'px');
-  titleSwingEl.style.setProperty('--titleOffY', (centerY - restY).toFixed(2) + 'px');
-  titleSwingEl.style.setProperty('--titleAngle', angleDeg.toFixed(3) + 'deg');
-
-  updateRopePhysics(clampedDt);
-}
-
-if (titleSignEl){
-  titleSignEl.addEventListener('pointerdown', (e) => {
-    titleDragging = true;
-    titleDragPointerId = e.pointerId;
-    try { titleSignEl.setPointerCapture(e.pointerId); } catch (err) {}
-    const centerX = (cornerL.x + cornerR.x) / 2;
-    titleDragSide = e.clientX < centerX ? 'L' : 'R';
-  });
-  titleSignEl.addEventListener('pointermove', (e) => {
-    if (!titleDragging || e.pointerId !== titleDragPointerId) return;
-    const restY = ropeAnchorY + currentRopeLen;
-    const off = titleDragSide === 'L' ? cornerOffL : cornerOffR;
-    const anchorX = titleDragSide === 'L' ? ropeAnchorLX : ropeAnchorRX;
-    off.x = e.clientX - anchorX;
-    off.y = e.clientY - restY;
-    off.vx = 0; off.vy = 0;
-  });
-  const endTitleDrag = (e) => {
-    if (!titleDragging || (e && e.pointerId !== titleDragPointerId)) return;
-    titleDragging = false;
-    titleDragPointerId = null;
-    titleDragSide = null;
-  };
-  titleSignEl.addEventListener('pointerup', endTitleDrag);
-  titleSignEl.addEventListener('pointercancel', endTitleDrag);
-}
-
-updateTitleRopeLen();
-window.addEventListener('resize', updateTitleRopeLen);
-window.addEventListener('orientationchange', () => setTimeout(updateTitleRopeLen, 150));
-
 
 const nicknameEl = document.getElementById('nickname');
 const menuEl     = document.getElementById('menu');
@@ -3659,14 +3438,33 @@ function refreshShopState(){
   updateCharInfo();
 
   
-  const playBtnEl     = document.getElementById('playBtn').closest('.menuBtnWrap');
-  const continueBtnEl = document.getElementById('continueBtn').closest('.menuBtnWrap');
-  const lockedPanel   = document.getElementById('lockedPanel');
+  const playBtnEl      = document.getElementById('playBtn').closest('.menuBtnWrap');
+  const continueBtnEl  = document.getElementById('continueBtn').closest('.menuBtnWrap');
+  const wardrobeBtnEl  = document.getElementById('wardrobeBtn').closest('.menuBtnWrap');
+  const settingsBtnEl  = document.getElementById('settingsBtn').closest('.menuBtnWrap');
+  const pauseMenuBtnEl = document.getElementById('pauseMenuBtn').closest('.menuBtnWrap');
+  const lockedPanel    = document.getElementById('lockedPanel');
+  const paused = state === STATE.PAUSED;
+
+  if (paused){
+    playBtnEl.classList.add('hidden');
+    wardrobeBtnEl.classList.add('hidden');
+    settingsBtnEl.classList.add('hidden');
+    pauseMenuBtnEl.classList.remove('hidden');
+    continueBtnEl.classList.remove('hidden');
+    lockedPanel.classList.add('hidden');
+    return;
+  }
+
+  pauseMenuBtnEl.classList.add('hidden');
+  continueBtnEl.classList.add('hidden');
+  wardrobeBtnEl.classList.remove('hidden');
+  settingsBtnEl.classList.remove('hidden');
+
   const locked = getLockedItems();
 
   if (locked.length > 0){
     playBtnEl.classList.add('hidden');
-    continueBtnEl.classList.add('hidden');
     lockedPanel.classList.remove('hidden');
     lockedPanel.innerHTML = '';
 
@@ -3712,7 +3510,6 @@ function refreshShopState(){
     }
   } else {
     playBtnEl.classList.remove('hidden');
-    continueBtnEl.classList.remove('hidden');
     lockedPanel.classList.add('hidden');
   }
 }
@@ -3729,7 +3526,6 @@ function goToMenu(){
   refreshShopState();
   document.getElementById('continueBtn').disabled = true;
   if (cloudReady()) checkPendingGrant();
-  requestAnimationFrame(updateTitleRopeLen);
 }
 
 function startGame(){
@@ -4138,6 +3934,7 @@ document.getElementById('playBtn').addEventListener('click', startGame);
 document.getElementById('continueBtn').addEventListener('click', resumeGame);
 document.getElementById('settingsBtn').addEventListener('click', openSettings);
 document.getElementById('wardrobeBtn').addEventListener('click', openWardrobe);
+document.getElementById('pauseMenuBtn').addEventListener('click', goToMenu);
 
 
 const ADMIN_PIN = '1337';
