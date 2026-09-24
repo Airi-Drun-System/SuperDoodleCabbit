@@ -225,6 +225,13 @@
   .settingRow{display:flex;flex-direction:column;gap:8px;align-items:flex-start;width:100%;}
   .settingLabel{font-size:13px;opacity:.7;font-weight:600;}
 
+  .swatchRow{display:flex;gap:9px;flex-wrap:wrap;}
+  .swatchBtn{
+    width:30px;height:30px;border-radius:50%;border:2px solid rgba(255,255,255,.25);
+    cursor:pointer;padding:0;box-shadow:0 2px 0 rgba(0,0,0,.25);transition:transform .12s ease,border-color .12s ease;
+  }
+  .swatchBtn.active{border-color:#ffd34d;transform:scale(1.14);}
+
   .cloudRow{display:flex;gap:8px;width:100%;align-items:center;}
   .cloudCode{
     flex:1;padding:9px 12px;border-radius:10px;background:rgba(255,255,255,.08);
@@ -516,6 +523,14 @@
         </div>
       </div>
       <div class="settingRow">
+        <span class="settingLabel" data-i18n="bgColorLabel">Цвет фона</span>
+        <div id="bgColorRow" class="swatchRow"></div>
+      </div>
+      <div class="settingRow">
+        <span class="settingLabel" data-i18n="platformColorLabel">Цвет платформ</span>
+        <div id="platformColorRow" class="swatchRow"></div>
+      </div>
+      <div class="settingRow">
         <span class="settingLabel" data-i18n="musicLabel">Музыка</span>
         <div class="btnRow">
           <button id="musicToggle" class="chip"></button>
@@ -652,6 +667,28 @@ let best  = parseInt(Store.get('best', '0'), 10) || 0;
 let coins = parseInt(Store.get('coins', '0'), 10) || 0;
 let nickname = Store.get('nick', '');
 
+const BG_THEMES = {
+  auto:   { label: 'Авто',      swatch: 'linear-gradient(135deg,#301238,#7a3f84,#123252)' },
+  white:  { bg1: [246, 248, 255], bg2: [214, 226, 246], glow: 'rgba(255,255,255,.28)', swatch: '#eef2fb' },
+  blue:   { bg1: [10, 38, 88],    bg2: [36, 108, 198],  glow: 'rgba(120,180,255,.26)', swatch: '#1f5fb0' },
+  purple: { bg1: [38, 14, 68],    bg2: [108, 58, 158],  glow: 'rgba(190,140,255,.26)', swatch: '#6c3a9e' },
+  pink:   { bg1: [68, 14, 44],    bg2: [188, 78, 148],  glow: 'rgba(255,160,210,.26)', swatch: '#c14f92' },
+  green:  { bg1: [8, 38, 20],     bg2: [38, 118, 58],   glow: 'rgba(140,255,150,.22)', swatch: '#379a49' },
+  night:  { bg1: [6, 6, 12],      bg2: [28, 28, 40],    glow: 'rgba(150,150,190,.18)', swatch: '#141420' }
+};
+const PLATFORM_THEMES = {
+  auto:   { label: 'Авто', c1: '#8ce678', c2: '#4cb43f', c3: '#2f7d2a', swatch: '#4cb43f' },
+  violet: { c1: '#c9a8ff', c2: '#8f5fe0', c3: '#5c3aa0', swatch: '#8f5fe0' },
+  orange: { c1: '#ffcf7a', c2: '#f5934a', c3: '#b85f1e', swatch: '#f5934a' },
+  pink:   { c1: '#ffb3d9', c2: '#e0629f', c3: '#a83f74', swatch: '#e0629f' },
+  yellow: { c1: '#fff3a0', c2: '#f0c93e', c3: '#b8901c', swatch: '#f0c93e' },
+  silver: { c1: '#f5f5f8', c2: '#c9c9d4', c3: '#8f8f99', swatch: '#c9c9d4' }
+};
+let bgTheme = Store.get('bgTheme', 'auto');
+if (!BG_THEMES[bgTheme]) bgTheme = 'auto';
+let platformTheme = Store.get('platformTheme', 'auto');
+if (!PLATFORM_THEMES[platformTheme]) platformTheme = 'auto';
+
 
 let actx = null;
 function ensureAudio(){
@@ -760,6 +797,7 @@ const I18N = {
     best: 'Лучший результат', settings: 'Настройки', play: 'Играть',
     cont: 'Продолжить', back: 'Назад', language: 'Язык', motionBlur: 'Motion blur',
     pauseMenu: 'Меню',
+    bgColorLabel: 'Цвет фона', platformColorLabel: 'Цвет платформ',
     musicLabel: 'Музыка', musicVolumeLabel: 'Громкость музыки',
     on: 'вкл', off: 'выкл',
     hint: 'Клавиши ← → или A / D, на телефоне — кнопки внизу. Тап по экрану: выстрел из лука или двойной прыжок. Встретил монстра — жми, пока идёт отсчёт!',
@@ -813,6 +851,7 @@ const I18N = {
     best: 'Best score', settings: 'Settings', play: 'Play',
     cont: 'Continue', back: 'Back', language: 'Language', motionBlur: 'Motion blur',
     pauseMenu: 'Menu',
+    bgColorLabel: 'Background color', platformColorLabel: 'Platform color',
     musicLabel: 'Music', musicVolumeLabel: 'Music volume',
     on: 'on', off: 'off',
     hint: 'Arrow keys or A / D, on phone use the buttons below. Tap the screen to fire the bow or double jump. Met a monster? Tap before the timer runs out!',
@@ -1850,7 +1889,8 @@ function updateWorld(dt){
 
 
 function drawBackground(){
-  const w = currentWorld();
+  const themed = bgTheme !== 'auto' && BG_THEMES[bgTheme];
+  const w = themed ? BG_THEMES[bgTheme] : currentWorld();
   const c1 = 'rgb(' + w.bg1[0] + ',' + w.bg1[1] + ',' + w.bg1[2] + ')';
   const c2 = 'rgb(' + w.bg2[0] + ',' + w.bg2[1] + ',' + w.bg2[2] + ')';
 
@@ -1927,7 +1967,10 @@ function drawPlatform(p){
   let c1, c2, c3;
   if (p.type === 'moving')      { c1 = '#7ad3ff'; c2 = '#2f8ddb'; c3 = '#1c5f9c'; }
   else if (p.type === 'broken') { c1 = '#c9915c'; c2 = '#9a6134'; c3 = '#6d4322'; }
-  else                          { c1 = '#8ce678'; c2 = '#4cb43f'; c3 = '#2f7d2a'; }
+  else {
+    const pt = PLATFORM_THEMES[platformTheme] || PLATFORM_THEMES.auto;
+    c1 = pt.c1; c2 = pt.c2; c3 = pt.c3;
+  }
 
   const w = p.w, h = p.h;
 
@@ -3405,8 +3448,11 @@ document.getElementById('buyAllBtn').addEventListener('click', () => {
   if (coins < total){ denyChip(document.getElementById('buyAllBtn')); return; }
 
   coins -= total;
-  for (const val of candidates) owned.add(shopActiveSlot + ':' + val);
   Store.set('coins', coins);
+  for (const val of candidates){
+    owned.add(shopActiveSlot + ':' + val);
+    equipOwned(shopActiveSlot, val);
+  }
   saveOwned();
   refreshShopState();
   cloudPushSoon();
@@ -3717,9 +3763,13 @@ function charStep(delta){
   const idx = CHAR_LIST.indexOf(outfit.char);
   const nextIdx = (idx + delta + CHAR_LIST.length) % CHAR_LIST.length;
   const val = CHAR_LIST[nextIdx];
-  outfit.char = val;
-  if (isOwned('char', val)) Store.set('char', val); 
-  refreshShopState();
+  if (isOwned('char', val)){
+    equipOwned('char', val);
+    refreshShopState();
+  } else {
+    const arrowEl = document.getElementById(delta < 0 ? 'charPrev' : 'charNext');
+    tryBuyAndEquip('char', val, arrowEl);
+  }
 }
 
 function updateCharInfo(){
@@ -4285,8 +4335,9 @@ async function adminDeleteAccount(){
   }
   adminResetDeleteArm();
   adminSetStatus('Удаление...');
+  const deletedCode = adminCurrentCode;
   try {
-    const res = await fetch(cloudBase() + '/players/' + adminCurrentCode + '?key=' + CLOUD.apiKey, {
+    const res = await fetch(cloudBase() + '/players/' + deletedCode + '?key=' + CLOUD.apiKey, {
       method: 'DELETE'
     });
     if (res.ok){
@@ -4295,11 +4346,31 @@ async function adminDeleteAccount(){
       adminCurrentCode = null;
       adminSetStatus('Аккаунт удалён ✓');
       if (cloudReady()) cloudFetchLeaderboard();
+      return;
+    }
+    let reason = 'HTTP ' + res.status;
+    try {
+      const body = await res.json();
+      if (body && body.error && body.error.message) reason = res.status + ': ' + body.error.message;
+    } catch (parseErr){
+      try {
+        const text = await res.text();
+        if (text) reason = res.status + ': ' + text.slice(0, 160);
+      } catch (readErr){}
+    }
+    if (res.status === 403 || res.status === 401){
+      adminSetStatus('Не удалось удалить аккаунт — запрет в Firestore Rules (' + reason + ')');
+    } else if (res.status === 404){
+      document.getElementById('adminPlayerBox').classList.add('hidden');
+      document.getElementById('adminCodeInput').value = '';
+      adminCurrentCode = null;
+      adminSetStatus('Аккаунт уже удалён (' + reason + ')');
+      if (cloudReady()) cloudFetchLeaderboard();
     } else {
-      adminSetStatus('Не удалось удалить аккаунт');
+      adminSetStatus('Не удалось удалить аккаунт (' + reason + ')');
     }
   } catch (e){
-    adminSetStatus('Ошибка связи при удалении');
+    adminSetStatus('Ошибка связи при удалении: ' + (e && e.message ? e.message : String(e)));
   }
 }
 
@@ -4337,6 +4408,43 @@ musicVolumeSlider.addEventListener('input', () => {
   ambientAudio.volume = musicVolume / 100;
   Store.set('musicVolume', String(musicVolume));
 });
+
+function buildThemeSwatchRow(rowId, themes, current, onPick){
+  const row = document.getElementById(rowId);
+  if (!row) return;
+  row.innerHTML = '';
+  for (const key of Object.keys(themes)){
+    const th = themes[key];
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'swatchBtn';
+    btn.dataset.theme = key;
+    btn.setAttribute('aria-label', th.label || key);
+    btn.style.background = th.swatch;
+    btn.classList.toggle('active', key === current);
+    btn.addEventListener('click', () => onPick(key));
+    row.appendChild(btn);
+  }
+}
+
+function refreshBgColorRow(){
+  buildThemeSwatchRow('bgColorRow', BG_THEMES, bgTheme, (key) => {
+    bgTheme = key;
+    Store.set('bgTheme', key);
+    refreshBgColorRow();
+  });
+}
+
+function refreshPlatformColorRow(){
+  buildThemeSwatchRow('platformColorRow', PLATFORM_THEMES, platformTheme, (key) => {
+    platformTheme = key;
+    Store.set('platformTheme', key);
+    refreshPlatformColorRow();
+  });
+}
+
+refreshBgColorRow();
+refreshPlatformColorRow();
 
 document.querySelectorAll('.chip[data-lang]').forEach(chip => {
   chip.addEventListener('click', () => {
