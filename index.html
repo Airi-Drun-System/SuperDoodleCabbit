@@ -3531,37 +3531,47 @@ function refreshShopState(){
   updateCharInfo();
 
   
-  const playBtnEl      = document.getElementById('playBtn').closest('.menuBtnWrap');
-  const continueBtnEl  = document.getElementById('continueBtn').closest('.menuBtnWrap');
-  const wardrobeBtnEl  = document.getElementById('wardrobeBtn').closest('.menuBtnWrap');
-  const settingsBtnEl  = document.getElementById('settingsBtn').closest('.menuBtnWrap');
-  const pauseMenuBtnEl = document.getElementById('pauseMenuBtn').closest('.menuBtnWrap');
+  const playBtnRaw      = document.getElementById('playBtn');
+  const continueBtnRaw  = document.getElementById('continueBtn');
+  const wardrobeBtnRaw  = document.getElementById('wardrobeBtn');
+  const settingsBtnRaw  = document.getElementById('settingsBtn');
+  const pauseMenuBtnRaw = document.getElementById('pauseMenuBtn');
+  const playBtnEl      = playBtnRaw.closest('.menuBtnWrap');
+  const continueBtnEl  = continueBtnRaw.closest('.menuBtnWrap');
+  const wardrobeBtnEl  = wardrobeBtnRaw.closest('.menuBtnWrap');
+  const settingsBtnEl  = settingsBtnRaw.closest('.menuBtnWrap');
+  const pauseMenuBtnEl = pauseMenuBtnRaw.closest('.menuBtnWrap');
   const lockedPanel    = document.getElementById('lockedPanel');
   const buyAllRowEl    = document.getElementById('buyAllRow');
   const paused = state === STATE.PAUSED;
 
+  const setBtnVisible = (wrapEl, rawEl, visible) => {
+    wrapEl.classList.toggle('hidden', !visible);
+    rawEl.classList.toggle('hidden', !visible);
+  };
+
   if (paused){
-    playBtnEl.classList.add('hidden');
-    wardrobeBtnEl.classList.add('hidden');
-    settingsBtnEl.classList.add('hidden');
-    pauseMenuBtnEl.classList.remove('hidden');
-    continueBtnEl.classList.remove('hidden');
+    setBtnVisible(playBtnEl, playBtnRaw, false);
+    setBtnVisible(wardrobeBtnEl, wardrobeBtnRaw, false);
+    setBtnVisible(settingsBtnEl, settingsBtnRaw, false);
+    setBtnVisible(pauseMenuBtnEl, pauseMenuBtnRaw, true);
+    setBtnVisible(continueBtnEl, continueBtnRaw, true);
     lockedPanel.classList.add('hidden');
     buyAllRowEl.classList.add('hidden');
     return;
   }
 
-  pauseMenuBtnEl.classList.add('hidden');
-  continueBtnEl.classList.add('hidden');
-  wardrobeBtnEl.classList.remove('hidden');
-  settingsBtnEl.classList.remove('hidden');
+  setBtnVisible(pauseMenuBtnEl, pauseMenuBtnRaw, false);
+  setBtnVisible(continueBtnEl, continueBtnRaw, false);
+  setBtnVisible(wardrobeBtnEl, wardrobeBtnRaw, true);
+  setBtnVisible(settingsBtnEl, settingsBtnRaw, true);
   buyAllRowEl.classList.remove('hidden');
   refreshBuyAllRow();
 
   const locked = getLockedItems();
 
   if (locked.length > 0){
-    playBtnEl.classList.add('hidden');
+    setBtnVisible(playBtnEl, playBtnRaw, false);
     lockedPanel.classList.remove('hidden');
     lockedPanel.innerHTML = '';
 
@@ -3606,7 +3616,7 @@ function refreshShopState(){
       lockedPanel.appendChild(row);
     }
   } else {
-    playBtnEl.classList.remove('hidden');
+    setBtnVisible(playBtnEl, playBtnRaw, true);
     lockedPanel.classList.add('hidden');
   }
 }
