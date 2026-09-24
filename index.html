@@ -48,7 +48,13 @@
     -webkit-backdrop-filter:blur(8px) saturate(110%);
     justify-content:center;
   }
-  #menu.paused .titleSwing, #menu.paused .stats, #menu.paused .hint, #menu.paused > a.btn, #menu.paused .spacer{display:none;}
+  #menu.paused .titleSwing, #menu.paused .stats, #menu.paused .hint, #menu.paused > a.btn, #menu.paused .spacer, #menu.paused #menuPreview{display:none;}
+  .pauseLabel{
+    display:none;font-size:clamp(22px,7vw,32px);font-weight:800;letter-spacing:1px;
+    color:var(--gold);text-align:center;text-shadow:0 3px 0 rgba(0,0,0,.35);
+  }
+  #menu.paused .pauseLabel{display:block;}
+  #menuPreview{width:130px;height:130px;filter:drop-shadow(0 14px 16px rgba(0,0,0,.45));}
   #settings{background:radial-gradient(120% 90% at 50% 14%, rgba(87,45,140,.65), rgba(21,10,43,.96));}
   #wardrobe{background:radial-gradient(120% 90% at 50% 14%, rgba(60,30,100,.82), rgba(12,6,24,.985));}
   #nickname{background:radial-gradient(120% 90% at 50% 30%, rgba(87,45,140,.65), rgba(21,10,43,.97));justify-content:center;}
@@ -158,6 +164,10 @@
   .chip .iname{display:block;}
   .chip .idesc{display:block;font-size:10px;opacity:.72;font-weight:500;margin-top:2px;}
   .chip .price{color:var(--gold);font-weight:800;display:block;margin-bottom:3px;font-size:13px;}
+  .chip .chipIcon{
+    display:block;width:44px;height:44px;margin:0 auto 4px;border-radius:10px;
+    background:rgba(0,0,0,.18);
+  }
   .chip:active{transform:scale(.96);}
   .chip[aria-pressed="true"]{
     background:linear-gradient(180deg,#ffd08a,#ff9f45);
@@ -168,6 +178,7 @@
   .chip:focus-visible{outline:2px solid #fff;outline-offset:3px;}
   .chip.unowned{opacity:.52;filter:saturate(.65);}
   .chip.unowned .price{opacity:1;}
+  .chip.unowned .chipIcon{opacity:1;filter:none;}
   @keyframes denyShake{
     0%,100%{transform:translateX(0);}
     20%{transform:translateX(-5px);}
@@ -225,12 +236,45 @@
   .settingRow{display:flex;flex-direction:column;gap:8px;align-items:flex-start;width:100%;}
   .settingLabel{font-size:13px;opacity:.7;font-weight:600;}
 
+  .profileOverlay{
+    position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;
+    background:rgba(10,6,20,.78);backdrop-filter:blur(6px);padding:20px;box-sizing:border-box;
+  }
+  .profileOverlay.hidden{display:none;}
+  .profileCard{
+    position:relative;width:min(280px,90vw);background:rgba(40,20,60,.92);border-radius:24px;
+    padding:26px 20px 22px;display:flex;flex-direction:column;align-items:center;gap:6px;
+    box-shadow:0 20px 60px rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,255,255,.14);
+  }
+  .profileCard #profileClose{position:absolute;top:10px;right:10px;}
+  .profileCanvasWrap{position:relative;margin-bottom:4px;}
+  #profileCanvas{width:130px;height:130px;filter:drop-shadow(0 14px 16px rgba(0,0,0,.45));display:block;}
+  .profileAvatarBadge{
+    position:absolute;right:-4px;bottom:2px;width:34px;height:34px;font-size:17px;
+    box-shadow:0 2px 0 rgba(0,0,0,.3),inset 0 0 0 2px rgba(255,255,255,.35);
+  }
+  .profileNick{font-size:20px;font-weight:800;text-align:center;}
+  .profileTitleLine{font-size:13px;opacity:.85;min-height:16px;text-align:center;}
+  .profileStats{display:flex;gap:18px;margin-top:8px;font-size:14px;font-weight:700;color:var(--gold);}
+
   .swatchRow{display:flex;gap:9px;flex-wrap:wrap;}
   .swatchBtn{
     width:30px;height:30px;border-radius:50%;border:2px solid rgba(255,255,255,.25);
     cursor:pointer;padding:0;box-shadow:0 2px 0 rgba(0,0,0,.25);transition:transform .12s ease,border-color .12s ease;
   }
   .swatchBtn.active{border-color:#ffd34d;transform:scale(1.14);}
+  .avatarRow .swatchBtn{
+    width:38px;height:38px;background:rgba(255,255,255,.08);font-size:19px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .avatarRow .swatchBtn.active{background:rgba(255,211,77,.22);}
+  .avatarPickerRow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .avatarPreview{
+    width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.08);
+    box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.22);flex:0 0 auto;
+    display:flex;align-items:center;justify-content:center;font-size:22px;overflow:hidden;
+  }
+  .avatarPreview img{width:100%;height:100%;object-fit:cover;display:block;}
 
   .cloudRow{display:flex;gap:8px;width:100%;align-items:center;}
   .cloudCode{
@@ -256,6 +300,9 @@
   }
   #onlineLbRows .lbRow span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
   #onlineLbRows .lbRow b{color:var(--gold);flex:0 0 auto;}
+  .lbAvatarImg{
+    width:18px;height:18px;border-radius:50%;object-fit:cover;vertical-align:-4px;margin-right:2px;
+  }
   .devNick{
     background:linear-gradient(90deg,#c084fc,#8a2be2,#ff6f91,#8a2be2,#c084fc);
     background-size:200% auto;
@@ -360,6 +407,85 @@
   }
   .adminIconBtn:active{transform:translateY(2px);box-shadow:0 1px 0 #c26a1d,0 2px 5px rgba(0,0,0,.25);}
 
+  .adminInput{
+    border:none;border-radius:10px;padding:9px 11px;background:rgba(255,255,255,.92);
+    color:#2a1550;font-family:inherit;font-weight:600;font-size:13px;box-sizing:border-box;
+  }
+  .adminInputNum{width:100px;text-align:center;}
+  .adminInputMono{font-size:11px;}
+
+  .adminGate{
+    display:flex;flex-direction:column;gap:10px;align-items:center;
+    background:rgba(255,211,77,.08);border:1px solid rgba(255,211,77,.28);border-radius:16px;padding:16px;width:100%;box-sizing:border-box;
+  }
+  .adminPinInput{width:160px;text-align:center;font-size:16px;}
+
+  .adminPanel{
+    display:flex;flex-direction:column;gap:12px;width:100%;box-sizing:border-box;
+    background:rgba(255,211,77,.06);border:1px solid rgba(255,211,77,.24);border-radius:18px;padding:14px;
+  }
+  .adminHeader{display:flex;flex-direction:column;gap:4px;}
+  .adminHeaderTitle{font-size:14px;font-weight:800;color:var(--gold);}
+  .adminHint{font-size:11px;opacity:.62;margin:0;line-height:1.4;}
+
+  .adminSearchRow{display:flex;gap:8px;align-items:center;}
+  .adminSearchRow .adminInput{flex:1;min-width:0;text-transform:uppercase;text-align:center;}
+
+  .adminPlayerBox{display:flex;flex-direction:column;gap:10px;}
+  .adminCodeLine{margin:0;font-size:11px;opacity:.6;text-align:center;letter-spacing:.5px;}
+
+  .adminCard{
+    background:rgba(0,0,0,.16);border-radius:14px;padding:11px 12px;
+    display:flex;flex-direction:column;gap:8px;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.06);
+  }
+  .adminCardTitle{
+    font-size:10.5px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;opacity:.55;
+  }
+  .adminField{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;}
+  .adminField > span{flex:0 0 auto;opacity:.85;}
+  .adminField .adminInput{flex:1;min-width:0;max-width:150px;}
+
+  .adminGradientPresets{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end;}
+  .adminGradientChip{
+    padding:5px 9px;border-radius:10px;border:none;font-size:10px;font-weight:700;cursor:pointer;color:#1a1a1a;
+  }
+
+  .adminItemsGrid{
+    display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;max-height:190px;overflow-y:auto;font-size:11px;
+    padding-right:2px;
+  }
+  .adminItemsGrid .adminItemsSlotTitle{
+    grid-column:1/-1;font-weight:800;opacity:.55;margin-top:8px;font-size:10px;letter-spacing:.6px;
+  }
+  .adminItemsGrid .adminItemsSlotTitle:first-child{margin-top:0;}
+  .adminItemChip{
+    display:flex;align-items:center;gap:6px;cursor:pointer;
+    background:rgba(255,255,255,.05);border-radius:9px;padding:5px 8px;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);transition:background .12s;
+  }
+  .adminItemChip input{accent-color:#ff9f45;width:14px;height:14px;flex:0 0 auto;}
+  .adminItemChip:has(input:checked){background:rgba(255,159,69,.22);box-shadow:inset 0 0 0 1px rgba(255,159,69,.4);}
+
+  .adminSaveBtn{
+    border:none;cursor:pointer;font-family:inherit;font-weight:800;font-size:14px;padding:12px 16px;
+    border-radius:14px;color:#3a1f00;background:linear-gradient(180deg,#ffd08a,#ff9f45);
+    box-shadow:0 3px 0 #c26a1d;
+  }
+  .adminSaveBtn:active{transform:translateY(2px);box-shadow:0 1px 0 #c26a1d;}
+
+  .adminDangerZone{
+    border-top:1px dashed rgba(255,106,106,.35);padding-top:10px;margin-top:2px;
+    display:flex;flex-direction:column;align-items:center;gap:8px;
+  }
+  .adminDangerLabel{font-size:10px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:#ff8a8a;opacity:.85;}
+  .adminDeleteBtn{
+    border:none;cursor:pointer;font-family:inherit;font-weight:800;font-size:13px;padding:9px 16px;
+    border-radius:999px;color:#fff;background:linear-gradient(180deg,#ff6a6a,#c62828);box-shadow:0 4px 0 #8e1c1c;
+  }
+
+  .adminStatus{font-size:11px;opacity:.8;min-height:14px;margin:0;text-align:center;}
+
   .backIconBtn{
     position:fixed;top:10px;left:10px;z-index:20;
     width:38px;height:38px;border-radius:50%;border:none;cursor:pointer;
@@ -368,8 +494,9 @@
   }
   .backIconBtn:active{transform:scale(.9);}
   .backIconBtn svg{width:20px;height:20px;}
-  #charInfo{font-size:13px;opacity:.85;text-align:center;min-height:16px;}
+  #charInfo{font-size:13px;opacity:.85;text-align:center;min-height:16px;cursor:pointer;}
   #preview,#preview2{width:104px;height:104px;filter:drop-shadow(0 14px 16px rgba(0,0,0,.45));flex:0 0 auto;}
+  #preview2{cursor:pointer;}
   @media (max-height:760px){
     #preview,#preview2{width:78px;height:78px;}
     .title{font-size:clamp(22px,6.6vw,34px);}
@@ -413,7 +540,9 @@
 
   <div id="menu" class="screen hidden">
     <div id="secretZone" style="position:absolute;top:0;left:0;width:48px;height:48px;z-index:50;"></div>
+    <div id="pauseLabel" class="pauseLabel" data-i18n="pauseLabel">Пауза</div>
     <div class="spacer"></div>
+    <canvas id="menuPreview" class="rise d1" width="220" height="220"></canvas>
     <div class="titleSwing" id="titleSwing"><h1 class="title" id="titleSign">Cabbit Jump!</h1></div>
 
     <p class="stats rise d1">
@@ -474,46 +603,71 @@
         </div>
       </div>
 
-      <div id="adminGate" class="settingRow hidden" style="flex-direction:column;gap:8px;background:rgba(255,211,77,.08);border:1px solid rgba(255,211,77,.28);border-radius:16px;padding:14px;">
-        <input id="adminPinInput" type="password" placeholder="PIN" inputmode="numeric"
-               style="width:160px;text-align:center;font-size:16px;padding:8px;border-radius:12px;border:none;background:rgba(255,255,255,.9);color:#2a1550;font-weight:600;">
+      <div id="adminGate" class="adminGate hidden">
+        <input id="adminPinInput" class="adminInput adminPinInput" type="password" placeholder="PIN" inputmode="numeric">
         <button id="adminPinBtn" class="btn small">Войти</button>
       </div>
 
-      <div id="adminTool" class="settingRow hidden" style="flex-direction:column;gap:10px;align-items:stretch;background:rgba(255,211,77,.08);border:1px solid rgba(255,211,77,.28);border-radius:16px;padding:14px;">
-        <span class="settingLabel">⚒ Админка</span>
-        <p style="font-size:11px;opacity:.6;margin:0;">Тапни по игроку в рейтинге ниже, чтобы выдать ему вещи или монеты</p>
-        <div style="display:flex;gap:8px;align-items:center;">
-          <input id="adminCodeInput" type="text" placeholder="...или код вручную"
-                 style="flex:1;min-width:0;padding:8px 10px;border-radius:12px;border:none;text-transform:uppercase;font-size:13px;background:rgba(255,255,255,.9);color:#2a1550;font-weight:600;text-align:center;">
+      <div id="adminTool" class="adminPanel hidden">
+        <div class="adminHeader">
+          <span class="adminHeaderTitle">⚒ Админка</span>
+          <p class="adminHint">Тапни по игроку в рейтинге ниже, чтобы выдать ему вещи или монеты</p>
+        </div>
+
+        <div class="adminSearchRow">
+          <input id="adminCodeInput" class="adminInput" type="text" placeholder="Код игрока">
           <button id="adminLoadBtn" class="adminIconBtn" aria-label="Загрузить">↓</button>
         </div>
 
-        <div id="adminPlayerBox" class="hidden" style="display:flex;flex-direction:column;gap:8px;">
-          <p id="adminCodeLine" style="margin:0;font-size:11px;opacity:.6;"></p>
-          <label style="display:flex;justify-content:space-between;align-items:center;font-size:13px;">Ник
-            <input id="adminNickInput" type="text" maxlength="14" style="width:140px;padding:6px;border-radius:8px;border:none;">
-          </label>
-          <label style="display:flex;justify-content:space-between;align-items:center;font-size:13px;">Монеты
-            <input id="adminCoinsInput" type="number" style="width:100px;padding:6px;border-radius:8px;border:none;">
-          </label>
-          <label style="display:flex;justify-content:space-between;align-items:center;font-size:13px;">Рекорд
-            <input id="adminBestInput" type="number" style="width:100px;padding:6px;border-radius:8px;border:none;">
-          </label>
-          <label style="display:flex;justify-content:space-between;align-items:center;font-size:13px;">Титул
-            <input id="adminTitleInput" type="text" maxlength="16" placeholder="слово" style="width:140px;padding:6px;border-radius:8px;border:none;">
-          </label>
-          <label style="display:flex;justify-content:space-between;align-items:center;font-size:13px;">Цвет/градиент
-            <input id="adminTitleColorInput" type="text" placeholder="#ffd34d или linear-gradient(...)" style="width:140px;padding:6px;border-radius:8px;border:none;font-size:11px;">
-          </label>
-          <div id="adminGradientPresets" style="display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end;"></div>
-          <div id="adminItemsGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:4px 10px;max-height:180px;overflow-y:auto;font-size:11px;"></div>
-          <div style="display:flex;justify-content:center;gap:10px;">
-            <button id="adminSaveBtn" class="adminIconBtn" aria-label="Сохранить">✓</button>
-            <button id="adminDeleteBtn" type="button" style="border:none;cursor:pointer;font-family:inherit;font-weight:800;font-size:13px;padding:9px 16px;border-radius:999px;color:#fff;background:linear-gradient(180deg,#ff6a6a,#c62828);box-shadow:0 4px 0 #8e1c1c;">Удалить аккаунт</button>
+        <div id="adminPlayerBox" class="adminPlayerBox hidden">
+          <p id="adminCodeLine" class="adminCodeLine"></p>
+
+          <div class="adminCard">
+            <div class="adminCardTitle">Игрок</div>
+            <label class="adminField">
+              <span>Ник</span>
+              <input id="adminNickInput" class="adminInput" type="text" maxlength="14">
+            </label>
+          </div>
+
+          <div class="adminCard">
+            <div class="adminCardTitle">Статистика</div>
+            <label class="adminField">
+              <span>Монеты</span>
+              <input id="adminCoinsInput" class="adminInput adminInputNum" type="number">
+            </label>
+            <label class="adminField">
+              <span>Рекорд</span>
+              <input id="adminBestInput" class="adminInput adminInputNum" type="number">
+            </label>
+          </div>
+
+          <div class="adminCard">
+            <div class="adminCardTitle">Титул</div>
+            <label class="adminField">
+              <span>Текст</span>
+              <input id="adminTitleInput" class="adminInput" type="text" maxlength="16" placeholder="слово">
+            </label>
+            <label class="adminField">
+              <span>Цвет</span>
+              <input id="adminTitleColorInput" class="adminInput adminInputMono" type="text" placeholder="#ffd34d или gradient(...)">
+            </label>
+            <div id="adminGradientPresets" class="adminGradientPresets"></div>
+          </div>
+
+          <div class="adminCard">
+            <div class="adminCardTitle">Предметы</div>
+            <div id="adminItemsGrid" class="adminItemsGrid"></div>
+          </div>
+
+          <button id="adminSaveBtn" class="adminSaveBtn" type="button">✓ Сохранить изменения</button>
+
+          <div class="adminDangerZone">
+            <div class="adminDangerLabel">Опасная зона</div>
+            <button id="adminDeleteBtn" type="button" class="adminDeleteBtn">Удалить аккаунт</button>
           </div>
         </div>
-        <p id="adminStatus" style="font-size:11px;opacity:.8;min-height:14px;margin:0;"></p>
+        <p id="adminStatus" class="adminStatus"></p>
       </div>
 
       <div class="settingRow">
@@ -521,6 +675,16 @@
         <div class="btnRow">
           <button id="blurToggle" class="chip"></button>
         </div>
+      </div>
+      <div class="settingRow">
+        <span class="settingLabel" data-i18n="avatarLabel">Аватар</span>
+        <div class="avatarPickerRow">
+          <div id="avatarPreview" class="avatarPreview"></div>
+          <button id="avatarUploadBtn" class="chip" type="button" data-i18n="avatarUpload">Фото из галереи</button>
+          <button id="avatarRemoveBtn" class="chip hidden" type="button" data-i18n="avatarRemove">Убрать фото</button>
+          <input id="avatarFileInput" type="file" accept="image/*" class="hidden">
+        </div>
+        <div id="avatarRow" class="swatchRow avatarRow"></div>
       </div>
       <div class="settingRow">
         <span class="settingLabel" data-i18n="bgColorLabel">Цвет фона</span>
@@ -581,6 +745,24 @@
     <div class="btnRow">
       <button id="retryBtn" class="btn" data-i18n="retry">Повторить</button>
       <button id="menuBtn" class="btn ghost" data-i18n="toMenu">В меню</button>
+    </div>
+  </div>
+
+  <div id="profileModal" class="profileOverlay hidden">
+    <div class="profileCard">
+      <button id="profileClose" class="backIconBtn" aria-label="Закрыть">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M6 6 L18 18 M18 6 L6 18" stroke="#fdf6e8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="profileCanvasWrap">
+        <canvas id="profileCanvas" width="220" height="220"></canvas>
+        <div id="profileAvatar" class="avatarPreview profileAvatarBadge"></div>
+      </div>
+      <div id="profileNick" class="profileNick"></div>
+      <div id="profileTitleLine" class="profileTitleLine"></div>
+      <div class="profileStats">
+        <span id="profileBest"></span>
+        <span id="profileCoins"></span>
+      </div>
     </div>
   </div>
 </div>
@@ -688,6 +870,12 @@ let bgTheme = Store.get('bgTheme', 'auto');
 if (!BG_THEMES[bgTheme]) bgTheme = 'auto';
 let platformTheme = Store.get('platformTheme', 'auto');
 if (!PLATFORM_THEMES[platformTheme]) platformTheme = 'auto';
+
+const AVATAR_LIST = ['🐰','🐱','🦊','🐻','🐼','🐨','🐸','🐯','🦁','🐵','🐹','🐷','🐮','🐔','🐧','🦄','🐙','⭐'];
+const isCustomAvatar = (v) => typeof v === 'string' && v.indexOf('data:image/') === 0;
+const isValidAvatar = (v) => AVATAR_LIST.indexOf(v) !== -1 || isCustomAvatar(v);
+let avatar = Store.get('avatar', '🐰');
+if (!isValidAvatar(avatar)) avatar = '🐰';
 
 
 let actx = null;
@@ -798,6 +986,7 @@ const I18N = {
     cont: 'Продолжить', back: 'Назад', language: 'Язык', motionBlur: 'Motion blur',
     pauseMenu: 'Меню',
     bgColorLabel: 'Цвет фона', platformColorLabel: 'Цвет платформ',
+    profileCoinsLabel: 'монет', avatarLabel: 'Аватар', pauseLabel: 'Пауза', avatarUpload: 'Фото из галереи', avatarRemove: 'Убрать фото',
     musicLabel: 'Музыка', musicVolumeLabel: 'Громкость музыки',
     on: 'вкл', off: 'выкл',
     hint: 'Клавиши ← → или A / D, на телефоне — кнопки внизу. Тап по экрану: выстрел из лука или двойной прыжок. Встретил монстра — жми, пока идёт отсчёт!',
@@ -852,6 +1041,7 @@ const I18N = {
     cont: 'Continue', back: 'Back', language: 'Language', motionBlur: 'Motion blur',
     pauseMenu: 'Menu',
     bgColorLabel: 'Background color', platformColorLabel: 'Platform color',
+    profileCoinsLabel: 'coins', avatarLabel: 'Avatar', pauseLabel: 'Paused', avatarUpload: 'Photo from gallery', avatarRemove: 'Remove photo',
     musicLabel: 'Music', musicVolumeLabel: 'Music volume',
     on: 'on', off: 'off',
     hint: 'Arrow keys or A / D, on phone use the buttons below. Tap the screen to fire the bow or double jump. Met a monster? Tap before the timer runs out!',
@@ -2839,8 +3029,8 @@ function drawHero(x, y, sx, sy, tilt, face, alpha, ear, phase){
   paintHat(ctx, hero.w, hero.h, outfit.hat, A);
   if (outfit.hat2 !== 'none' && isOwned('perk', 'multiacc')){
     ctx.save();
-    ctx.translate(hero.w * 0.30, hero.h * 0.015);
-    ctx.scale(0.78, 0.78);
+    ctx.translate(0, -hero.h * 0.20);
+    ctx.scale(0.7, 0.7);
     paintHat(ctx, hero.w, hero.h, outfit.hat2, A);
     ctx.restore();
   }
@@ -3458,6 +3648,34 @@ document.getElementById('buyAllBtn').addEventListener('click', () => {
   cloudPushSoon();
 });
 
+function renderChipIcon(canvas, slotKey, val){
+  if (!canvas || !canvas.getContext) return;
+  const ic = canvas.getContext('2d');
+  ic.clearRect(0, 0, canvas.width, canvas.height);
+  ic.save();
+  ic.translate(canvas.width / 2, canvas.height * 0.58);
+  ic.scale(0.62, 0.62);
+
+  const prevChar = outfit.char;
+  if (slotKey === 'char' && OUTFITS.char[val]) outfit.char = val;
+  const A = anchors();
+
+  paintHeroBody(ic, hero.w, hero.h, 0);
+  if (slotKey === 'hat'){
+    paintHat(ic, hero.w, hero.h, val, A);
+  } else if (slotKey === 'acc'){
+    paintAccessory(ic, hero.w, hero.h, val, A);
+  } else if (slotKey === 'tool'){
+    paintTool(ic, hero.w, hero.h, val, A, performance.now() / 1000);
+  } else {
+    if (outfit.hat !== 'none') paintHat(ic, hero.w, hero.h, outfit.hat, A);
+    if (outfit.acc !== 'none') paintAccessory(ic, hero.w, hero.h, outfit.acc, A);
+  }
+
+  outfit.char = prevChar;
+  ic.restore();
+}
+
 function buildShop(){
   shopEl.innerHTML = '';
   const tabsEl = document.getElementById('shopTabs');
@@ -3570,13 +3788,14 @@ function refreshShopState(){
     chip.setAttribute('aria-pressed', isEquipped ? 'true' : 'false');
     chip.classList.toggle('unowned', !own && priceInfo.price > 0);
 
-    let html = '';
+    let html = '<canvas class="chipIcon" width="44" height="44"></canvas>';
     if (!own && priceInfo.price > 0) html += '<span class="price">' + priceInfo.price + ' ¤</span>';
     const mark = isEquipped ? ('✓ ' + (isSecondary ? '· ' : '')) : '';
     html += '<span class="iname">' + mark + escapeHtml(info.n) + '</span>';
     if (info.d) html += '<span class="idesc">' + escapeHtml(info.d) + '</span>';
     if (own && !isEquipped && priceInfo.price > 0) html += '<span class="ownedTag">✓</span>';
     chip.innerHTML = html;
+    renderChipIcon(chip.querySelector('.chipIcon'), slot, val);
   });
 
   const wCoins = document.getElementById('wardrobeCoins');
@@ -3658,7 +3877,7 @@ function refreshShopState(){
       revert.addEventListener('click', () => {
         const field = item.displaySlot;
         outfit[field] = (field === 'char') ? 'hero' : 'none';
-        if (field === 'char') updateCharInfo();
+        if (field === 'char') { previewChar = 'hero'; updateCharInfo(); }
         refreshShopState();
       });
 
@@ -3758,31 +3977,40 @@ function gameOver(){
 
 
 const CHAR_LIST = Object.keys(OUTFITS.char);
+let previewChar = outfit.char;
 
 function charStep(delta){
-  const idx = CHAR_LIST.indexOf(outfit.char);
+  const idx = CHAR_LIST.indexOf(previewChar);
   const nextIdx = (idx + delta + CHAR_LIST.length) % CHAR_LIST.length;
-  const val = CHAR_LIST[nextIdx];
-  if (isOwned('char', val)){
-    equipOwned('char', val);
-    refreshShopState();
-  } else {
-    const arrowEl = document.getElementById(delta < 0 ? 'charPrev' : 'charNext');
-    tryBuyAndEquip('char', val, arrowEl);
+  previewChar = CHAR_LIST[nextIdx];
+  if (isOwned('char', previewChar)){
+    equipOwned('char', previewChar);
   }
+  refreshShopState();
+}
+
+function buyPreviewedChar(){
+  if (isOwned('char', previewChar)){
+    equipOwned('char', previewChar);
+    refreshShopState();
+    return;
+  }
+  tryBuyAndEquip('char', previewChar, document.getElementById('preview2'));
 }
 
 function updateCharInfo(){
   const el = document.getElementById('charInfo');
   if (!el) return;
-  const info = ti('char', outfit.char);
-  const price = OUTFITS.char[outfit.char].price;
-  const own = isOwned('char', outfit.char);
-  el.textContent = info.n + (own ? '' : ' — ' + price + ' ¤');
+  const info = ti('char', previewChar);
+  const price = OUTFITS.char[previewChar].price;
+  const own = isOwned('char', previewChar);
+  el.textContent = info.n + (own ? '' : ' — ' + t('buyFor') + ' ' + price + ' ¤');
 }
 
 document.getElementById('charPrev').addEventListener('click', () => charStep(-1));
 document.getElementById('charNext').addEventListener('click', () => charStep(1));
+document.getElementById('preview2').addEventListener('click', buyPreviewedChar);
+document.getElementById('charInfo').addEventListener('click', buyPreviewedChar);
 
 
 let wardrobeReturn = STATE.MENU;
@@ -3790,6 +4018,7 @@ let wardrobeReturn = STATE.MENU;
 function openWardrobe(){
   wardrobeReturn = (state === STATE.PAUSED) ? STATE.PAUSED : STATE.MENU;
   state = STATE.WARDROBE;
+  previewChar = outfit.char;
   hideAllScreens();
   show(wardrobeEl);
   reanimate(wardrobeEl);
@@ -3881,7 +4110,8 @@ async function cloudPush(){
           hat2:  { stringValue: outfit.hat2 },
           acc2:  { stringValue: outfit.acc2 },
           title:      { stringValue: myTitle || '' },
-          titleColor: { stringValue: myTitleColor || '' }
+          titleColor: { stringValue: myTitleColor || '' },
+          avatar: { stringValue: avatar }
         }
       })
     });
@@ -3902,8 +4132,14 @@ async function cloudRestore(rawCode){
     if (f.coins) { coins = parseInt(f.coins.integerValue || '0', 10) || 0; Store.set('coins', coins); }
     if (f.best)  { best  = parseInt(f.best.integerValue  || '0', 10) || 0; Store.set('best', best); }
     if (f.nick && f.nick.stringValue){ nickname = f.nick.stringValue; Store.set('nick', nickname); }
+    if (f.avatar && f.avatar.stringValue && isValidAvatar(f.avatar.stringValue)){
+      avatar = f.avatar.stringValue;
+      Store.set('avatar', avatar);
+      refreshAvatarRow();
+      refreshAvatarPreview();
+    }
 
-    
+
     
     if (f.owned && f.owned.arrayValue && Array.isArray(f.owned.arrayValue.values)){
       for (const v of f.owned.arrayValue.values){
@@ -3997,6 +4233,8 @@ async function checkPendingGrant(){
 }
 
 
+let lbFieldsByCode = {};
+
 async function cloudFetchLeaderboard(){
   const rows = document.getElementById('onlineLbRows');
   if (!rows || !cloudReady()) return;
@@ -4015,15 +4253,21 @@ async function cloudFetchLeaderboard(){
     });
     const data = await res.json();
     rows.innerHTML = '';
+    lbFieldsByCode = {};
     let i = 0;
     for (const row of (Array.isArray(data) ? data : [])){
       if (!row.document) continue;
       const f = row.document.fields || {};
       const nick = (f.nick && f.nick.stringValue) || '?';
       const sc = (f.best && f.best.integerValue) || '0';
-      
+      const rowAvatarVal = (f.avatar && f.avatar.stringValue && isValidAvatar(f.avatar.stringValue)) ? f.avatar.stringValue : AVATAR_LIST[0];
+      const rowAvatar = isCustomAvatar(rowAvatarVal)
+        ? '<img class="lbAvatarImg" src="' + rowAvatarVal + '" alt="">'
+        : escapeHtml(rowAvatarVal);
+
       const path = row.document.name || '';
       const rowCode = path.substring(path.lastIndexOf('/') + 1);
+      lbFieldsByCode[rowCode] = f;
       const isDev = DEV_CODE && rowCode === DEV_CODE;
       const titleText = (f.title && f.title.stringValue) || '';
       const titleColor = (f.titleColor && f.titleColor.stringValue) || '';
@@ -4045,13 +4289,16 @@ async function cloudFetchLeaderboard(){
       } else {
         nameHtml = escapeHtml(nick);
       }
-      div.innerHTML = '<span>' + i + '. ' + nameHtml + '</span><b>' + sc + '</b>';
+      div.innerHTML = '<span>' + i + '. ' + rowAvatar + ' ' + nameHtml + '</span><b>' + sc + '</b>';
       
       
       if (adminMode){
         div.style.cursor = 'pointer';
         div.title = 'Тап — выдать вещи/монеты';
         div.addEventListener('click', () => adminLoad(rowCode));
+      } else {
+        div.style.cursor = 'pointer';
+        div.addEventListener('click', () => openProfile(rowCode));
       }
       rows.appendChild(div);
     }
@@ -4060,6 +4307,82 @@ async function cloudFetchLeaderboard(){
     rows.innerHTML = '<div class="lbRow"><span>' + t('cloudErr') + '</span></div>';
   }
 }
+
+function renderProfileHero(canvas, f){
+  if (!canvas || !canvas.getContext) return;
+  const pctx = canvas.getContext('2d');
+  pctx.setTransform(1, 0, 0, 1, 0, 0);
+  pctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  const prevOutfit = Object.assign({}, outfit);
+  const charVal = (f.char && f.char.stringValue && OUTFITS.char[f.char.stringValue]) ? f.char.stringValue : 'hero';
+  outfit.char = charVal;
+  outfit.hat  = (f.hat  && f.hat.stringValue  && OUTFITS.hat[f.hat.stringValue])   ? f.hat.stringValue  : 'none';
+  outfit.acc  = (f.acc  && f.acc.stringValue  && OUTFITS.acc[f.acc.stringValue])   ? f.acc.stringValue  : 'none';
+  outfit.tool = (f.tool && f.tool.stringValue && OUTFITS.tool[f.tool.stringValue]) ? f.tool.stringValue : 'none';
+  const theirMulti = ((f.perk && f.perk.stringValue) || 'none') === 'multiacc';
+  const hat2Val = (theirMulti && f.hat2 && f.hat2.stringValue && OUTFITS.hat[f.hat2.stringValue]) ? f.hat2.stringValue : 'none';
+  const acc2Val = (theirMulti && f.acc2 && f.acc2.stringValue && OUTFITS.acc[f.acc2.stringValue]) ? f.acc2.stringValue : 'none';
+
+  const A = anchors();
+  pctx.save();
+  pctx.translate(canvas.width / 2, canvas.height * 0.56);
+  pctx.scale(2.9, 2.9);
+  paintHeroBody(pctx, hero.w, hero.h, 0);
+  paintAccessory(pctx, hero.w, hero.h, outfit.acc, A);
+  if (acc2Val !== 'none') paintAccessory(pctx, hero.w, hero.h, acc2Val, A);
+  paintHat(pctx, hero.w, hero.h, outfit.hat, A);
+  if (hat2Val !== 'none'){
+    pctx.save();
+    pctx.translate(0, -hero.h * 0.20);
+    pctx.scale(0.7, 0.7);
+    paintHat(pctx, hero.w, hero.h, hat2Val, A);
+    pctx.restore();
+  }
+  paintTool(pctx, hero.w, hero.h, outfit.tool, A, performance.now() / 1000);
+  pctx.restore();
+
+  Object.assign(outfit, prevOutfit);
+}
+
+function openProfile(code){
+  const f = lbFieldsByCode[code];
+  if (!f) return;
+  const nick = (f.nick && f.nick.stringValue) || '?';
+  const titleText = (f.title && f.title.stringValue) || '';
+  const titleColor = (f.titleColor && f.titleColor.stringValue) || '';
+  const bestScore = (f.best && f.best.integerValue) || '0';
+  const coinsVal = (f.coins && f.coins.integerValue) || '0';
+  const profAvatarVal = (f.avatar && f.avatar.stringValue && isValidAvatar(f.avatar.stringValue)) ? f.avatar.stringValue : AVATAR_LIST[0];
+  const profAvatarBox = document.getElementById('profileAvatar');
+  if (profAvatarBox){
+    if (isCustomAvatar(profAvatarVal)) profAvatarBox.innerHTML = '<img src="' + profAvatarVal + '" alt="">';
+    else profAvatarBox.textContent = profAvatarVal;
+  }
+
+  document.getElementById('profileNick').textContent = nick;
+  const titleEl = document.getElementById('profileTitleLine');
+  if (titleText){
+    titleEl.textContent = titleText;
+    titleEl.style.color = titleColor && !/gradient\(/i.test(titleColor) ? titleColor : '';
+  } else {
+    titleEl.textContent = '';
+    titleEl.style.color = '';
+  }
+  document.getElementById('profileBest').textContent = t('overRecordLabel') + ': ' + bestScore;
+  document.getElementById('profileCoins').textContent = coinsVal + ' ' + t('profileCoinsLabel');
+
+  renderProfileHero(document.getElementById('profileCanvas'), f);
+  document.getElementById('profileModal').classList.remove('hidden');
+}
+
+function closeProfile(){
+  document.getElementById('profileModal').classList.add('hidden');
+}
+document.getElementById('profileClose').addEventListener('click', closeProfile);
+document.getElementById('profileModal').addEventListener('click', (e) => {
+  if (e.target && e.target.id === 'profileModal') closeProfile();
+});
 
 function refreshCloudUI(){
   const section = document.getElementById('cloudSection');
@@ -4197,14 +4520,14 @@ function renderAdminItemsGrid(ownedSet){
   const slotTitles = { hat: 'ШЛЯПЫ', acc: 'АКСЕССУАРЫ', tool: 'ИНСТРУМЕНТЫ', char: 'ПЕРСОНАЖИ' };
   for (const slot of Object.keys(OUTFITS)){
     const title = document.createElement('div');
-    title.style.cssText = 'grid-column:1/-1;font-weight:800;opacity:.6;margin-top:6px;font-size:10px;letter-spacing:.5px;';
+    title.className = 'adminItemsSlotTitle';
     title.textContent = slotTitles[slot] || slot;
     grid.appendChild(title);
 
     for (const val of Object.keys(OUTFITS[slot])){
       const key = slot + ':' + val;
       const label = document.createElement('label');
-      label.style.cssText = 'display:flex;align-items:center;gap:5px;cursor:pointer;';
+      label.className = 'adminItemChip';
       const cb = document.createElement('input');
       cb.type = 'checkbox';
       cb.dataset.item = key;
@@ -4237,7 +4560,8 @@ function renderAdminGradientPresets(){
     btn.type = 'button';
     btn.textContent = p.n;
     btn.dataset.grad = p.v;
-    btn.style.cssText = 'padding:5px 9px;border-radius:10px;border:none;font-size:10px;font-weight:700;cursor:pointer;color:#1a1a1a;background:' + p.v + ';';
+    btn.className = 'adminGradientChip';
+    btn.style.background = p.v;
     btn.addEventListener('click', () => {
       document.getElementById('adminTitleColorInput').value = p.v;
     });
@@ -4443,8 +4767,98 @@ function refreshPlatformColorRow(){
   });
 }
 
+function refreshAvatarRow(){
+  const row = document.getElementById('avatarRow');
+  if (!row) return;
+  row.innerHTML = '';
+  for (const em of AVATAR_LIST){
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'swatchBtn';
+    btn.dataset.avatar = em;
+    btn.textContent = em;
+    btn.setAttribute('aria-label', em);
+    btn.classList.toggle('active', em === avatar);
+    btn.addEventListener('click', () => {
+      avatar = em;
+      Store.set('avatar', em);
+      refreshAvatarRow();
+      refreshAvatarPreview();
+      cloudPushSoon();
+    });
+    row.appendChild(btn);
+  }
+}
+
+function refreshAvatarPreview(){
+  const box = document.getElementById('avatarPreview');
+  const removeBtn = document.getElementById('avatarRemoveBtn');
+  if (!box) return;
+  if (isCustomAvatar(avatar)){
+    box.innerHTML = '<img src="' + avatar + '" alt="">';
+    if (removeBtn) removeBtn.classList.remove('hidden');
+  } else {
+    box.textContent = avatar;
+    if (removeBtn) removeBtn.classList.add('hidden');
+  }
+}
+
+function cropImageToAvatarDataUrl(img, cb){
+  const SIZE = 128;
+  const canvas = document.createElement('canvas');
+  canvas.width = SIZE; canvas.height = SIZE;
+  const ictx = canvas.getContext('2d');
+  const srcW = img.naturalWidth || img.width || SIZE;
+  const srcH = img.naturalHeight || img.height || SIZE;
+  const side = Math.min(srcW, srcH);
+  const sx = (srcW - side) / 2, sy = (srcH - side) / 2;
+  ictx.drawImage(img, sx, sy, side, side, 0, 0, SIZE, SIZE);
+  cb(canvas.toDataURL('image/jpeg', 0.75));
+}
+
+const avatarUploadBtnEl = document.getElementById('avatarUploadBtn');
+const avatarRemoveBtnEl = document.getElementById('avatarRemoveBtn');
+const avatarFileInputEl = document.getElementById('avatarFileInput');
+
+if (avatarUploadBtnEl && avatarFileInputEl){
+  avatarUploadBtnEl.addEventListener('click', () => avatarFileInputEl.click());
+}
+if (avatarFileInputEl){
+  avatarFileInputEl.addEventListener('change', () => {
+    const file = avatarFileInputEl.files && avatarFileInputEl.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        cropImageToAvatarDataUrl(img, (dataUrl) => {
+          avatar = dataUrl;
+          Store.set('avatar', avatar);
+          refreshAvatarRow();
+          refreshAvatarPreview();
+          cloudPushSoon();
+        });
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+    avatarFileInputEl.value = '';
+  });
+}
+if (avatarRemoveBtnEl){
+  avatarRemoveBtnEl.addEventListener('click', () => {
+    avatar = AVATAR_LIST[0];
+    Store.set('avatar', avatar);
+    refreshAvatarRow();
+    refreshAvatarPreview();
+    cloudPushSoon();
+  });
+}
+
 refreshBgColorRow();
 refreshPlatformColorRow();
+refreshAvatarRow();
+refreshAvatarPreview();
 
 document.querySelectorAll('.chip[data-lang]').forEach(chip => {
   chip.addEventListener('click', () => {
@@ -4457,10 +4871,10 @@ document.querySelectorAll('.chip[data-lang]').forEach(chip => {
 });
 
 
-const previewCtxs = ['preview', 'preview2']
-  .map(id => document.getElementById(id))
-  .filter(Boolean)
-  .map(cv => cv.getContext('2d'));
+const previewCtxs = ['menuPreview', 'preview2']
+  .map(id => ({ id, el: document.getElementById(id) }))
+  .filter(o => !!o.el)
+  .map(o => ({ id: o.id, ctx: o.el.getContext('2d') }));
 let prevT = performance.now();
 
 (function previewLoop(now){
@@ -4474,29 +4888,35 @@ let prevT = performance.now();
   const ear  = Math.sin(t2 * 1.7 + 0.8) * 0.3;
   const tilt = Math.sin(t2 * 0.9) * 0.07;
   const sq   = 1 + Math.sin(t2 * 1.7 + 1.6) * 0.045;
-  const A = anchors();
+  const realChar = outfit.char;
 
-  for (const pctx of previewCtxs){
+  for (const entry of previewCtxs){
+    const pctx = entry.ctx;
+    if (entry.id === 'preview2') outfit.char = previewChar;
+    const A = anchors();
+
     pctx.setTransform(1, 0, 0, 1, 0, 0);
     pctx.clearRect(0, 0, 220, 220);
     pctx.imageSmoothingQuality = 'high';
     pctx.save();
     pctx.translate(110, 114 + bob);
     pctx.rotate(tilt);
-    pctx.scale(2.9 / sq, 2.9 * sq); 
+    pctx.scale(2.9 / sq, 2.9 * sq);
     paintHeroBody(pctx, hero.w, hero.h, ear);
     paintAccessory(pctx, hero.w, hero.h, outfit.acc, A);
     if (outfit.acc2 !== 'none' && isOwned('perk', 'multiacc')) paintAccessory(pctx, hero.w, hero.h, outfit.acc2, A);
     paintHat(pctx, hero.w, hero.h, outfit.hat, A);
     if (outfit.hat2 !== 'none' && isOwned('perk', 'multiacc')){
       pctx.save();
-      pctx.translate(hero.w * 0.30, hero.h * 0.015);
-      pctx.scale(0.78, 0.78);
+      pctx.translate(0, -hero.h * 0.20);
+      pctx.scale(0.7, 0.7);
       paintHat(pctx, hero.w, hero.h, outfit.hat2, A);
       pctx.restore();
     }
     paintTool(pctx, hero.w, hero.h, outfit.tool, A, t2);
     pctx.restore();
+
+    outfit.char = realChar;
   }
 })(performance.now());
 
