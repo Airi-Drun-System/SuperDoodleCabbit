@@ -150,7 +150,7 @@
   }
   .chip .iname{display:block;}
   .chip .idesc{display:block;font-size:10px;opacity:.72;font-weight:500;margin-top:2px;}
-  .chip .price{color:var(--gold);font-weight:800;display:block;margin-top:2px;}
+  .chip .price{color:var(--gold);font-weight:800;display:block;margin-bottom:3px;font-size:13px;}
   .chip:active{transform:scale(.96);}
   .chip[aria-pressed="true"]{
     background:linear-gradient(180deg,#ffd08a,#ff9f45);
@@ -159,6 +159,28 @@
   .chip[aria-pressed="true"] .price{color:#8a4a00;}
   .chip[aria-pressed="true"] .idesc{opacity:.75;color:#5a3200;}
   .chip:focus-visible{outline:2px solid #fff;outline-offset:3px;}
+  .chip.unowned{opacity:.52;filter:saturate(.65);}
+  .chip.unowned .price{opacity:1;}
+  @keyframes denyShake{
+    0%,100%{transform:translateX(0);}
+    20%{transform:translateX(-5px);}
+    40%{transform:translateX(5px);}
+    60%{transform:translateX(-4px);}
+    80%{transform:translateX(4px);}
+  }
+  .denyShake{animation:denyShake .32s ease;}
+
+  .buyAllRow{
+    width:min(430px,95vw);display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;
+  }
+  .buyAllBtn{
+    border:none;cursor:pointer;font-family:inherit;font-weight:800;font-size:13px;
+    padding:9px 16px;border-radius:14px;color:#3a1f00;white-space:nowrap;
+    background:linear-gradient(180deg,#ffe08a,#ffc42e);box-shadow:0 3px 0 #b8860b;
+  }
+  .buyAllBtn:disabled{opacity:.4;cursor:default;box-shadow:none;}
+  .buyAllBtn:active:enabled{transform:translateY(2px);box-shadow:0 1px 0 #b8860b;}
+  .buyAllCost{font-size:12.5px;font-weight:700;color:var(--gold);}
 
   #lockedPanel{
     width:min(430px,95vw);display:flex;flex-direction:column;gap:8px;
@@ -414,6 +436,10 @@
       <span><i class="coinDot"></i><span class="coinNum" id="wardrobeCoins">0</span></span>
     </p>
     <div id="shopTabs" class="shopTabs rise d2"></div>
+    <div id="buyAllRow" class="buyAllRow rise d2 hidden">
+      <button id="buyAllBtn" class="buyAllBtn" type="button"></button>
+      <span id="buyAllCost" class="buyAllCost"></span>
+    </div>
     <div id="shop" class="rise d2"></div>
     <div id="lockedPanel" class="hidden"></div>
     <div class="spacer"></div>
@@ -732,6 +758,7 @@ const I18N = {
     hint: 'Клавиши ← → или A / D, на телефоне — кнопки внизу. Тап по экрану: выстрел из лука или двойной прыжок. Встретил монстра — жми, пока идёт отсчёт!',
     slotHat: 'На голову', slotAcc: 'Аксессуары', slotTool: 'Инструмент', slotPerk: 'Слоты',
     notEnough: 'Не хватает', coinsWord: 'монет', buyFor: 'Купить за', revert: 'Снять',
+    buyAll: 'Купить всё', allBought: 'Всё куплено', willSpend: 'Потратишь',
     nickTitle: 'Как тебя зовут?', nickPlaceholder: 'Ник котокролика', nickConfirm: 'Готово',
     nickLabel: 'Ник', changeNickBtn: 'Изменить',
     supportLabel: 'Поддержка', supportBtn: 'Написать',
@@ -784,6 +811,7 @@ const I18N = {
     hint: 'Arrow keys or A / D, on phone use the buttons below. Tap the screen to fire the bow or double jump. Met a monster? Tap before the timer runs out!',
     slotHat: 'Headwear', slotAcc: 'Accessories', slotTool: 'Tool', slotPerk: 'Slots',
     notEnough: 'Need', coinsWord: 'more coins', buyFor: 'Buy for', revert: 'Remove',
+    buyAll: 'Buy all', allBought: 'All bought', willSpend: 'You will spend',
     nickTitle: 'What is your name?', nickPlaceholder: 'Cabbit nickname', nickConfirm: 'Done',
     nickLabel: 'Nickname', changeNickBtn: 'Change',
     supportLabel: 'Support', supportBtn: 'Message',
@@ -3294,6 +3322,89 @@ function escapeHtml(s){
 
 let shopActiveSlot = 'hat';
 
+function equipOwned(slot, val){
+  const multi = (slot === 'hat' || slot === 'acc') && isOwned('perk', 'multiacc');
+  const secKey = slot + '2';
+  if (multi){
+    if (outfit[slot] === val){
+      outfit[slot] = outfit[secKey];
+      outfit[secKey] = 'none';
+    } else if (outfit[secKey] === val){
+      outfit[secKey] = 'none';
+    } else if (outfit[slot] === 'none'){
+      outfit[slot] = val;
+    } else if (outfit[secKey] === 'none'){
+      outfit[secKey] = val;
+    } else {
+      outfit[secKey] = val;
+    }
+    Store.set(slot, outfit[slot]);
+    Store.set(secKey, outfit[secKey]);
+  } else {
+    outfit[slot] = val;
+    Store.set(slot, val);
+  }
+}
+
+function denyChip(chipEl){
+  if (!chipEl) return;
+  chipEl.classList.remove('denyShake');
+  void chipEl.offsetWidth;
+  chipEl.classList.add('denyShake');
+}
+
+function tryBuyAndEquip(slot, val, chipEl){
+  const price = OUTFITS[slot][val].price;
+  if (coins < price){ denyChip(chipEl); return; }
+
+  coins -= price;
+  Store.set('coins', coins);
+  owned.add(slot + ':' + val);
+  saveOwned();
+  equipOwned(slot, val);
+  refreshShopState();
+  cloudPushSoon();
+}
+
+function getBuyAllCandidates(slotKey){
+  const list = OUTFITS[slotKey];
+  if (!list) return [];
+  return Object.keys(list).filter(val => !list[val].locked && list[val].price > 0 && !isOwned(slotKey, val));
+}
+
+function refreshBuyAllRow(){
+  const btn = document.getElementById('buyAllBtn');
+  const costEl = document.getElementById('buyAllCost');
+  if (!btn || !costEl) return;
+
+  const candidates = getBuyAllCandidates(shopActiveSlot);
+  if (candidates.length === 0){
+    btn.disabled = true;
+    btn.textContent = t('allBought');
+    costEl.textContent = '';
+    return;
+  }
+
+  const total = candidates.reduce((sum, val) => sum + OUTFITS[shopActiveSlot][val].price, 0);
+  btn.disabled = coins < total;
+  btn.textContent = t('buyAll');
+  costEl.textContent = t('willSpend') + ': ' + total + ' ¤';
+}
+
+document.getElementById('buyAllBtn').addEventListener('click', () => {
+  const candidates = getBuyAllCandidates(shopActiveSlot);
+  if (candidates.length === 0) return;
+  const total = candidates.reduce((sum, val) => sum + OUTFITS[shopActiveSlot][val].price, 0);
+  if (coins < total){ denyChip(document.getElementById('buyAllBtn')); return; }
+
+  coins -= total;
+  for (const val of candidates) owned.add(shopActiveSlot + ':' + val);
+  Store.set('coins', coins);
+  saveOwned();
+  refreshShopState();
+  cloudPushSoon();
+});
+
 function buildShop(){
   shopEl.innerHTML = '';
   const tabsEl = document.getElementById('shopTabs');
@@ -3313,7 +3424,7 @@ function buildShop(){
     tab.type = 'button';
     tab.textContent = slotDef.label;
     tab.dataset.slot = slotDef.key;
-    tab.addEventListener('click', () => { shopActiveSlot = slotDef.key; refreshShopTabs(); });
+    tab.addEventListener('click', () => { shopActiveSlot = slotDef.key; refreshShopTabs(); refreshBuyAllRow(); });
     tabsEl.appendChild(tab);
 
     const row = document.createElement('div');
@@ -3334,32 +3445,12 @@ function buildShop(){
       chip.innerHTML = html;
 
       chip.addEventListener('click', () => {
-        const multi = (slotDef.key === 'hat' || slotDef.key === 'acc') && isOwned('perk', 'multiacc');
-        const secKey = slotDef.key + '2';
-
-        if (multi){
-          if (outfit[slotDef.key] === val){
-            
-            outfit[slotDef.key] = outfit[secKey];
-            outfit[secKey] = 'none';
-          } else if (outfit[secKey] === val){
-            
-            outfit[secKey] = 'none';
-          } else if (outfit[slotDef.key] === 'none'){
-            outfit[slotDef.key] = val;
-          } else if (outfit[secKey] === 'none'){
-            outfit[secKey] = val;
-          } else {
-            
-            outfit[secKey] = val;
-          }
-          if (isOwned(slotDef.key, outfit[slotDef.key]) || outfit[slotDef.key] === 'none') Store.set(slotDef.key, outfit[slotDef.key]);
-          if (isOwned(slotDef.key, outfit[secKey]) || outfit[secKey] === 'none') Store.set(secKey, outfit[secKey]);
+        if (isOwned(slotDef.key, val)){
+          equipOwned(slotDef.key, val);
+          refreshShopState();
         } else {
-          outfit[slotDef.key] = val;
-          if (isOwned(slotDef.key, val)) Store.set(slotDef.key, val); 
+          tryBuyAndEquip(slotDef.key, val, chip);
         }
-        refreshShopState();                                        
       });
 
       row.appendChild(chip);
@@ -3421,15 +3512,17 @@ function refreshShopState(){
     const priceInfo = OUTFITS[slot][val];
     const own = isOwned(slot, val);
 
-    const isSecondary = (slot === 'hat' || slot === 'acc') && val !== 'none' && outfit[slot + '2'] === val;
-    const isEquipped = outfit[slot] === val || isSecondary;
+    const isSecondary = own && (slot === 'hat' || slot === 'acc') && val !== 'none' && outfit[slot + '2'] === val;
+    const isEquipped = own && (outfit[slot] === val || isSecondary);
     chip.setAttribute('aria-pressed', isEquipped ? 'true' : 'false');
+    chip.classList.toggle('unowned', !own && priceInfo.price > 0);
 
+    let html = '';
+    if (!own && priceInfo.price > 0) html += '<span class="price">' + priceInfo.price + ' ¤</span>';
     const mark = isEquipped ? ('✓ ' + (isSecondary ? '· ' : '')) : '';
-    let html = '<span class="iname">' + mark + escapeHtml(info.n) + '</span>';
+    html += '<span class="iname">' + mark + escapeHtml(info.n) + '</span>';
     if (info.d) html += '<span class="idesc">' + escapeHtml(info.d) + '</span>';
-    if (!own && priceInfo.price > 0) html += '<span class="price">' + priceInfo.price + '</span>';
-    else if (own && !isEquipped && priceInfo.price > 0) html += '<span class="ownedTag">✓</span>';
+    if (own && !isEquipped && priceInfo.price > 0) html += '<span class="ownedTag">✓</span>';
     chip.innerHTML = html;
   });
 
@@ -3444,6 +3537,7 @@ function refreshShopState(){
   const settingsBtnEl  = document.getElementById('settingsBtn').closest('.menuBtnWrap');
   const pauseMenuBtnEl = document.getElementById('pauseMenuBtn').closest('.menuBtnWrap');
   const lockedPanel    = document.getElementById('lockedPanel');
+  const buyAllRowEl    = document.getElementById('buyAllRow');
   const paused = state === STATE.PAUSED;
 
   if (paused){
@@ -3453,6 +3547,7 @@ function refreshShopState(){
     pauseMenuBtnEl.classList.remove('hidden');
     continueBtnEl.classList.remove('hidden');
     lockedPanel.classList.add('hidden');
+    buyAllRowEl.classList.add('hidden');
     return;
   }
 
@@ -3460,6 +3555,8 @@ function refreshShopState(){
   continueBtnEl.classList.add('hidden');
   wardrobeBtnEl.classList.remove('hidden');
   settingsBtnEl.classList.remove('hidden');
+  buyAllRowEl.classList.remove('hidden');
+  refreshBuyAllRow();
 
   const locked = getLockedItems();
 
