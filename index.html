@@ -236,17 +236,25 @@
   .settingRow{display:flex;flex-direction:column;gap:8px;align-items:flex-start;width:100%;}
   .settingLabel{font-size:13px;opacity:.7;font-weight:600;}
 
+  @keyframes iosPopIn{
+    from{ transform:scale(.86); opacity:0; }
+    to{ transform:scale(1); opacity:1; }
+  }
   .profileOverlay{
     position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;
-    background:rgba(10,6,20,.78);backdrop-filter:blur(6px);padding:20px;box-sizing:border-box;
+    background:rgba(10,6,20,.55);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);padding:20px;box-sizing:border-box;
   }
   .profileOverlay.hidden{display:none;}
   .profileCard{
-    position:relative;width:min(280px,90vw);background:rgba(40,20,60,.92);border-radius:24px;
+    position:relative;width:min(280px,90vw);background:rgba(44,44,48,.78);border-radius:22px;
     padding:26px 20px 22px;display:flex;flex-direction:column;align-items:center;gap:6px;
+    backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
     box-shadow:0 20px 60px rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,255,255,.14);
+    animation:iosPopIn .24s cubic-bezier(.34,1.56,.64,1);
   }
-  .profileCard #profileClose{position:absolute;top:10px;right:10px;}
+  .profileCard #profileClose,.chatCard #chatClose{
+    position:absolute;top:10px;right:10px;background:rgba(120,120,128,.32);
+  }
   .profileCanvasWrap{position:relative;margin-bottom:4px;}
   #profileCanvas{width:130px;height:130px;filter:drop-shadow(0 14px 16px rgba(0,0,0,.45));display:block;}
   .profileAvatarBadge{
@@ -256,6 +264,89 @@
   .profileNick{font-size:20px;font-weight:800;text-align:center;}
   .profileTitleLine{font-size:13px;opacity:.85;min-height:16px;text-align:center;}
   .profileStats{display:flex;gap:18px;margin-top:8px;font-size:14px;font-weight:700;color:var(--gold);}
+  .profileComments{width:100%;margin-top:14px;display:flex;flex-direction:column;gap:8px;}
+  .profileCommentsLabel{font-size:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;opacity:.65;}
+  .profileCommentsList{width:100%;max-height:150px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding-right:2px;}
+  .profileCommentRow{background:rgba(255,255,255,.07);border-radius:12px;padding:8px 10px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);}
+  .profileCommentAuthor{font-size:12px;font-weight:800;color:#ffd34d;display:flex;align-items:center;gap:5px;}
+  .profileCommentText{font-size:13px;line-height:1.35;margin-top:2px;word-break:break-word;}
+  .profileCommentEmpty{font-size:12px;opacity:.6;text-align:center;padding:6px 0;}
+  .profileCommentForm{display:flex;gap:8px;width:100%;margin-top:2px;}
+  #profileCommentInput{
+    flex:1;min-width:0;border-radius:12px;border:none;padding:9px 12px;font-size:13px;
+    background:rgba(255,255,255,.1);color:#fdf6e8;box-shadow:inset 0 0 0 1px rgba(255,255,255,.14);
+  }
+  #profileCommentInput::placeholder{color:rgba(253,246,232,.5);}
+  #profileCommentSendBtn{
+    border:none;border-radius:999px;padding:0 16px;font-weight:700;font-size:13px;cursor:pointer;
+    background:#0a84ff;color:#fff;
+  }
+  #profileCommentSendBtn:disabled{opacity:.4;cursor:default;}
+  .profileCommentStatus{font-size:11px;opacity:.7;min-height:14px;text-align:center;}
+  .profileMessageBtn{
+    width:100%;margin-top:10px;padding:9px 0;font-size:14px;font-weight:600;
+    background:#0a84ff;color:#fff;box-shadow:none;
+  }
+  .profileMessageBtn.hidden{display:none;}
+
+  .chatCard{
+    position:relative;width:min(320px,92vw);height:min(480px,80vh);background:rgba(44,44,48,.78);border-radius:22px;
+    padding:22px 18px 16px;display:flex;flex-direction:column;gap:10px;
+    backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+    box-shadow:0 20px 60px rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,255,255,.14);
+    animation:iosPopIn .24s cubic-bezier(.34,1.56,.64,1);
+  }
+  .chatWithNick{font-size:17px;font-weight:800;text-align:center;padding-right:26px;}
+  .chatMessagesList{
+    flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:3px;padding:6px 4px;
+    background:#0d0a16;border-radius:16px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
+  }
+  .chatMsgRow{
+    max-width:76%;padding:9px 14px;font-size:14.5px;line-height:1.32;word-break:break-word;
+    border-radius:19px;box-shadow:0 1px 0 rgba(0,0,0,.15);
+  }
+  .chatMsgRow.own{
+    align-self:flex-end;background:linear-gradient(180deg,#3d9bff,#0b84ff);color:#fff;
+    border-bottom-right-radius:5px;
+  }
+  .chatMsgRow.their{
+    align-self:flex-start;background:#3a3a3f;color:#f2f2f4;
+    border-bottom-left-radius:5px;
+  }
+  .chatEmpty{font-size:12px;opacity:.6;text-align:center;padding:10px 0;}
+  .chatForm{display:flex;gap:8px;width:100%;}
+  #chatInput{
+    flex:1;min-width:0;border-radius:12px;border:none;padding:9px 12px;font-size:13px;
+    background:rgba(255,255,255,.1);color:#fdf6e8;box-shadow:inset 0 0 0 1px rgba(255,255,255,.14);
+  }
+  #chatInput::placeholder{color:rgba(253,246,232,.5);}
+  #chatSendBtn{
+    border:none;border-radius:999px;padding:0 16px;font-weight:700;font-size:13px;cursor:pointer;
+    background:#0a84ff;color:#fff;
+  }
+  #chatSendBtn:disabled{opacity:.4;cursor:default;}
+  .chatStatus{font-size:11px;opacity:.7;min-height:14px;text-align:center;}
+
+  .iosSheet{width:min(280px,90vw);display:flex;flex-direction:column;gap:8px;animation:iosPopIn .24s cubic-bezier(.34,1.56,.64,1);}
+  .iosSheetGroup{
+    background:rgba(44,44,48,.82);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+    border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5);
+  }
+  .iosSheetTitle{
+    font-size:12px;font-weight:600;opacity:.6;text-align:center;color:#fdf6e8;
+    padding:12px 16px 10px;border-bottom:1px solid rgba(255,255,255,.14);
+  }
+  .iosSheetBtn{
+    display:block;width:100%;border:none;background:transparent;cursor:pointer;
+    padding:15px 16px;font-size:17px;font-weight:500;color:#0a84ff;font-family:inherit;
+    border-bottom:1px solid rgba(255,255,255,.14);text-align:center;
+  }
+  .iosSheetGroup .iosSheetBtn:last-child{border-bottom:none;}
+  .iosSheetBtn:active{background:rgba(255,255,255,.1);}
+  .iosSheetCancel{
+    background:rgba(44,44,48,.82);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+    border-radius:16px;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,.35);
+  }
 
   .swatchRow{display:flex;gap:9px;flex-wrap:wrap;}
   .swatchBtn{
@@ -560,6 +651,7 @@
     </div>
     <p class="hint rise d4" data-i18n="hint">Клавиши ← → или A / D, на телефоне — кнопки внизу. Тап по экрану: выстрел из лука или двойной прыжок. Встретил монстра — жми, пока идёт отсчёт!</p>
     <a href="https://discord.gg/H6WcNMffZ" target="_blank" rel="noopener" class="btn ghost rise d4" style="text-decoration:none;">Discord</a>
+    <a href="https://t.me/CabbitJumpNews" target="_blank" rel="noopener" class="btn ghost rise d4" style="text-decoration:none;">Telegram</a>
     <div class="spacer"></div>
   </div>
 
@@ -712,12 +804,6 @@
           <button id="changeNickBtn" class="chip" data-i18n="changeNickBtn">Изменить</button>
         </div>
       </div>
-      <div class="settingRow">
-        <span class="settingLabel" data-i18n="supportLabel">Поддержка</span>
-        <div class="btnRow">
-          <button id="supportBtn" class="chip" data-i18n="supportBtn">Написать</button>
-        </div>
-      </div>
       <div class="settingRow" id="cloudSection" style="border-top:1px solid rgba(255,255,255,.1);padding-top:14px;">
         <span class="settingLabel" data-i18n="cloudTitle">Онлайн-профиль</span>
         <div class="cloudRow">
@@ -763,6 +849,42 @@
         <span id="profileBest"></span>
         <span id="profileCoins"></span>
       </div>
+      <button id="profileMessageBtn" class="btn ghost profileMessageBtn hidden" data-i18n="chatWriteBtn">Написать</button>
+      <div class="profileComments">
+        <div class="profileCommentsLabel" data-i18n="profileCommentsLabel">Комментарии</div>
+        <div id="profileCommentsList" class="profileCommentsList"></div>
+        <div class="profileCommentForm">
+          <input id="profileCommentInput" type="text" maxlength="140" data-i18n-placeholder="profileCommentPlaceholder" placeholder="Оставить комментарий...">
+          <button id="profileCommentSendBtn" data-i18n="profileCommentSend">Отправить</button>
+        </div>
+        <div id="profileCommentStatus" class="profileCommentStatus"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="chatModal" class="profileOverlay hidden">
+    <div class="chatCard">
+      <button id="chatClose" class="backIconBtn" aria-label="Закрыть">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M6 6 L18 18 M18 6 L6 18" stroke="#fdf6e8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div id="chatWithNick" class="chatWithNick"></div>
+      <div id="chatMessagesList" class="chatMessagesList"></div>
+      <div class="chatForm">
+        <input id="chatInput" type="text" maxlength="200" data-i18n-placeholder="chatPlaceholder" placeholder="Написать сообщение...">
+        <button id="chatSendBtn" data-i18n="chatSend">Отправить</button>
+      </div>
+      <div id="chatStatus" class="chatStatus"></div>
+    </div>
+  </div>
+
+  <div id="adminChoiceModal" class="profileOverlay hidden">
+    <div class="iosSheet">
+      <div class="iosSheetGroup">
+        <div id="adminChoiceNick" class="iosSheetTitle"></div>
+        <button id="adminChoiceProfileBtn" class="iosSheetBtn" data-i18n="adminChoiceProfile">Профиль</button>
+        <button id="adminChoicePanelBtn" class="iosSheetBtn" data-i18n="adminChoicePanel">Админ панель</button>
+      </div>
+      <button id="adminChoiceCancelBtn" class="iosSheetBtn iosSheetCancel" data-i18n="adminChoiceCancel">Отмена</button>
     </div>
   </div>
 </div>
@@ -955,6 +1077,8 @@ const sfxSpring= () => { beep(500, 0.12, 'sawtooth', 0.12); beep(760, 0.14, 'saw
 const sfxGlass = () => { beep(1400, 0.05, 'square', 0.12); beep(200, 0.18, 'sawtooth', 0.10); };
 const sfxSmash = () => { if (playCustomSfx('kill')) return; beep(90, 0.22, 'sawtooth', 0.22); beep(660, 0.12, 'square', 0.14); };
 const sfxOver  = () => { if (playCustomSfx('fall')) return; beep(160, 0.35, 'sawtooth', 0.14); };
+const sfxPopupOpen  = () => { ensureAudio(); beep(680, 0.05, 'sine', 0.10); beep(980, 0.07, 'sine', 0.09); };
+const sfxPopupClose = () => { ensureAudio(); beep(560, 0.06, 'sine', 0.08); beep(360, 0.08, 'sine', 0.06); };
 
 let musicOn = Store.get('music', '1') === '1';
 let musicVolume = parseInt(Store.get('musicVolume', '28'), 10);
@@ -988,6 +1112,14 @@ const I18N = {
     bgColorLabel: 'Цвет фона', platformColorLabel: 'Цвет платформ',
     profileCoinsLabel: 'монет', avatarLabel: 'Аватар', pauseLabel: 'Пауза', avatarUpload: 'Фото из галереи', avatarRemove: 'Убрать фото',
     musicLabel: 'Музыка', musicVolumeLabel: 'Громкость музыки',
+    profileCommentsLabel: 'Комментарии', profileCommentPlaceholder: 'Оставить комментарий...',
+    profileCommentSend: 'Отправить', profileCommentEmpty: 'Пока нет комментариев',
+    profileCommentSending: 'Отправка...', profileCommentError: 'Не удалось загрузить',
+    profileCommentTooLong: 'Слишком длинно (макс 140)', profileCommentNeedNick: 'Придумайте ник в настройках',
+    chatWriteBtn: 'Написать', chatPlaceholder: 'Написать сообщение...', chatSend: 'Отправить',
+    chatEmpty: 'Пока нет сообщений', chatSending: 'Отправка...', chatError: 'Не удалось отправить',
+    chatTooLong: 'Слишком длинно (макс 200)', chatNeedNick: 'Придумайте ник в настройках',
+    adminChoiceProfile: 'Профиль', adminChoicePanel: 'Админ панель', adminChoiceCancel: 'Отмена',
     on: 'вкл', off: 'выкл',
     hint: 'Клавиши ← → или A / D, на телефоне — кнопки внизу. Тап по экрану: выстрел из лука или двойной прыжок. Встретил монстра — жми, когда бегунок в жёлтой зоне по центру, для идеального удара!',
     slotHat: 'На голову', slotAcc: 'Аксессуары', slotTool: 'Инструмент', slotPerk: 'Слоты',
@@ -995,7 +1127,6 @@ const I18N = {
     buyAll: 'Купить всё', allBought: 'Всё куплено', willSpend: 'Потратишь',
     nickTitle: 'Как тебя зовут?', nickPlaceholder: 'Ник котокролика', nickConfirm: 'Готово',
     nickLabel: 'Ник', changeNickBtn: 'Изменить',
-    supportLabel: 'Поддержка', supportBtn: 'Написать',
     rotateMsg: 'Переверни телефон вертикально',
     leaderboard: 'Таблица лидеров', empty: '—', wardrobe: 'Гардероб',
     overTitleNormal: 'Котокролик приземлился', overTitleRecord: 'Новый рекорд',
@@ -1043,6 +1174,14 @@ const I18N = {
     bgColorLabel: 'Background color', platformColorLabel: 'Platform color',
     profileCoinsLabel: 'coins', avatarLabel: 'Avatar', pauseLabel: 'Paused', avatarUpload: 'Photo from gallery', avatarRemove: 'Remove photo',
     musicLabel: 'Music', musicVolumeLabel: 'Music volume',
+    profileCommentsLabel: 'Comments', profileCommentPlaceholder: 'Leave a comment...',
+    profileCommentSend: 'Send', profileCommentEmpty: 'No comments yet',
+    profileCommentSending: 'Sending...', profileCommentError: 'Failed to load',
+    profileCommentTooLong: 'Too long (max 140)', profileCommentNeedNick: 'Set a nickname in settings',
+    chatWriteBtn: 'Message', chatPlaceholder: 'Write a message...', chatSend: 'Send',
+    chatEmpty: 'No messages yet', chatSending: 'Sending...', chatError: 'Failed to send',
+    chatTooLong: 'Too long (max 200)', chatNeedNick: 'Set a nickname in settings',
+    adminChoiceProfile: 'Profile', adminChoicePanel: 'Admin panel', adminChoiceCancel: 'Cancel',
     on: 'on', off: 'off',
     hint: 'Arrow keys or A / D, on phone use the buttons below. Tap the screen to fire the bow or double jump. Met a monster? Tap when the marker is in the yellow center zone for a perfect hit!',
     slotHat: 'Headwear', slotAcc: 'Accessories', slotTool: 'Tool', slotPerk: 'Slots',
@@ -1050,7 +1189,6 @@ const I18N = {
     buyAll: 'Buy all', allBought: 'All bought', willSpend: 'You will spend',
     nickTitle: 'What is your name?', nickPlaceholder: 'Cabbit nickname', nickConfirm: 'Done',
     nickLabel: 'Nickname', changeNickBtn: 'Change',
-    supportLabel: 'Support', supportBtn: 'Message',
     rotateMsg: 'Please rotate your phone back to portrait',
     leaderboard: 'Leaderboard', empty: '—', wardrobe: 'Wardrobe',
     overTitleNormal: 'The cabbit has landed', overTitleRecord: 'New record',
@@ -1279,7 +1417,12 @@ let startY = 0, minY = 0, score = 0, runCoins = 0;
 let shake = 0, shakeX = 0, shakeY = 0;
 let lastPlatY = 0, flash = 0, flashColor = '#fff3c4', blurAmount = 0, blurWanted = 0, coinPulse = 0;
 let monsterTimer = 0;
-const MONSTER_INTERVAL = 55;
+const MONSTER_INTERVAL = 32;
+function maxMonsters(){
+  if (score > 6000) return 3;
+  if (score > 2200) return 2;
+  return 1;
+}
 let maceSwing = 0;
 let tapEvent = false; 
 
@@ -2006,7 +2149,7 @@ function updateWorld(dt){
 
 
   monsterTimer -= dt;
-  if (monsterTimer <= 0 && monsters.length === 0 && !monsterEvent){
+  if (monsterTimer <= 0 && monsters.length < maxMonsters() && !monsterEvent){
     spawnMonster();
     monsterTimer = MONSTER_INTERVAL;
   }
@@ -3567,8 +3710,6 @@ function confirmNick(){
 }
 
 document.getElementById('changeNickBtn').addEventListener('click', () => openNicknameScreen(true));
-const SUPPORT_URL = 'https://t.me/CabbitJumpSupportBot';
-document.getElementById('supportBtn').addEventListener('click', () => window.open(SUPPORT_URL, '_blank'));
 
 
 function loadLeaderboard(){
@@ -3926,8 +4067,10 @@ function refreshShopState(){
       revert.addEventListener('click', () => {
         const field = item.displaySlot;
         outfit[field] = (field === 'char') ? 'hero' : 'none';
+        Store.set(field, outfit[field]);
         if (field === 'char') { previewChar = 'hero'; updateCharInfo(); }
         refreshShopState();
+        cloudPushSoon();
       });
 
       actions.appendChild(buyOne);
@@ -4300,6 +4443,10 @@ async function cloudFetchLeaderboard(){
         }
       })
     });
+    if (!res.ok){
+      rows.innerHTML = '<div class="lbRow"><span>' + t('cloudErr') + '</span></div>';
+      return;
+    }
     const data = await res.json();
     rows.innerHTML = '';
     lbFieldsByCode = {};
@@ -4343,8 +4490,8 @@ async function cloudFetchLeaderboard(){
       
       if (adminMode){
         div.style.cursor = 'pointer';
-        div.title = 'Тап — выдать вещи/монеты';
-        div.addEventListener('click', () => adminLoad(rowCode));
+        div.title = 'Тап — выбрать действие';
+        div.addEventListener('click', () => openAdminChoice(rowCode, nick));
       } else {
         div.style.cursor = 'pointer';
         div.addEventListener('click', () => openProfile(rowCode));
@@ -4394,10 +4541,16 @@ function renderProfileHero(canvas, f){
   Object.assign(outfit, prevOutfit);
 }
 
+let profileOpenCode = '';
+
+let profileOpenNick = '';
+
 function openProfile(code){
   const f = lbFieldsByCode[code];
   if (!f) return;
+  profileOpenCode = code;
   const nick = (f.nick && f.nick.stringValue) || '?';
+  profileOpenNick = nick;
   const titleText = (f.title && f.title.stringValue) || '';
   const titleColor = (f.titleColor && f.titleColor.stringValue) || '';
   const bestScore = (f.best && f.best.integerValue) || '0';
@@ -4422,15 +4575,295 @@ function openProfile(code){
   document.getElementById('profileCoins').textContent = coinsVal + ' ' + t('profileCoinsLabel');
 
   renderProfileHero(document.getElementById('profileCanvas'), f);
+  const msgBtn = document.getElementById('profileMessageBtn');
+  if (msgBtn) msgBtn.classList.toggle('hidden', code === cloudCode);
   document.getElementById('profileModal').classList.remove('hidden');
+  sfxPopupOpen();
+  fetchProfileComments(code);
 }
 
 function closeProfile(){
   document.getElementById('profileModal').classList.add('hidden');
+  sfxPopupClose();
+  profileOpenCode = '';
+  profileOpenNick = '';
+  const inputEl = document.getElementById('profileCommentInput');
+  const statusEl = document.getElementById('profileCommentStatus');
+  if (inputEl) inputEl.value = '';
+  if (statusEl) statusEl.textContent = '';
 }
+const profileMessageBtnEl = document.getElementById('profileMessageBtn');
+if (profileMessageBtnEl) profileMessageBtnEl.addEventListener('click', () => {
+  if (profileOpenCode) openChat(profileOpenCode, profileOpenNick);
+});
 document.getElementById('profileClose').addEventListener('click', closeProfile);
 document.getElementById('profileModal').addEventListener('click', (e) => {
   if (e.target && e.target.id === 'profileModal') closeProfile();
+});
+
+function renderComments(list){
+  const box = document.getElementById('profileCommentsList');
+  if (!box) return;
+  box.innerHTML = '';
+  if (!list || !list.length){
+    const empty = document.createElement('div');
+    empty.className = 'profileCommentEmpty';
+    empty.textContent = t('profileCommentEmpty');
+    box.appendChild(empty);
+    return;
+  }
+  for (const c of list){
+    const row = document.createElement('div');
+    row.className = 'profileCommentRow';
+    row.innerHTML =
+      '<div class="profileCommentAuthor">' + escapeHtml(c.author || '?') + '</div>' +
+      '<div class="profileCommentText">' + escapeHtml(c.text || '') + '</div>';
+    box.appendChild(row);
+  }
+}
+
+async function fetchProfileComments(code){
+  const box = document.getElementById('profileCommentsList');
+  if (box) box.innerHTML = '<div class="profileCommentEmpty">' + t('cloudLoading') + '</div>';
+  if (!cloudReady()){ renderComments([]); return; }
+  try {
+    const res = await fetch(cloudBase() + '/players/' + code + '/comments?pageSize=30&orderBy=ts%20desc&key=' + CLOUD.apiKey);
+    if (!res.ok){ renderComments([]); return; }
+    const data = await res.json();
+    const docs = (data && data.documents) || [];
+    const list = docs.map(d => {
+      const f = d.fields || {};
+      return {
+        author: (f.author && f.author.stringValue) || '?',
+        text: (f.text && f.text.stringValue) || '',
+        ts: parseInt((f.ts && f.ts.integerValue) || '0', 10) || 0
+      };
+    });
+    if (profileOpenCode === code) renderComments(list);
+  } catch (e) {
+    if (profileOpenCode === code) renderComments([]);
+  }
+}
+
+let profileCommentBusy = false;
+async function postProfileComment(){
+  const code = profileOpenCode;
+  if (!code || profileCommentBusy) return;
+  const input = document.getElementById('profileCommentInput');
+  const statusEl = document.getElementById('profileCommentStatus');
+  const text = (input && input.value || '').trim();
+  if (!text) return;
+  if (text.length > 140){
+    if (statusEl) statusEl.textContent = t('profileCommentTooLong');
+    return;
+  }
+  if (!cloudReady()){
+    if (statusEl) statusEl.textContent = t('cloudErr');
+    return;
+  }
+  if (!nickname){
+    if (statusEl) statusEl.textContent = t('profileCommentNeedNick');
+    return;
+  }
+  const authorName = nickname;
+  profileCommentBusy = true;
+  const sendBtn = document.getElementById('profileCommentSendBtn');
+  if (sendBtn) sendBtn.disabled = true;
+  if (statusEl) statusEl.textContent = t('profileCommentSending');
+  try {
+    const res = await fetch(cloudBase() + '/players/' + code + '/comments?key=' + CLOUD.apiKey, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        fields: {
+          author: { stringValue: authorName },
+          authorCode: { stringValue: cloudCode },
+          avatar: { stringValue: avatar },
+          text: { stringValue: text },
+          ts: { integerValue: String(Date.now()) }
+        }
+      })
+    });
+    if (res.ok){
+      if (input) input.value = '';
+      if (statusEl) statusEl.textContent = '';
+      fetchProfileComments(code);
+    } else {
+      if (statusEl) statusEl.textContent = t('profileCommentError');
+    }
+  } catch (e) {
+    if (statusEl) statusEl.textContent = t('profileCommentError');
+  }
+  profileCommentBusy = false;
+  if (sendBtn) sendBtn.disabled = false;
+}
+
+const profileCommentSendBtnEl = document.getElementById('profileCommentSendBtn');
+if (profileCommentSendBtnEl) profileCommentSendBtnEl.addEventListener('click', postProfileComment);
+const profileCommentInputEl = document.getElementById('profileCommentInput');
+if (profileCommentInputEl) profileCommentInputEl.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') postProfileComment();
+});
+
+function chatConvId(codeA, codeB){
+  return [codeA, codeB].sort().join('_');
+}
+
+let chatWithCode = '';
+let chatPollTimer = null;
+
+function renderChatMessages(list){
+  const box = document.getElementById('chatMessagesList');
+  if (!box) return;
+  box.innerHTML = '';
+  if (!list || !list.length){
+    const empty = document.createElement('div');
+    empty.className = 'chatEmpty';
+    empty.textContent = t('chatEmpty');
+    box.appendChild(empty);
+    return;
+  }
+  for (const m of list){
+    const row = document.createElement('div');
+    row.className = 'chatMsgRow ' + (m.from === cloudCode ? 'own' : 'their');
+    row.textContent = m.text || '';
+    box.appendChild(row);
+  }
+}
+
+async function fetchChatMessages(){
+  if (!chatWithCode) return;
+  const requestedWith = chatWithCode;
+  if (!cloudReady()){ renderChatMessages([]); return; }
+  const id = chatConvId(cloudCode, requestedWith);
+  try {
+    const res = await fetch(cloudBase() + '/conversations/' + id + '/messages?pageSize=50&orderBy=ts&key=' + CLOUD.apiKey);
+    if (!res.ok){ if (chatWithCode === requestedWith) renderChatMessages([]); return; }
+    const data = await res.json();
+    const docs = (data && data.documents) || [];
+    const list = docs.map(d => {
+      const f = d.fields || {};
+      return {
+        from: (f.from && f.from.stringValue) || '',
+        text: (f.text && f.text.stringValue) || '',
+        ts: parseInt((f.ts && f.ts.integerValue) || '0', 10) || 0
+      };
+    });
+    if (chatWithCode === requestedWith) renderChatMessages(list);
+  } catch (e) {
+    if (chatWithCode === requestedWith) renderChatMessages([]);
+  }
+}
+
+function openChat(code, nick){
+  chatWithCode = code;
+  document.getElementById('chatWithNick').textContent = nick || '?';
+  document.getElementById('chatModal').classList.remove('hidden');
+  sfxPopupOpen();
+  fetchChatMessages();
+  clearInterval(chatPollTimer);
+  chatPollTimer = setInterval(fetchChatMessages, 4000);
+}
+
+function closeChat(){
+  document.getElementById('chatModal').classList.add('hidden');
+  sfxPopupClose();
+  chatWithCode = '';
+  clearInterval(chatPollTimer);
+  chatPollTimer = null;
+  const inputEl = document.getElementById('chatInput');
+  const statusEl = document.getElementById('chatStatus');
+  if (inputEl) inputEl.value = '';
+  if (statusEl) statusEl.textContent = '';
+}
+document.getElementById('chatClose').addEventListener('click', closeChat);
+document.getElementById('chatModal').addEventListener('click', (e) => {
+  if (e.target && e.target.id === 'chatModal') closeChat();
+});
+
+let adminChoiceCode = '';
+function openAdminChoice(code, nick){
+  adminChoiceCode = code;
+  document.getElementById('adminChoiceNick').textContent = nick || '?';
+  document.getElementById('adminChoiceModal').classList.remove('hidden');
+  sfxPopupOpen();
+}
+function closeAdminChoice(){
+  document.getElementById('adminChoiceModal').classList.add('hidden');
+  sfxPopupClose();
+  adminChoiceCode = '';
+}
+document.getElementById('adminChoiceProfileBtn').addEventListener('click', () => {
+  const code = adminChoiceCode;
+  closeAdminChoice();
+  if (code) openProfile(code);
+});
+document.getElementById('adminChoicePanelBtn').addEventListener('click', () => {
+  const code = adminChoiceCode;
+  closeAdminChoice();
+  if (code) adminLoad(code);
+});
+document.getElementById('adminChoiceCancelBtn').addEventListener('click', closeAdminChoice);
+document.getElementById('adminChoiceModal').addEventListener('click', (e) => {
+  if (e.target && e.target.id === 'adminChoiceModal') closeAdminChoice();
+});
+
+let chatBusy = false;
+async function postChatMessage(){
+  if (!chatWithCode || chatBusy) return;
+  const input = document.getElementById('chatInput');
+  const statusEl = document.getElementById('chatStatus');
+  const text = (input && input.value || '').trim();
+  if (!text) return;
+  if (text.length > 200){
+    if (statusEl) statusEl.textContent = t('chatTooLong');
+    return;
+  }
+  if (!cloudReady()){
+    if (statusEl) statusEl.textContent = t('cloudErr');
+    return;
+  }
+  if (!nickname){
+    if (statusEl) statusEl.textContent = t('chatNeedNick');
+    return;
+  }
+  const id = chatConvId(cloudCode, chatWithCode);
+  chatBusy = true;
+  const sendBtn = document.getElementById('chatSendBtn');
+  if (sendBtn) sendBtn.disabled = true;
+  if (statusEl) statusEl.textContent = t('chatSending');
+  try {
+    const res = await fetch(cloudBase() + '/conversations/' + id + '/messages?key=' + CLOUD.apiKey, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        fields: {
+          from: { stringValue: cloudCode },
+          fromNick: { stringValue: nickname },
+          text: { stringValue: text },
+          ts: { integerValue: String(Date.now()) }
+        }
+      })
+    });
+    if (res.ok){
+      if (input) input.value = '';
+      if (statusEl) statusEl.textContent = '';
+      fetchChatMessages();
+    } else {
+      if (statusEl) statusEl.textContent = t('chatError');
+    }
+  } catch (e) {
+    if (statusEl) statusEl.textContent = t('chatError');
+  }
+  chatBusy = false;
+  if (sendBtn) sendBtn.disabled = false;
+}
+
+const chatSendBtnEl = document.getElementById('chatSendBtn');
+if (chatSendBtnEl) chatSendBtnEl.addEventListener('click', postChatMessage);
+const chatInputEl = document.getElementById('chatInput');
+if (chatInputEl) chatInputEl.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') postChatMessage();
 });
 
 function refreshCloudUI(){
