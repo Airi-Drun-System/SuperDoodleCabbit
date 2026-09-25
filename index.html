@@ -2870,6 +2870,34 @@ function ultraDepthVector(sx, sy){
   };
 }
 
+const hexRgbCache = new Map();
+function hexToRgb(hex){
+  let v = hexRgbCache.get(hex);
+  if (!v){
+    const n = parseInt(String(hex).replace('#', ''), 16) || 0;
+    v = [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+    hexRgbCache.set(hex, v);
+  }
+  return v;
+}
+function mixHex(a, b, t){
+  const x = hexToRgb(a), y = hexToRgb(b);
+  const k = clamp(t, 0, 1);
+  return 'rgb(' + Math.round(x[0] + (y[0] - x[0]) * k) + ',' +
+    Math.round(x[1] + (y[1] - x[1]) * k) + ',' +
+    Math.round(x[2] + (y[2] - x[2]) * k) + ')';
+}
+const ULTRA_BLEND_BAND = 0.45;
+function ultraSideBlend(dy){
+  const tdep = clamp(dy / ULTRA_DEPTH_Y, -1, 1);
+  const u = clamp((ULTRA_BLEND_BAND - tdep) / (2 * ULTRA_BLEND_BAND), 0, 1);
+  return u * u * (3 - 2 * u);
+}
+function ultraSideStyle(dy, cTop, cUnder){
+  const s = ultraSideBlend(dy);
+  return { color: mixHex(cUnder, cTop, s), overlay: 0.35 + (0.12 - 0.35) * s, blend: s };
+}
+
 function drawPlatform(p){
   const y = p.y - camY;
   if (y < -70 || y > VH + 70) return;
@@ -2895,19 +2923,21 @@ function drawPlatform(p){
     const d = ultraDepthVector(p.x + w / 2, y + h / 2);
     const dx = d.dx, dy = d.dy;
     const a0 = ctx.globalAlpha;
-    if (dy > 0.5){
-      ctx.globalAlpha = a0 * 0.16 * clamp(dy / ULTRA_DEPTH_Y, 0, 1);
+    const shadowK = (1 - ultraSideBlend(dy)) * clamp(dy / ULTRA_DEPTH_Y, 0, 1);
+    if (shadowK > 0.01){
+      ctx.globalAlpha = a0 * 0.16 * shadowK;
       ctx.fillStyle = '#000';
       rr(ctx, dx * 1.8, dy * 2.2, w, h, 8);
       ctx.fill();
       ctx.globalAlpha = a0;
     }
-    ctx.fillStyle = dy >= 0 ? c3 : c1;
+    const side = ultraSideStyle(dy, c2, c3);
+    ctx.fillStyle = side.color;
     for (let s = 4; s >= 1; s--){
       rr(ctx, dx * s / 4, dy * s / 4, w, h, 8);
       ctx.fill();
     }
-    ctx.globalAlpha = a0 * (dy >= 0 ? 0.35 : 0.14);
+    ctx.globalAlpha = a0 * side.overlay;
     ctx.fillStyle = '#000';
     rr(ctx, dx, dy, w, h, 8);
     ctx.fill();
