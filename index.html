@@ -236,25 +236,22 @@
   .settingRow{display:flex;flex-direction:column;gap:8px;align-items:flex-start;width:100%;}
   .settingLabel{font-size:13px;opacity:.7;font-weight:600;}
 
-  @keyframes iosPopIn{
+  @keyframes popIn{
     from{ transform:scale(.86); opacity:0; }
     to{ transform:scale(1); opacity:1; }
   }
   .profileOverlay{
     position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;
-    background:rgba(10,6,20,.55);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);padding:20px;box-sizing:border-box;
+    background:rgba(10,6,20,.78);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);padding:20px;box-sizing:border-box;
   }
   .profileOverlay.hidden{display:none;}
   .profileCard{
-    position:relative;width:min(280px,90vw);background:rgba(44,44,48,.78);border-radius:22px;
+    position:relative;width:min(280px,90vw);background:rgba(40,20,60,.92);border-radius:24px;
     padding:26px 20px 22px;display:flex;flex-direction:column;align-items:center;gap:6px;
-    backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
     box-shadow:0 20px 60px rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,255,255,.14);
-    animation:iosPopIn .24s cubic-bezier(.34,1.56,.64,1);
+    animation:popIn .24s cubic-bezier(.34,1.56,.64,1);
   }
-  .profileCard #profileClose,.chatCard #chatClose{
-    position:absolute;top:10px;right:10px;background:rgba(120,120,128,.32);
-  }
+  .profileCard #profileClose,.chatCard #chatClose{position:absolute;top:10px;right:10px;}
   .profileCanvasWrap{position:relative;margin-bottom:4px;}
   #profileCanvas{width:130px;height:130px;filter:drop-shadow(0 14px 16px rgba(0,0,0,.45));display:block;}
   .profileAvatarBadge{
@@ -278,39 +275,36 @@
   }
   #profileCommentInput::placeholder{color:rgba(253,246,232,.5);}
   #profileCommentSendBtn{
-    border:none;border-radius:999px;padding:0 16px;font-weight:700;font-size:13px;cursor:pointer;
-    background:#0a84ff;color:#fff;
+    border:none;border-radius:999px;padding:0 16px;font-weight:800;font-size:13px;cursor:pointer;
+    background:var(--gold);color:#3a2400;
   }
-  #profileCommentSendBtn:disabled{opacity:.4;cursor:default;}
+  #profileCommentSendBtn:disabled{opacity:.5;cursor:default;}
   .profileCommentStatus{font-size:11px;opacity:.7;min-height:14px;text-align:center;}
-  .profileMessageBtn{
-    width:100%;margin-top:10px;padding:9px 0;font-size:14px;font-weight:600;
-    background:#0a84ff;color:#fff;box-shadow:none;
-  }
+  .profileMessageBtn{width:100%;margin-top:10px;padding:9px 0;font-size:13px;}
   .profileMessageBtn.hidden{display:none;}
 
   .chatCard{
-    position:relative;width:min(320px,92vw);height:min(480px,80vh);background:rgba(44,44,48,.78);border-radius:22px;
+    position:relative;width:min(320px,92vw);height:min(480px,80vh);background:rgba(40,20,60,.92);border-radius:24px;
     padding:22px 18px 16px;display:flex;flex-direction:column;gap:10px;
-    backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
     box-shadow:0 20px 60px rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,255,255,.14);
-    animation:iosPopIn .24s cubic-bezier(.34,1.56,.64,1);
+    animation:popIn .24s cubic-bezier(.34,1.56,.64,1);
   }
   .chatWithNick{font-size:17px;font-weight:800;text-align:center;padding-right:26px;}
   .chatMessagesList{
     flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:3px;padding:6px 4px;
-    background:#0d0a16;border-radius:16px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
+    background:rgba(10,6,20,.45);border-radius:16px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
   }
   .chatMsgRow{
     max-width:76%;padding:9px 14px;font-size:14.5px;line-height:1.32;word-break:break-word;
     border-radius:19px;box-shadow:0 1px 0 rgba(0,0,0,.15);
   }
   .chatMsgRow.own{
-    align-self:flex-end;background:linear-gradient(180deg,#3d9bff,#0b84ff);color:#fff;
+    align-self:flex-end;background:linear-gradient(180deg,#ffd08a,#ff9f45);color:#3a1f00;font-weight:600;
     border-bottom-right-radius:5px;
   }
   .chatMsgRow.their{
-    align-self:flex-start;background:#3a3a3f;color:#f2f2f4;
+    align-self:flex-start;background:rgba(255,255,255,.12);color:#fdf6e8;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.1);
     border-bottom-left-radius:5px;
   }
   .chatEmpty{font-size:12px;opacity:.6;text-align:center;padding:10px 0;}
@@ -321,32 +315,19 @@
   }
   #chatInput::placeholder{color:rgba(253,246,232,.5);}
   #chatSendBtn{
-    border:none;border-radius:999px;padding:0 16px;font-weight:700;font-size:13px;cursor:pointer;
-    background:#0a84ff;color:#fff;
+    border:none;border-radius:999px;padding:0 16px;font-weight:800;font-size:13px;cursor:pointer;
+    background:var(--gold);color:#3a2400;
   }
-  #chatSendBtn:disabled{opacity:.4;cursor:default;}
+  #chatSendBtn:disabled{opacity:.5;cursor:default;}
   .chatStatus{font-size:11px;opacity:.7;min-height:14px;text-align:center;}
 
-  .iosSheet{width:min(280px,90vw);display:flex;flex-direction:column;gap:8px;animation:iosPopIn .24s cubic-bezier(.34,1.56,.64,1);}
-  .iosSheetGroup{
-    background:rgba(44,44,48,.82);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
-    border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5);
+  .adminChoiceCard{
+    width:min(260px,88vw);background:rgba(40,20,60,.95);border-radius:22px;
+    padding:22px 18px 18px;display:flex;flex-direction:column;align-items:stretch;gap:10px;
+    box-shadow:0 20px 60px rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,255,255,.14);
+    animation:popIn .24s cubic-bezier(.34,1.56,.64,1);
   }
-  .iosSheetTitle{
-    font-size:12px;font-weight:600;opacity:.6;text-align:center;color:#fdf6e8;
-    padding:12px 16px 10px;border-bottom:1px solid rgba(255,255,255,.14);
-  }
-  .iosSheetBtn{
-    display:block;width:100%;border:none;background:transparent;cursor:pointer;
-    padding:15px 16px;font-size:17px;font-weight:500;color:#0a84ff;font-family:inherit;
-    border-bottom:1px solid rgba(255,255,255,.14);text-align:center;
-  }
-  .iosSheetGroup .iosSheetBtn:last-child{border-bottom:none;}
-  .iosSheetBtn:active{background:rgba(255,255,255,.1);}
-  .iosSheetCancel{
-    background:rgba(44,44,48,.82);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
-    border-radius:16px;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,.35);
-  }
+  .adminChoiceNick{font-size:16px;font-weight:800;text-align:center;margin-bottom:4px;}
 
   .swatchRow{display:flex;gap:9px;flex-wrap:wrap;}
   .swatchBtn{
@@ -878,13 +859,11 @@
   </div>
 
   <div id="adminChoiceModal" class="profileOverlay hidden">
-    <div class="iosSheet">
-      <div class="iosSheetGroup">
-        <div id="adminChoiceNick" class="iosSheetTitle"></div>
-        <button id="adminChoiceProfileBtn" class="iosSheetBtn" data-i18n="adminChoiceProfile">Профиль</button>
-        <button id="adminChoicePanelBtn" class="iosSheetBtn" data-i18n="adminChoicePanel">Админ панель</button>
-      </div>
-      <button id="adminChoiceCancelBtn" class="iosSheetBtn iosSheetCancel" data-i18n="adminChoiceCancel">Отмена</button>
+    <div class="adminChoiceCard">
+      <div id="adminChoiceNick" class="adminChoiceNick"></div>
+      <button id="adminChoiceProfileBtn" class="btn" data-i18n="adminChoiceProfile">Профиль</button>
+      <button id="adminChoicePanelBtn" class="btn ghost" data-i18n="adminChoicePanel">Админ панель</button>
+      <button id="adminChoiceCancelBtn" class="btn ghost" data-i18n="adminChoiceCancel">Отмена</button>
     </div>
   </div>
 </div>
