@@ -3985,6 +3985,7 @@ function equipOwned(slot, val){
     outfit[slot] = val;
     Store.set(slot, val);
   }
+  cloudPushSoon();
 }
 
 function denyChip(chipEl){
@@ -4795,8 +4796,25 @@ let profileOpenCode = '';
 
 let profileOpenNick = '';
 
+function ownProfileFields(base){
+  const f = Object.assign({}, base || {});
+  for (const key of ['char', 'hat', 'acc', 'tool', 'perk', 'hat2', 'acc2']){
+    f[key] = { stringValue: outfit[key] || 'none' };
+  }
+  f.avatar = { stringValue: avatar };
+  f.frame = { stringValue: avatarFrame };
+  if (nickname) f.nick = { stringValue: nickname };
+  f.best = { integerValue: String(best) };
+  f.coins = { integerValue: String(coins) };
+  f.lastSeen = { integerValue: String(Date.now()) };
+  f.title = { stringValue: myTitle || '' };
+  f.titleColor = { stringValue: myTitleColor || '' };
+  return f;
+}
+
 function openProfile(code){
-  const f = lbFieldsByCode[code];
+  let f = lbFieldsByCode[code];
+  if (code === cloudCode) f = ownProfileFields(f);
   if (!f) return;
   profileOpenCode = code;
   const nick = (f.nick && f.nick.stringValue) || '?';
