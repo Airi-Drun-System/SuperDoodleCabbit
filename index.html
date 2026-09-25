@@ -33,6 +33,11 @@
   #rotateOverlay p{font-size:16px;font-weight:600;max-width:280px;opacity:.85;}
   @keyframes rotateHint{ 0%,100%{transform:rotate(0deg);} 50%{transform:rotate(-90deg);} }
   canvas#game{display:block;width:100%;height:100%;touch-action:none;}
+  .vignette{
+    position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(ellipse 78% 60% at 50% 50%,rgba(5,0,18,0) 45%,rgba(5,0,18,.4) 100%);
+  }
+  .vignette.off{display:none;}
 
   .screen{
     position:absolute;inset:0;
@@ -254,7 +259,7 @@
     box-shadow:0 20px 60px rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,255,255,.08),0 0 22px rgba(255,183,61,.14);
     animation:popIn .24s cubic-bezier(.34,1.56,.64,1);
   }
-  .profileCard #profileClose,.chatCard #chatClose{position:absolute;top:10px;right:10px;}
+  .profileCard #profileClose,.chatCard #chatClose,.inboxCard #inboxClose{position:absolute;top:10px;right:10px;left:auto;}
   .profileCanvasWrap{position:relative;margin-bottom:4px;}
   #profileCanvas{width:130px;height:130px;filter:drop-shadow(0 14px 16px rgba(0,0,0,.45));display:block;}
   .profileAvatarFrame{position:absolute;right:-4px;bottom:2px;--av:34px;}
@@ -296,48 +301,99 @@
   .profileMessageBtn.hidden{display:none;}
 
   .chatCard{
-    position:relative;width:min(320px,92vw);height:min(480px,80vh);border-radius:24px;
-    padding:22px 18px 16px;display:flex;flex-direction:column;gap:10px;
+    position:relative;width:min(400px,94vw);height:min(640px,86vh);height:min(640px,86dvh);border-radius:24px;
+    padding:14px 14px 12px;display:flex;flex-direction:column;gap:10px;
     background:linear-gradient(180deg,rgba(44,22,64,.96),rgba(28,14,46,.96)) padding-box,
       linear-gradient(135deg,rgba(255,211,77,.55),rgba(147,90,255,.5) 50%,rgba(255,211,77,.55)) border-box;
     border:1.5px solid transparent;
     box-shadow:0 20px 60px rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,255,255,.08),0 0 22px rgba(255,183,61,.14);
     animation:popIn .24s cubic-bezier(.34,1.56,.64,1);
   }
-  .chatWithNick{font-size:17px;font-weight:800;text-align:center;padding-right:26px;}
+  .chatWithNick{font-size:16px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
+  .chatHeader{display:flex;align-items:center;gap:10px;padding:2px 44px 2px 44px;min-height:44px;}
+  .chatHeaderAv{--av:40px;}
+  .chatHeaderText{display:flex;flex-direction:column;min-width:0;}
+  .chatHeader .chatWithNickRow{justify-content:flex-start;padding-right:0;}
+  .chatPresence{font-size:11px;opacity:.65;min-height:13px;}
+  .chatBackBtn{
+    position:absolute;top:10px;left:10px;width:38px;height:38px;border-radius:50%;border:none;cursor:pointer;
+    background:transparent;display:flex;align-items:center;justify-content:center;
+  }
+  .chatBackBtn svg{width:20px;height:20px;}
   .chatMessagesList{
-    flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:3px;padding:6px 4px;
+    flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:4px;padding:10px 8px;
     background:rgba(10,6,20,.45);border-radius:16px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
+    overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
   }
   .chatMsgRow{
-    max-width:76%;padding:9px 14px;font-size:14.5px;line-height:1.32;word-break:break-word;
-    border-radius:19px;box-shadow:0 1px 0 rgba(0,0,0,.15);
+    max-width:80%;padding:8px 12px 6px;font-size:14.5px;line-height:1.32;word-break:break-word;
+    border-radius:18px;box-shadow:0 1px 0 rgba(0,0,0,.15);
+    display:flex;flex-wrap:wrap;align-items:flex-end;column-gap:8px;
   }
   .chatMsgRow.own{
     align-self:flex-end;background:linear-gradient(180deg,#ffd08a,#ff9f45);color:#3a1f00;font-weight:600;
-    border-bottom-right-radius:5px;display:flex;align-items:flex-end;gap:5px;
+    border-bottom-right-radius:5px;
   }
+  .chatMsgRow.pending{opacity:.7;}
   .chatMsgText{word-break:break-word;}
-  .chatMsgTick{font-size:12px;opacity:.65;flex:0 0 auto;letter-spacing:-2px;}
+  .chatMsgMeta{margin-left:auto;display:inline-flex;align-items:center;gap:3px;font-size:10.5px;opacity:.6;font-weight:600;white-space:nowrap;}
+  .chatMsgTick{font-size:12px;opacity:.75;letter-spacing:-2px;}
   .chatMsgTick.isRead{opacity:1;color:#2e6bff;}
   .chatMsgRow.their{
     align-self:flex-start;background:rgba(255,255,255,.12);color:#fdf6e8;
     box-shadow:inset 0 0 0 1px rgba(255,255,255,.1);
     border-bottom-left-radius:5px;
   }
-  .chatEmpty{font-size:12px;opacity:.6;text-align:center;padding:10px 0;}
+  .chatDay{align-self:center;font-size:11px;font-weight:700;opacity:.6;padding:6px 10px;margin:4px 0;border-radius:999px;background:rgba(255,255,255,.06);}
+  .chatEmpty{font-size:12px;opacity:.6;text-align:center;padding:10px 0;margin:auto 0;}
   .chatForm{display:flex;gap:8px;width:100%;}
   #chatInput{
-    flex:1;min-width:0;border-radius:12px;border:none;padding:9px 12px;font-size:13px;
+    flex:1;min-width:0;border-radius:999px;border:none;padding:11px 16px;font-size:16px;
     background:rgba(255,255,255,.1);color:#fdf6e8;box-shadow:inset 0 0 0 1px rgba(255,255,255,.14);
   }
   #chatInput::placeholder{color:rgba(253,246,232,.5);}
   #chatSendBtn{
-    border:none;border-radius:999px;padding:0 16px;font-weight:800;font-size:13px;cursor:pointer;
-    background:var(--gold);color:#3a2400;
+    flex:0 0 auto;width:44px;height:44px;border:none;border-radius:50%;cursor:pointer;padding:0;
+    background:var(--gold);color:#3a2400;display:flex;align-items:center;justify-content:center;
+    box-shadow:0 3px 0 #b8860b;
   }
+  #chatSendBtn svg{width:20px;height:20px;margin-left:2px;}
+  #chatSendBtn:active{transform:translateY(2px);box-shadow:0 1px 0 #b8860b;}
   #chatSendBtn:disabled{opacity:.5;cursor:default;}
   .chatStatus{font-size:11px;opacity:.7;min-height:14px;text-align:center;}
+  .chatStatus:empty{display:none;}
+
+  .inboxBtn{
+    position:absolute;top:12px;right:12px;z-index:50;width:46px;height:46px;border-radius:50%;border:none;cursor:pointer;
+    background:rgba(255,255,255,.1);box-shadow:inset 0 0 0 1px rgba(255,255,255,.18);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .inboxBtn svg{width:24px;height:24px;}
+  .inboxBtn:active{transform:scale(.92);}
+  #menu.paused .inboxBtn{display:none;}
+  .inboxBadge{
+    position:absolute;top:-3px;right:-3px;min-width:20px;height:20px;padding:0 5px;border-radius:999px;
+    background:#ff4d6d;color:#fff;font-size:11px;font-weight:900;line-height:20px;text-align:center;
+    box-shadow:0 0 0 2px #1a0f33;
+  }
+  .inboxCard{gap:8px;}
+  .inboxTitle{font-size:18px;font-weight:800;text-align:center;padding:8px 44px 4px;}
+  .inboxList{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:6px;padding:2px;}
+  .inboxRow{
+    display:flex;align-items:center;gap:12px;width:100%;border:none;cursor:pointer;text-align:left;font-family:inherit;color:inherit;
+    padding:10px 12px;border-radius:16px;background:rgba(255,255,255,.06);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
+  }
+  .inboxRow:active{transform:scale(.985);}
+  .inboxRow.unread{background:rgba(255,211,77,.12);box-shadow:inset 0 0 0 1px rgba(255,211,77,.35);}
+  .inboxRow .avFrame{--av:44px;}
+  .inboxMain{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;}
+  .inboxTop{display:flex;align-items:baseline;gap:8px;}
+  .inboxNick{font-weight:800;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1;}
+  .inboxTime{font-size:11px;opacity:.55;flex:0 0 auto;}
+  .inboxPreview{font-size:13px;opacity:.7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .inboxRow.unread .inboxPreview{opacity:1;font-weight:700;}
+  .inboxDot{width:10px;height:10px;border-radius:50%;background:#ff4d6d;flex:0 0 auto;}
+  .inboxEmpty{font-size:13px;opacity:.65;text-align:center;padding:30px 16px;line-height:1.45;margin:auto 0;}
 
   .adminChoiceCard{
     width:min(260px,88vw);border-radius:22px;
@@ -475,6 +531,15 @@
   .frameBtn.active{background:rgba(255,211,77,.18);box-shadow:inset 0 0 0 2px #ffd34d;}
   .frameBtn:active{transform:scale(.94);}
   .frameNameLine{color:var(--gold);font-weight:800;}
+  .gfxNote{font-size:11px;opacity:.7;font-weight:600;}
+  #gfxRow{flex-wrap:wrap;}
+  .gfxUltraChip{display:inline-flex;align-items:center;gap:6px;}
+  .expBadge{
+    font-size:9px;font-weight:900;letter-spacing:.04em;text-transform:uppercase;line-height:1;
+    padding:3px 6px;border-radius:999px;color:#1a0f33;
+    background:linear-gradient(90deg,#8affc1,#6ec8ff,#c58aff);
+  }
+  .gfxUltraNote{font-size:11px;opacity:.8;margin:8px 0 0;line-height:1.35;color:#b8f5d6;}
 
   .cloudRow{display:flex;gap:8px;width:100%;align-items:center;}
   .cloudCode{
@@ -713,6 +778,7 @@
 <body>
 <div id="wrap">
   <canvas id="game"></canvas>
+  <div id="vignette" class="vignette"></div>
 
   <div id="rotateOverlay" class="hidden">
     <div class="rotateIcon">⟲</div>
@@ -745,6 +811,10 @@
   <div id="menu" class="screen hidden">
     <div id="secretZone" style="position:absolute;top:0;left:0;width:48px;height:48px;z-index:50;"></div>
     <div id="pauseLabel" class="pauseLabel" data-i18n="pauseLabel">Пауза</div>
+    <button id="inboxBtn" class="inboxBtn hidden" type="button" aria-label="Сообщения">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M4 5.5 C4 4.7 4.7 4 5.5 4 H18.5 C19.3 4 20 4.7 20 5.5 V15 C20 15.8 19.3 16.5 18.5 16.5 H10 L6 20 V16.5 H5.5 C4.7 16.5 4 15.8 4 15 Z" fill="#fdf6e8"/></svg>
+      <span id="inboxBadge" class="inboxBadge hidden">0</span>
+    </button>
     <div class="spacer"></div>
     <canvas id="menuPreview" class="rise d1" width="220" height="220"></canvas>
     <div class="titleSwing" id="titleSwing"><h1 class="title" id="titleSign">Cabbit Jump!</h1></div>
@@ -876,6 +946,17 @@
       </div>
 
       <div class="settingRow">
+        <span class="settingLabel"><span data-i18n="gfxLabel">Графика</span> <span id="gfxNote" class="gfxNote"></span></span>
+        <div id="gfxRow" class="btnRow">
+          <button class="chip" type="button" data-gfx="auto" data-i18n="gfx_auto">Авто</button>
+          <button class="chip" type="button" data-gfx="high" data-i18n="gfx_high">Красиво</button>
+          <button class="chip" type="button" data-gfx="low" data-i18n="gfx_low">Быстро</button>
+          <button class="chip gfxUltraChip" type="button" data-gfx="ultra"><span data-i18n="gfx_ultra">Ультра</span><span class="expBadge" data-i18n="expBadge">эксперимент</span></button>
+        </div>
+        <p id="gfxUltraNote" class="gfxUltraNote hidden" data-i18n="gfxUltraNote">Экспериментальная функция: объёмные платформы и параллакс. На слабых телефонах может тормозить.</p>
+      </div>
+
+      <div class="settingRow">
         <span class="settingLabel" data-i18n="motionBlur">Motion blur</span>
         <div class="btnRow">
           <button id="blurToggle" class="chip"></button>
@@ -982,19 +1063,40 @@
     </div>
   </div>
 
+  <div id="inboxModal" class="profileOverlay hidden">
+    <div class="chatCard inboxCard">
+      <button id="inboxClose" class="backIconBtn" aria-label="Закрыть">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M6 6 L18 18 M18 6 L6 18" stroke="#fdf6e8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="inboxTitle" data-i18n="inboxTitle">Сообщения</div>
+      <div id="inboxList" class="inboxList"></div>
+    </div>
+  </div>
+
   <div id="chatModal" class="profileOverlay hidden">
     <div class="chatCard">
+      <button id="chatBackBtn" class="chatBackBtn hidden" type="button" aria-label="К диалогам">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M15 5 L8 12 L15 19" stroke="#fdf6e8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
       <button id="chatClose" class="backIconBtn" aria-label="Закрыть">
         <svg viewBox="0 0 24 24" fill="none"><path d="M6 6 L18 18 M18 6 L6 18" stroke="#fdf6e8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
-      <div class="chatWithNickRow">
-        <div id="chatWithNick" class="chatWithNick"></div>
-        <span id="chatOnlineDot" class="onlineDot hidden"></span>
+      <div class="chatHeader">
+        <span id="chatWithAvatar" class="chatHeaderAv"></span>
+        <div class="chatHeaderText">
+          <div class="chatWithNickRow">
+            <div id="chatWithNick" class="chatWithNick"></div>
+            <span id="chatOnlineDot" class="onlineDot hidden"></span>
+          </div>
+          <div id="chatPresence" class="chatPresence"></div>
+        </div>
       </div>
       <div id="chatMessagesList" class="chatMessagesList"></div>
       <div class="chatForm">
-        <input id="chatInput" type="text" maxlength="200" data-i18n-placeholder="chatPlaceholder" placeholder="Написать сообщение...">
-        <button id="chatSendBtn" data-i18n="chatSend">Отправить</button>
+        <input id="chatInput" type="text" maxlength="200" enterkeyhint="send" autocomplete="off" data-i18n-placeholder="chatPlaceholder" placeholder="Написать сообщение...">
+        <button id="chatSendBtn" type="button" aria-label="Отправить">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M4 12 L20 4 L14 20 L11 13 Z" fill="#3a2400"/></svg>
+        </button>
       </div>
       <div id="chatStatus" class="chatStatus"></div>
     </div>
@@ -1033,6 +1135,13 @@ const VW = 420;
 let   VH = 740;
 let   DPR = 1, S = 1, cssW = 0, cssH = 0;
 
+const GFX_MODES = ['auto', 'high', 'low', 'ultra'];
+let gfxMode = 'auto';
+try { gfxMode = window.localStorage.getItem('doodlecabbit.gfxMode') || 'auto'; } catch (e) {}
+if (GFX_MODES.indexOf(gfxMode) === -1) gfxMode = 'auto';
+let autoLowGfx = false;
+function lowGfx(){ return gfxMode === 'low' || (gfxMode === 'auto' && autoLowGfx); }
+function ultraGfx(){ return gfxMode === 'ultra'; }
 
 const isTouchDevice = (navigator.maxTouchPoints > 0) ||
   (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) ||
@@ -1043,17 +1152,17 @@ function resize(){
   cssH = window.innerHeight || cssH || VH;
   if (!(cssW > 0)) cssW = VW;
   if (!(cssH > 0)) cssH = VH;
-  DPR  = Math.min(window.devicePixelRatio || 1, 2);
+  DPR  = lowGfx() ? 1 : Math.min(window.devicePixelRatio || 1, 2);
   cvs.width  = Math.round(cssW * DPR);
   cvs.height = Math.round(cssH * DPR);
-  blurCvs.width  = cvs.width;
-  blurCvs.height = cvs.height;
+  blurCvs.width  = lowGfx() ? 1 : cvs.width;
+  blurCvs.height = lowGfx() ? 1 : cvs.height;
   S  = cssW / VW;
   if (!(S > 0) || !isFinite(S)) S = 1;
   VH = cssH / S;
   if (!(VH > 0) || !isFinite(VH)) VH = 740;
   ctx.imageSmoothingEnabled = true;
-  ctx.imageSmoothingQuality = 'high';
+  ctx.imageSmoothingQuality = lowGfx() ? 'low' : 'high';
 }
 resize();
 
@@ -1257,6 +1366,10 @@ const I18N = {
   ru: {
     best: 'Лучший результат', settings: 'Настройки', play: 'Играть',
     cont: 'Продолжить', back: 'Назад', language: 'Язык', motionBlur: 'Motion blur',
+    gfxLabel: 'Графика', gfx_auto: 'Авто', gfx_high: 'Красиво', gfx_low: 'Быстро', gfx_ultra: 'Ультра',
+    expBadge: 'эксперимент',
+    gfxUltraNote: '⚗ Экспериментальная функция: объёмные платформы и параллакс. На слабых телефонах может тормозить.',
+    gfxAutoLowNote: '(лагало — включён быстрый режим)',
     pauseMenu: 'Меню',
     bgColorLabel: 'Цвет фона', platformColorLabel: 'Цвет платформ',
     profileCoinsLabel: 'монет', avatarLabel: 'Аватар', pauseLabel: 'Пауза', avatarUpload: 'Фото из галереи', avatarRemove: 'Убрать фото',
@@ -1272,6 +1385,9 @@ const I18N = {
     chatWriteBtn: 'Написать', chatPlaceholder: 'Написать сообщение...', chatSend: 'Отправить',
     chatEmpty: 'Пока нет сообщений', chatSending: 'Отправка...', chatError: 'Не удалось отправить',
     chatTooLong: 'Слишком длинно (макс 200)', chatNeedNick: 'Придумайте ник в настройках',
+    inboxTitle: 'Сообщения', inboxEmpty: 'Пока никто не писал. Открой профиль игрока в рейтинге и нажми «Написать».',
+    chatOnlineNow: 'в сети', chatYou: 'Вы: ', newMsgToast: 'Новое сообщение от ',
+    dayToday: 'Сегодня', dayYesterday: 'Вчера',
     adminChoiceProfile: 'Профиль', adminChoicePanel: 'Админ панель', adminChoiceCancel: 'Отмена',
     linkChoiceOpen: 'Открыть', linkChoiceCopy: 'Скопировать ссылку', linkCopied: 'Ссылка скопирована',
     linkCopyFailed: 'Не удалось скопировать',
@@ -1293,6 +1409,7 @@ const I18N = {
     cloudCopied: 'Код скопирован', cloudRestored: 'Прогресс восстановлен!',
     cloudNotFound: 'Код не найден', cloudErr: 'Нет связи с сервером', cloudLoading: 'Загрузка…',
     smashToast: 'СОКРУШИТЕЛЬНЫЙ УДАР!', kickToast: 'ПИНОК!', perfectToast: 'ИДЕАЛЬНО!',
+    laserToast: 'ОСТОРОЖНО: ЛАЗЕРЫ!',
     glassToast: 'СТЕКЛО СПАСЛО ТЕБЯ!', tapPrompt: 'ЖМИ!',
     items: {
       'hat:none':      { n: 'Без шляпы',        d: '' },
@@ -1334,6 +1451,10 @@ const I18N = {
   en: {
     best: 'Best score', settings: 'Settings', play: 'Play',
     cont: 'Continue', back: 'Back', language: 'Language', motionBlur: 'Motion blur',
+    gfxLabel: 'Graphics', gfx_auto: 'Auto', gfx_high: 'Pretty', gfx_low: 'Fast', gfx_ultra: 'Ultra',
+    expBadge: 'experimental',
+    gfxUltraNote: '⚗ Experimental feature: 3D-looking platforms and parallax. May lag on weak phones.',
+    gfxAutoLowNote: '(lag detected — fast mode on)',
     pauseMenu: 'Menu',
     bgColorLabel: 'Background color', platformColorLabel: 'Platform color',
     profileCoinsLabel: 'coins', avatarLabel: 'Avatar', pauseLabel: 'Paused', avatarUpload: 'Photo from gallery', avatarRemove: 'Remove photo',
@@ -1349,6 +1470,9 @@ const I18N = {
     chatWriteBtn: 'Message', chatPlaceholder: 'Write a message...', chatSend: 'Send',
     chatEmpty: 'No messages yet', chatSending: 'Sending...', chatError: 'Failed to send',
     chatTooLong: 'Too long (max 200)', chatNeedNick: 'Set a nickname in settings',
+    inboxTitle: 'Messages', inboxEmpty: 'Nobody has written yet. Open a player\'s profile in the leaderboard and tap “Message”.',
+    chatOnlineNow: 'online', chatYou: 'You: ', newMsgToast: 'New message from ',
+    dayToday: 'Today', dayYesterday: 'Yesterday',
     adminChoiceProfile: 'Profile', adminChoicePanel: 'Admin panel', adminChoiceCancel: 'Cancel',
     linkChoiceOpen: 'Open', linkChoiceCopy: 'Copy link', linkCopied: 'Link copied',
     linkCopyFailed: 'Could not copy',
@@ -1370,6 +1494,7 @@ const I18N = {
     cloudCopied: 'Code copied', cloudRestored: 'Progress restored!',
     cloudNotFound: 'Code not found', cloudErr: 'Could not reach the server', cloudLoading: 'Loading…',
     smashToast: 'MACE SMASH!', kickToast: 'KICKED!', perfectToast: 'PERFECT!',
+    laserToast: 'WATCH OUT: LASERS!',
     glassToast: 'THE GLASS SAVED YOU!', tapPrompt: 'TAP!',
     items: {
       'hat:none':      { n: 'No hat',           d: '' },
@@ -1550,10 +1675,34 @@ function showToast(text){
 }
 
 
+const SPRITE_MAX_PX = 320;
+function downscaleSprite(img){
+  const w = img.naturalWidth || img.width;
+  const h = img.naturalHeight || img.height;
+  if (!(w > 0 && h > 0)) return img;
+  const k = SPRITE_MAX_PX / Math.max(w, h);
+  if (k >= 1) return img;
+  try {
+    const c = document.createElement('canvas');
+    c.width = Math.max(1, Math.round(w * k));
+    c.height = Math.max(1, Math.round(h * k));
+    const g = c.getContext('2d');
+    g.imageSmoothingEnabled = true;
+    g.imageSmoothingQuality = 'high';
+    g.drawImage(img, 0, 0, c.width, c.height);
+    return c;
+  } catch (e) { return img; }
+}
+
 const charImgs = {};
 function loadCharImage(id){
-  const rec = { img: new Image(), ready: false };
-  rec.img.onload  = () => { if (rec.img.naturalWidth > 0) rec.ready = true; };
+  const rec = { img: new Image(), draw: null, ready: false };
+  rec.img.onload  = () => {
+    if (rec.img.naturalWidth > 0){
+      rec.draw = downscaleSprite(rec.img);
+      rec.ready = true;
+    }
+  };
   rec.img.onerror = () => { rec.ready = false; };
   rec.img.src = id + '.png';
   charImgs[id] = rec;
@@ -1564,7 +1713,8 @@ const currentCharReady = () => !!(charImgs[outfit.char] && charImgs[outfit.char]
 
 const maceImg = new Image();
 let maceReady = false;
-maceImg.onload  = () => { if (maceImg.naturalWidth > 0) maceReady = true; };
+let maceDraw = null;
+maceImg.onload  = () => { if (maceImg.naturalWidth > 0){ maceDraw = downscaleSprite(maceImg); maceReady = true; } };
 maceImg.onerror = () => { maceReady = false; };
 maceImg.src = 'mace.png';
 
@@ -1630,17 +1780,86 @@ let lastPlatY = 0, flash = 0, flashColor = '#fff3c4', blurAmount = 0, blurWanted
 let monsterTimer = 0;
 const MONSTER_INTERVAL = 32;
 function maxMonsters(){
-  if (score > 6000) return 3;
-  if (score > 2200) return 2;
   return 1;
 }
 let maceSwing = 0;
 let tapEvent = false; 
 
 
-let monsterEvent = null; 
+let monsterEvent = null;
 const SLOWMO_SCALE = 0.16;
 const QTE_DURATION = 6;
+
+const LASER_START = 5000;
+const LASER_HARD = 7500;
+const LASER_W = 30;
+const LASER_FIRST_DELAY = 2.5;
+let lasers = [];
+let laserTimer = LASER_FIRST_DELAY;
+let laserIntroShown = false;
+
+function laserWarnDur(){ return score >= LASER_HARD ? 1.1 : 1.4; }
+function laserFireDur(){ return 0.6; }
+function laserCooldown(){ return score >= LASER_HARD ? rand(5.5, 8.5) : rand(8.5, 12.5); }
+
+const LASER_GAP = 150;
+function pickLaserXs(count){
+  const lo = 40, hi = VW - 40;
+  const first = rand(lo, hi);
+  if (count < 2) return [first];
+  const leftLen = Math.max(0, (first - LASER_GAP) - lo);
+  const rightLen = Math.max(0, hi - (first + LASER_GAP));
+  if (leftLen + rightLen <= 0) return [first];
+  const r = Math.random() * (leftLen + rightLen);
+  const second = r < leftLen ? lo + r : (first + LASER_GAP) + (r - leftLen);
+  return [first, second];
+}
+
+function spawnLaserWave(){
+  const count = (score >= LASER_HARD && Math.random() < 0.45) ? 2 : 1;
+  for (const x of pickLaserXs(count)){
+    lasers.push({ x, w: LASER_W, t: 0, warn: laserWarnDur(), fire: laserFireDur(), fired: false });
+  }
+  ensureAudio();
+  beep(880, 0.07, 'square', 0.06);
+  setTimeout(() => beep(880, 0.07, 'square', 0.06), 160);
+}
+
+function laserHitsHero(L){
+  return Math.abs(hero.x - L.x) < L.w / 2 + hero.w * 0.26;
+}
+
+function updateLasers(dt){
+  if (score >= LASER_START && !laserIntroShown){
+    laserIntroShown = true;
+    addToast(t('laserToast'), VW / 2, camY + VH * 0.3, '#ff6b8a');
+  }
+  if (score >= LASER_START && lasers.length === 0 && !monsterEvent){
+    laserTimer -= dt;
+    if (laserTimer <= 0){
+      spawnLaserWave();
+      laserTimer = laserCooldown();
+    }
+  }
+  for (let i = lasers.length - 1; i >= 0; i--){
+    const L = lasers[i];
+    L.t += dt;
+    if (!L.fired && L.t >= L.warn){
+      L.fired = true;
+      beep(170, 0.28, 'sawtooth', 0.11);
+      shake = Math.max(shake, 5);
+    }
+    if (L.t >= L.warn + L.fire){ lasers.splice(i, 1); continue; }
+    if (L.fired && !monsterEvent && state === STATE.PLAY && laserHitsHero(L)){
+      burstSpark(hero.x, hero.y, '#ff4d6d', 18, 1.2);
+      flash = 0.6; flashColor = '#ff4d6d';
+      lasers.length = 0;
+      laserTimer = laserCooldown();
+      handleFatalEvent();
+      return;
+    }
+  }
+}
 
 
 const BAND = 1000;
@@ -1697,7 +1916,16 @@ function buildLayers(){
     leaves.items.push({ x: rand(0, VW), y: rand(0, BAND), r: rand(4, 9), a: rand(0.18, 0.4), rot: rand(0, 6.28), spin: rand(-1.2, 1.2) });
 
   layers = [stars, far, near, leaves];
+
+  ultraFar = [];
+  for (let i = 0; i < 3; i++)
+    ultraFar.push({ x: rand(40, VW - 40), y: rand(0, BAND), r: rand(26, 48), hue: pick(['#ffb3d9', '#9fd8ff', '#ffd98a']), ring: Math.random() < 0.5 });
+
+  ultraFront = [];
+  for (let i = 0; i < 5; i++)
+    ultraFront.push({ x: rand(-30, VW + 30), y: rand(0, BAND), r: rand(28, 54), a: rand(0.035, 0.07) });
 }
+let ultraFar = [], ultraFront = [];
 buildLayers();
 
 
@@ -1775,7 +2003,7 @@ function spawnAbove(){
 
 const MAX_PARTICLES = 70;
 function addParticle(p){
-  if (particles.length >= MAX_PARTICLES) return;
+  if (particles.length >= (lowGfx() ? 30 : MAX_PARTICLES)) return;
   particles.push(p);
 }
 
@@ -1882,6 +2110,7 @@ function spawnMonster(){
 function removeMonster(m){
   const idx = monsters.indexOf(m);
   if (idx >= 0) monsters.splice(idx, 1);
+  monsterTimer = Math.max(monsterTimer, MONSTER_INTERVAL);
 }
 
 
@@ -1995,6 +2224,9 @@ function resetGame(){
   shake = 0; flash = 0; blurAmount = 0; coinPulse = 0;
   monsterTimer = MONSTER_INTERVAL;
   monsterEvent = null;
+  lasers.length = 0;
+  laserTimer = LASER_FIRST_DELAY;
+  laserIntroShown = false;
   glassUsedThisRun = false;
   fallSoundPlayed = false;
   maceSwing = 0;
@@ -2359,7 +2591,7 @@ function updateWorld(dt){
   }
 
 
-  monsterTimer -= dt;
+  if (monsters.length === 0 && !monsterEvent) monsterTimer -= dt;
   if (monsterTimer <= 0 && monsters.length < maxMonsters() && !monsterEvent){
     spawnMonster();
     monsterTimer = MONSTER_INTERVAL;
@@ -2397,7 +2629,7 @@ function updateWorld(dt){
       }
 
       m.life -= dt;
-      if (m.life <= 0) { monsters.splice(i, 1); continue; } 
+      if (m.life <= 0) { removeMonster(m); continue; }
     }
   }
 
@@ -2437,6 +2669,9 @@ function updateWorld(dt){
   coinPulse = Math.max(0, coinPulse - dt * 2.4);
   maceSwing = Math.max(0, maceSwing - dt * 3.1);
 
+  updateLasers(dt);
+  if (state !== STATE.PLAY){ tapEvent = false; return; }
+
   if (!fallSoundPlayed && hero.y - camY > VH){
     fallSoundPlayed = true;
     sfxOver();
@@ -2447,30 +2682,61 @@ function updateWorld(dt){
 }
 
 
+const bgCacheCvs = document.createElement('canvas');
+let bgCacheKey = '';
+function getBgCache(w){
+  const withGlow = !lowGfx();
+  const key = w.bg1.join(',') + '|' + w.bg2.join(',') + '|' + w.glow + '|' + cvs.width + 'x' + cvs.height + '|' + withGlow;
+  if (key === bgCacheKey) return bgCacheCvs;
+  bgCacheKey = key;
+  bgCacheCvs.width = cvs.width;
+  bgCacheCvs.height = cvs.height;
+  const b = bgCacheCvs.getContext('2d', { alpha: false });
+  b.setTransform(S * DPR, 0, 0, S * DPR, 0, 0);
+  const g = b.createLinearGradient(0, 0, 0, VH);
+  g.addColorStop(0, 'rgb(' + w.bg1[0] + ',' + w.bg1[1] + ',' + w.bg1[2] + ')');
+  g.addColorStop(1, 'rgb(' + w.bg2[0] + ',' + w.bg2[1] + ',' + w.bg2[2] + ')');
+  b.fillStyle = g;
+  b.fillRect(0, 0, VW, VH);
+  if (withGlow){
+    const gl = b.createRadialGradient(VW * 0.5, VH * 1.05, 20, VW * 0.5, VH * 1.05, VH * 0.85);
+    gl.addColorStop(0, w.glow);
+    gl.addColorStop(1, w.glow.replace(/,[.\d]+\)$/, ',0)'));
+    b.fillStyle = gl;
+    b.fillRect(0, 0, VW, VH);
+  }
+  return bgCacheCvs;
+}
+
 function drawBackground(){
   const themed = bgTheme !== 'auto' && BG_THEMES[bgTheme];
   const w = themed ? BG_THEMES[bgTheme] : currentWorld();
-  const c1 = 'rgb(' + w.bg1[0] + ',' + w.bg1[1] + ',' + w.bg1[2] + ')';
-  const c2 = 'rgb(' + w.bg2[0] + ',' + w.bg2[1] + ',' + w.bg2[2] + ')';
-
-  const g = ctx.createLinearGradient(0, 0, 0, VH);
-  g.addColorStop(0, c1);
-  g.addColorStop(1, c2);
-  ctx.fillStyle = g;
-  ctx.fillRect(0, 0, VW, VH);
-
-  const gl = ctx.createRadialGradient(VW * 0.5, VH * 1.05, 20, VW * 0.5, VH * 1.05, VH * 0.85);
-  gl.addColorStop(0, w.glow);
-  gl.addColorStop(1, w.glow.replace(/,[.\d]+\)$/, ',0)'));
-  ctx.fillStyle = gl;
-  ctx.fillRect(0, 0, VW, VH);
+  const cache = getBgCache(w);
+  ctx.save();
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.drawImage(cache, 0, 0);
+  ctx.restore();
 
   const time = performance.now() / 1000;
+  const low = lowGfx();
+  const ultra = ultraGfx();
   const reps = Math.ceil(VH / BAND) + 2;
+
+  if (ultra){
+    const leanTarget = state === STATE.PLAY ? (VW / 2 - hero.x) * 0.5 : 0;
+    ultraLean += (leanTarget - ultraLean) * 0.06;
+    drawUltraFar(reps);
+  } else {
+    ultraLean = 0;
+  }
 
   for (const L of layers){
     const off = ((-camY * L.factor) % BAND + BAND) % BAND;
-    for (const it of L.items){
+    const sideShift = ultra ? ultraLean * L.factor : 0;
+    if (sideShift){ ctx.save(); ctx.translate(sideShift, 0); }
+    for (let ii = 0; ii < L.items.length; ii++){
+      if (low && L.kind === 0 && (ii % 3) !== 0) continue;
+      const it = L.items[ii];
       for (let k = -1; k < reps; k++){
         const y = it.y + off + k * BAND;
         if (y < -120 || y > VH + 120) continue;
@@ -2502,12 +2768,72 @@ function drawBackground(){
         }
       }
     }
+    if (sideShift) ctx.restore();
+  }
+  ctx.globalAlpha = 1;
+}
+
+let ultraLean = 0;
+
+function drawUltraFar(reps){
+  const f = 0.06;
+  const off = ((-camY * f) % BAND + BAND) % BAND;
+  const sx = ultraLean * f;
+  for (const it of ultraFar){
+    for (let k = -1; k < reps; k++){
+      const y = it.y + off + k * BAND;
+      if (y < -120 || y > VH + 120) continue;
+      const x = it.x + sx;
+      ctx.globalAlpha = 0.22;
+      ctx.fillStyle = it.hue;
+      ctx.beginPath();
+      ctx.arc(x, y, it.r, 0, 6.2832);
+      ctx.fill();
+      ctx.globalAlpha = 0.18;
+      ctx.fillStyle = '#1a0f33';
+      ctx.beginPath();
+      ctx.arc(x + it.r * 0.28, y - it.r * 0.18, it.r * 0.92, 0, 6.2832);
+      ctx.fill();
+      if (it.ring){
+        ctx.globalAlpha = 0.2;
+        ctx.strokeStyle = it.hue;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.ellipse(x, y, it.r * 1.7, it.r * 0.42, -0.35, 0, 6.2832);
+        ctx.stroke();
+      }
+    }
+  }
+  ctx.globalAlpha = 1;
+}
+
+function drawUltraFront(){
+  if (!ultraGfx()) return;
+  const f = 1.4;
+  const reps = Math.ceil(VH / BAND) + 2;
+  const off = ((-camY * f) % BAND + BAND) % BAND;
+  const sx = ultraLean * f;
+  ctx.fillStyle = '#fdf6e8';
+  for (const it of ultraFront){
+    for (let k = -1; k < reps; k++){
+      const y = it.y + off + k * BAND;
+      if (y < -80 || y > VH + 80) continue;
+      ctx.globalAlpha = it.a;
+      ctx.beginPath();
+      ctx.arc(it.x + sx, y, it.r, 0, 6.2832);
+      ctx.fill();
+      ctx.globalAlpha = it.a * 0.6;
+      ctx.beginPath();
+      ctx.arc(it.x + sx, y, it.r * 0.62, 0, 6.2832);
+      ctx.fill();
+    }
   }
   ctx.globalAlpha = 1;
 }
 
 
 function drawShadows(){
+  if (ultraGfx()) return;
   const sy = hero.y - camY + hero.h * 0.42;
   if (sy < -40 || sy > VH + 40) return;
   ctx.globalAlpha = 0.16;
@@ -2518,6 +2844,31 @@ function drawShadows(){
   ctx.globalAlpha = 1;
 }
 
+
+const platformGradCache = new Map();
+function platformGradient(c1, c2, h){
+  const key = c1 + '|' + c2 + '|' + h;
+  let g = platformGradCache.get(key);
+  if (!g){
+    g = ctx.createLinearGradient(0, 0, 0, h);
+    g.addColorStop(0, c1);
+    g.addColorStop(1, c2);
+    if (platformGradCache.size > 40) platformGradCache.clear();
+    platformGradCache.set(key, g);
+  }
+  return g;
+}
+
+const ULTRA_DEPTH_X = 13;
+const ULTRA_DEPTH_Y = 14;
+function ultraDepthVector(sx, sy){
+  const vx = VW / 2 + ultraLean * 0.35;
+  const vy = VH / 2;
+  return {
+    dx: clamp((vx - sx) * 0.055, -ULTRA_DEPTH_X, ULTRA_DEPTH_X),
+    dy: clamp((vy - sy) * 0.045, -ULTRA_DEPTH_Y, ULTRA_DEPTH_Y)
+  };
+}
 
 function drawPlatform(p){
   const y = p.y - camY;
@@ -2540,14 +2891,34 @@ function drawPlatform(p){
   if (p.broken) ctx.rotate(p.rot * clamp(p.fallV / 400, 0, 1));
   ctx.translate(-w / 2, -h / 2);
 
-  ctx.fillStyle = c3;
-  rr(ctx, 0, 4, w, h, 8);
-  ctx.fill();
+  if (ultraGfx()){
+    const d = ultraDepthVector(p.x + w / 2, y + h / 2);
+    const dx = d.dx, dy = d.dy;
+    const a0 = ctx.globalAlpha;
+    if (dy > 0.5){
+      ctx.globalAlpha = a0 * 0.16 * clamp(dy / ULTRA_DEPTH_Y, 0, 1);
+      ctx.fillStyle = '#000';
+      rr(ctx, dx * 1.8, dy * 2.2, w, h, 8);
+      ctx.fill();
+      ctx.globalAlpha = a0;
+    }
+    ctx.fillStyle = dy >= 0 ? c3 : c1;
+    for (let s = 4; s >= 1; s--){
+      rr(ctx, dx * s / 4, dy * s / 4, w, h, 8);
+      ctx.fill();
+    }
+    ctx.globalAlpha = a0 * (dy >= 0 ? 0.35 : 0.14);
+    ctx.fillStyle = '#000';
+    rr(ctx, dx, dy, w, h, 8);
+    ctx.fill();
+    ctx.globalAlpha = a0;
+  } else {
+    ctx.fillStyle = c3;
+    rr(ctx, 0, 4, w, h, 8);
+    ctx.fill();
+  }
 
-  const g = ctx.createLinearGradient(0, 0, 0, h);
-  g.addColorStop(0, c1);
-  g.addColorStop(1, c2);
-  ctx.fillStyle = g;
+  ctx.fillStyle = platformGradient(c1, c2, h);
   rr(ctx, 0, 0, w, h, 8);
   ctx.fill();
 
@@ -2595,6 +2966,31 @@ function drawPlatform(p){
 }
 
 
+const coinGlowCvs = document.createElement('canvas');
+let coinGlowReady = false;
+function getCoinGlow(){
+  if (coinGlowReady) return coinGlowCvs;
+  coinGlowReady = true;
+  coinGlowCvs.width = 48;
+  coinGlowCvs.height = 48;
+  const gc = coinGlowCvs.getContext('2d');
+  const gl = gc.createRadialGradient(24, 24, 1, 24, 24, 24);
+  gl.addColorStop(0, 'rgba(255,214,90,.34)');
+  gl.addColorStop(1, 'rgba(255,214,90,0)');
+  gc.fillStyle = gl;
+  gc.fillRect(0, 0, 48, 48);
+  return coinGlowCvs;
+}
+let coinFaceGrad = null;
+function getCoinFaceGradient(){
+  if (coinFaceGrad) return coinFaceGrad;
+  coinFaceGrad = ctx.createLinearGradient(-11, -11, 11, 11);
+  coinFaceGrad.addColorStop(0, '#fff0a8');
+  coinFaceGrad.addColorStop(0.45, '#ffc42e');
+  coinFaceGrad.addColorStop(1, '#e09a10');
+  return coinFaceGrad;
+}
+
 function drawCoin(c){
   const bob = Math.sin(c.bob) * 4;
   const y = c.y - camY + bob;
@@ -2603,19 +2999,14 @@ function drawCoin(c){
   const spin = Math.abs(Math.cos(c.phase));
   const grab = c.got > 0 ? c.got : 0;
   const alpha = 1 - grab;
-  const R = 11 * (1 + grab * 1.4);
+  const R = 11;
 
   ctx.save();
   ctx.globalAlpha = alpha;
   ctx.translate(c.x, y - grab * 34);
+  if (grab > 0) ctx.scale(1 + grab * 1.4, 1 + grab * 1.4);
 
-  const gl = ctx.createRadialGradient(0, 0, 1, 0, 0, R * 2.1);
-  gl.addColorStop(0, 'rgba(255,214,90,.34)');
-  gl.addColorStop(1, 'rgba(255,214,90,0)');
-  ctx.fillStyle = gl;
-  ctx.beginPath();
-  ctx.arc(0, 0, R * 2.1, 0, 6.2832);
-  ctx.fill();
+  if (!lowGfx()) ctx.drawImage(getCoinGlow(), -R * 2.1, -R * 2.1, R * 4.2, R * 4.2);
 
   ctx.scale(clamp(spin, 0.14, 1), 1);
 
@@ -2624,11 +3015,7 @@ function drawCoin(c){
   ctx.arc(0, 1.6, R, 0, 6.2832);
   ctx.fill();
 
-  const g = ctx.createLinearGradient(-R, -R, R, R);
-  g.addColorStop(0, '#fff0a8');
-  g.addColorStop(0.45, '#ffc42e');
-  g.addColorStop(1, '#e09a10');
-  ctx.fillStyle = g;
+  ctx.fillStyle = getCoinFaceGradient();
   ctx.beginPath();
   ctx.arc(0, 0, R, 0, 6.2832);
   ctx.fill();
@@ -3224,7 +3611,7 @@ function paintTool(c, w, h, kind, A, phase){
     
     const mw = w * 0.62;
     const mh = mw * (maceImg.naturalHeight / maceImg.naturalWidth);
-    c.drawImage(maceImg, -mw / 2, 8 - mh, mw, mh);
+    c.drawImage(maceDraw || maceImg, -mw / 2, 8 - mh, mw, mh);
     headY = 8 - mh * 0.88;
   } else {
     
@@ -3381,7 +3768,7 @@ function paintCabbitVector(c, w, h, ear){
 
 function paintHeroBody(c, w, h, ear){
   const rec = charImgs[outfit.char];
-  if (rec && rec.ready) c.drawImage(rec.img, -w / 2, -h / 2, w, h);
+  if (rec && rec.ready) c.drawImage(rec.draw || rec.img, -w / 2, -h / 2, w, h);
   else paintCabbitVector(c, w, h, ear);
 }
 
@@ -3407,11 +3794,88 @@ function drawHero(x, y, sx, sy, tilt, face, alpha, ear, phase){
   ctx.restore();
 }
 
+const HERO_SHADOW_SCALE = 2.6;
+const HERO_SHADOW_SRC = 128;
+const HERO_SHADOW_BLUR = 44;
+const heroShadowTmp = document.createElement('canvas');
+const heroShadowCvs = document.createElement('canvas');
+let heroShadowKey = '';
+
+function heroShadowKeyNow(){
+  const multi = isOwned('perk', 'multiacc');
+  return [outfit.char, currentCharReady() ? 1 : 0, outfit.hat, outfit.acc, outfit.tool,
+    multi ? outfit.hat2 : '', multi ? outfit.acc2 : '', maceReady ? 1 : 0].join('|');
+}
+
+function getHeroShadowCanvas(){
+  const key = heroShadowKeyNow();
+  if (key === heroShadowKey) return heroShadowCvs;
+  heroShadowKey = key;
+  const size = HERO_SHADOW_SRC;
+  heroShadowTmp.width = size;
+  heroShadowTmp.height = size;
+  const g = heroShadowTmp.getContext('2d');
+  g.clearRect(0, 0, size, size);
+  g.save();
+  g.translate(size / 2, size / 2);
+  const k = size / (hero.w * HERO_SHADOW_SCALE);
+  g.scale(k, k);
+  const A = anchors();
+  paintHeroBody(g, hero.w, hero.h, 0);
+  paintAccessory(g, hero.w, hero.h, outfit.acc, A);
+  const multi = isOwned('perk', 'multiacc');
+  if (multi && outfit.acc2 !== 'none') paintAccessory(g, hero.w, hero.h, outfit.acc2, A);
+  paintHat(g, hero.w, hero.h, outfit.hat, A);
+  if (multi && outfit.hat2 !== 'none'){
+    g.save();
+    g.translate(0, -hero.h * 0.20);
+    g.scale(0.7, 0.7);
+    paintHat(g, hero.w, hero.h, outfit.hat2, A);
+    g.restore();
+  }
+  paintTool(g, hero.w, hero.h, outfit.tool, A, 0);
+  g.restore();
+  g.globalCompositeOperation = 'source-in';
+  g.fillStyle = '#000';
+  g.fillRect(0, 0, size, size);
+  g.globalCompositeOperation = 'source-over';
+
+  heroShadowCvs.width = HERO_SHADOW_BLUR;
+  heroShadowCvs.height = HERO_SHADOW_BLUR;
+  const b = heroShadowCvs.getContext('2d');
+  b.clearRect(0, 0, HERO_SHADOW_BLUR, HERO_SHADOW_BLUR);
+  b.imageSmoothingEnabled = true;
+  b.imageSmoothingQuality = 'high';
+  b.drawImage(heroShadowTmp, 0, 0, HERO_SHADOW_BLUR, HERO_SHADOW_BLUR);
+  return heroShadowCvs;
+}
+
+function drawHeroShadow(x, y, sx, sy, tilt, face){
+  const d = ultraDepthVector(x, y);
+  const ox = d.dx * 1.6;
+  const oy = d.dy * 1.6 + 5;
+  const W = hero.w * HERO_SHADOW_SCALE;
+  ctx.save();
+  ctx.globalAlpha = 0.4;
+  ctx.translate(x + ox, y + oy);
+  ctx.rotate(tilt);
+  ctx.scale(face * sx, sy);
+  ctx.drawImage(getHeroShadowCanvas(), -W / 2, -W / 2, W, W);
+  ctx.restore();
+}
+
 function drawHeroWithWrap(){
   const y = hero.y - camY;
   const phase = performance.now() / 1000;
 
-  if (motionBlurOn){
+  if (ultraGfx()){
+    const tilt0 = hero.tilt + hero.spin;
+    drawHeroShadow(hero.x, y, hero.sx, hero.sy, tilt0, hero.face);
+    if (hero.x < hero.w) drawHeroShadow(hero.x + VW + hero.w, y, hero.sx, hero.sy, tilt0, hero.face);
+    else if (hero.x > VW - hero.w) drawHeroShadow(hero.x - VW - hero.w, y, hero.sx, hero.sy, tilt0, hero.face);
+  }
+
+  if (motionBlurOn && !lowGfx()){
     for (let i = hero.ghosts.length - 1; i >= 1; i--){
       const gph = hero.ghosts[i];
       const a = (1 - i / hero.ghosts.length) * 0.19;
@@ -3473,6 +3937,55 @@ function drawCrawler(cr){
   c.moveTo(-4, 5); c.lineTo(-1.5, 7); c.lineTo(1.5, 5); c.lineTo(4, 7);
   c.stroke();
   c.restore();
+}
+
+function drawLasers(){
+  if (!lasers.length) return;
+  const now = performance.now() / 1000;
+  for (const L of lasers){
+    const x0 = L.x - L.w / 2;
+    if (!L.fired){
+      const p = clamp(L.t / L.warn, 0, 1);
+      const blink = 0.5 + 0.5 * Math.sin(now * (14 + p * 22));
+      ctx.globalAlpha = 0.08 + 0.16 * p;
+      ctx.fillStyle = '#ff2d55';
+      ctx.fillRect(x0, 0, L.w, VH);
+      ctx.globalAlpha = 0.35 + 0.55 * blink;
+      ctx.fillStyle = '#ff6b8a';
+      for (let y = 0; y < VH; y += 26) ctx.fillRect(L.x - 1.5, y, 3, 14);
+      ctx.globalAlpha = 1;
+      for (const ey of [0, VH]){
+        ctx.fillStyle = '#2a1a3a';
+        rr(ctx, L.x - 16, ey === 0 ? -6 : VH - 14, 32, 20, 6);
+        ctx.fill();
+        ctx.fillStyle = blink > 0.5 ? '#ff4d6d' : '#8a1c33';
+        ctx.beginPath();
+        ctx.arc(L.x, ey === 0 ? 6 : VH - 6, 4.5, 0, 6.2832);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 0.6 + 0.4 * blink;
+      ctx.fillStyle = '#ffd34d';
+      ctx.font = '900 22px system-ui, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('!', L.x, 34);
+      ctx.globalAlpha = 1;
+    } else {
+      const ft = clamp((L.t - L.warn) / L.fire, 0, 1);
+      const fade = ft < 0.8 ? 1 : 1 - (ft - 0.8) / 0.2;
+      const jitter = 1 + Math.sin(now * 90) * 0.08;
+      const bw = L.w * jitter * (ft < 0.08 ? ft / 0.08 : 1);
+      ctx.globalAlpha = 0.28 * fade;
+      ctx.fillStyle = '#ff2d55';
+      ctx.fillRect(L.x - bw * 0.95, 0, bw * 1.9, VH);
+      ctx.globalAlpha = 0.9 * fade;
+      ctx.fillStyle = '#ff4d6d';
+      ctx.fillRect(L.x - bw / 2, 0, bw, VH);
+      ctx.fillStyle = '#ffe0e8';
+      ctx.fillRect(L.x - bw * 0.16, 0, bw * 0.32, VH);
+      ctx.globalAlpha = 1;
+    }
+  }
 }
 
 function drawArrows(){
@@ -3708,7 +4221,7 @@ function render(){
   drawBackground();
   ctx.restore();
 
-  if (blurAmount > 0.01){
+  if (blurAmount > 0.01 && motionBlurOn && !lowGfx()){
     pixelTransform();
     ctx.globalAlpha = blurAmount;
     ctx.drawImage(blurCvs, 0, 0);
@@ -3723,9 +4236,11 @@ function render(){
   for (const c of coinsOnMap) drawCoin(c);
   for (const m of monsters) drawMonster(m);
   for (const cr of crawlers) drawCrawler(cr);
+  drawLasers();
   drawArrows();
   drawParticles();
   drawHeroWithWrap();
+  drawUltraFront();
   drawToasts();
   ctx.restore();
 
@@ -3736,13 +4251,7 @@ function render(){
     ctx.globalAlpha = 1;
   }
 
-  const vignette = ctx.createRadialGradient(VW / 2, VH / 2, VH * 0.35, VW / 2, VH / 2, VH * 0.78);
-  vignette.addColorStop(0, 'rgba(5,0,18,0)');
-  vignette.addColorStop(1, 'rgba(5,0,18,.4)');
-  ctx.fillStyle = vignette;
-  ctx.fillRect(0, 0, VW, VH);
-
-  if (motionBlurOn && (blurAmount > 0.01 || blurWanted > 0.01)){
+  if (motionBlurOn && !lowGfx() && (blurAmount > 0.01 || blurWanted > 0.01)){
     pixelTransform();
     blurCtx.setTransform(1, 0, 0, 1, 0, 0);
     blurCtx.clearRect(0, 0, blurCvs.width, blurCvs.height);
@@ -3756,11 +4265,49 @@ function render(){
 
 
 let last = performance.now(), acc = 0;
+let perfSampleSum = 0, perfSampleCount = 0;
+const PERF_SAMPLE_FRAMES = 90;
+const PERF_SLOW_FRAME = 1 / 42;
+
+function trackPerformance(realDt){
+  if (gfxMode !== 'auto' || autoLowGfx || state !== STATE.PLAY || monsterEvent){
+    perfSampleSum = 0; perfSampleCount = 0;
+    return;
+  }
+  if (realDt <= 0 || realDt >= 0.09) return;
+  perfSampleSum += realDt;
+  perfSampleCount++;
+  if (perfSampleCount < PERF_SAMPLE_FRAMES) return;
+  const avg = perfSampleSum / perfSampleCount;
+  perfSampleSum = 0; perfSampleCount = 0;
+  if (avg > PERF_SLOW_FRAME){
+    autoLowGfx = true;
+    applyGfxChange();
+  }
+}
+
+function applyGfxChange(){
+  resize();
+  bgCacheKey = '';
+  const vig = document.getElementById('vignette');
+  if (vig) vig.classList.toggle('off', lowGfx());
+  if (typeof refreshGfxRow === 'function') refreshGfxRow();
+}
+
+function setGfxMode(mode){
+  if (GFX_MODES.indexOf(mode) === -1) return;
+  gfxMode = mode;
+  Store.set('gfxMode', mode);
+  if (mode !== 'auto') autoLowGfx = false;
+  perfSampleSum = 0; perfSampleCount = 0;
+  applyGfxChange();
+}
 
 function frame(now){
   requestAnimationFrame(frame);
   let realDt = (now - last) / 1000;
   last = now;
+  trackPerformance(realDt);
   if (realDt > 0.1) realDt = 0.1;
 
   if (state === STATE.PLAY){
@@ -4315,7 +4862,8 @@ function goToMenu(){
   refreshLeaderboardUI();
   refreshShopState();
   document.getElementById('continueBtn').disabled = true;
-  if (cloudReady()) checkPendingGrant();
+  updateInboxBtn();
+  if (cloudReady()){ checkPendingGrant(); fetchInbox(); }
 }
 
 function startGame(){
@@ -4984,31 +5532,89 @@ function chatConvId(codeA, codeB){
 }
 
 let chatWithCode = '';
+let chatWithNickName = '';
 let chatPollTimer = null;
+let chatLastSig = null;
+let chatMessages = [];
+let chatPending = [];
+let chatFromInbox = false;
+const convSeenSent = {};
+const CHAT_PAGE = 60;
 
-function renderChatMessages(list){
+const pad2 = (n) => (n < 10 ? '0' : '') + n;
+function fmtTime(ts){
+  const d = new Date(ts);
+  return pad2(d.getHours()) + ':' + pad2(d.getMinutes());
+}
+function dayKey(ts){
+  const d = new Date(ts);
+  return d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate();
+}
+function dayLabel(ts){
+  const now = new Date();
+  if (dayKey(ts) === dayKey(now.getTime())) return t('dayToday');
+  const y = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1).getTime();
+  if (dayKey(ts) === dayKey(y)) return t('dayYesterday');
+  try {
+    return new Date(ts).toLocaleDateString(lang === 'en' ? 'en-GB' : 'ru-RU', { day: 'numeric', month: 'long' });
+  } catch (e) { return ''; }
+}
+function shortTimeLabel(ts){
+  if (!ts) return '';
+  if (dayKey(ts) === dayKey(Date.now())) return fmtTime(ts);
+  return dayLabel(ts);
+}
+
+function chatSignature(list){
+  return (list || []).map(m => m.id + (m.read ? 'r' : 'u')).join(',') + '|' + chatPending.map(p => p.tempId).join(',');
+}
+
+function renderChatMessages(list, forceBottom){
   const box = document.getElementById('chatMessagesList');
   if (!box) return;
+  chatMessages = list || [];
+  const sig = chatSignature(chatMessages);
+  if (sig === chatLastSig && !forceBottom) return;
+  const firstRender = chatLastSig === null;
+  const nearBottom = (box.scrollHeight - box.scrollTop - box.clientHeight) < 90;
+  chatLastSig = sig;
+
+  const all = chatMessages.concat(chatPending.map(p => ({
+    id: p.tempId, from: cloudCode, text: p.text, ts: p.ts, read: false, pending: true
+  })));
   box.innerHTML = '';
-  if (!list || !list.length){
+  if (!all.length){
     const empty = document.createElement('div');
     empty.className = 'chatEmpty';
     empty.textContent = t('chatEmpty');
     box.appendChild(empty);
     return;
   }
-  for (const m of list){
+  let prevDay = '';
+  for (const m of all){
+    if (m.ts){
+      const dk = dayKey(m.ts);
+      if (dk !== prevDay){
+        prevDay = dk;
+        const sep = document.createElement('div');
+        sep.className = 'chatDay';
+        sep.textContent = dayLabel(m.ts);
+        box.appendChild(sep);
+      }
+    }
     const row = document.createElement('div');
     const isOwn = m.from === cloudCode;
-    row.className = 'chatMsgRow ' + (isOwn ? 'own' : 'their');
+    row.className = 'chatMsgRow ' + (isOwn ? 'own' : 'their') + (m.pending ? ' pending' : '');
+    let meta = '<span class="chatMsgMeta">' + (m.ts ? fmtTime(m.ts) : '');
     if (isOwn){
-      row.innerHTML = '<span class="chatMsgText">' + escapeHtml(m.text || '') + '</span>' +
-        '<span class="chatMsgTick' + (m.read ? ' isRead' : '') + '">' + (m.read ? '✓✓' : '✓') + '</span>';
-    } else {
-      row.textContent = m.text || '';
+      if (m.pending) meta += '<span class="chatMsgTick">🕓</span>';
+      else meta += '<span class="chatMsgTick' + (m.read ? ' isRead' : '') + '">' + (m.read ? '✓✓' : '✓') + '</span>';
     }
+    meta += '</span>';
+    row.innerHTML = '<span class="chatMsgText">' + escapeHtml(m.text || '') + '</span>' + meta;
     box.appendChild(row);
   }
+  if (firstRender || nearBottom || forceBottom) box.scrollTop = box.scrollHeight;
 }
 
 async function fetchChatMessages(){
@@ -5017,7 +5623,7 @@ async function fetchChatMessages(){
   if (!cloudReady()){ renderChatMessages([]); return; }
   const id = chatConvId(cloudCode, requestedWith);
   try {
-    const res = await fetch(cloudBase() + '/conversations/' + id + '/messages?pageSize=50&orderBy=ts&key=' + CLOUD.apiKey);
+    const res = await fetch(cloudBase() + '/conversations/' + id + '/messages?pageSize=' + CHAT_PAGE + '&orderBy=ts%20desc&key=' + CLOUD.apiKey);
     if (!res.ok){ if (chatWithCode === requestedWith) renderChatMessages([]); return; }
     const data = await res.json();
     const docs = (data && data.documents) || [];
@@ -5032,14 +5638,181 @@ async function fetchChatMessages(){
         read: !!(f.read && f.read.booleanValue)
       };
     });
+    list.sort((a, b) => a.ts - b.ts);
     if (chatWithCode === requestedWith){
       renderChatMessages(list);
       markIncomingRead(id, list);
+      markConvSeen(id, list);
     }
   } catch (e) {
     if (chatWithCode === requestedWith) renderChatMessages([]);
   }
 }
+
+function markConvSeen(convId, list){
+  let latestIncoming = 0;
+  for (const m of (list || [])) if (m.from !== cloudCode && m.ts > latestIncoming) latestIncoming = m.ts;
+  if (!latestIncoming || latestIncoming <= (convSeenSent[convId] || 0)) return;
+  convSeenSent[convId] = latestIncoming;
+  for (const c of inboxConvs) if (c.id === convId) c.unread = false;
+  recountInboxUnread();
+  if (!cloudReady()) return;
+  const field = 'seen_' + cloudCode;
+  const body = { fields: {} };
+  body.fields[field] = { integerValue: String(Date.now()) };
+  fetch(cloudBase() + '/conversations/' + convId + '?updateMask.fieldPaths=' + field + '&key=' + CLOUD.apiKey, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  }).catch(() => {});
+}
+
+function updateConvMeta(convId, otherCode, otherNick, text, ts){
+  if (!cloudReady()) return Promise.resolve();
+  const fields = {
+    members: { arrayValue: { values: [{ stringValue: cloudCode }, { stringValue: otherCode }] } },
+    lastText: { stringValue: String(text).slice(0, 120) },
+    lastFrom: { stringValue: cloudCode },
+    lastTs: { integerValue: String(ts) }
+  };
+  fields['nick_' + cloudCode] = { stringValue: nickname || '' };
+  if (otherNick) fields['nick_' + otherCode] = { stringValue: otherNick };
+  fields['seen_' + cloudCode] = { integerValue: String(ts) };
+  if (!isCustomAvatar(avatar)) fields['av_' + cloudCode] = { stringValue: avatar };
+  const mask = Object.keys(fields).map(k => 'updateMask.fieldPaths=' + k).join('&');
+  return fetch(cloudBase() + '/conversations/' + convId + '?' + mask + '&key=' + CLOUD.apiKey, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ fields })
+  }).catch(() => {});
+}
+
+let inboxConvs = [];
+let inboxUnread = 0;
+let inboxLoadedOnce = false;
+
+function parseConv(doc){
+  const f = (doc && doc.fields) || {};
+  const path = (doc && doc.name) || '';
+  const id = path.substring(path.lastIndexOf('/') + 1);
+  const vals = (f.members && f.members.arrayValue && f.members.arrayValue.values) || [];
+  const members = vals.map(v => v && v.stringValue).filter(Boolean);
+  const other = members.find(c => c !== cloudCode);
+  if (!other || members.indexOf(cloudCode) === -1) return null;
+  const s = (k) => (f[k] && f[k].stringValue) || '';
+  const n = (k) => parseInt((f[k] && f[k].integerValue) || '0', 10) || 0;
+  const lb = lbFieldsByCode[other];
+  const lastTs = n('lastTs');
+  const lastFrom = s('lastFrom');
+  const seen = Math.max(n('seen_' + cloudCode), convSeenSent[id] || 0);
+  return {
+    id, other,
+    nick: s('nick_' + other) || (lb && lb.nick && lb.nick.stringValue) || '?',
+    av: s('av_' + other),
+    lastText: s('lastText'), lastFrom, lastTs,
+    unread: lastFrom !== cloudCode && lastTs > seen
+  };
+}
+
+function recountInboxUnread(){
+  inboxUnread = inboxConvs.filter(c => c.unread && c.other !== chatWithCode).length;
+  updateInboxBadge();
+}
+
+function updateInboxBadge(){
+  const badge = document.getElementById('inboxBadge');
+  if (!badge) return;
+  badge.textContent = inboxUnread > 9 ? '9+' : String(inboxUnread);
+  badge.classList.toggle('hidden', inboxUnread === 0);
+}
+
+function updateInboxBtn(){
+  const btn = document.getElementById('inboxBtn');
+  if (btn) btn.classList.toggle('hidden', !cloudReady());
+}
+
+async function fetchInbox(){
+  if (!cloudReady() || !cloudCode) return;
+  try {
+    const res = await fetch(cloudBase() + ':runQuery?key=' + CLOUD.apiKey, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        structuredQuery: {
+          from: [{ collectionId: 'conversations' }],
+          where: { fieldFilter: { field: { fieldPath: 'members' }, op: 'ARRAY_CONTAINS', value: { stringValue: cloudCode } } },
+          limit: 60
+        }
+      })
+    });
+    if (!res.ok) return;
+    const data = await res.json();
+    const list = (Array.isArray(data) ? data : []).filter(r => r && r.document).map(r => parseConv(r.document)).filter(Boolean);
+    list.sort((a, b) => b.lastTs - a.lastTs);
+    const prevUnread = inboxUnread;
+    inboxConvs = list;
+    recountInboxUnread();
+    if (inboxLoadedOnce && inboxUnread > prevUnread){
+      const c = list.find(x => x.unread && x.other !== chatWithCode);
+      if (c){ showToast(t('newMsgToast') + c.nick); sfxPopupOpen(); }
+    }
+    inboxLoadedOnce = true;
+    const modal = document.getElementById('inboxModal');
+    if (modal && !modal.classList.contains('hidden')) renderInbox();
+  } catch (e) {}
+}
+
+function renderInbox(){
+  const box = document.getElementById('inboxList');
+  if (!box) return;
+  box.innerHTML = '';
+  if (!inboxConvs.length){
+    box.innerHTML = '<div class="inboxEmpty">' + escapeHtml(t('inboxEmpty')) + '</div>';
+    return;
+  }
+  for (const c of inboxConvs){
+    const lb = lbFieldsByCode[c.other];
+    const avVal = (lb && lb.avatar && lb.avatar.stringValue) || c.av || AVATAR_LIST[0];
+    const frame = (lb && lb.frame && lb.frame.stringValue) || 'none';
+    const preview = (c.lastFrom === cloudCode ? t('chatYou') : '') + c.lastText;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'inboxRow' + (c.unread ? ' unread' : '');
+    btn.dataset.code = c.other;
+    btn.innerHTML = avatarHtml(avVal, frame, '') +
+      '<span class="inboxMain"><span class="inboxTop"><span class="inboxNick">' + escapeHtml(c.nick) +
+      '</span><span class="inboxTime">' + escapeHtml(shortTimeLabel(c.lastTs)) + '</span></span>' +
+      '<span class="inboxPreview">' + escapeHtml(preview) + '</span></span>' +
+      (c.unread ? '<span class="inboxDot"></span>' : '');
+    btn.addEventListener('click', () => {
+      closeInbox(true);
+      openChat(c.other, c.nick, true);
+    });
+    box.appendChild(btn);
+  }
+}
+
+function openInbox(){
+  const modal = document.getElementById('inboxModal');
+  if (!modal) return;
+  modal.classList.remove('hidden');
+  sfxPopupOpen();
+  renderInbox();
+  fetchInbox();
+}
+
+function closeInbox(silent){
+  const modal = document.getElementById('inboxModal');
+  if (!modal) return;
+  modal.classList.add('hidden');
+  if (!silent) sfxPopupClose();
+}
+
+document.getElementById('inboxBtn').addEventListener('click', openInbox);
+document.getElementById('inboxClose').addEventListener('click', () => closeInbox(false));
+document.getElementById('inboxModal').addEventListener('click', (e) => {
+  if (e.target && e.target.id === 'inboxModal') closeInbox(false);
+});
 
 async function markIncomingRead(convId, list){
   if (!cloudReady()) return;
@@ -5057,34 +5830,66 @@ async function markIncomingRead(convId, list){
   } catch (e) {}
 }
 
-function openChat(code, nick){
+function openChat(code, nick, fromInbox){
   chatWithCode = code;
+  chatWithNickName = nick || '';
+  chatFromInbox = !!fromInbox;
+  chatLastSig = null;
+  chatMessages = [];
+  chatPending = [];
   document.getElementById('chatWithNick').textContent = nick || '?';
+  const f = lbFieldsByCode[code];
+  const online = !!f && isOnline(f);
   const chatDotEl = document.getElementById('chatOnlineDot');
   if (chatDotEl){
-    const f = lbFieldsByCode[code];
     chatDotEl.classList.remove('hidden');
-    chatDotEl.classList.toggle('isOnline', !!f && isOnline(f));
+    chatDotEl.classList.toggle('isOnline', online);
   }
+  const presenceEl = document.getElementById('chatPresence');
+  if (presenceEl) presenceEl.textContent = online ? t('chatOnlineNow') : '';
+  const avEl = document.getElementById('chatWithAvatar');
+  if (avEl){
+    const conv = inboxConvs.find(c => c.other === code);
+    const avVal = (f && f.avatar && f.avatar.stringValue) || (conv && conv.av) || AVATAR_LIST[0];
+    const frame = (f && f.frame && f.frame.stringValue) || 'none';
+    avEl.innerHTML = avatarHtml(avVal, frame, '');
+  }
+  const backBtn = document.getElementById('chatBackBtn');
+  if (backBtn) backBtn.classList.toggle('hidden', !chatFromInbox);
+  const box = document.getElementById('chatMessagesList');
+  if (box) box.innerHTML = '<div class="chatEmpty">' + t('cloudLoading') + '</div>';
   document.getElementById('chatModal').classList.remove('hidden');
   sfxPopupOpen();
+  recountInboxUnread();
   fetchChatMessages();
   clearInterval(chatPollTimer);
-  chatPollTimer = setInterval(fetchChatMessages, 4000);
+  chatPollTimer = setInterval(fetchChatMessages, 3000);
+  if (!isTouchDevice){
+    const inputEl = document.getElementById('chatInput');
+    if (inputEl && inputEl.focus) inputEl.focus();
+  }
 }
 
 function closeChat(){
   document.getElementById('chatModal').classList.add('hidden');
   sfxPopupClose();
   chatWithCode = '';
+  chatWithNickName = '';
+  chatPending = [];
+  chatLastSig = null;
   clearInterval(chatPollTimer);
   chatPollTimer = null;
   const inputEl = document.getElementById('chatInput');
   const statusEl = document.getElementById('chatStatus');
   if (inputEl) inputEl.value = '';
   if (statusEl) statusEl.textContent = '';
+  fetchInbox();
 }
 document.getElementById('chatClose').addEventListener('click', closeChat);
+document.getElementById('chatBackBtn').addEventListener('click', () => {
+  closeChat();
+  openInbox();
+});
 document.getElementById('chatModal').addEventListener('click', (e) => {
   if (e.target && e.target.id === 'chatModal') closeChat();
 });
@@ -5161,9 +5966,8 @@ document.getElementById('linkChoiceModal').addEventListener('click', (e) => {
   if (e.target && e.target.id === 'linkChoiceModal') closeLinkChoice();
 });
 
-let chatBusy = false;
 async function postChatMessage(){
-  if (!chatWithCode || chatBusy) return;
+  if (!chatWithCode) return;
   const input = document.getElementById('chatInput');
   const statusEl = document.getElementById('chatStatus');
   const text = (input && input.value || '').trim();
@@ -5180,11 +5984,19 @@ async function postChatMessage(){
     if (statusEl) statusEl.textContent = t('chatNeedNick');
     return;
   }
-  const id = chatConvId(cloudCode, chatWithCode);
-  chatBusy = true;
-  const sendBtn = document.getElementById('chatSendBtn');
-  if (sendBtn) sendBtn.disabled = true;
-  if (statusEl) statusEl.textContent = t('chatSending');
+  const toCode = chatWithCode;
+  const toNick = chatWithNickName;
+  const id = chatConvId(cloudCode, toCode);
+  const ts = Date.now();
+  const pend = { tempId: 'p' + ts + Math.random().toString(36).slice(2, 7), text, ts };
+  chatPending.push(pend);
+  if (input) input.value = '';
+  if (statusEl) statusEl.textContent = '';
+  renderChatMessages(chatMessages, true);
+  const dropPending = () => {
+    const i = chatPending.indexOf(pend);
+    if (i >= 0) chatPending.splice(i, 1);
+  };
   try {
     const res = await fetch(cloudBase() + '/conversations/' + id + '/messages?key=' + CLOUD.apiKey, {
       method: 'POST',
@@ -5194,30 +6006,40 @@ async function postChatMessage(){
           from: { stringValue: cloudCode },
           fromNick: { stringValue: nickname },
           text: { stringValue: text },
-          ts: { integerValue: String(Date.now()) },
+          ts: { integerValue: String(ts) },
           read: { booleanValue: false }
         }
       })
     });
+    dropPending();
     if (res.ok){
-      if (input) input.value = '';
-      if (statusEl) statusEl.textContent = '';
-      fetchChatMessages();
+      updateConvMeta(id, toCode, toNick, text, ts);
+      if (chatWithCode === toCode) fetchChatMessages();
     } else {
-      if (statusEl) statusEl.textContent = t('chatError');
+      if (chatWithCode === toCode){
+        if (statusEl) statusEl.textContent = t('chatError');
+        if (input && !input.value) input.value = text;
+        renderChatMessages(chatMessages, true);
+      }
     }
   } catch (e) {
-    if (statusEl) statusEl.textContent = t('chatError');
+    dropPending();
+    if (chatWithCode === toCode){
+      if (statusEl) statusEl.textContent = t('chatError');
+      if (input && !input.value) input.value = text;
+      renderChatMessages(chatMessages, true);
+    }
   }
-  chatBusy = false;
-  if (sendBtn) sendBtn.disabled = false;
 }
 
 const chatSendBtnEl = document.getElementById('chatSendBtn');
 if (chatSendBtnEl) chatSendBtnEl.addEventListener('click', postChatMessage);
 const chatInputEl = document.getElementById('chatInput');
 if (chatInputEl) chatInputEl.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') postChatMessage();
+  if (e.key === 'Enter'){
+    if (e.preventDefault) e.preventDefault();
+    postChatMessage();
+  }
 });
 
 function refreshCloudUI(){
@@ -5544,6 +6366,21 @@ document.getElementById('retryBtn').addEventListener('click', startGame);
 document.getElementById('menuBtn').addEventListener('click', goToMenu);
 pauseBtn.addEventListener('click', pauseGame);
 
+function refreshGfxRow(){
+  document.querySelectorAll('#gfxRow .chip[data-gfx]').forEach(chip => {
+    chip.setAttribute('aria-pressed', chip.dataset.gfx === gfxMode ? 'true' : 'false');
+  });
+  const note = document.getElementById('gfxNote');
+  if (note) note.textContent = (gfxMode === 'auto' && autoLowGfx) ? t('gfxAutoLowNote') : '';
+  const ultraNote = document.getElementById('gfxUltraNote');
+  if (ultraNote) ultraNote.classList.toggle('hidden', gfxMode !== 'ultra');
+}
+document.querySelectorAll('#gfxRow .chip[data-gfx]').forEach(chip => {
+  chip.addEventListener('click', () => setGfxMode(chip.dataset.gfx));
+});
+refreshGfxRow();
+document.getElementById('vignette').classList.toggle('off', lowGfx());
+
 blurToggle.addEventListener('click', () => {
   motionBlurOn = !motionBlurOn;
   Store.set('blur', motionBlurOn ? '1' : '0');
@@ -5731,6 +6568,7 @@ document.querySelectorAll('.chip[data-lang]').forEach(chip => {
     buildShop();
     refreshLeaderboardUI();
     refreshFrameRow();
+    refreshGfxRow();
   });
 });
 
@@ -5794,6 +6632,12 @@ if (cloudReady()){
   checkPendingGrant();
   updatePresence();
   setInterval(updatePresence, 45000);
+  updateInboxBtn();
+  fetchInbox();
+  setInterval(() => {
+    if (document.hidden || state === STATE.PLAY) return;
+    fetchInbox();
+  }, 25000);
 }
 
 if (nickname){
