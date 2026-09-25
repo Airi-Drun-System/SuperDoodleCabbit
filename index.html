@@ -519,22 +519,6 @@
   .adminHeader{display:flex;flex-direction:column;gap:4px;}
   .adminHeaderTitle{font-size:14px;font-weight:800;color:var(--gold);}
   .adminHint{font-size:11px;opacity:.62;margin:0;line-height:1.4;}
-  .adminUidRow{
-    margin-top:4px;background:rgba(0,0,0,.18);border-radius:10px;padding:8px 10px;
-    display:flex;flex-direction:column;gap:4px;
-  }
-  .adminUidLabel{font-size:10px;opacity:.6;font-weight:700;}
-  .adminUidValueRow{display:flex;align-items:center;gap:8px;}
-  .adminUidValue{
-    flex:1;min-width:0;font-size:11px;overflow-x:auto;white-space:nowrap;opacity:.9;
-    font-family:monospace;
-  }
-  .adminGoogleBtn{
-    border:none;cursor:pointer;font-family:inherit;font-weight:800;font-size:12px;padding:8px 14px;
-    border-radius:999px;color:#3a2400;background:var(--gold);align-self:flex-start;
-  }
-  .adminGoogleStatus{font-size:11px;opacity:.75;margin:0;}
-
   .adminSearchRow{display:flex;gap:8px;align-items:center;}
   .adminSearchRow .adminInput{flex:1;min-width:0;text-transform:uppercase;text-align:center;}
 
@@ -586,13 +570,10 @@
     display:flex;flex-direction:column;align-items:center;gap:8px;
   }
   .adminDangerLabel{font-size:10px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:#ff8a8a;opacity:.85;}
-  .adminBanStatus{font-size:11px;opacity:.75;margin:0;text-align:center;}
-  .adminDeleteBtn,.adminBanBtn{
+  .adminDeleteBtn{
     border:none;cursor:pointer;font-family:inherit;font-weight:800;font-size:13px;padding:9px 16px;
     border-radius:999px;color:#fff;background:linear-gradient(180deg,#ff6a6a,#c62828);box-shadow:0 4px 0 #8e1c1c;
   }
-  .adminBanBtn.isBanned{background:linear-gradient(180deg,#8aff9f,#2ea34d);box-shadow:0 4px 0 #1c7a35;}
-  .adminBanDeviceRow{display:flex;align-items:center;gap:8px;font-size:11px;opacity:.85;width:100%;}
 
   .adminStatus{font-size:11px;opacity:.8;min-height:14px;margin:0;text-align:center;}
 
@@ -615,7 +596,6 @@
     .hint{display:none;}
   }
 </style>
-<script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
 <div id="wrap">
@@ -724,15 +704,6 @@
         <div class="adminHeader">
           <span class="adminHeaderTitle">⚒ Админка</span>
           <p class="adminHint">Тапни по игроку в рейтинге ниже, чтобы выдать ему вещи или монеты</p>
-          <div class="adminUidRow">
-            <span class="adminUidLabel">Твой Admin UID (вставь в Firestore Rules):</span>
-            <div class="adminUidValueRow">
-              <code id="adminUidValue" class="adminUidValue">…</code>
-              <button id="adminUidCopyBtn" type="button" class="adminIconBtn" aria-label="Скопировать">⧉</button>
-            </div>
-            <button id="adminGoogleSignInBtn" type="button" class="adminGoogleBtn">Войти через Google</button>
-            <p id="adminGoogleStatus" class="adminGoogleStatus"></p>
-          </div>
         </div>
 
         <div class="adminSearchRow">
@@ -785,20 +756,6 @@
 
           <div class="adminDangerZone">
             <div class="adminDangerLabel">Опасная зона</div>
-            <p id="adminBanStatus" class="adminBanStatus"></p>
-            <label class="adminField">
-              <span>Причина (необязательно)</span>
-              <input id="adminBanReasonInput" class="adminInput" type="text" maxlength="140" placeholder="читерство, оскорбления...">
-            </label>
-            <label class="adminField">
-              <span>Срок бана в часах (пусто = навсегда)</span>
-              <input id="adminBanHoursInput" class="adminInput" type="number" min="0" placeholder="например 24">
-            </label>
-            <label class="adminBanDeviceRow">
-              <input id="adminBanDeviceCheck" type="checkbox" checked>
-              <span>Также заблокировать по устройству/браузеру</span>
-            </label>
-            <button id="adminBanBtn" type="button" class="adminBanBtn">Забанить по коду</button>
             <button id="adminDeleteBtn" type="button" class="adminDeleteBtn">Удалить аккаунт</button>
           </div>
         </div>
@@ -1194,8 +1151,6 @@ const I18N = {
     cloudEnterCode: 'КОД', cloudTop: 'Рейтинг игроков', cloudRefresh: 'Обновить рейтинг',
     cloudCopied: 'Код скопирован', cloudRestored: 'Прогресс восстановлен!',
     cloudNotFound: 'Код не найден', cloudErr: 'Нет связи с сервером', cloudLoading: 'Загрузка…',
-    bannedToast: 'Твой аккаунт заблокирован администрацией',
-    bannedToastReason: 'Причина', bannedToastUntil: 'До:',
     smashToast: 'СОКРУШИТЕЛЬНЫЙ УДАР!', kickToast: 'ПИНОК!', perfectToast: 'ИДЕАЛЬНО!',
     glassToast: 'СТЕКЛО СПАСЛО ТЕБЯ!', tapPrompt: 'ЖМИ!',
     items: {
@@ -1260,8 +1215,6 @@ const I18N = {
     cloudEnterCode: 'CODE', cloudTop: 'Leaderboard', cloudRefresh: 'Refresh ranking',
     cloudCopied: 'Code copied', cloudRestored: 'Progress restored!',
     cloudNotFound: 'Code not found', cloudErr: 'Could not reach the server', cloudLoading: 'Loading…',
-    bannedToast: 'Your account has been banned by the administration',
-    bannedToastReason: 'Reason', bannedToastUntil: 'Until:',
     smashToast: 'MACE SMASH!', kickToast: 'KICKED!', perfectToast: 'PERFECT!',
     glassToast: 'THE GLASS SAVED YOU!', tapPrompt: 'TAP!',
     items: {
@@ -4298,124 +4251,8 @@ const CLOUD = {
   apiKey:    'AIzaSyCocguW-KrcPBbo5v1Me9iF1C_dDJHe-Qc',
   projectId: 'cabbit-jump'
 };
-const GOOGLE_CLIENT_ID = 'ТВОЙ_GOOGLE_CLIENT_ID_СЮДА';
 const cloudReady = () => !!(CLOUD.apiKey && CLOUD.projectId);
 const cloudBase  = () => 'https://firestore.googleapis.com/v1/projects/' + CLOUD.projectId + '/databases/(default)/documents';
-
-const AUTH_BASE = 'https://identitytoolkit.googleapis.com/v1';
-const TOKEN_BASE = 'https://securetoken.googleapis.com/v1';
-let authUid = Store.get('authUid', '');
-let authIdToken = Store.get('authIdToken', '');
-let authRefreshToken = Store.get('authRefreshToken', '');
-let authExpiresAt = parseInt(Store.get('authExpiresAt', '0'), 10) || 0;
-let authPromise = null;
-
-function saveAuthState(){
-  Store.set('authUid', authUid);
-  Store.set('authIdToken', authIdToken);
-  Store.set('authRefreshToken', authRefreshToken);
-  Store.set('authExpiresAt', String(authExpiresAt));
-}
-
-async function signUpAnon(){
-  const res = await fetch(AUTH_BASE + '/accounts:signUp?key=' + CLOUD.apiKey, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ returnSecureToken: true })
-  });
-  if (!res.ok) throw new Error('signup failed');
-  const data = await res.json();
-  authUid = data.localId;
-  authIdToken = data.idToken;
-  authRefreshToken = data.refreshToken;
-  authExpiresAt = Date.now() + (parseInt(data.expiresIn, 10) || 3600) * 1000 - 60000;
-  saveAuthState();
-}
-
-async function refreshAuthToken(){
-  const res = await fetch(TOKEN_BASE + '/token?key=' + CLOUD.apiKey, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: 'grant_type=refresh_token&refresh_token=' + encodeURIComponent(authRefreshToken)
-  });
-  if (!res.ok) throw new Error('refresh failed');
-  const data = await res.json();
-  authUid = data.user_id;
-  authIdToken = data.id_token;
-  authRefreshToken = data.refresh_token;
-  authExpiresAt = Date.now() + (parseInt(data.expires_in, 10) || 3600) * 1000 - 60000;
-  saveAuthState();
-}
-
-async function ensureAuth(){
-  if (authIdToken && authExpiresAt > Date.now()) return;
-  if (authPromise) return authPromise;
-  authPromise = (async () => {
-    try {
-      if (authRefreshToken){
-        try { await refreshAuthToken(); return; } catch (e) {}
-      }
-      await signUpAnon();
-    } finally {
-      authPromise = null;
-    }
-  })();
-  return authPromise;
-}
-
-function authHeader(){
-  return authIdToken ? { 'Authorization': 'Bearer ' + authIdToken } : {};
-}
-
-let authEmail = Store.get('authEmail', '');
-
-function saveGoogleAuthState(){
-  saveAuthState();
-  Store.set('authEmail', authEmail);
-}
-
-async function exchangeGoogleAccessToken(accessToken){
-  const res = await fetch(AUTH_BASE + '/accounts:signInWithIdp?key=' + CLOUD.apiKey, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      postBody: 'access_token=' + accessToken + '&providerId=google.com',
-      requestUri: 'https://' + CLOUD.projectId + '.firebaseapp.com',
-      returnSecureToken: true
-    })
-  });
-  if (!res.ok) throw new Error('google signin failed');
-  const data = await res.json();
-  authUid = data.localId;
-  authIdToken = data.idToken;
-  authRefreshToken = data.refreshToken;
-  authEmail = data.email || '';
-  authExpiresAt = Date.now() + (parseInt(data.expiresIn, 10) || 3600) * 1000 - 60000;
-  saveGoogleAuthState();
-}
-
-function signInWithGoogle(){
-  return new Promise((resolve, reject) => {
-    if (!window.google || !google.accounts || !google.accounts.oauth2){
-      reject(new Error('google identity services not loaded'));
-      return;
-    }
-    try {
-      const client = google.accounts.oauth2.initTokenClient({
-        client_id: GOOGLE_CLIENT_ID,
-        scope: 'openid email profile',
-        callback: (resp) => {
-          if (resp && resp.access_token){
-            exchangeGoogleAccessToken(resp.access_token).then(resolve).catch(reject);
-          } else {
-            reject(new Error('no access token'));
-          }
-        }
-      });
-      client.requestAccessToken();
-    } catch (e) { reject(e); }
-  });
-}
 
 const DEV_CODE = 'C4N3TAU5';
 
@@ -4429,14 +4266,6 @@ function makeCloudCode(){
 let cloudCode = Store.get('cloudCode', '') || makeCloudCode();
 Store.set('cloudCode', cloudCode);
 
-function makeDeviceId(){
-  const abc = 'abcdefghijklmnopqrstuvwxyz0123456789';
-  let id = '';
-  for (let i = 0; i < 24; i++) id += abc[Math.floor(Math.random() * abc.length)];
-  return id;
-}
-let deviceId = Store.get('deviceId', '') || makeDeviceId();
-Store.set('deviceId', deviceId);
 let myTitle = Store.get('titleText', '');
 let myTitleColor = Store.get('titleColor', '');
 
@@ -4471,17 +4300,14 @@ function cloudPushSoon(){
 async function cloudPush(){
   if (!cloudReady()) return;
   try {
-    await ensureAuth();
     await fetch(cloudBase() + '/players/' + cloudCode + '?key=' + CLOUD.apiKey, {
       method: 'PATCH',
-      headers: Object.assign({ 'Content-Type': 'application/json' }, authHeader()),
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         fields: {
           nick:  { stringValue: nickname || 'Котокролик' },
           coins: { integerValue: String(coins) },
           best:  { integerValue: String(best) },
-          ownerUid: { stringValue: authUid || '' },
-          deviceId: { stringValue: deviceId || '' },
           owned: { arrayValue: { values: Array.from(owned).map(v => ({ stringValue: v })) } },
           hat:   { stringValue: outfit.hat  },
           acc:   { stringValue: outfit.acc  },
@@ -4499,57 +4325,6 @@ async function cloudPush(){
   } catch (e) {  }
 }
 
-function parseBanDoc(doc){
-  if (!doc || !doc.fields) return null;
-  const f = doc.fields;
-  const expiresAt = parseInt((f.expiresAt && f.expiresAt.integerValue) || '0', 10) || 0;
-  if (expiresAt > 0 && expiresAt <= Date.now()) return null;
-  return {
-    reason: (f.reason && f.reason.stringValue) || '',
-    expiresAt: expiresAt
-  };
-}
-
-async function fetchBanInfo(collection, key){
-  if (!cloudReady() || !key) return null;
-  try {
-    const res = await fetch(cloudBase() + '/' + collection + '/' + key + '?key=' + CLOUD.apiKey);
-    if (!res.ok) return null;
-    const doc = await res.json();
-    return parseBanDoc(doc);
-  } catch (e) { return null; }
-}
-
-async function checkBanned(code){
-  const info = await fetchBanInfo('bans', code);
-  return !!info;
-}
-
-async function checkDeviceBanned(devId){
-  const info = await fetchBanInfo('deviceBans', devId);
-  return !!info;
-}
-
-function formatBanUntil(expiresAt){
-  if (!expiresAt) return '';
-  try {
-    return new Date(expiresAt).toLocaleString('ru-RU');
-  } catch (e) { return ''; }
-}
-
-async function checkOwnBanStatus(){
-  if (!cloudReady()) return;
-  try {
-    let info = await fetchBanInfo('bans', cloudCode);
-    if (!info) info = await fetchBanInfo('deviceBans', deviceId);
-    if (!info) return;
-    let msg = t('bannedToast');
-    if (info.reason) msg += '. ' + t('bannedToastReason') + ': ' + info.reason;
-    if (info.expiresAt) msg += '. ' + t('bannedToastUntil') + ' ' + formatBanUntil(info.expiresAt);
-    showToast(msg);
-  } catch (e) {}
-}
-
 const ONLINE_THRESHOLD_MS = 90000;
 function isOnline(f){
   const ls = parseInt((f && f.lastSeen && f.lastSeen.integerValue) || '0', 10) || 0;
@@ -4559,10 +4334,9 @@ function isOnline(f){
 async function updatePresence(){
   if (!cloudReady()) return;
   try {
-    await ensureAuth();
     await fetch(cloudBase() + '/players/' + cloudCode + '?updateMask.fieldPaths=lastSeen&key=' + CLOUD.apiKey, {
       method: 'PATCH',
-      headers: Object.assign({ 'Content-Type': 'application/json' }, authHeader()),
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ fields: { lastSeen: { integerValue: String(Date.now()) } } })
     });
   } catch (e) {}
@@ -4934,10 +4708,9 @@ async function postProfileComment(){
   if (sendBtn) sendBtn.disabled = true;
   if (statusEl) statusEl.textContent = t('profileCommentSending');
   try {
-    await ensureAuth();
     const res = await fetch(cloudBase() + '/players/' + code + '/comments?key=' + CLOUD.apiKey, {
       method: 'POST',
-      headers: Object.assign({ 'Content-Type': 'application/json' }, authHeader()),
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         fields: {
           author: { stringValue: authorName },
@@ -5036,12 +4809,11 @@ async function markIncomingRead(convId, list){
   const unread = (list || []).filter(m => m.id && m.from !== cloudCode && !m.read);
   if (!unread.length) return;
   try {
-    await ensureAuth();
     await Promise.all(unread.map(m => fetch(
       cloudBase() + '/conversations/' + convId + '/messages/' + m.id + '?updateMask.fieldPaths=read&key=' + CLOUD.apiKey,
       {
         method: 'PATCH',
-        headers: Object.assign({ 'Content-Type': 'application/json' }, authHeader()),
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ fields: { read: { booleanValue: true } } })
       }
     )));
@@ -5177,10 +4949,9 @@ async function postChatMessage(){
   if (sendBtn) sendBtn.disabled = true;
   if (statusEl) statusEl.textContent = t('chatSending');
   try {
-    await ensureAuth();
     const res = await fetch(cloudBase() + '/conversations/' + id + '/messages?key=' + CLOUD.apiKey, {
       method: 'POST',
-      headers: Object.assign({ 'Content-Type': 'application/json' }, authHeader()),
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         fields: {
           from: { stringValue: cloudCode },
@@ -5261,23 +5032,6 @@ let adminCurrentCode = null;
 let adminCurrentEquipped = null;
 if (adminMode) document.getElementById('adminTool').classList.remove('hidden');
 
-function updateAdminGoogleStatus(){
-  const el = document.getElementById('adminGoogleStatus');
-  if (!el) return;
-  el.textContent = authEmail ? ('Вход выполнен как: ' + authEmail) : 'Не авторизован через Google';
-}
-
-function updateAdminUidDisplay(){
-  const el = document.getElementById('adminUidValue');
-  updateAdminGoogleStatus();
-  if (!el) return;
-  ensureAuth().then(() => {
-    el.textContent = authUid || '…';
-  }).catch(() => {});
-}
-if (adminMode) updateAdminUidDisplay();
-
-
 let secretTaps = 0, secretTapTimer = null;
 document.getElementById('secretZone').addEventListener('click', () => {
   if (adminMode) return;
@@ -5298,7 +5052,6 @@ document.getElementById('adminPinBtn').addEventListener('click', () => {
     localStorage.setItem('cabbitAdminMode', '1');
     document.getElementById('adminGate').classList.add('hidden');
     document.getElementById('adminTool').classList.remove('hidden');
-    updateAdminUidDisplay();
   } else {
     input.value = '';
     input.placeholder = 'Неверный PIN';
@@ -5328,8 +5081,6 @@ async function adminLoad(codeOverride){
     const f = doc.fields || {};
 
     adminCurrentCode = code;
-    adminCurrentOwnerUid = (f.ownerUid && f.ownerUid.stringValue) || '';
-    adminCurrentDeviceId = (f.deviceId && f.deviceId.stringValue) || '';
     adminCurrentEquipped = {
       hat:  (f.hat  && f.hat.stringValue)  || 'none',
       acc:  (f.acc  && f.acc.stringValue)  || 'none',
@@ -5354,101 +5105,9 @@ async function adminLoad(codeOverride){
 
     document.getElementById('adminPlayerBox').classList.remove('hidden');
     adminSetStatus('');
-    refreshAdminBanUI();
-    fetchBanInfo('bans', code).then((info) => {
-      if (adminCurrentCode !== code) return;
-      setAdminBanUI(!!info, info);
-    });
   } catch (e){
     adminSetStatus('Ошибка связи с облаком');
   }
-}
-
-let adminCurrentOwnerUid = '';
-let adminCurrentDeviceId = '';
-let adminCurrentBanned = false;
-
-function setAdminBanUI(banned, info){
-  adminCurrentBanned = !!banned;
-  const btn = document.getElementById('adminBanBtn');
-  const status = document.getElementById('adminBanStatus');
-  const reasonInput = document.getElementById('adminBanReasonInput');
-  const hoursInput = document.getElementById('adminBanHoursInput');
-  if (btn){
-    btn.textContent = adminCurrentBanned ? 'Разбанить' : 'Забанить по коду';
-    btn.classList.toggle('isBanned', adminCurrentBanned);
-  }
-  if (status){
-    if (adminCurrentBanned){
-      let line = 'Статус: забанен';
-      if (info && info.reason) line += ' — ' + info.reason;
-      if (info && info.expiresAt) line += ' (до ' + formatBanUntil(info.expiresAt) + ')';
-      status.textContent = line;
-    } else {
-      status.textContent = '';
-    }
-  }
-  if (reasonInput) reasonInput.value = (info && info.reason) || '';
-  if (hoursInput) hoursInput.value = '';
-}
-
-function refreshAdminBanUI(){
-  setAdminBanUI(false, null);
-}
-
-async function adminBanCode(){
-  if (!adminCurrentCode || !cloudReady()) return;
-  const code = adminCurrentCode;
-  const devId = adminCurrentDeviceId;
-  const useDevice = !!document.getElementById('adminBanDeviceCheck') && document.getElementById('adminBanDeviceCheck').checked;
-  try {
-    await ensureAuth();
-    if (adminCurrentBanned){
-      await fetch(cloudBase() + '/bans/' + code + '?key=' + CLOUD.apiKey, {
-        method: 'DELETE',
-        headers: authHeader()
-      });
-      if (devId){
-        await fetch(cloudBase() + '/deviceBans/' + devId + '?key=' + CLOUD.apiKey, {
-          method: 'DELETE',
-          headers: authHeader()
-        });
-      }
-      if (adminCurrentCode === code) setAdminBanUI(false, null);
-    } else {
-      const reasonInput = document.getElementById('adminBanReasonInput');
-      const hoursInput = document.getElementById('adminBanHoursInput');
-      const reason = (reasonInput && reasonInput.value || '').trim();
-      const hours = parseFloat(hoursInput && hoursInput.value) || 0;
-      const expiresAt = hours > 0 ? (Date.now() + hours * 3600000) : 0;
-      const banFields = {
-        bannedAt: { integerValue: String(Date.now()) },
-        expiresAt: { integerValue: String(expiresAt) },
-        reason: { stringValue: reason },
-        deviceId: { stringValue: devId || '' }
-      };
-      await fetch(cloudBase() + '/bans/' + code + '?key=' + CLOUD.apiKey, {
-        method: 'PATCH',
-        headers: Object.assign({ 'Content-Type': 'application/json' }, authHeader()),
-        body: JSON.stringify({ fields: banFields })
-      });
-      if (useDevice && devId){
-        await fetch(cloudBase() + '/deviceBans/' + devId + '?key=' + CLOUD.apiKey, {
-          method: 'PATCH',
-          headers: Object.assign({ 'Content-Type': 'application/json' }, authHeader()),
-          body: JSON.stringify({
-            fields: {
-              bannedAt: { integerValue: String(Date.now()) },
-              expiresAt: { integerValue: String(expiresAt) },
-              reason: { stringValue: reason },
-              code: { stringValue: code }
-            }
-          })
-        });
-      }
-      if (adminCurrentCode === code) setAdminBanUI(true, { reason: reason, expiresAt: expiresAt });
-    }
-  } catch (e) {}
 }
 
 function renderAdminItemsGrid(ownedSet){
@@ -5523,16 +5182,14 @@ async function adminSave(){
 
   adminSetStatus('Сохранение...');
   try {
-    await ensureAuth();
     const res = await fetch(cloudBase() + '/players/' + adminCurrentCode + '?key=' + CLOUD.apiKey, {
       method: 'PATCH',
-      headers: Object.assign({ 'Content-Type': 'application/json' }, authHeader()),
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         fields: {
           nick:  { stringValue: nickMatch },
           coins: { integerValue: String(coinsVal) },
           best:  { integerValue: String(bestVal) },
-          ownerUid: { stringValue: adminCurrentOwnerUid || authUid || '' },
           owned: { arrayValue: { values: ownedList.map(v => ({ stringValue: v })) } },
           hat:   { stringValue: (adminCurrentEquipped && adminCurrentEquipped.hat)  || 'none' },
           acc:   { stringValue: (adminCurrentEquipped && adminCurrentEquipped.acc)  || 'none' },
@@ -5600,10 +5257,8 @@ async function adminDeleteAccount(){
   adminSetStatus('Удаление...');
   const deletedCode = adminCurrentCode;
   try {
-    await ensureAuth();
     const res = await fetch(cloudBase() + '/players/' + deletedCode + '?key=' + CLOUD.apiKey, {
-      method: 'DELETE',
-      headers: authHeader()
+      method: 'DELETE'
     });
     if (res.ok){
       document.getElementById('adminPlayerBox').classList.add('hidden');
@@ -5642,30 +5297,6 @@ async function adminDeleteAccount(){
 document.getElementById('adminLoadBtn').addEventListener('click', () => adminLoad());
 document.getElementById('adminSaveBtn').addEventListener('click', adminSave);
 if (adminDeleteBtnEl) adminDeleteBtnEl.addEventListener('click', adminDeleteAccount);
-
-const adminBanBtnEl = document.getElementById('adminBanBtn');
-if (adminBanBtnEl) adminBanBtnEl.addEventListener('click', adminBanCode);
-
-const adminUidCopyBtnEl = document.getElementById('adminUidCopyBtn');
-if (adminUidCopyBtnEl) adminUidCopyBtnEl.addEventListener('click', () => {
-  const el = document.getElementById('adminUidValue');
-  const val = (el && el.textContent) || '';
-  if (!val || val === '…') return;
-  if (navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(val).then(() => showToast(t('cloudCopied'))).catch(() => {});
-  }
-});
-
-const adminGoogleSignInBtnEl = document.getElementById('adminGoogleSignInBtn');
-if (adminGoogleSignInBtnEl) adminGoogleSignInBtnEl.addEventListener('click', () => {
-  const statusEl = document.getElementById('adminGoogleStatus');
-  if (statusEl) statusEl.textContent = 'Вход...';
-  signInWithGoogle().then(() => {
-    updateAdminUidDisplay();
-  }).catch(() => {
-    if (statusEl) statusEl.textContent = 'Не удалось войти через Google';
-  });
-});
 
 document.getElementById('wardrobeBack').addEventListener('click', closeWardrobe);
 document.getElementById('settingsBack').addEventListener('click', closeSettings);
@@ -5892,10 +5523,8 @@ camY = camTarget = 0;
 buildShop();
 applyStaticI18n();
 if (cloudReady()){
-  ensureAuth().catch(() => {});
   cloudFetchOwnTitle();
   checkPendingGrant();
-  checkOwnBanStatus();
   updatePresence();
   setInterval(updatePresence, 45000);
 }
