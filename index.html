@@ -529,6 +529,11 @@
     flex:1;min-width:0;font-size:11px;overflow-x:auto;white-space:nowrap;opacity:.9;
     font-family:monospace;
   }
+  .adminGoogleBtn{
+    border:none;cursor:pointer;font-family:inherit;font-weight:800;font-size:12px;padding:8px 14px;
+    border-radius:999px;color:#3a2400;background:var(--gold);align-self:flex-start;
+  }
+  .adminGoogleStatus{font-size:11px;opacity:.75;margin:0;}
 
   .adminSearchRow{display:flex;gap:8px;align-items:center;}
   .adminSearchRow .adminInput{flex:1;min-width:0;text-transform:uppercase;text-align:center;}
@@ -610,6 +615,7 @@
     .hint{display:none;}
   }
 </style>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
 <div id="wrap">
@@ -724,6 +730,8 @@
               <code id="adminUidValue" class="adminUidValue">…</code>
               <button id="adminUidCopyBtn" type="button" class="adminIconBtn" aria-label="Скопировать">⧉</button>
             </div>
+            <button id="adminGoogleSignInBtn" type="button" class="adminGoogleBtn">Войти через Google</button>
+            <p id="adminGoogleStatus" class="adminGoogleStatus"></p>
           </div>
         </div>
 
@@ -4287,9 +4295,10 @@ function closeWardrobe(){
 }
 
 const CLOUD = {
-  apiKey:    'AIzaSyCocguW-KrcPBbo5v1Me9iF1C_dDJHe-Qc',   
-  projectId: 'cabbit-jump'                                 
+  apiKey:    'AIzaSyCocguW-KrcPBbo5v1Me9iF1C_dDJHe-Qc',
+  projectId: 'cabbit-jump'
 };
+const GOOGLE_CLIENT_ID = 'ТВОЙ_GOOGLE_CLIENT_ID_СЮДА';
 const cloudReady = () => !!(CLOUD.apiKey && CLOUD.projectId);
 const cloudBase  = () => 'https://firestore.googleapis.com/v1/projects/' + CLOUD.projectId + '/databases/(default)/documents';
 
@@ -4356,6 +4365,56 @@ async function ensureAuth(){
 
 function authHeader(){
   return authIdToken ? { 'Authorization': 'Bearer ' + authIdToken } : {};
+}
+
+let authEmail = Store.get('authEmail', '');
+
+function saveGoogleAuthState(){
+  saveAuthState();
+  Store.set('authEmail', authEmail);
+}
+
+async function exchangeGoogleAccessToken(accessToken){
+  const res = await fetch(AUTH_BASE + '/accounts:signInWithIdp?key=' + CLOUD.apiKey, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      postBody: 'access_token=' + accessToken + '&providerId=google.com',
+      requestUri: 'https://' + CLOUD.projectId + '.firebaseapp.com',
+      returnSecureToken: true
+    })
+  });
+  if (!res.ok) throw new Error('google signin failed');
+  const data = await res.json();
+  authUid = data.localId;
+  authIdToken = data.idToken;
+  authRefreshToken = data.refreshToken;
+  authEmail = data.email || '';
+  authExpiresAt = Date.now() + (parseInt(data.expiresIn, 10) || 3600) * 1000 - 60000;
+  saveGoogleAuthState();
+}
+
+function signInWithGoogle(){
+  return new Promise((resolve, reject) => {
+    if (!window.google || !google.accounts || !google.accounts.oauth2){
+      reject(new Error('google identity services not loaded'));
+      return;
+    }
+    try {
+      const client = google.accounts.oauth2.initTokenClient({
+        client_id: GOOGLE_CLIENT_ID,
+        scope: 'openid email profile',
+        callback: (resp) => {
+          if (resp && resp.access_token){
+            exchangeGoogleAccessToken(resp.access_token).then(resolve).catch(reject);
+          } else {
+            reject(new Error('no access token'));
+          }
+        }
+      });
+      client.requestAccessToken();
+    } catch (e) { reject(e); }
+  });
 }
 
 const DEV_CODE = 'C4N3TAU5';
@@ -5202,8 +5261,15 @@ let adminCurrentCode = null;
 let adminCurrentEquipped = null;
 if (adminMode) document.getElementById('adminTool').classList.remove('hidden');
 
+function updateAdminGoogleStatus(){
+  const el = document.getElementById('adminGoogleStatus');
+  if (!el) return;
+  el.textContent = authEmail ? ('Вход выполнен как: ' + authEmail) : 'Не авторизован через Google';
+}
+
 function updateAdminUidDisplay(){
   const el = document.getElementById('adminUidValue');
+  updateAdminGoogleStatus();
   if (!el) return;
   ensureAuth().then(() => {
     el.textContent = authUid || '…';
@@ -5589,6 +5655,18 @@ if (adminUidCopyBtnEl) adminUidCopyBtnEl.addEventListener('click', () => {
     navigator.clipboard.writeText(val).then(() => showToast(t('cloudCopied'))).catch(() => {});
   }
 });
+
+const adminGoogleSignInBtnEl = document.getElementById('adminGoogleSignInBtn');
+if (adminGoogleSignInBtnEl) adminGoogleSignInBtnEl.addEventListener('click', () => {
+  const statusEl = document.getElementById('adminGoogleStatus');
+  if (statusEl) statusEl.textContent = 'Вход...';
+  signInWithGoogle().then(() => {
+    updateAdminUidDisplay();
+  }).catch(() => {
+    if (statusEl) statusEl.textContent = 'Не удалось войти через Google';
+  });
+});
+
 document.getElementById('wardrobeBack').addEventListener('click', closeWardrobe);
 document.getElementById('settingsBack').addEventListener('click', closeSettings);
 document.getElementById('retryBtn').addEventListener('click', startGame);
