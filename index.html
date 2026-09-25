@@ -257,8 +257,9 @@
   .profileCard #profileClose,.chatCard #chatClose{position:absolute;top:10px;right:10px;}
   .profileCanvasWrap{position:relative;margin-bottom:4px;}
   #profileCanvas{width:130px;height:130px;filter:drop-shadow(0 14px 16px rgba(0,0,0,.45));display:block;}
+  .profileAvatarFrame{position:absolute;right:-4px;bottom:2px;--av:34px;}
   .profileAvatarBadge{
-    position:absolute;right:-4px;bottom:2px;width:34px;height:34px;font-size:17px;
+    width:34px;height:34px;font-size:17px;
     box-shadow:0 2px 0 rgba(0,0,0,.3),inset 0 0 0 2px rgba(255,255,255,.35);
   }
   .profileNickRow{display:flex;align-items:center;justify-content:center;gap:6px;}
@@ -368,6 +369,113 @@
   }
   .avatarPreview img{width:100%;height:100%;object-fit:cover;display:block;}
 
+  .avFrame{
+    --av:46px;position:relative;display:inline-flex;align-items:center;justify-content:center;
+    width:var(--av);height:var(--av);border-radius:50%;flex:0 0 auto;isolation:isolate;vertical-align:middle;
+  }
+  .avFrame > .avInner,.avFrame > .avatarPreview{position:relative;z-index:1;}
+  .avInner{
+    width:100%;height:100%;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;
+    background:rgba(255,255,255,.08);font-size:calc(var(--av) * .56);line-height:1;
+  }
+  .avInner img{width:100%;height:100%;object-fit:cover;display:block;}
+  .avFrame::before,.avFrame::after{position:absolute;pointer-events:none;}
+  .frame-gold::before,.frame-neon::before,.frame-rainbow::before,.frame-fire::before,.frame-frost::before,
+  .frame-orbit::before,.frame-crown::before,.frame-hearts::before{
+    content:'';inset:-14%;border-radius:50%;padding:9%;z-index:0;
+    -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor;
+    mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+    mask-composite:exclude;
+  }
+  .frame-gold::before{
+    background:conic-gradient(#b8860b,#ffe08a,#fff6cf,#ffb43d,#b8860b,#ffe08a,#b8860b);
+    animation:avSpin 5s linear infinite;
+  }
+  .frame-gold::after{
+    content:'';inset:-18%;border-radius:50%;z-index:-1;
+    box-shadow:0 0 calc(var(--av) * .22) rgba(255,200,80,.55);animation:avPulse 2.6s ease-in-out infinite;
+  }
+  .frame-neon::before{background:linear-gradient(135deg,#c084fc,#ff5ab0,#8a2be2);}
+  .frame-neon::after{
+    content:'';inset:-14%;border-radius:50%;z-index:-1;
+    box-shadow:0 0 calc(var(--av) * .2) calc(var(--av) * .03) #d05aff,inset 0 0 calc(var(--av) * .12) #ff5ab0;
+    animation:avPulse 1.8s ease-in-out infinite;
+  }
+  .frame-rainbow::before{
+    background:conic-gradient(#ff5a5a,#ffd34d,#5aff8a,#5ab4ff,#c05aff,#ff5a5a);
+    animation:avSpin 3s linear infinite;
+  }
+  .frame-fire::before{
+    background:conic-gradient(#ff3d00,#ffb43d,#ff6a00,#ffe08a,#ff3d00,#ff9f45,#ff3d00);
+    animation:avSpin 1.6s linear infinite;
+  }
+  .frame-fire::after{
+    content:'';inset:-24%;border-radius:50%;z-index:-1;
+    background:radial-gradient(circle,rgba(255,120,0,0) 55%,rgba(255,110,0,.6) 66%,rgba(255,60,0,0) 76%);
+    animation:avFlicker .9s ease-in-out infinite alternate;
+  }
+  .frame-frost::before{
+    background:conic-gradient(#e8fbff,#9be8ff,#4fc3ff,#ffffff,#9be8ff,#e8fbff);
+    animation:avSpin 7s linear infinite;
+  }
+  .frame-frost::after{
+    content:'✦';z-index:2;top:-18%;right:-12%;font-size:calc(var(--av) * .34);line-height:1;
+    color:#e8fbff;text-shadow:0 0 calc(var(--av) * .1) #9be8ff;animation:avTwinkle 1.6s ease-in-out infinite;
+  }
+  .frame-orbit::before{background:linear-gradient(180deg,#ffe08a,#8a5aff);padding:5%;}
+  .frame-orbit::after{
+    content:'★';inset:-28%;z-index:2;display:flex;justify-content:center;align-items:flex-start;
+    font-size:calc(var(--av) * .28);line-height:1;color:#ffd34d;text-shadow:0 0 calc(var(--av) * .1) #ffb43d;
+    animation:avSpin 3.2s linear infinite;
+  }
+  .frame-ears::before,.frame-ears::after{
+    content:'';z-index:-1;top:-40%;width:27%;height:52%;
+    background:radial-gradient(ellipse 40% 56% at 50% 52%,#ffb3d1 62%,rgba(255,179,209,0) 64%),#fdf6e8;
+    border-radius:50% 50% 45% 45% / 70% 70% 30% 30%;
+    -webkit-mask-image:linear-gradient(180deg,#000 76%,transparent 100%);
+    mask-image:linear-gradient(180deg,#000 76%,transparent 100%);
+    transform-origin:50% 100%;
+  }
+  .frame-ears::before{left:17%;animation:avEarL 2.4s ease-in-out infinite;}
+  .frame-ears::after{right:17%;animation:avEarR 2.4s ease-in-out infinite .3s;}
+  .frame-crown::before{background:linear-gradient(180deg,#ffe08a,#b8860b);padding:6%;}
+  .frame-crown::after{
+    content:'👑';z-index:2;top:-46%;left:50%;font-size:calc(var(--av) * .46);line-height:1;
+    transform:translateX(-50%) rotate(-10deg);animation:avBob 2.2s ease-in-out infinite;
+  }
+  .frame-hearts::before{background:linear-gradient(135deg,#ff9fd0,#ff5ab0,#ff9fd0);padding:6%;}
+  .frame-hearts::after{
+    content:'♥';inset:-22%;z-index:2;display:flex;justify-content:center;align-items:flex-start;
+    font-size:calc(var(--av) * .26);line-height:1;color:#ff5ab0;text-shadow:0 calc(var(--av) * 1.18) 0 #ff9fd0;
+    animation:avSpin 4s linear infinite reverse;
+  }
+  @keyframes avSpin{to{transform:rotate(360deg);}}
+  @keyframes avPulse{0%,100%{opacity:.55;}50%{opacity:1;}}
+  @keyframes avFlicker{from{opacity:.6;transform:scale(.97);}to{opacity:1;transform:scale(1.05);}}
+  @keyframes avTwinkle{0%,100%{opacity:.4;transform:scale(.8);}50%{opacity:1;transform:scale(1.1);}}
+  @keyframes avEarL{0%,100%{transform:rotate(-16deg);}50%{transform:rotate(-7deg);}}
+  @keyframes avEarR{0%,100%{transform:rotate(16deg);}50%{transform:rotate(7deg);}}
+  @keyframes avBob{
+    0%,100%{transform:translateX(-50%) rotate(-10deg) translateY(0);}
+    50%{transform:translateX(-50%) rotate(-5deg) translateY(-8%);}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .avFrame::before,.avFrame::after{animation:none !important;}
+  }
+  .avPreviewFrame{--av:46px;margin-top:16px;}
+  .avPreviewFrame .avatarPreview{width:100%;height:100%;}
+  .frameRow{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;}
+  .frameBtn{
+    width:54px;height:54px;border-radius:14px;border:none;cursor:pointer;padding:0;
+    background:rgba(255,255,255,.06);box-shadow:inset 0 0 0 1px rgba(255,255,255,.1);
+    display:flex;align-items:center;justify-content:center;transition:transform .12s ease;
+  }
+  .frameBtn .avFrame{--av:30px;}
+  .frameBtn.active{background:rgba(255,211,77,.18);box-shadow:inset 0 0 0 2px #ffd34d;}
+  .frameBtn:active{transform:scale(.94);}
+  .frameNameLine{color:var(--gold);font-weight:800;}
+
   .cloudRow{display:flex;gap:8px;width:100%;align-items:center;}
   .cloudCode{
     flex:1;padding:9px 12px;border-radius:10px;background:rgba(255,255,255,.08);
@@ -392,9 +500,12 @@
   }
   #onlineLbRows .lbRow span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
   #onlineLbRows .lbRow b{color:var(--gold);flex:0 0 auto;}
-  .lbAvatarImg{
-    width:18px;height:18px;border-radius:50%;object-fit:cover;vertical-align:-4px;margin-right:2px;
-  }
+  #onlineLbRows .lbRow{padding-top:9px;padding-bottom:4px;}
+  .lbLeft{display:flex;align-items:center;gap:7px;min-width:0;}
+  .lbRank{flex:0 0 auto;}
+  .lbAv{--av:22px;}
+  #onlineLbRows .lbRow span.avFrame{overflow:visible;}
+  #onlineLbRows .lbRow span.avInner{overflow:hidden;}
   .devNick{
     background:linear-gradient(90deg,#c084fc,#8a2be2,#ff6f91,#8a2be2,#c084fc);
     background-size:200% auto;
@@ -557,6 +668,8 @@
   }
   .adminItemChip input{accent-color:#ff9f45;width:14px;height:14px;flex:0 0 auto;}
   .adminItemChip:has(input:checked){background:rgba(255,159,69,.22);box-shadow:inset 0 0 0 1px rgba(255,159,69,.4);}
+  .adminItemChip.isLimited{box-shadow:inset 0 0 0 1px rgba(255,211,77,.45);}
+  .adminItemChip.isLimited span{color:var(--gold);font-weight:700;}
 
   .adminSaveBtn{
     border:none;cursor:pointer;font-family:inherit;font-weight:800;font-size:14px;padding:12px 16px;
@@ -771,12 +884,16 @@
       <div class="settingRow">
         <span class="settingLabel" data-i18n="avatarLabel">Аватар</span>
         <div class="avatarPickerRow">
-          <div id="avatarPreview" class="avatarPreview"></div>
+          <span id="avatarPreviewFrame" class="avFrame avPreviewFrame frame-none"><span id="avatarPreview" class="avatarPreview"></span></span>
           <button id="avatarUploadBtn" class="chip" type="button" data-i18n="avatarUpload">Фото из галереи</button>
           <button id="avatarRemoveBtn" class="chip hidden" type="button" data-i18n="avatarRemove">Убрать фото</button>
           <input id="avatarFileInput" type="file" accept="image/*" class="hidden">
         </div>
         <div id="avatarRow" class="swatchRow avatarRow"></div>
+      </div>
+      <div class="settingRow">
+        <span class="settingLabel"><span data-i18n="frameLabel">Рамка аватара</span>: <b id="frameNameLine" class="frameNameLine"></b></span>
+        <div id="frameRow" class="frameRow"></div>
       </div>
       <div class="settingRow">
         <span class="settingLabel" data-i18n="bgColorLabel">Цвет фона</span>
@@ -841,7 +958,7 @@
       </button>
       <div class="profileCanvasWrap">
         <canvas id="profileCanvas" width="220" height="220"></canvas>
-        <div id="profileAvatar" class="avatarPreview profileAvatarBadge"></div>
+        <span id="profileAvatarFrame" class="avFrame profileAvatarFrame frame-none"><span id="profileAvatar" class="avatarPreview profileAvatarBadge"></span></span>
       </div>
       <div class="profileNickRow">
         <div id="profileNick" class="profileNick"></div>
@@ -1012,6 +1129,25 @@ const isValidAvatar = (v) => AVATAR_LIST.indexOf(v) !== -1 || isCustomAvatar(v);
 let avatar = Store.get('avatar', '🐰');
 if (!isValidAvatar(avatar)) avatar = '🐰';
 
+const FRAME_LIST = ['none', 'gold', 'neon', 'rainbow', 'fire', 'frost', 'orbit', 'ears', 'crown', 'hearts'];
+const isValidFrame = (v) => FRAME_LIST.indexOf(v) !== -1;
+let avatarFrame = Store.get('avatarFrame', 'none');
+if (!isValidFrame(avatarFrame)) avatarFrame = 'none';
+
+function avatarHtml(avatarVal, frameId, extraClass){
+  const av = isValidAvatar(avatarVal) ? avatarVal : AVATAR_LIST[0];
+  const fr = isValidFrame(frameId) ? frameId : 'none';
+  const inner = isCustomAvatar(av) ? '<img src="' + av + '" alt="">' : escapeHtml(av);
+  return '<span class="avFrame frame-' + fr + (extraClass ? ' ' + extraClass : '') + '"><span class="avInner">' + inner + '</span></span>';
+}
+
+function setFrameClass(el, frameId){
+  if (!el) return;
+  const fr = isValidFrame(frameId) ? frameId : 'none';
+  for (const id of FRAME_LIST) el.classList.remove('frame-' + id);
+  el.classList.add('frame-' + fr);
+}
+
 
 let actx = null;
 function ensureAudio(){
@@ -1124,6 +1260,10 @@ const I18N = {
     pauseMenu: 'Меню',
     bgColorLabel: 'Цвет фона', platformColorLabel: 'Цвет платформ',
     profileCoinsLabel: 'монет', avatarLabel: 'Аватар', pauseLabel: 'Пауза', avatarUpload: 'Фото из галереи', avatarRemove: 'Убрать фото',
+    frameLabel: 'Рамка аватара',
+    frame_none: 'Без рамки', frame_gold: 'Золотое сияние', frame_neon: 'Неон', frame_rainbow: 'Радуга',
+    frame_fire: 'Пламя', frame_frost: 'Иней', frame_orbit: 'Звёздная орбита', frame_ears: 'Ушки котокролика',
+    frame_crown: 'Корона', frame_hearts: 'Сердечки',
     musicLabel: 'Музыка', musicVolumeLabel: 'Громкость музыки',
     profileCommentsLabel: 'Комментарии', profileCommentPlaceholder: 'Оставить комментарий...',
     profileCommentSend: 'Отправить', profileCommentEmpty: 'Пока нет комментариев',
@@ -1139,6 +1279,7 @@ const I18N = {
     hint: 'Клавиши ← → или A / D, на телефоне — кнопки внизу. Тап по экрану: выстрел из лука или двойной прыжок. Встретил монстра — жми, когда бегунок в жёлтой зоне по центру, для идеального удара!',
     slotHat: 'На голову', slotAcc: 'Аксессуары', slotTool: 'Инструмент', slotPerk: 'Слоты',
     notEnough: 'Не хватает', coinsWord: 'монет', buyFor: 'Купить за', revert: 'Снять',
+    limitedTag: 'Лимитированный', notForSale: 'не продаётся',
     buyAll: 'Купить всё', allBought: 'Всё куплено', willSpend: 'Потратишь',
     nickTitle: 'Как тебя зовут?', nickPlaceholder: 'Ник котокролика', nickConfirm: 'Готово',
     nickLabel: 'Ник', changeNickBtn: 'Изменить',
@@ -1176,6 +1317,14 @@ const I18N = {
       'tool:bow':       { n: 'Лук охотника',      d: 'На платформах заводятся монстрики. Тапай — стреляй: +3 монеты за каждого, но не наступай на них.' },
       'char:hero':      { n: 'Котокролик',        d: 'Классический котокролик.' },
       'char:hero2':     { n: 'Котокролик №2',     d: 'Второй котокролик — просто для разнообразия.' },
+      'char:hero3':     { n: 'Котокролик №3',     d: 'Лимитированный — выдаётся только администрацией.' },
+      'char:hero4':     { n: 'Котокролик №4',     d: 'Лимитированный — выдаётся только администрацией.' },
+      'char:hero5':     { n: 'Котокролик №5',     d: 'Лимитированный — выдаётся только администрацией.' },
+      'char:hero6':     { n: 'Котокролик №6',     d: 'Лимитированный — выдаётся только администрацией.' },
+      'char:hero7':     { n: 'Котокролик №7',     d: 'Лимитированный — выдаётся только администрацией.' },
+      'char:hero8':     { n: 'Котокролик №8',     d: 'Лимитированный — выдаётся только администрацией.' },
+      'char:hero9':     { n: 'Котокролик №9',     d: 'Лимитированный — выдаётся только администрацией.' },
+      'char:hero10':    { n: 'Котокролик №10',    d: 'Лимитированный — выдаётся только администрацией.' },
       'hat:starcrown':  { n: 'Звёздная корона',   d: 'Награда за 10 000 очков — не продаётся.' },
       'perk:multiacc':  { n: 'Второй предмет',    d: 'Можно надеть сразу два в шляпах и в аксессуарах.' },
       'hat:none': { n: 'Ничего', d: '' }, 'acc:none': { n: 'Ничего', d: '' },
@@ -1188,6 +1337,10 @@ const I18N = {
     pauseMenu: 'Menu',
     bgColorLabel: 'Background color', platformColorLabel: 'Platform color',
     profileCoinsLabel: 'coins', avatarLabel: 'Avatar', pauseLabel: 'Paused', avatarUpload: 'Photo from gallery', avatarRemove: 'Remove photo',
+    frameLabel: 'Avatar frame',
+    frame_none: 'No frame', frame_gold: 'Golden Glow', frame_neon: 'Neon', frame_rainbow: 'Rainbow',
+    frame_fire: 'Blaze', frame_frost: 'Frost', frame_orbit: 'Star Orbit', frame_ears: 'Cabbit Ears',
+    frame_crown: 'Crown', frame_hearts: 'Hearts',
     musicLabel: 'Music', musicVolumeLabel: 'Music volume',
     profileCommentsLabel: 'Comments', profileCommentPlaceholder: 'Leave a comment...',
     profileCommentSend: 'Send', profileCommentEmpty: 'No comments yet',
@@ -1203,6 +1356,7 @@ const I18N = {
     hint: 'Arrow keys or A / D, on phone use the buttons below. Tap the screen to fire the bow or double jump. Met a monster? Tap when the marker is in the yellow center zone for a perfect hit!',
     slotHat: 'Headwear', slotAcc: 'Accessories', slotTool: 'Tool', slotPerk: 'Slots',
     notEnough: 'Need', coinsWord: 'more coins', buyFor: 'Buy for', revert: 'Remove',
+    limitedTag: 'Limited', notForSale: 'not for sale',
     buyAll: 'Buy all', allBought: 'All bought', willSpend: 'You will spend',
     nickTitle: 'What is your name?', nickPlaceholder: 'Cabbit nickname', nickConfirm: 'Done',
     nickLabel: 'Nickname', changeNickBtn: 'Change',
@@ -1240,6 +1394,14 @@ const I18N = {
       'tool:bow':       { n: "Hunter's Bow",      d: 'Critters appear on platforms. Tap to shoot: +3 coins each — but never land on one.' },
       'char:hero':      { n: 'Cabbit',            d: 'The classic cat-rabbit.' },
       'char:hero2':     { n: 'Cabbit #2',         d: 'A second cat-rabbit — just for variety.' },
+      'char:hero3':     { n: 'Cabbit #3',         d: 'Limited — granted by the admin only.' },
+      'char:hero4':     { n: 'Cabbit #4',         d: 'Limited — granted by the admin only.' },
+      'char:hero5':     { n: 'Cabbit #5',         d: 'Limited — granted by the admin only.' },
+      'char:hero6':     { n: 'Cabbit #6',         d: 'Limited — granted by the admin only.' },
+      'char:hero7':     { n: 'Cabbit #7',         d: 'Limited — granted by the admin only.' },
+      'char:hero8':     { n: 'Cabbit #8',         d: 'Limited — granted by the admin only.' },
+      'char:hero9':     { n: 'Cabbit #9',         d: 'Limited — granted by the admin only.' },
+      'char:hero10':    { n: 'Cabbit #10',        d: 'Limited — granted by the admin only.' },
       'hat:starcrown':  { n: 'Star Crown',        d: 'A reward for 10,000 points — not for sale.' },
       'perk:multiacc':  { n: 'Second Item',       d: 'Wear two hats and two accessories at once.' },
       'hat:none': { n: 'None', d: '' }, 'acc:none': { n: 'None', d: '' },
@@ -1302,8 +1464,16 @@ const OUTFITS = {
     bow:  { price: 380 }
   },
   char: {
-    hero:  { price: 0 },
-    hero2: { price: 3000 }
+    hero:   { price: 0 },
+    hero2:  { price: 3000 },
+    hero3:  { price: 0, locked: true, secret: true },
+    hero4:  { price: 0, locked: true, secret: true },
+    hero5:  { price: 0, locked: true, secret: true },
+    hero6:  { price: 0, locked: true, secret: true },
+    hero7:  { price: 0, locked: true, secret: true },
+    hero8:  { price: 0, locked: true, secret: true },
+    hero9:  { price: 0, locked: true, secret: true },
+    hero10: { price: 0, locked: true, secret: true }
   },
   perk: {
     none:     { price: 0 },
@@ -1340,6 +1510,30 @@ if (!OUTFITS.hat[outfit.hat2]) { outfit.hat2 = 'none'; Store.set('hat2', 'none')
 if (!OUTFITS.acc[outfit.acc2]) { outfit.acc2 = 'none'; Store.set('acc2', 'none'); }
 
 function isOwned(slot, val){ return owned.has(slot + ':' + val); }
+
+function dropUnownedLockedOutfit(){
+  let changed = false;
+  for (const slotKey of Object.keys(OUTFITS)){
+    const val = outfit[slotKey];
+    const info = OUTFITS[slotKey][val];
+    if (info && info.locked && !isOwned(slotKey, val)){
+      outfit[slotKey] = (slotKey === 'char') ? 'hero' : 'none';
+      Store.set(slotKey, outfit[slotKey]);
+      changed = true;
+    }
+  }
+  for (const baseSlot of ['hat', 'acc']){
+    const secKey = baseSlot + '2';
+    const info = OUTFITS[baseSlot][outfit[secKey]];
+    if (info && info.locked && !isOwned(baseSlot, outfit[secKey])){
+      outfit[secKey] = 'none';
+      Store.set(secKey, 'none');
+      changed = true;
+    }
+  }
+  return changed;
+}
+dropUnownedLockedOutfit();
 function saveOwned(){ Store.set('owned', Array.from(owned).join(',')); }
 
 const toastBanner = document.getElementById('toastBanner');
@@ -3801,6 +3995,7 @@ function denyChip(chipEl){
 }
 
 function tryBuyAndEquip(slot, val, chipEl){
+  if (OUTFITS[slot][val].locked){ denyChip(chipEl); return; }
   const price = OUTFITS[slot][val].price;
   if (coins < price){ denyChip(chipEl); return; }
 
@@ -3967,6 +4162,7 @@ function getLockedItems(){
 
 function buyItem(slot, val, field){
   field = field || slot;
+  if (OUTFITS[slot][val].locked) return;
   const price = OUTFITS[slot][val].price;
   if (coins < price) return;
 
@@ -4056,17 +4252,20 @@ function refreshShopState(){
 
     for (const item of locked){
       const info = ti(item.slot, item.val);
+      const itemLocked = !!OUTFITS[item.slot][item.val].locked;
       const price = OUTFITS[item.slot][item.val].price;
-      const can = coins >= price;
+      const can = !itemLocked && coins >= price;
 
       const row = document.createElement('div');
       row.className = 'lockedRow';
 
       const label = document.createElement('span');
       label.className = 'li-label';
-      label.textContent = info.n + (item.displaySlot && item.displaySlot.endsWith('2') ? ' (2-й)' : '') + ' — ' + (can
-        ? t('buyFor') + ' ' + price
-        : t('notEnough') + ' ' + (price - coins) + ' ' + t('coinsWord'));
+      let statusText;
+      if (itemLocked) statusText = t('notForSale');
+      else if (can) statusText = t('buyFor') + ' ' + price;
+      else statusText = t('notEnough') + ' ' + (price - coins) + ' ' + t('coinsWord');
+      label.textContent = info.n + (item.displaySlot && item.displaySlot.endsWith('2') ? ' (2-й)' : '') + ' — ' + statusText;
 
       const actions = document.createElement('span');
       actions.className = 'li-actions';
@@ -4076,6 +4275,7 @@ function refreshShopState(){
       buyOne.disabled = !can;
       buyOne.textContent = String(price);
       buyOne.addEventListener('click', () => buyItem(item.slot, item.val, item.displaySlot));
+      if (itemLocked) buyOne.classList.add('hidden');
 
       const revert = document.createElement('button');
       revert.className = 'lockedRevert';
@@ -4188,10 +4388,16 @@ function gameOver(){
 const CHAR_LIST = Object.keys(OUTFITS.char);
 let previewChar = outfit.char;
 
+function visibleCharList(){
+  return CHAR_LIST.filter(id => !OUTFITS.char[id].secret || isOwned('char', id));
+}
+
 function charStep(delta){
-  const idx = CHAR_LIST.indexOf(previewChar);
-  const nextIdx = (idx + delta + CHAR_LIST.length) % CHAR_LIST.length;
-  previewChar = CHAR_LIST[nextIdx];
+  const list = visibleCharList();
+  let idx = list.indexOf(previewChar);
+  if (idx === -1) idx = 0;
+  const nextIdx = (idx + delta + list.length) % list.length;
+  previewChar = list[nextIdx];
   if (isOwned('char', previewChar)){
     equipOwned('char', previewChar);
   }
@@ -4210,10 +4416,14 @@ function buyPreviewedChar(){
 function updateCharInfo(){
   const el = document.getElementById('charInfo');
   if (!el) return;
+  if (visibleCharList().indexOf(previewChar) === -1) previewChar = outfit.char;
   const info = ti('char', previewChar);
-  const price = OUTFITS.char[previewChar].price;
+  const charInfo = OUTFITS.char[previewChar];
   const own = isOwned('char', previewChar);
-  el.textContent = info.n + (own ? '' : ' — ' + t('buyFor') + ' ' + price + ' ¤');
+  let text = info.n;
+  if (charInfo.locked) text += ' · ★ ' + t('limitedTag');
+  else if (!own) text += ' — ' + t('buyFor') + ' ' + charInfo.price + ' ¤';
+  el.textContent = text;
 }
 
 document.getElementById('charPrev').addEventListener('click', () => charStep(-1));
@@ -4318,7 +4528,8 @@ async function cloudPush(){
           acc2:  { stringValue: outfit.acc2 },
           title:      { stringValue: myTitle || '' },
           titleColor: { stringValue: myTitleColor || '' },
-          avatar: { stringValue: avatar }
+          avatar: { stringValue: avatar },
+          frame:  { stringValue: avatarFrame }
         }
       })
     });
@@ -4356,12 +4567,16 @@ async function cloudRestore(rawCode){
     if (f.coins) { coins = parseInt(f.coins.integerValue || '0', 10) || 0; Store.set('coins', coins); }
     if (f.best)  { best  = parseInt(f.best.integerValue  || '0', 10) || 0; Store.set('best', best); }
     if (f.nick && f.nick.stringValue){ nickname = f.nick.stringValue; Store.set('nick', nickname); }
+    if (f.frame && f.frame.stringValue && isValidFrame(f.frame.stringValue)){
+      avatarFrame = f.frame.stringValue;
+      Store.set('avatarFrame', avatarFrame);
+    }
     if (f.avatar && f.avatar.stringValue && isValidAvatar(f.avatar.stringValue)){
       avatar = f.avatar.stringValue;
       Store.set('avatar', avatar);
-      refreshAvatarRow();
-      refreshAvatarPreview();
     }
+    refreshAvatarRow();
+    refreshAvatarPreview();
 
 
     
@@ -4397,6 +4612,8 @@ async function cloudRestore(rawCode){
 
     cloudCode = code;
     Store.set('cloudCode', cloudCode);
+    dropUnownedLockedOutfit();
+    previewChar = outfit.char;
     refreshCloudUI();
     refreshShopState();
     setCloudStatus(t('cloudRestored'));
@@ -4445,6 +4662,8 @@ async function checkPendingGrant(){
     Store.set('titleText', myTitle);
     Store.set('titleColor', myTitleColor);
 
+    dropUnownedLockedOutfit();
+    previewChar = outfit.char;
     refreshShopState();
     showToast('Админ обновил твой профиль!');
 
@@ -4489,9 +4708,8 @@ async function cloudFetchLeaderboard(){
       const nick = (f.nick && f.nick.stringValue) || '?';
       const sc = (f.best && f.best.integerValue) || '0';
       const rowAvatarVal = (f.avatar && f.avatar.stringValue && isValidAvatar(f.avatar.stringValue)) ? f.avatar.stringValue : AVATAR_LIST[0];
-      const rowAvatar = isCustomAvatar(rowAvatarVal)
-        ? '<img class="lbAvatarImg" src="' + rowAvatarVal + '" alt="">'
-        : escapeHtml(rowAvatarVal);
+      const rowFrame = (f.frame && f.frame.stringValue) || 'none';
+      const rowAvatar = avatarHtml(rowAvatarVal, rowFrame, 'lbAv');
 
       const path = row.document.name || '';
       const rowCode = path.substring(path.lastIndexOf('/') + 1);
@@ -4517,7 +4735,7 @@ async function cloudFetchLeaderboard(){
       } else {
         nameHtml = escapeHtml(nick);
       }
-      div.innerHTML = '<span>' + i + '. ' + rowAvatar + ' ' + nameHtml + '</span><b>' + sc + '</b>';
+      div.innerHTML = '<div class="lbLeft"><span class="lbRank">' + i + '.</span>' + rowAvatar + '<span>' + nameHtml + '</span></div><b>' + sc + '</b>';
       
       
       if (adminMode){
@@ -4593,6 +4811,7 @@ function openProfile(code){
     if (isCustomAvatar(profAvatarVal)) profAvatarBox.innerHTML = '<img src="' + profAvatarVal + '" alt="">';
     else profAvatarBox.textContent = profAvatarVal;
   }
+  setFrameClass(document.getElementById('profileAvatarFrame'), (f.frame && f.frame.stringValue) || 'none');
 
   document.getElementById('profileNick').textContent = nick;
   const onlineDotEl = document.getElementById('profileOnlineDot');
@@ -5123,13 +5342,14 @@ function renderAdminItemsGrid(ownedSet){
     for (const val of Object.keys(OUTFITS[slot])){
       const key = slot + ':' + val;
       const label = document.createElement('label');
-      label.className = 'adminItemChip';
+      const isLimited = !!OUTFITS[slot][val].locked;
+      label.className = 'adminItemChip' + (isLimited ? ' isLimited' : '');
       const cb = document.createElement('input');
       cb.type = 'checkbox';
       cb.dataset.item = key;
       cb.checked = ownedSet.has(key);
       const span = document.createElement('span');
-      span.textContent = ti(slot, val).n;
+      span.textContent = (isLimited ? '★ ' : '') + ti(slot, val).n;
       label.appendChild(cb);
       label.appendChild(span);
       grid.appendChild(label);
@@ -5181,28 +5401,28 @@ async function adminSave(){
   const isSelf = adminCurrentCode === cloudCode;
 
   adminSetStatus('Сохранение...');
+  const saveFields = {
+    nick:  { stringValue: nickMatch },
+    coins: { integerValue: String(coinsVal) },
+    best:  { integerValue: String(bestVal) },
+    owned: { arrayValue: { values: ownedList.map(v => ({ stringValue: v })) } },
+    hat:   { stringValue: (adminCurrentEquipped && adminCurrentEquipped.hat)  || 'none' },
+    acc:   { stringValue: (adminCurrentEquipped && adminCurrentEquipped.acc)  || 'none' },
+    tool:  { stringValue: (adminCurrentEquipped && adminCurrentEquipped.tool) || 'none' },
+    char:  { stringValue: (adminCurrentEquipped && adminCurrentEquipped.char) || 'hero' },
+    perk:  { stringValue: (adminCurrentEquipped && adminCurrentEquipped.perk) || 'none' },
+    hat2:  { stringValue: (adminCurrentEquipped && adminCurrentEquipped.hat2) || 'none' },
+    acc2:  { stringValue: (adminCurrentEquipped && adminCurrentEquipped.acc2) || 'none' },
+    title:      { stringValue: titleVal },
+    titleColor: { stringValue: titleColorVal },
+    pending:    { booleanValue: !isSelf }
+  };
+  const saveMask = Object.keys(saveFields).map(k => 'updateMask.fieldPaths=' + k).join('&');
   try {
-    const res = await fetch(cloudBase() + '/players/' + adminCurrentCode + '?key=' + CLOUD.apiKey, {
+    const res = await fetch(cloudBase() + '/players/' + adminCurrentCode + '?' + saveMask + '&key=' + CLOUD.apiKey, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        fields: {
-          nick:  { stringValue: nickMatch },
-          coins: { integerValue: String(coinsVal) },
-          best:  { integerValue: String(bestVal) },
-          owned: { arrayValue: { values: ownedList.map(v => ({ stringValue: v })) } },
-          hat:   { stringValue: (adminCurrentEquipped && adminCurrentEquipped.hat)  || 'none' },
-          acc:   { stringValue: (adminCurrentEquipped && adminCurrentEquipped.acc)  || 'none' },
-          tool:  { stringValue: (adminCurrentEquipped && adminCurrentEquipped.tool) || 'none' },
-          char:  { stringValue: (adminCurrentEquipped && adminCurrentEquipped.char) || 'hero' },
-          perk:  { stringValue: (adminCurrentEquipped && adminCurrentEquipped.perk) || 'none' },
-          hat2:  { stringValue: (adminCurrentEquipped && adminCurrentEquipped.hat2) || 'none' },
-          acc2:  { stringValue: (adminCurrentEquipped && adminCurrentEquipped.acc2) || 'none' },
-          title:      { stringValue: titleVal },
-          titleColor: { stringValue: titleColorVal },
-          pending:    { booleanValue: !isSelf }
-        }
-      })
+      body: JSON.stringify({ fields: saveFields })
     });
     if (res.ok){
       if (isSelf){
@@ -5215,6 +5435,8 @@ async function adminSave(){
         for (const it of ownedList) owned.add(it);
         owned.add('hat:none'); owned.add('acc:none'); owned.add('acc:bowtie'); owned.add('tool:none'); owned.add('char:hero');
         saveOwned();
+        dropUnownedLockedOutfit();
+        previewChar = outfit.char;
         refreshShopState();
         adminSetStatus('Сохранено ✓ (это твой профиль — применено сразу)');
       } else {
@@ -5390,6 +5612,8 @@ function refreshAvatarRow(){
 function refreshAvatarPreview(){
   const box = document.getElementById('avatarPreview');
   const removeBtn = document.getElementById('avatarRemoveBtn');
+  setFrameClass(document.getElementById('avatarPreviewFrame'), avatarFrame);
+  refreshFrameRow();
   if (!box) return;
   if (isCustomAvatar(avatar)){
     box.innerHTML = '<img src="' + avatar + '" alt="">';
@@ -5397,6 +5621,30 @@ function refreshAvatarPreview(){
   } else {
     box.textContent = avatar;
     if (removeBtn) removeBtn.classList.add('hidden');
+  }
+}
+
+function refreshFrameRow(){
+  const row = document.getElementById('frameRow');
+  const nameEl = document.getElementById('frameNameLine');
+  if (nameEl) nameEl.textContent = t('frame_' + avatarFrame);
+  if (!row) return;
+  row.innerHTML = '';
+  for (const id of FRAME_LIST){
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'frameBtn' + (id === avatarFrame ? ' active' : '');
+    btn.dataset.frame = id;
+    btn.title = t('frame_' + id);
+    btn.setAttribute('aria-label', t('frame_' + id));
+    btn.innerHTML = avatarHtml(avatar, id, '');
+    btn.addEventListener('click', () => {
+      avatarFrame = id;
+      Store.set('avatarFrame', id);
+      refreshAvatarPreview();
+      cloudPushSoon();
+    });
+    row.appendChild(btn);
   }
 }
 
@@ -5464,6 +5712,7 @@ document.querySelectorAll('.chip[data-lang]').forEach(chip => {
     applyStaticI18n();
     buildShop();
     refreshLeaderboardUI();
+    refreshFrameRow();
   });
 });
 
