@@ -246,9 +246,12 @@
   }
   .profileOverlay.hidden{display:none;}
   .profileCard{
-    position:relative;width:min(280px,90vw);background:rgba(40,20,60,.92);border-radius:24px;
+    position:relative;width:min(280px,90vw);border-radius:24px;
     padding:26px 20px 22px;display:flex;flex-direction:column;align-items:center;gap:6px;
-    box-shadow:0 20px 60px rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,255,255,.14);
+    background:linear-gradient(180deg,rgba(44,22,64,.96),rgba(28,14,46,.96)) padding-box,
+      linear-gradient(135deg,rgba(255,211,77,.55),rgba(147,90,255,.5) 50%,rgba(255,211,77,.55)) border-box;
+    border:1.5px solid transparent;
+    box-shadow:0 20px 60px rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,255,255,.08),0 0 22px rgba(255,183,61,.14);
     animation:popIn .24s cubic-bezier(.34,1.56,.64,1);
   }
   .profileCard #profileClose,.chatCard #chatClose{position:absolute;top:10px;right:10px;}
@@ -258,6 +261,14 @@
     position:absolute;right:-4px;bottom:2px;width:34px;height:34px;font-size:17px;
     box-shadow:0 2px 0 rgba(0,0,0,.3),inset 0 0 0 2px rgba(255,255,255,.35);
   }
+  .profileNickRow{display:flex;align-items:center;justify-content:center;gap:6px;}
+  .chatWithNickRow{display:flex;align-items:center;justify-content:center;gap:6px;padding-right:26px;}
+  .onlineDot{
+    width:9px;height:9px;border-radius:50%;flex:0 0 auto;
+    background:#6a6a78;box-shadow:0 0 0 2px rgba(0,0,0,.25);
+  }
+  .onlineDot.isOnline{background:#4fe08a;box-shadow:0 0 0 2px rgba(0,0,0,.25),0 0 6px rgba(79,224,138,.8);}
+  .onlineDot.hidden{display:none;}
   .profileNick{font-size:20px;font-weight:800;text-align:center;}
   .profileTitleLine{font-size:13px;opacity:.85;min-height:16px;text-align:center;}
   .profileStats{display:flex;gap:18px;margin-top:8px;font-size:14px;font-weight:700;color:var(--gold);}
@@ -284,9 +295,12 @@
   .profileMessageBtn.hidden{display:none;}
 
   .chatCard{
-    position:relative;width:min(320px,92vw);height:min(480px,80vh);background:rgba(40,20,60,.92);border-radius:24px;
+    position:relative;width:min(320px,92vw);height:min(480px,80vh);border-radius:24px;
     padding:22px 18px 16px;display:flex;flex-direction:column;gap:10px;
-    box-shadow:0 20px 60px rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,255,255,.14);
+    background:linear-gradient(180deg,rgba(44,22,64,.96),rgba(28,14,46,.96)) padding-box,
+      linear-gradient(135deg,rgba(255,211,77,.55),rgba(147,90,255,.5) 50%,rgba(255,211,77,.55)) border-box;
+    border:1.5px solid transparent;
+    box-shadow:0 20px 60px rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,255,255,.08),0 0 22px rgba(255,183,61,.14);
     animation:popIn .24s cubic-bezier(.34,1.56,.64,1);
   }
   .chatWithNick{font-size:17px;font-weight:800;text-align:center;padding-right:26px;}
@@ -300,8 +314,11 @@
   }
   .chatMsgRow.own{
     align-self:flex-end;background:linear-gradient(180deg,#ffd08a,#ff9f45);color:#3a1f00;font-weight:600;
-    border-bottom-right-radius:5px;
+    border-bottom-right-radius:5px;display:flex;align-items:flex-end;gap:5px;
   }
+  .chatMsgText{word-break:break-word;}
+  .chatMsgTick{font-size:12px;opacity:.65;flex:0 0 auto;letter-spacing:-2px;}
+  .chatMsgTick.isRead{opacity:1;color:#2e6bff;}
   .chatMsgRow.their{
     align-self:flex-start;background:rgba(255,255,255,.12);color:#fdf6e8;
     box-shadow:inset 0 0 0 1px rgba(255,255,255,.1);
@@ -322,9 +339,12 @@
   .chatStatus{font-size:11px;opacity:.7;min-height:14px;text-align:center;}
 
   .adminChoiceCard{
-    width:min(260px,88vw);background:rgba(40,20,60,.95);border-radius:22px;
+    width:min(260px,88vw);border-radius:22px;
     padding:22px 18px 18px;display:flex;flex-direction:column;align-items:stretch;gap:10px;
-    box-shadow:0 20px 60px rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,255,255,.14);
+    background:linear-gradient(180deg,rgba(44,22,64,.97),rgba(28,14,46,.97)) padding-box,
+      linear-gradient(135deg,rgba(255,211,77,.55),rgba(147,90,255,.5) 50%,rgba(255,211,77,.55)) border-box;
+    border:1.5px solid transparent;
+    box-shadow:0 20px 60px rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,255,255,.08),0 0 22px rgba(255,183,61,.14);
     animation:popIn .24s cubic-bezier(.34,1.56,.64,1);
   }
   .adminChoiceNick{font-size:16px;font-weight:800;text-align:center;margin-bottom:4px;}
@@ -499,6 +519,16 @@
   .adminHeader{display:flex;flex-direction:column;gap:4px;}
   .adminHeaderTitle{font-size:14px;font-weight:800;color:var(--gold);}
   .adminHint{font-size:11px;opacity:.62;margin:0;line-height:1.4;}
+  .adminUidRow{
+    margin-top:4px;background:rgba(0,0,0,.18);border-radius:10px;padding:8px 10px;
+    display:flex;flex-direction:column;gap:4px;
+  }
+  .adminUidLabel{font-size:10px;opacity:.6;font-weight:700;}
+  .adminUidValueRow{display:flex;align-items:center;gap:8px;}
+  .adminUidValue{
+    flex:1;min-width:0;font-size:11px;overflow-x:auto;white-space:nowrap;opacity:.9;
+    font-family:monospace;
+  }
 
   .adminSearchRow{display:flex;gap:8px;align-items:center;}
   .adminSearchRow .adminInput{flex:1;min-width:0;text-transform:uppercase;text-align:center;}
@@ -551,10 +581,13 @@
     display:flex;flex-direction:column;align-items:center;gap:8px;
   }
   .adminDangerLabel{font-size:10px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:#ff8a8a;opacity:.85;}
-  .adminDeleteBtn{
+  .adminBanStatus{font-size:11px;opacity:.75;margin:0;text-align:center;}
+  .adminDeleteBtn,.adminBanBtn{
     border:none;cursor:pointer;font-family:inherit;font-weight:800;font-size:13px;padding:9px 16px;
     border-radius:999px;color:#fff;background:linear-gradient(180deg,#ff6a6a,#c62828);box-shadow:0 4px 0 #8e1c1c;
   }
+  .adminBanBtn.isBanned{background:linear-gradient(180deg,#8aff9f,#2ea34d);box-shadow:0 4px 0 #1c7a35;}
+  .adminBanDeviceRow{display:flex;align-items:center;gap:8px;font-size:11px;opacity:.85;width:100%;}
 
   .adminStatus{font-size:11px;opacity:.8;min-height:14px;margin:0;text-align:center;}
 
@@ -685,6 +718,13 @@
         <div class="adminHeader">
           <span class="adminHeaderTitle">⚒ Админка</span>
           <p class="adminHint">Тапни по игроку в рейтинге ниже, чтобы выдать ему вещи или монеты</p>
+          <div class="adminUidRow">
+            <span class="adminUidLabel">Твой Admin UID (вставь в Firestore Rules):</span>
+            <div class="adminUidValueRow">
+              <code id="adminUidValue" class="adminUidValue">…</code>
+              <button id="adminUidCopyBtn" type="button" class="adminIconBtn" aria-label="Скопировать">⧉</button>
+            </div>
+          </div>
         </div>
 
         <div class="adminSearchRow">
@@ -737,6 +777,20 @@
 
           <div class="adminDangerZone">
             <div class="adminDangerLabel">Опасная зона</div>
+            <p id="adminBanStatus" class="adminBanStatus"></p>
+            <label class="adminField">
+              <span>Причина (необязательно)</span>
+              <input id="adminBanReasonInput" class="adminInput" type="text" maxlength="140" placeholder="читерство, оскорбления...">
+            </label>
+            <label class="adminField">
+              <span>Срок бана в часах (пусто = навсегда)</span>
+              <input id="adminBanHoursInput" class="adminInput" type="number" min="0" placeholder="например 24">
+            </label>
+            <label class="adminBanDeviceRow">
+              <input id="adminBanDeviceCheck" type="checkbox" checked>
+              <span>Также заблокировать по устройству/браузеру</span>
+            </label>
+            <button id="adminBanBtn" type="button" class="adminBanBtn">Забанить по коду</button>
             <button id="adminDeleteBtn" type="button" class="adminDeleteBtn">Удалить аккаунт</button>
           </div>
         </div>
@@ -824,7 +878,10 @@
         <canvas id="profileCanvas" width="220" height="220"></canvas>
         <div id="profileAvatar" class="avatarPreview profileAvatarBadge"></div>
       </div>
-      <div id="profileNick" class="profileNick"></div>
+      <div class="profileNickRow">
+        <div id="profileNick" class="profileNick"></div>
+        <span id="profileOnlineDot" class="onlineDot hidden"></span>
+      </div>
       <div id="profileTitleLine" class="profileTitleLine"></div>
       <div class="profileStats">
         <span id="profileBest"></span>
@@ -848,7 +905,10 @@
       <button id="chatClose" class="backIconBtn" aria-label="Закрыть">
         <svg viewBox="0 0 24 24" fill="none"><path d="M6 6 L18 18 M18 6 L6 18" stroke="#fdf6e8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
-      <div id="chatWithNick" class="chatWithNick"></div>
+      <div class="chatWithNickRow">
+        <div id="chatWithNick" class="chatWithNick"></div>
+        <span id="chatOnlineDot" class="onlineDot hidden"></span>
+      </div>
       <div id="chatMessagesList" class="chatMessagesList"></div>
       <div class="chatForm">
         <input id="chatInput" type="text" maxlength="200" data-i18n-placeholder="chatPlaceholder" placeholder="Написать сообщение...">
@@ -1126,6 +1186,8 @@ const I18N = {
     cloudEnterCode: 'КОД', cloudTop: 'Рейтинг игроков', cloudRefresh: 'Обновить рейтинг',
     cloudCopied: 'Код скопирован', cloudRestored: 'Прогресс восстановлен!',
     cloudNotFound: 'Код не найден', cloudErr: 'Нет связи с сервером', cloudLoading: 'Загрузка…',
+    bannedToast: 'Твой аккаунт заблокирован администрацией',
+    bannedToastReason: 'Причина', bannedToastUntil: 'До:',
     smashToast: 'СОКРУШИТЕЛЬНЫЙ УДАР!', kickToast: 'ПИНОК!', perfectToast: 'ИДЕАЛЬНО!',
     glassToast: 'СТЕКЛО СПАСЛО ТЕБЯ!', tapPrompt: 'ЖМИ!',
     items: {
@@ -1190,6 +1252,8 @@ const I18N = {
     cloudEnterCode: 'CODE', cloudTop: 'Leaderboard', cloudRefresh: 'Refresh ranking',
     cloudCopied: 'Code copied', cloudRestored: 'Progress restored!',
     cloudNotFound: 'Code not found', cloudErr: 'Could not reach the server', cloudLoading: 'Loading…',
+    bannedToast: 'Your account has been banned by the administration',
+    bannedToastReason: 'Reason', bannedToastUntil: 'Until:',
     smashToast: 'MACE SMASH!', kickToast: 'KICKED!', perfectToast: 'PERFECT!',
     glassToast: 'THE GLASS SAVED YOU!', tapPrompt: 'TAP!',
     items: {
@@ -4229,6 +4293,70 @@ const CLOUD = {
 const cloudReady = () => !!(CLOUD.apiKey && CLOUD.projectId);
 const cloudBase  = () => 'https://firestore.googleapis.com/v1/projects/' + CLOUD.projectId + '/databases/(default)/documents';
 
+const AUTH_BASE = 'https://identitytoolkit.googleapis.com/v1';
+const TOKEN_BASE = 'https://securetoken.googleapis.com/v1';
+let authUid = Store.get('authUid', '');
+let authIdToken = Store.get('authIdToken', '');
+let authRefreshToken = Store.get('authRefreshToken', '');
+let authExpiresAt = parseInt(Store.get('authExpiresAt', '0'), 10) || 0;
+let authPromise = null;
+
+function saveAuthState(){
+  Store.set('authUid', authUid);
+  Store.set('authIdToken', authIdToken);
+  Store.set('authRefreshToken', authRefreshToken);
+  Store.set('authExpiresAt', String(authExpiresAt));
+}
+
+async function signUpAnon(){
+  const res = await fetch(AUTH_BASE + '/accounts:signUp?key=' + CLOUD.apiKey, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ returnSecureToken: true })
+  });
+  if (!res.ok) throw new Error('signup failed');
+  const data = await res.json();
+  authUid = data.localId;
+  authIdToken = data.idToken;
+  authRefreshToken = data.refreshToken;
+  authExpiresAt = Date.now() + (parseInt(data.expiresIn, 10) || 3600) * 1000 - 60000;
+  saveAuthState();
+}
+
+async function refreshAuthToken(){
+  const res = await fetch(TOKEN_BASE + '/token?key=' + CLOUD.apiKey, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: 'grant_type=refresh_token&refresh_token=' + encodeURIComponent(authRefreshToken)
+  });
+  if (!res.ok) throw new Error('refresh failed');
+  const data = await res.json();
+  authUid = data.user_id;
+  authIdToken = data.id_token;
+  authRefreshToken = data.refresh_token;
+  authExpiresAt = Date.now() + (parseInt(data.expires_in, 10) || 3600) * 1000 - 60000;
+  saveAuthState();
+}
+
+async function ensureAuth(){
+  if (authIdToken && authExpiresAt > Date.now()) return;
+  if (authPromise) return authPromise;
+  authPromise = (async () => {
+    try {
+      if (authRefreshToken){
+        try { await refreshAuthToken(); return; } catch (e) {}
+      }
+      await signUpAnon();
+    } finally {
+      authPromise = null;
+    }
+  })();
+  return authPromise;
+}
+
+function authHeader(){
+  return authIdToken ? { 'Authorization': 'Bearer ' + authIdToken } : {};
+}
 
 const DEV_CODE = 'C4N3TAU5';
 
@@ -4241,6 +4369,15 @@ function makeCloudCode(){
 }
 let cloudCode = Store.get('cloudCode', '') || makeCloudCode();
 Store.set('cloudCode', cloudCode);
+
+function makeDeviceId(){
+  const abc = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  let id = '';
+  for (let i = 0; i < 24; i++) id += abc[Math.floor(Math.random() * abc.length)];
+  return id;
+}
+let deviceId = Store.get('deviceId', '') || makeDeviceId();
+Store.set('deviceId', deviceId);
 let myTitle = Store.get('titleText', '');
 let myTitleColor = Store.get('titleColor', '');
 
@@ -4275,16 +4412,17 @@ function cloudPushSoon(){
 async function cloudPush(){
   if (!cloudReady()) return;
   try {
+    await ensureAuth();
     await fetch(cloudBase() + '/players/' + cloudCode + '?key=' + CLOUD.apiKey, {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
+      headers: Object.assign({ 'Content-Type': 'application/json' }, authHeader()),
       body: JSON.stringify({
         fields: {
           nick:  { stringValue: nickname || 'Котокролик' },
           coins: { integerValue: String(coins) },
           best:  { integerValue: String(best) },
-          
-          
+          ownerUid: { stringValue: authUid || '' },
+          deviceId: { stringValue: deviceId || '' },
           owned: { arrayValue: { values: Array.from(owned).map(v => ({ stringValue: v })) } },
           hat:   { stringValue: outfit.hat  },
           acc:   { stringValue: outfit.acc  },
@@ -4300,6 +4438,75 @@ async function cloudPush(){
       })
     });
   } catch (e) {  }
+}
+
+function parseBanDoc(doc){
+  if (!doc || !doc.fields) return null;
+  const f = doc.fields;
+  const expiresAt = parseInt((f.expiresAt && f.expiresAt.integerValue) || '0', 10) || 0;
+  if (expiresAt > 0 && expiresAt <= Date.now()) return null;
+  return {
+    reason: (f.reason && f.reason.stringValue) || '',
+    expiresAt: expiresAt
+  };
+}
+
+async function fetchBanInfo(collection, key){
+  if (!cloudReady() || !key) return null;
+  try {
+    const res = await fetch(cloudBase() + '/' + collection + '/' + key + '?key=' + CLOUD.apiKey);
+    if (!res.ok) return null;
+    const doc = await res.json();
+    return parseBanDoc(doc);
+  } catch (e) { return null; }
+}
+
+async function checkBanned(code){
+  const info = await fetchBanInfo('bans', code);
+  return !!info;
+}
+
+async function checkDeviceBanned(devId){
+  const info = await fetchBanInfo('deviceBans', devId);
+  return !!info;
+}
+
+function formatBanUntil(expiresAt){
+  if (!expiresAt) return '';
+  try {
+    return new Date(expiresAt).toLocaleString('ru-RU');
+  } catch (e) { return ''; }
+}
+
+async function checkOwnBanStatus(){
+  if (!cloudReady()) return;
+  try {
+    let info = await fetchBanInfo('bans', cloudCode);
+    if (!info) info = await fetchBanInfo('deviceBans', deviceId);
+    if (!info) return;
+    let msg = t('bannedToast');
+    if (info.reason) msg += '. ' + t('bannedToastReason') + ': ' + info.reason;
+    if (info.expiresAt) msg += '. ' + t('bannedToastUntil') + ' ' + formatBanUntil(info.expiresAt);
+    showToast(msg);
+  } catch (e) {}
+}
+
+const ONLINE_THRESHOLD_MS = 90000;
+function isOnline(f){
+  const ls = parseInt((f && f.lastSeen && f.lastSeen.integerValue) || '0', 10) || 0;
+  return ls > 0 && (Date.now() - ls) < ONLINE_THRESHOLD_MS;
+}
+
+async function updatePresence(){
+  if (!cloudReady()) return;
+  try {
+    await ensureAuth();
+    await fetch(cloudBase() + '/players/' + cloudCode + '?updateMask.fieldPaths=lastSeen&key=' + CLOUD.apiKey, {
+      method: 'PATCH',
+      headers: Object.assign({ 'Content-Type': 'application/json' }, authHeader()),
+      body: JSON.stringify({ fields: { lastSeen: { integerValue: String(Date.now()) } } })
+    });
+  } catch (e) {}
 }
 
 
@@ -4555,6 +4762,11 @@ function openProfile(code){
   }
 
   document.getElementById('profileNick').textContent = nick;
+  const onlineDotEl = document.getElementById('profileOnlineDot');
+  if (onlineDotEl){
+    onlineDotEl.classList.remove('hidden');
+    onlineDotEl.classList.toggle('isOnline', isOnline(f));
+  }
   const titleEl = document.getElementById('profileTitleLine');
   if (titleText){
     titleEl.textContent = titleText;
@@ -4663,9 +4875,10 @@ async function postProfileComment(){
   if (sendBtn) sendBtn.disabled = true;
   if (statusEl) statusEl.textContent = t('profileCommentSending');
   try {
+    await ensureAuth();
     const res = await fetch(cloudBase() + '/players/' + code + '/comments?key=' + CLOUD.apiKey, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: Object.assign({ 'Content-Type': 'application/json' }, authHeader()),
       body: JSON.stringify({
         fields: {
           author: { stringValue: authorName },
@@ -4717,8 +4930,14 @@ function renderChatMessages(list){
   }
   for (const m of list){
     const row = document.createElement('div');
-    row.className = 'chatMsgRow ' + (m.from === cloudCode ? 'own' : 'their');
-    row.textContent = m.text || '';
+    const isOwn = m.from === cloudCode;
+    row.className = 'chatMsgRow ' + (isOwn ? 'own' : 'their');
+    if (isOwn){
+      row.innerHTML = '<span class="chatMsgText">' + escapeHtml(m.text || '') + '</span>' +
+        '<span class="chatMsgTick' + (m.read ? ' isRead' : '') + '">' + (m.read ? '✓✓' : '✓') + '</span>';
+    } else {
+      row.textContent = m.text || '';
+    }
     box.appendChild(row);
   }
 }
@@ -4735,21 +4954,50 @@ async function fetchChatMessages(){
     const docs = (data && data.documents) || [];
     const list = docs.map(d => {
       const f = d.fields || {};
+      const path = d.name || '';
       return {
+        id: path.substring(path.lastIndexOf('/') + 1),
         from: (f.from && f.from.stringValue) || '',
         text: (f.text && f.text.stringValue) || '',
-        ts: parseInt((f.ts && f.ts.integerValue) || '0', 10) || 0
+        ts: parseInt((f.ts && f.ts.integerValue) || '0', 10) || 0,
+        read: !!(f.read && f.read.booleanValue)
       };
     });
-    if (chatWithCode === requestedWith) renderChatMessages(list);
+    if (chatWithCode === requestedWith){
+      renderChatMessages(list);
+      markIncomingRead(id, list);
+    }
   } catch (e) {
     if (chatWithCode === requestedWith) renderChatMessages([]);
   }
 }
 
+async function markIncomingRead(convId, list){
+  if (!cloudReady()) return;
+  const unread = (list || []).filter(m => m.id && m.from !== cloudCode && !m.read);
+  if (!unread.length) return;
+  try {
+    await ensureAuth();
+    await Promise.all(unread.map(m => fetch(
+      cloudBase() + '/conversations/' + convId + '/messages/' + m.id + '?updateMask.fieldPaths=read&key=' + CLOUD.apiKey,
+      {
+        method: 'PATCH',
+        headers: Object.assign({ 'Content-Type': 'application/json' }, authHeader()),
+        body: JSON.stringify({ fields: { read: { booleanValue: true } } })
+      }
+    )));
+  } catch (e) {}
+}
+
 function openChat(code, nick){
   chatWithCode = code;
   document.getElementById('chatWithNick').textContent = nick || '?';
+  const chatDotEl = document.getElementById('chatOnlineDot');
+  if (chatDotEl){
+    const f = lbFieldsByCode[code];
+    chatDotEl.classList.remove('hidden');
+    chatDotEl.classList.toggle('isOnline', !!f && isOnline(f));
+  }
   document.getElementById('chatModal').classList.remove('hidden');
   sfxPopupOpen();
   fetchChatMessages();
@@ -4870,15 +5118,17 @@ async function postChatMessage(){
   if (sendBtn) sendBtn.disabled = true;
   if (statusEl) statusEl.textContent = t('chatSending');
   try {
+    await ensureAuth();
     const res = await fetch(cloudBase() + '/conversations/' + id + '/messages?key=' + CLOUD.apiKey, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: Object.assign({ 'Content-Type': 'application/json' }, authHeader()),
       body: JSON.stringify({
         fields: {
           from: { stringValue: cloudCode },
           fromNick: { stringValue: nickname },
           text: { stringValue: text },
-          ts: { integerValue: String(Date.now()) }
+          ts: { integerValue: String(Date.now()) },
+          read: { booleanValue: false }
         }
       })
     });
@@ -4952,6 +5202,15 @@ let adminCurrentCode = null;
 let adminCurrentEquipped = null;
 if (adminMode) document.getElementById('adminTool').classList.remove('hidden');
 
+function updateAdminUidDisplay(){
+  const el = document.getElementById('adminUidValue');
+  if (!el) return;
+  ensureAuth().then(() => {
+    el.textContent = authUid || '…';
+  }).catch(() => {});
+}
+if (adminMode) updateAdminUidDisplay();
+
 
 let secretTaps = 0, secretTapTimer = null;
 document.getElementById('secretZone').addEventListener('click', () => {
@@ -4973,6 +5232,7 @@ document.getElementById('adminPinBtn').addEventListener('click', () => {
     localStorage.setItem('cabbitAdminMode', '1');
     document.getElementById('adminGate').classList.add('hidden');
     document.getElementById('adminTool').classList.remove('hidden');
+    updateAdminUidDisplay();
   } else {
     input.value = '';
     input.placeholder = 'Неверный PIN';
@@ -5002,8 +5262,8 @@ async function adminLoad(codeOverride){
     const f = doc.fields || {};
 
     adminCurrentCode = code;
-    
-    
+    adminCurrentOwnerUid = (f.ownerUid && f.ownerUid.stringValue) || '';
+    adminCurrentDeviceId = (f.deviceId && f.deviceId.stringValue) || '';
     adminCurrentEquipped = {
       hat:  (f.hat  && f.hat.stringValue)  || 'none',
       acc:  (f.acc  && f.acc.stringValue)  || 'none',
@@ -5028,9 +5288,101 @@ async function adminLoad(codeOverride){
 
     document.getElementById('adminPlayerBox').classList.remove('hidden');
     adminSetStatus('');
+    refreshAdminBanUI();
+    fetchBanInfo('bans', code).then((info) => {
+      if (adminCurrentCode !== code) return;
+      setAdminBanUI(!!info, info);
+    });
   } catch (e){
     adminSetStatus('Ошибка связи с облаком');
   }
+}
+
+let adminCurrentOwnerUid = '';
+let adminCurrentDeviceId = '';
+let adminCurrentBanned = false;
+
+function setAdminBanUI(banned, info){
+  adminCurrentBanned = !!banned;
+  const btn = document.getElementById('adminBanBtn');
+  const status = document.getElementById('adminBanStatus');
+  const reasonInput = document.getElementById('adminBanReasonInput');
+  const hoursInput = document.getElementById('adminBanHoursInput');
+  if (btn){
+    btn.textContent = adminCurrentBanned ? 'Разбанить' : 'Забанить по коду';
+    btn.classList.toggle('isBanned', adminCurrentBanned);
+  }
+  if (status){
+    if (adminCurrentBanned){
+      let line = 'Статус: забанен';
+      if (info && info.reason) line += ' — ' + info.reason;
+      if (info && info.expiresAt) line += ' (до ' + formatBanUntil(info.expiresAt) + ')';
+      status.textContent = line;
+    } else {
+      status.textContent = '';
+    }
+  }
+  if (reasonInput) reasonInput.value = (info && info.reason) || '';
+  if (hoursInput) hoursInput.value = '';
+}
+
+function refreshAdminBanUI(){
+  setAdminBanUI(false, null);
+}
+
+async function adminBanCode(){
+  if (!adminCurrentCode || !cloudReady()) return;
+  const code = adminCurrentCode;
+  const devId = adminCurrentDeviceId;
+  const useDevice = !!document.getElementById('adminBanDeviceCheck') && document.getElementById('adminBanDeviceCheck').checked;
+  try {
+    await ensureAuth();
+    if (adminCurrentBanned){
+      await fetch(cloudBase() + '/bans/' + code + '?key=' + CLOUD.apiKey, {
+        method: 'DELETE',
+        headers: authHeader()
+      });
+      if (devId){
+        await fetch(cloudBase() + '/deviceBans/' + devId + '?key=' + CLOUD.apiKey, {
+          method: 'DELETE',
+          headers: authHeader()
+        });
+      }
+      if (adminCurrentCode === code) setAdminBanUI(false, null);
+    } else {
+      const reasonInput = document.getElementById('adminBanReasonInput');
+      const hoursInput = document.getElementById('adminBanHoursInput');
+      const reason = (reasonInput && reasonInput.value || '').trim();
+      const hours = parseFloat(hoursInput && hoursInput.value) || 0;
+      const expiresAt = hours > 0 ? (Date.now() + hours * 3600000) : 0;
+      const banFields = {
+        bannedAt: { integerValue: String(Date.now()) },
+        expiresAt: { integerValue: String(expiresAt) },
+        reason: { stringValue: reason },
+        deviceId: { stringValue: devId || '' }
+      };
+      await fetch(cloudBase() + '/bans/' + code + '?key=' + CLOUD.apiKey, {
+        method: 'PATCH',
+        headers: Object.assign({ 'Content-Type': 'application/json' }, authHeader()),
+        body: JSON.stringify({ fields: banFields })
+      });
+      if (useDevice && devId){
+        await fetch(cloudBase() + '/deviceBans/' + devId + '?key=' + CLOUD.apiKey, {
+          method: 'PATCH',
+          headers: Object.assign({ 'Content-Type': 'application/json' }, authHeader()),
+          body: JSON.stringify({
+            fields: {
+              bannedAt: { integerValue: String(Date.now()) },
+              expiresAt: { integerValue: String(expiresAt) },
+              reason: { stringValue: reason },
+              code: { stringValue: code }
+            }
+          })
+        });
+      }
+      if (adminCurrentCode === code) setAdminBanUI(true, { reason: reason, expiresAt: expiresAt });
+    }
+  } catch (e) {}
 }
 
 function renderAdminItemsGrid(ownedSet){
@@ -5105,14 +5457,16 @@ async function adminSave(){
 
   adminSetStatus('Сохранение...');
   try {
+    await ensureAuth();
     const res = await fetch(cloudBase() + '/players/' + adminCurrentCode + '?key=' + CLOUD.apiKey, {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
+      headers: Object.assign({ 'Content-Type': 'application/json' }, authHeader()),
       body: JSON.stringify({
         fields: {
           nick:  { stringValue: nickMatch },
           coins: { integerValue: String(coinsVal) },
           best:  { integerValue: String(bestVal) },
+          ownerUid: { stringValue: adminCurrentOwnerUid || authUid || '' },
           owned: { arrayValue: { values: ownedList.map(v => ({ stringValue: v })) } },
           hat:   { stringValue: (adminCurrentEquipped && adminCurrentEquipped.hat)  || 'none' },
           acc:   { stringValue: (adminCurrentEquipped && adminCurrentEquipped.acc)  || 'none' },
@@ -5180,8 +5534,10 @@ async function adminDeleteAccount(){
   adminSetStatus('Удаление...');
   const deletedCode = adminCurrentCode;
   try {
+    await ensureAuth();
     const res = await fetch(cloudBase() + '/players/' + deletedCode + '?key=' + CLOUD.apiKey, {
-      method: 'DELETE'
+      method: 'DELETE',
+      headers: authHeader()
     });
     if (res.ok){
       document.getElementById('adminPlayerBox').classList.add('hidden');
@@ -5220,6 +5576,19 @@ async function adminDeleteAccount(){
 document.getElementById('adminLoadBtn').addEventListener('click', () => adminLoad());
 document.getElementById('adminSaveBtn').addEventListener('click', adminSave);
 if (adminDeleteBtnEl) adminDeleteBtnEl.addEventListener('click', adminDeleteAccount);
+
+const adminBanBtnEl = document.getElementById('adminBanBtn');
+if (adminBanBtnEl) adminBanBtnEl.addEventListener('click', adminBanCode);
+
+const adminUidCopyBtnEl = document.getElementById('adminUidCopyBtn');
+if (adminUidCopyBtnEl) adminUidCopyBtnEl.addEventListener('click', () => {
+  const el = document.getElementById('adminUidValue');
+  const val = (el && el.textContent) || '';
+  if (!val || val === '…') return;
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(val).then(() => showToast(t('cloudCopied'))).catch(() => {});
+  }
+});
 document.getElementById('wardrobeBack').addEventListener('click', closeWardrobe);
 document.getElementById('settingsBack').addEventListener('click', closeSettings);
 document.getElementById('retryBtn').addEventListener('click', startGame);
@@ -5444,7 +5813,14 @@ resetGame();
 camY = camTarget = 0;
 buildShop();
 applyStaticI18n();
-if (cloudReady()){ cloudFetchOwnTitle(); checkPendingGrant(); }
+if (cloudReady()){
+  ensureAuth().catch(() => {});
+  cloudFetchOwnTitle();
+  checkPendingGrant();
+  checkOwnBanStatus();
+  updatePresence();
+  setInterval(updatePresence, 45000);
+}
 
 if (nickname){
   state = STATE.MENU;
