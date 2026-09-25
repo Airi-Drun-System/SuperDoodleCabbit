@@ -631,8 +631,8 @@
       <div class="menuBtnWrap"><button id="settingsBtn" class="btn ghost" data-i18n="settings">Настройки</button></div>
     </div>
     <p class="hint rise d4" data-i18n="hint">Клавиши ← → или A / D, на телефоне — кнопки внизу. Тап по экрану: выстрел из лука или двойной прыжок. Встретил монстра — жми, пока идёт отсчёт!</p>
-    <a href="https://discord.gg/H6WcNMffZ" target="_blank" rel="noopener" class="btn ghost rise d4" style="text-decoration:none;">Discord</a>
-    <a href="https://t.me/CabbitJumpNews" target="_blank" rel="noopener" class="btn ghost rise d4" style="text-decoration:none;">Telegram</a>
+    <button id="discordBtn" class="btn ghost rise d4">Discord</button>
+    <button id="telegramBtn" class="btn ghost rise d4">Telegram</button>
     <div class="spacer"></div>
   </div>
 
@@ -864,6 +864,15 @@
       <button id="adminChoiceProfileBtn" class="btn" data-i18n="adminChoiceProfile">Профиль</button>
       <button id="adminChoicePanelBtn" class="btn ghost" data-i18n="adminChoicePanel">Админ панель</button>
       <button id="adminChoiceCancelBtn" class="btn ghost" data-i18n="adminChoiceCancel">Отмена</button>
+    </div>
+  </div>
+
+  <div id="linkChoiceModal" class="profileOverlay hidden">
+    <div class="adminChoiceCard">
+      <div id="linkChoiceTitle" class="adminChoiceNick"></div>
+      <button id="linkChoiceOpenBtn" class="btn" data-i18n="linkChoiceOpen">Открыть</button>
+      <button id="linkChoiceCopyBtn" class="btn ghost" data-i18n="linkChoiceCopy">Скопировать ссылку</button>
+      <button id="linkChoiceCancelBtn" class="btn ghost" data-i18n="adminChoiceCancel">Отмена</button>
     </div>
   </div>
 </div>
@@ -1099,6 +1108,8 @@ const I18N = {
     chatEmpty: 'Пока нет сообщений', chatSending: 'Отправка...', chatError: 'Не удалось отправить',
     chatTooLong: 'Слишком длинно (макс 200)', chatNeedNick: 'Придумайте ник в настройках',
     adminChoiceProfile: 'Профиль', adminChoicePanel: 'Админ панель', adminChoiceCancel: 'Отмена',
+    linkChoiceOpen: 'Открыть', linkChoiceCopy: 'Скопировать ссылку', linkCopied: 'Ссылка скопирована',
+    linkCopyFailed: 'Не удалось скопировать',
     on: 'вкл', off: 'выкл',
     hint: 'Клавиши ← → или A / D, на телефоне — кнопки внизу. Тап по экрану: выстрел из лука или двойной прыжок. Встретил монстра — жми, когда бегунок в жёлтой зоне по центру, для идеального удара!',
     slotHat: 'На голову', slotAcc: 'Аксессуары', slotTool: 'Инструмент', slotPerk: 'Слоты',
@@ -1161,6 +1172,8 @@ const I18N = {
     chatEmpty: 'No messages yet', chatSending: 'Sending...', chatError: 'Failed to send',
     chatTooLong: 'Too long (max 200)', chatNeedNick: 'Set a nickname in settings',
     adminChoiceProfile: 'Profile', adminChoicePanel: 'Admin panel', adminChoiceCancel: 'Cancel',
+    linkChoiceOpen: 'Open', linkChoiceCopy: 'Copy link', linkCopied: 'Link copied',
+    linkCopyFailed: 'Could not copy',
     on: 'on', off: 'off',
     hint: 'Arrow keys or A / D, on phone use the buttons below. Tap the screen to fire the bow or double jump. Met a monster? Tap when the marker is in the yellow center zone for a perfect hit!',
     slotHat: 'Headwear', slotAcc: 'Accessories', slotTool: 'Tool', slotPerk: 'Slots',
@@ -4785,6 +4798,51 @@ document.getElementById('adminChoicePanelBtn').addEventListener('click', () => {
 document.getElementById('adminChoiceCancelBtn').addEventListener('click', closeAdminChoice);
 document.getElementById('adminChoiceModal').addEventListener('click', (e) => {
   if (e.target && e.target.id === 'adminChoiceModal') closeAdminChoice();
+});
+
+const DISCORD_URL = 'https://discord.gg/H6WcNMffZ';
+const TELEGRAM_URL = 'https://t.me/CabbitJumpNews';
+let linkChoiceUrl = '';
+
+function openLinkChoice(url, title){
+  if (navigator.share){
+    navigator.share({ url: url, title: title || url }).catch(() => {});
+    return;
+  }
+  linkChoiceUrl = url;
+  document.getElementById('linkChoiceTitle').textContent = title || url;
+  document.getElementById('linkChoiceModal').classList.remove('hidden');
+  sfxPopupOpen();
+}
+function closeLinkChoice(){
+  document.getElementById('linkChoiceModal').classList.add('hidden');
+  sfxPopupClose();
+  linkChoiceUrl = '';
+}
+document.getElementById('discordBtn').addEventListener('click', () => openLinkChoice(DISCORD_URL, 'Discord'));
+document.getElementById('telegramBtn').addEventListener('click', () => openLinkChoice(TELEGRAM_URL, 'Telegram'));
+document.getElementById('linkChoiceOpenBtn').addEventListener('click', () => {
+  const url = linkChoiceUrl;
+  closeLinkChoice();
+  if (url) window.open(url, '_blank');
+});
+document.getElementById('linkChoiceCopyBtn').addEventListener('click', () => {
+  const url = linkChoiceUrl;
+  if (!url || !navigator.clipboard || !navigator.clipboard.writeText){
+    closeLinkChoice();
+    return;
+  }
+  navigator.clipboard.writeText(url).then(() => {
+    closeLinkChoice();
+    showToast(t('linkCopied'));
+  }).catch(() => {
+    closeLinkChoice();
+    showToast(t('linkCopyFailed'));
+  });
+});
+document.getElementById('linkChoiceCancelBtn').addEventListener('click', closeLinkChoice);
+document.getElementById('linkChoiceModal').addEventListener('click', (e) => {
+  if (e.target && e.target.id === 'linkChoiceModal') closeLinkChoice();
 });
 
 let chatBusy = false;
