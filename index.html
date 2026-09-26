@@ -1631,6 +1631,7 @@ const I18N = {
       'char:hero8':     { n: 'Котокролик №8',     d: 'Лимитированный — выдаётся только администрацией.' },
       'char:hero9':     { n: 'Котокролик №9',     d: 'Лимитированный — выдаётся только администрацией.' },
       'char:hero10':    { n: 'Котокролик №10',    d: 'Лимитированный — выдаётся только администрацией.' },
+      'char:hero11':    { n: 'Пёс №11',           d: 'Лимитированный, с анимацией — выдаётся только администрацией.' },
       'hat:starcrown':  { n: 'Звёздная корона',   d: 'Награда за 10 000 очков — не продаётся.' },
       'perk:multiacc':  { n: 'Второй предмет',    d: 'Можно надеть сразу два в шляпах и в аксессуарах.' },
       'hat:none': { n: 'Ничего', d: '' }, 'acc:none': { n: 'Ничего', d: '' },
@@ -1716,6 +1717,7 @@ const I18N = {
       'char:hero8':     { n: 'Cabbit #8',         d: 'Limited — granted by the admin only.' },
       'char:hero9':     { n: 'Cabbit #9',         d: 'Limited — granted by the admin only.' },
       'char:hero10':    { n: 'Cabbit #10',        d: 'Limited — granted by the admin only.' },
+      'char:hero11':    { n: 'Pup #11',           d: 'Limited, animated — granted by the admin only.' },
       'hat:starcrown':  { n: 'Star Crown',        d: 'A reward for 10,000 points — not for sale.' },
       'perk:multiacc':  { n: 'Second Item',       d: 'Wear two hats and two accessories at once.' },
       'hat:none': { n: 'None', d: '' }, 'acc:none': { n: 'None', d: '' },
@@ -1787,7 +1789,8 @@ const OUTFITS = {
     hero7:  { price: 0, locked: true, secret: true },
     hero8:  { price: 0, locked: true, secret: true },
     hero9:  { price: 0, locked: true, secret: true },
-    hero10: { price: 0, locked: true, secret: true }
+    hero10: { price: 0, locked: true, secret: true },
+    hero11: { price: 0, locked: true, secret: true }
   },
   perk: {
     none:     { price: 0 },
@@ -1896,7 +1899,146 @@ function loadCharImage(id){
   rec.img.src = id + '.png';
   charImgs[id] = rec;
 }
-for (const id of Object.keys(OUTFITS.char)) loadCharImage(id);
+const PUP_RIG = {"order":["legL","legR","torso","earL","earR","armL","armR","head","lids"],"parts":{"legL":{"box":[168,366,268,470],"pivot":[226,380],"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"168 366 100 104\" width=\"100\" height=\"104\"><defs><linearGradient id=\"pants\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#4a4a5c\"/><stop offset=\"1\" stop-color=\"#34343f\"/></linearGradient><pattern id=\"sockStripes\" patternUnits=\"userSpaceOnUse\" x=\"0\" y=\"0\" width=\"22\" height=\"512\" patternTransform=\"rotate(8)\"><rect width=\"22\" height=\"512\" fill=\"#b9bccb\"/><rect width=\"9\" height=\"512\" fill=\"#f1f1f6\"/></pattern></defs><g stroke=\"#2b2238\" stroke-width=\"9\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M204 378 L202 420 Q222 426 244 420 L248 378 Z\" fill=\"url(#pants)\"/><path d=\"M180 446 Q178 418 206 414 L232 414 Q256 418 256 442 Q256 458 218 458 Q180 458 180 446 Z\" fill=\"url(#sockStripes)\"/></g><g fill=\"none\" stroke=\"#2b2238\" stroke-width=\"4\" stroke-linecap=\"round\" opacity=\"0.5\"><path d=\"M206 444 L206 452\"/><path d=\"M228 444 L228 452\"/></g></svg>"},"legR":{"box":[244,366,344,470],"pivot":[286,380],"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"244 366 100 104\" width=\"100\" height=\"104\"><defs><linearGradient id=\"pants\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#4a4a5c\"/><stop offset=\"1\" stop-color=\"#34343f\"/></linearGradient><pattern id=\"sockStripes\" patternUnits=\"userSpaceOnUse\" x=\"0\" y=\"0\" width=\"22\" height=\"512\" patternTransform=\"rotate(8)\"><rect width=\"22\" height=\"512\" fill=\"#b9bccb\"/><rect width=\"9\" height=\"512\" fill=\"#f1f1f6\"/></pattern></defs><g transform=\"translate(512 0) scale(-1 1)\"><g stroke=\"#2b2238\" stroke-width=\"9\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M204 378 L202 420 Q222 426 244 420 L248 378 Z\" fill=\"url(#pants)\"/><path d=\"M180 446 Q178 418 206 414 L232 414 Q256 418 256 442 Q256 458 218 458 Q180 458 180 446 Z\" fill=\"url(#sockStripes)\"/></g><g fill=\"none\" stroke=\"#2b2238\" stroke-width=\"4\" stroke-linecap=\"round\" opacity=\"0.5\"><path d=\"M206 444 L206 452\"/><path d=\"M228 444 L228 452\"/></g></g></svg>"},"torso":{"box":[144,274,368,398],"pivot":[0,0],"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"144 274 224 124\" width=\"224\" height=\"124\"><defs><linearGradient id=\"shade\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#000\" stop-opacity=\"0\"/><stop offset=\"1\" stop-color=\"#1a1530\" stop-opacity=\"0.28\"/></linearGradient><pattern id=\"stripes\" patternUnits=\"userSpaceOnUse\" x=\"0\" y=\"296\" width=\"40\" height=\"38\"><rect width=\"40\" height=\"38\" fill=\"#ecebf2\"/><rect width=\"40\" height=\"19\" fill=\"#565b72\"/></pattern></defs><g stroke=\"#2b2238\" stroke-width=\"9\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M170 298 Q256 282 342 298 Q360 336 356 366 Q354 384 338 386 L174 386 Q158 384 156 366 Q152 336 170 298 Z\" fill=\"url(#stripes)\"/><path d=\"M170 298 Q256 282 342 298 Q360 336 356 366 Q354 384 338 386 L174 386 Q158 384 156 366 Q152 336 170 298 Z\" fill=\"url(#shade)\" stroke=\"none\"/><path d=\"M170 298 Q256 282 342 298 Q360 336 356 366 Q354 384 338 386 L174 386 Q158 384 156 366 Q152 336 170 298 Z\" fill=\"none\"/></g></svg>"},"armL":{"box":[100,290,200,414],"pivot":[180,316],"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"100 290 100 124\" width=\"100\" height=\"124\"><defs><linearGradient id=\"paw\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#e3a549\"/><stop offset=\"1\" stop-color=\"#bb7f2e\"/></linearGradient><pattern id=\"stripes\" patternUnits=\"userSpaceOnUse\" x=\"0\" y=\"296\" width=\"40\" height=\"38\"><rect width=\"40\" height=\"38\" fill=\"#ecebf2\"/><rect width=\"40\" height=\"19\" fill=\"#565b72\"/></pattern></defs><g stroke=\"#2b2238\" stroke-width=\"9\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M178 304 Q144 318 130 356 L126 372 L158 378 L162 362 Q168 344 186 334 Z\" fill=\"url(#stripes)\"/><ellipse cx=\"140\" cy=\"386\" rx=\"22\" ry=\"19\" fill=\"url(#paw)\"/></g><g fill=\"none\" stroke=\"#2b2238\" stroke-width=\"4\" stroke-linecap=\"round\" opacity=\"0.55\"><path d=\"M134 379 L134 393\"/><path d=\"M146 379 L146 393\"/></g></svg>"},"armR":{"box":[312,290,412,414],"pivot":[332,316],"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"312 290 100 124\" width=\"100\" height=\"124\"><defs><linearGradient id=\"paw\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#e3a549\"/><stop offset=\"1\" stop-color=\"#bb7f2e\"/></linearGradient><pattern id=\"stripes\" patternUnits=\"userSpaceOnUse\" x=\"0\" y=\"296\" width=\"40\" height=\"38\"><rect width=\"40\" height=\"38\" fill=\"#ecebf2\"/><rect width=\"40\" height=\"19\" fill=\"#565b72\"/></pattern></defs><g transform=\"translate(512 0) scale(-1 1)\"><g stroke=\"#2b2238\" stroke-width=\"9\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M178 304 Q144 318 130 356 L126 372 L158 378 L162 362 Q168 344 186 334 Z\" fill=\"url(#stripes)\"/><ellipse cx=\"140\" cy=\"386\" rx=\"22\" ry=\"19\" fill=\"url(#paw)\"/></g><g fill=\"none\" stroke=\"#2b2238\" stroke-width=\"4\" stroke-linecap=\"round\" opacity=\"0.55\"><path d=\"M134 379 L134 393\"/><path d=\"M146 379 L146 393\"/></g></g></svg>"},"earL":{"box":[72,92,190,326],"pivot":[160,122],"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"72 92 118 234\" width=\"118\" height=\"234\"><defs><linearGradient id=\"earOut\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#d9983c\"/><stop offset=\"1\" stop-color=\"#b37628\"/></linearGradient><linearGradient id=\"earIn\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#e9ddcc\"/><stop offset=\"1\" stop-color=\"#f6efe4\"/></linearGradient></defs><g stroke=\"#2b2238\" stroke-width=\"9\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M160 112 Q110 100 92 150 Q72 212 96 290 Q106 318 128 306 Q146 290 146 250 Q150 190 178 140 Z\" fill=\"url(#earOut)\"/></g><path d=\"M150 128 Q116 128 106 168 Q94 222 112 282 Q120 296 128 286 Q136 270 136 240 Q140 186 162 146 Z\" fill=\"url(#earIn)\"/></svg>"},"earR":{"box":[322,92,440,326],"pivot":[352,122],"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"322 92 118 234\" width=\"118\" height=\"234\"><defs><linearGradient id=\"earOut\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#d9983c\"/><stop offset=\"1\" stop-color=\"#b37628\"/></linearGradient><linearGradient id=\"earIn\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#e9ddcc\"/><stop offset=\"1\" stop-color=\"#f6efe4\"/></linearGradient></defs><g transform=\"translate(512 0) scale(-1 1)\"><g stroke=\"#2b2238\" stroke-width=\"9\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M160 112 Q110 100 92 150 Q72 212 96 290 Q106 318 128 306 Q146 290 146 250 Q150 190 178 140 Z\" fill=\"url(#earOut)\"/></g><path d=\"M150 128 Q116 128 106 168 Q94 222 112 282 Q120 296 128 286 Q136 270 136 240 Q140 186 162 146 Z\" fill=\"url(#earIn)\"/></g></svg>"},"head":{"box":[124,68,388,316],"pivot":[256,300],"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"124 68 264 248\" width=\"264\" height=\"248\"><defs><radialGradient id=\"fur\" cx=\"45%\" cy=\"30%\" r=\"75%\"><stop offset=\"0\" stop-color=\"#f0b858\"/><stop offset=\"0.6\" stop-color=\"#d8993c\"/><stop offset=\"1\" stop-color=\"#b0752a\"/></radialGradient><linearGradient id=\"blaze\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#fbf6ee\"/><stop offset=\"1\" stop-color=\"#ece0cd\"/></linearGradient><radialGradient id=\"muzzle\" cx=\"50%\" cy=\"35%\" r=\"70%\"><stop offset=\"0\" stop-color=\"#f3dcb4\"/><stop offset=\"1\" stop-color=\"#dcb57c\"/></radialGradient><radialGradient id=\"nose\" cx=\"40%\" cy=\"30%\" r=\"75%\"><stop offset=\"0\" stop-color=\"#5a5468\"/><stop offset=\"0.5\" stop-color=\"#2f2a3a\"/><stop offset=\"1\" stop-color=\"#1c1824\"/></radialGradient><radialGradient id=\"iris\" cx=\"50%\" cy=\"60%\" r=\"55%\"><stop offset=\"0\" stop-color=\"#b07a4a\"/><stop offset=\"0.7\" stop-color=\"#7a4a26\"/><stop offset=\"1\" stop-color=\"#4e2c14\"/></radialGradient></defs><path d=\"M256 76 C340 74 382 130 380 196 C378 262 330 306 256 306 C182 306 134 262 132 196 C130 130 172 78 256 76 Z\" fill=\"url(#fur)\"/><path d=\"M226 80 C236 77 276 77 286 80 C294 120 290 160 300 200 L212 200 C222 160 218 120 226 80 Z\" fill=\"url(#blaze)\"/><path d=\"M256 196 C312 194 336 226 334 256 C332 290 298 304 256 304 C214 304 180 290 178 256 C176 226 200 194 256 196 Z\" fill=\"url(#muzzle)\" stroke=\"#2b2238\" stroke-width=\"6\" stroke-opacity=\"0.35\"/><path d=\"M256 76 C340 74 382 130 380 196 C378 262 330 306 256 306 C182 306 134 262 132 196 C130 130 172 78 256 76 Z\" fill=\"none\" stroke=\"#2b2238\" stroke-width=\"9\"/><ellipse cx=\"208\" cy=\"176\" rx=\"25\" ry=\"28\" fill=\"#fdfbf7\" stroke=\"#2b2238\" stroke-width=\"6\"/><ellipse cx=\"304\" cy=\"176\" rx=\"25\" ry=\"28\" fill=\"#fdfbf7\" stroke=\"#2b2238\" stroke-width=\"6\"/><circle cx=\"211\" cy=\"180\" r=\"16\" fill=\"url(#iris)\"/><circle cx=\"301\" cy=\"180\" r=\"16\" fill=\"url(#iris)\"/><circle cx=\"211\" cy=\"181\" r=\"8.5\" fill=\"#1c1824\"/><circle cx=\"301\" cy=\"181\" r=\"8.5\" fill=\"#1c1824\"/><circle cx=\"205\" cy=\"172\" r=\"6\" fill=\"#fff\"/><circle cx=\"295\" cy=\"172\" r=\"6\" fill=\"#fff\"/><circle cx=\"217\" cy=\"189\" r=\"2.8\" fill=\"#fff\"/><circle cx=\"307\" cy=\"189\" r=\"2.8\" fill=\"#fff\"/><g fill=\"none\" stroke=\"#2b2238\" stroke-width=\"7\" stroke-linecap=\"round\"><path d=\"M188 136 Q200 128 214 134\"/><path d=\"M324 136 Q312 128 298 134\"/></g><path d=\"M256 214 C279 213 290 222 289 236 C288 252 272 265 256 265 C240 265 224 252 223 236 C222 222 233 213 256 214 Z\" fill=\"url(#nose)\" stroke=\"#2b2238\" stroke-width=\"6\"/><ellipse cx=\"245\" cy=\"225\" rx=\"10\" ry=\"5\" fill=\"#fff\" opacity=\"0.35\"/><g fill=\"none\" stroke=\"#2b2238\" stroke-width=\"6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M256 265 L256 280\"/><path d=\"M226 278 Q240 292 256 280 Q272 292 286 278\"/></g><g fill=\"#8a5a2a\" opacity=\"0.7\"><circle cx=\"206\" cy=\"262\" r=\"3.2\"/><circle cx=\"196\" cy=\"274\" r=\"3.2\"/><circle cx=\"214\" cy=\"278\" r=\"3.2\"/><circle cx=\"306\" cy=\"262\" r=\"3.2\"/><circle cx=\"316\" cy=\"274\" r=\"3.2\"/><circle cx=\"298\" cy=\"278\" r=\"3.2\"/></g></svg>"},"lids":{"box":[172,140,340,212],"pivot":[0,0],"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"172 140 168 72\" width=\"168\" height=\"72\"><defs></defs><g stroke=\"#2b2238\" stroke-width=\"6\"><ellipse cx=\"208\" cy=\"176\" rx=\"28\" ry=\"31\" fill=\"#dea449\"/><ellipse cx=\"304\" cy=\"176\" rx=\"28\" ry=\"31\" fill=\"#dea449\"/></g><g fill=\"none\" stroke=\"#2b2238\" stroke-width=\"6\" stroke-linecap=\"round\"><path d=\"M188 180 Q208 194 228 180\"/><path d=\"M284 180 Q304 194 324 180\"/></g></svg>"}}};
+const RIG_CHARS = { hero11: PUP_RIG };
+const RIG_OY = 36;
+const RIG_HI = 1;
+const RIG_LO = SPRITE_MAX_PX / 512;
+
+function rasterRigPart(img, part, k){
+  const b = part.box;
+  const w = Math.max(1, Math.round((b[2] - b[0]) * k));
+  const h = Math.max(1, Math.round((b[3] - b[1]) * k));
+  try {
+    const c = document.createElement('canvas');
+    c.width = w; c.height = h;
+    const g = c.getContext('2d');
+    g.imageSmoothingEnabled = true;
+    g.imageSmoothingQuality = 'high';
+    g.drawImage(img, 0, 0, w, h);
+    return c;
+  } catch (e) { return img; }
+}
+
+function loadRigChar(id){
+  const def = RIG_CHARS[id];
+  const rec = { rig: def, ready: false, hi: {}, lo: {}, left: def.order.length };
+  charImgs[id] = rec;
+  def.order.forEach((name) => {
+    const part = def.parts[name];
+    const img = new Image();
+    img.onload = () => {
+      rec.hi[name] = rasterRigPart(img, part, RIG_HI);
+      rec.lo[name] = rasterRigPart(img, part, RIG_LO);
+      rec.left--;
+      if (rec.left <= 0) rec.ready = true;
+    };
+    img.onerror = () => { rec.ready = false; };
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(part.svg);
+  });
+}
+
+for (const id of Object.keys(OUTFITS.char)){
+  if (RIG_CHARS[id]) loadRigChar(id);
+  else loadCharImage(id);
+}
+
+const rigLive = { armL: 0.9, armR: -0.9, legL: 0, legR: 0, earL: 0, earR: 0, head: 0, tuck: 0, blink: 0 };
+let rigLiveT = 0;
+let rigDrawPose = null;
+
+function rigBlinkAt(now){
+  return (now % 3.7) < 0.13 ? 1 : 0;
+}
+
+function rigIdlePose(){
+  const now = performance.now() / 1000;
+  const sway = Math.sin(now * 1.7 + 0.8) * 0.12;
+  return {
+    armL: 0.12 + Math.sin(now * 1.7) * 0.08,
+    armR: -(0.12 + Math.sin(now * 1.7 + 0.5) * 0.08),
+    legL: 0, legR: 0,
+    earL: sway, earR: -sway,
+    head: Math.sin(now * 0.9) * 0.03,
+    tuck: 0,
+    blink: rigBlinkAt(now)
+  };
+}
+
+function updateRigPose(){
+  const now = performance.now() / 1000;
+  const dt = rigLiveT ? Math.min(0.05, Math.max(0, now - rigLiveT)) : 0.016;
+  rigLiveT = now;
+  const u = clamp(hero.vy / -JUMP_V, -1, 1);
+  const rise = Math.max(0, -u), fall = Math.max(0, u);
+  const arm = 0.9 + rise * 1.0 + fall * 0.5 + Math.sin(now * 17) * 0.35 * fall;
+  const holding = outfit.tool !== 'none' && isOwned('tool', outfit.tool);
+  const armR = holding ? -(0.2 + 0.25 * rise + 0.1 * fall) : -arm;
+  const ear = -0.3 * rise + 1.3 * fall + Math.sin(now * 21) * 0.22 * fall;
+  const kick = Math.sin(now * 13) * 0.3 * fall;
+  const k = 1 - Math.exp(-dt * 16);
+  const R = rigLive;
+  R.armL += (arm - R.armL) * k;
+  R.armR += (armR - R.armR) * k;
+  R.earL += (ear - R.earL) * k;
+  R.earR += (-ear - R.earR) * k;
+  R.legL += (0.14 * rise + 0.08 * fall + kick - R.legL) * k;
+  R.legR += (-0.14 * rise - 0.08 * fall + kick - R.legR) * k;
+  R.tuck += (rise - R.tuck) * k;
+  R.head += (Math.sin(now * 9) * 0.05 * fall - R.head) * k;
+  R.blink = rigBlinkAt(now);
+}
+
+function rigPoseKey(){
+  const R = rigLive;
+  return [Math.round(R.armL * 5), Math.round(R.armR * 5), Math.round(R.earL * 5), Math.round(R.legL * 8), Math.round(R.legR * 8), Math.round(R.tuck * 4)].join(',');
+}
+
+function paintRig(c, w, h, rec, pose){
+  const def = rec.rig;
+  const set = c === ctx ? rec.lo : rec.hi;
+  const s = w / 512;
+  for (const name of def.order){
+    if (name === 'lids' && !pose.blink) continue;
+    const part = def.parts[name];
+    const cv = set[name];
+    if (!cv) continue;
+    const b = part.box;
+    const x0 = (b[0] - 256) * s, y0 = (b[1] - 256 + RIG_OY) * s;
+    const bw = (b[2] - b[0]) * s, bh = (b[3] - b[1]) * s;
+    const ang = pose[name] || 0;
+    const sy = (name === 'legL' || name === 'legR') ? 1 - 0.2 * (pose.tuck || 0) : 1;
+    if (!ang && sy === 1){ c.drawImage(cv, x0, y0, bw, bh); continue; }
+    const px = (part.pivot[0] - 256) * s, py = (part.pivot[1] - 256 + RIG_OY) * s;
+    c.save();
+    c.translate(px, py);
+    c.rotate(ang);
+    if (sy !== 1) c.scale(1, sy);
+    c.translate(-px, -py);
+    c.drawImage(cv, x0, y0, bw, bh);
+    c.restore();
+  }
+}
+
+function rigCharActive(){
+  const rec = charImgs[outfit.char];
+  return !!(rec && rec.rig && rec.ready);
+}
+
+function paintToolRigged(c, w, h, kind, A, phase){
+  const rec = charImgs[outfit.char];
+  if (!(rec && rec.rig && rec.ready && rigDrawPose)){ paintTool(c, w, h, kind, A, phase); return; }
+  const piv = rec.rig.parts.armR.pivot;
+  const s = w / 512;
+  const px = (piv[0] - 256) * s, py = (piv[1] - 256 + RIG_OY) * s;
+  c.save();
+  c.translate(px, py);
+  c.rotate(rigDrawPose.armR || 0);
+  c.translate(-px, -py);
+  paintTool(c, w, h, kind, A, phase);
+  c.restore();
+}
+
 const currentCharReady = () => !!(charImgs[outfit.char] && charImgs[outfit.char].ready);
 
 
@@ -1912,7 +2054,8 @@ const ANCHOR_SPRITE = { topY: -0.345, cx: 0.015, hw: 0.235, eyeY: -0.155, eyeDX:
 const ANCHOR_VECTOR = { topY: -0.400, cx: 0.000, hw: 0.290, eyeY: -0.040, eyeDX: 0.150, neckY: 0.330, handX: 0.21, handY: 0.38 };
 
 const CHAR_ANCHORS = {
-  hero2: { topY: -0.46, cx: 0.0, hw: 0.30, eyeY: -0.30, eyeDX: 0.10, neckY: 0.10, handX: 0.18, handY: 0.15 }
+  hero2: { topY: -0.46, cx: 0.0, hw: 0.30, eyeY: -0.30, eyeDX: 0.10, neckY: 0.10, handX: 0.18, handY: 0.15 },
+  hero11: { topY: -0.285, cx: 0.0, hw: 0.235, eyeY: -0.086, eyeDX: 0.094, neckY: 0.15, handX: 0.23, handY: 0.325 }
 };
 const anchors = () => {
   if (!currentCharReady()) return ANCHOR_VECTOR;
@@ -4183,7 +4326,8 @@ function paintCabbitVector(c, w, h, ear){
 
 function paintHeroBody(c, w, h, ear){
   const rec = charImgs[outfit.char];
-  if (rec && rec.ready) c.drawImage(rec.draw || rec.img, -w / 2, -h / 2, w, h);
+  if (rec && rec.ready && rec.rig) paintRig(c, w, h, rec, rigDrawPose || rigIdlePose());
+  else if (rec && rec.ready) c.drawImage(rec.draw || rec.img, -w / 2, -h / 2, w, h);
   else paintCabbitVector(c, w, h, ear);
 }
 
@@ -4194,6 +4338,7 @@ function drawHero(x, y, sx, sy, tilt, face, alpha, ear, phase){
   ctx.translate(x, y);
   ctx.rotate(tilt);
   ctx.scale(face * sx, sy);
+  rigDrawPose = rigLive;
   paintHeroBody(ctx, hero.w, hero.h, ear);
   paintAccessory(ctx, hero.w, hero.h, outfit.acc, A);
   if (outfit.acc2 !== 'none' && isOwned('perk', 'multiacc')) paintAccessory(ctx, hero.w, hero.h, outfit.acc2, A);
@@ -4205,7 +4350,8 @@ function drawHero(x, y, sx, sy, tilt, face, alpha, ear, phase){
     paintHat(ctx, hero.w, hero.h, outfit.hat2, A);
     ctx.restore();
   }
-  paintTool(ctx, hero.w, hero.h, outfit.tool, A, phase);
+  paintToolRigged(ctx, hero.w, hero.h, outfit.tool, A, phase);
+  rigDrawPose = null;
   ctx.restore();
 }
 
@@ -4219,7 +4365,7 @@ let heroShadowKey = '';
 function heroShadowKeyNow(){
   const multi = isOwned('perk', 'multiacc');
   return [outfit.char, currentCharReady() ? 1 : 0, outfit.hat, outfit.acc, outfit.tool,
-    multi ? outfit.hat2 : '', multi ? outfit.acc2 : '', maceReady ? 1 : 0].join('|');
+    multi ? outfit.hat2 : '', multi ? outfit.acc2 : '', maceReady ? 1 : 0, rigCharActive() ? rigPoseKey() : ''].join('|');
 }
 
 function getHeroShadowCanvas(){
@@ -4236,6 +4382,7 @@ function getHeroShadowCanvas(){
   const k = size / (hero.w * HERO_SHADOW_SCALE);
   g.scale(k, k);
   const A = anchors();
+  rigDrawPose = rigLive;
   paintHeroBody(g, hero.w, hero.h, 0);
   paintAccessory(g, hero.w, hero.h, outfit.acc, A);
   const multi = isOwned('perk', 'multiacc');
@@ -4248,7 +4395,8 @@ function getHeroShadowCanvas(){
     paintHat(g, hero.w, hero.h, outfit.hat2, A);
     g.restore();
   }
-  paintTool(g, hero.w, hero.h, outfit.tool, A, 0);
+  paintToolRigged(g, hero.w, hero.h, outfit.tool, A, 0);
+  rigDrawPose = null;
   g.restore();
   g.globalCompositeOperation = 'source-in';
   g.fillStyle = '#000';
@@ -4280,6 +4428,7 @@ function drawHeroShadow(x, y, sx, sy, tilt, face){
 }
 
 function drawHeroWithWrap(){
+  if (rigCharActive() && (state === STATE.PLAY || state === STATE.DYING)) updateRigPose();
   if (deathPortal){ drawDyingHero(); return; }
   const y = hero.y - camY;
   const phase = performance.now() / 1000;
