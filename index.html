@@ -651,6 +651,8 @@
   }
   #overTitle{font-size:24px;font-weight:700;opacity:.92;}
   #bestLine{font-size:16px;opacity:.75;}
+  #rankLine{font-size:16px;color:var(--gold);min-height:20px;margin-top:-4px;}
+  #rankLine:empty{display:none;}
   #coinLine{font-size:16px;color:var(--gold);font-weight:700;}
   .newbest{
     background:linear-gradient(90deg,var(--rose),var(--peach));
@@ -1063,6 +1065,7 @@
     <div id="finalScore">0</div>
     <p id="coinLine"></p>
     <p id="bestLine">Рекорд: 0</p>
+    <p id="rankLine"></p>
     <div class="btnRow">
       <button id="retryBtn" class="btn" data-i18n="retry">Повторить</button>
       <button id="menuBtn" class="btn ghost" data-i18n="toMenu">В меню</button>
@@ -1193,7 +1196,7 @@ function resize(){
   cssH = window.innerHeight || cssH || VH;
   if (!(cssW > 0)) cssW = VW;
   if (!(cssH > 0)) cssH = VH;
-  DPR  = lowGfx() ? 1 : Math.min(window.devicePixelRatio || 1, 2);
+  DPR  = lowGfx() ? 1 : Math.min(window.devicePixelRatio || 1, gfxMode === 'auto' ? 2 : 3);
   cvs.width  = Math.round(cssW * DPR);
   cvs.height = Math.round(cssH * DPR);
   blurCvs.width  = lowGfx() ? 1 : cvs.width;
@@ -1591,7 +1594,7 @@ const I18N = {
     rotateMsg: 'Переверни телефон вертикально',
     leaderboard: 'Таблица лидеров', empty: '—', wardrobe: 'Гардероб',
     overTitleNormal: 'Котокролик приземлился', overTitleRecord: 'Новый рекорд',
-    overCoins: 'собрано монет', overRecordLabel: 'Рекорд', overNewBest: 'выше не прыгал никто',
+    overCoins: 'собрано монет', overRecordLabel: 'Рекорд', overNewBest: 'новый личный рекорд', overRank: 'место в рейтинге', overTop1: 'выше не прыгал никто',
     retry: 'Повторить', toMenu: 'В меню', scoreWord: 'рекорд',
     cloudTitle: 'Онлайн-профиль', cloudCopy: 'Копировать', cloudRestore: 'Восстановить',
     cloudEnterCode: 'КОД', cloudTop: 'Рейтинг игроков', cloudRefresh: 'Обновить рейтинг',
@@ -1677,7 +1680,7 @@ const I18N = {
     rotateMsg: 'Please rotate your phone back to portrait',
     leaderboard: 'Leaderboard', empty: '—', wardrobe: 'Wardrobe',
     overTitleNormal: 'The cabbit has landed', overTitleRecord: 'New record',
-    overCoins: 'coins collected', overRecordLabel: 'Best', overNewBest: 'nobody jumped higher',
+    overCoins: 'coins collected', overRecordLabel: 'Best', overNewBest: 'new personal best', overRank: 'leaderboard place', overTop1: 'nobody jumped higher',
     retry: 'Retry', toMenu: 'Menu', scoreWord: 'best',
     cloudTitle: 'Online profile', cloudCopy: 'Copy', cloudRestore: 'Restore',
     cloudEnterCode: 'CODE', cloudTop: 'Leaderboard', cloudRefresh: 'Refresh ranking',
@@ -1899,7 +1902,7 @@ function loadCharImage(id){
   rec.img.src = id + '.png';
   charImgs[id] = rec;
 }
-const PUP_RIG = {"order":["legL","legR","torso","earL","earR","armL","armR","head","lids"],"parts":{"legL":{"box":[168,366,268,470],"pivot":[226,380],"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"168 366 100 104\" width=\"100\" height=\"104\"><defs><linearGradient id=\"pants\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#4a4a5c\"/><stop offset=\"1\" stop-color=\"#34343f\"/></linearGradient><pattern id=\"sockStripes\" patternUnits=\"userSpaceOnUse\" x=\"0\" y=\"0\" width=\"22\" height=\"512\" patternTransform=\"rotate(8)\"><rect width=\"22\" height=\"512\" fill=\"#b9bccb\"/><rect width=\"9\" height=\"512\" fill=\"#f1f1f6\"/></pattern></defs><g stroke=\"#2b2238\" stroke-width=\"9\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M204 378 L202 420 Q222 426 244 420 L248 378 Z\" fill=\"url(#pants)\"/><path d=\"M180 446 Q178 418 206 414 L232 414 Q256 418 256 442 Q256 458 218 458 Q180 458 180 446 Z\" fill=\"url(#sockStripes)\"/></g><g fill=\"none\" stroke=\"#2b2238\" stroke-width=\"4\" stroke-linecap=\"round\" opacity=\"0.5\"><path d=\"M206 444 L206 452\"/><path d=\"M228 444 L228 452\"/></g></svg>"},"legR":{"box":[244,366,344,470],"pivot":[286,380],"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"244 366 100 104\" width=\"100\" height=\"104\"><defs><linearGradient id=\"pants\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#4a4a5c\"/><stop offset=\"1\" stop-color=\"#34343f\"/></linearGradient><pattern id=\"sockStripes\" patternUnits=\"userSpaceOnUse\" x=\"0\" y=\"0\" width=\"22\" height=\"512\" patternTransform=\"rotate(8)\"><rect width=\"22\" height=\"512\" fill=\"#b9bccb\"/><rect width=\"9\" height=\"512\" fill=\"#f1f1f6\"/></pattern></defs><g transform=\"translate(512 0) scale(-1 1)\"><g stroke=\"#2b2238\" stroke-width=\"9\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M204 378 L202 420 Q222 426 244 420 L248 378 Z\" fill=\"url(#pants)\"/><path d=\"M180 446 Q178 418 206 414 L232 414 Q256 418 256 442 Q256 458 218 458 Q180 458 180 446 Z\" fill=\"url(#sockStripes)\"/></g><g fill=\"none\" stroke=\"#2b2238\" stroke-width=\"4\" stroke-linecap=\"round\" opacity=\"0.5\"><path d=\"M206 444 L206 452\"/><path d=\"M228 444 L228 452\"/></g></g></svg>"},"torso":{"box":[144,274,368,398],"pivot":[0,0],"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"144 274 224 124\" width=\"224\" height=\"124\"><defs><linearGradient id=\"shade\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#000\" stop-opacity=\"0\"/><stop offset=\"1\" stop-color=\"#1a1530\" stop-opacity=\"0.28\"/></linearGradient><pattern id=\"stripes\" patternUnits=\"userSpaceOnUse\" x=\"0\" y=\"296\" width=\"40\" height=\"38\"><rect width=\"40\" height=\"38\" fill=\"#ecebf2\"/><rect width=\"40\" height=\"19\" fill=\"#565b72\"/></pattern></defs><g stroke=\"#2b2238\" stroke-width=\"9\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M170 298 Q256 282 342 298 Q360 336 356 366 Q354 384 338 386 L174 386 Q158 384 156 366 Q152 336 170 298 Z\" fill=\"url(#stripes)\"/><path d=\"M170 298 Q256 282 342 298 Q360 336 356 366 Q354 384 338 386 L174 386 Q158 384 156 366 Q152 336 170 298 Z\" fill=\"url(#shade)\" stroke=\"none\"/><path d=\"M170 298 Q256 282 342 298 Q360 336 356 366 Q354 384 338 386 L174 386 Q158 384 156 366 Q152 336 170 298 Z\" fill=\"none\"/></g></svg>"},"armL":{"box":[100,290,200,414],"pivot":[180,316],"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"100 290 100 124\" width=\"100\" height=\"124\"><defs><linearGradient id=\"paw\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#e3a549\"/><stop offset=\"1\" stop-color=\"#bb7f2e\"/></linearGradient><pattern id=\"stripes\" patternUnits=\"userSpaceOnUse\" x=\"0\" y=\"296\" width=\"40\" height=\"38\"><rect width=\"40\" height=\"38\" fill=\"#ecebf2\"/><rect width=\"40\" height=\"19\" fill=\"#565b72\"/></pattern></defs><g stroke=\"#2b2238\" stroke-width=\"9\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M178 304 Q144 318 130 356 L126 372 L158 378 L162 362 Q168 344 186 334 Z\" fill=\"url(#stripes)\"/><ellipse cx=\"140\" cy=\"386\" rx=\"22\" ry=\"19\" fill=\"url(#paw)\"/></g><g fill=\"none\" stroke=\"#2b2238\" stroke-width=\"4\" stroke-linecap=\"round\" opacity=\"0.55\"><path d=\"M134 379 L134 393\"/><path d=\"M146 379 L146 393\"/></g></svg>"},"armR":{"box":[312,290,412,414],"pivot":[332,316],"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"312 290 100 124\" width=\"100\" height=\"124\"><defs><linearGradient id=\"paw\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#e3a549\"/><stop offset=\"1\" stop-color=\"#bb7f2e\"/></linearGradient><pattern id=\"stripes\" patternUnits=\"userSpaceOnUse\" x=\"0\" y=\"296\" width=\"40\" height=\"38\"><rect width=\"40\" height=\"38\" fill=\"#ecebf2\"/><rect width=\"40\" height=\"19\" fill=\"#565b72\"/></pattern></defs><g transform=\"translate(512 0) scale(-1 1)\"><g stroke=\"#2b2238\" stroke-width=\"9\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M178 304 Q144 318 130 356 L126 372 L158 378 L162 362 Q168 344 186 334 Z\" fill=\"url(#stripes)\"/><ellipse cx=\"140\" cy=\"386\" rx=\"22\" ry=\"19\" fill=\"url(#paw)\"/></g><g fill=\"none\" stroke=\"#2b2238\" stroke-width=\"4\" stroke-linecap=\"round\" opacity=\"0.55\"><path d=\"M134 379 L134 393\"/><path d=\"M146 379 L146 393\"/></g></g></svg>"},"earL":{"box":[72,92,190,326],"pivot":[160,122],"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"72 92 118 234\" width=\"118\" height=\"234\"><defs><linearGradient id=\"earOut\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#d9983c\"/><stop offset=\"1\" stop-color=\"#b37628\"/></linearGradient><linearGradient id=\"earIn\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#e9ddcc\"/><stop offset=\"1\" stop-color=\"#f6efe4\"/></linearGradient></defs><g stroke=\"#2b2238\" stroke-width=\"9\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M160 112 Q110 100 92 150 Q72 212 96 290 Q106 318 128 306 Q146 290 146 250 Q150 190 178 140 Z\" fill=\"url(#earOut)\"/></g><path d=\"M150 128 Q116 128 106 168 Q94 222 112 282 Q120 296 128 286 Q136 270 136 240 Q140 186 162 146 Z\" fill=\"url(#earIn)\"/></svg>"},"earR":{"box":[322,92,440,326],"pivot":[352,122],"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"322 92 118 234\" width=\"118\" height=\"234\"><defs><linearGradient id=\"earOut\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#d9983c\"/><stop offset=\"1\" stop-color=\"#b37628\"/></linearGradient><linearGradient id=\"earIn\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#e9ddcc\"/><stop offset=\"1\" stop-color=\"#f6efe4\"/></linearGradient></defs><g transform=\"translate(512 0) scale(-1 1)\"><g stroke=\"#2b2238\" stroke-width=\"9\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M160 112 Q110 100 92 150 Q72 212 96 290 Q106 318 128 306 Q146 290 146 250 Q150 190 178 140 Z\" fill=\"url(#earOut)\"/></g><path d=\"M150 128 Q116 128 106 168 Q94 222 112 282 Q120 296 128 286 Q136 270 136 240 Q140 186 162 146 Z\" fill=\"url(#earIn)\"/></g></svg>"},"head":{"box":[124,68,388,316],"pivot":[256,300],"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"124 68 264 248\" width=\"264\" height=\"248\"><defs><radialGradient id=\"fur\" cx=\"45%\" cy=\"30%\" r=\"75%\"><stop offset=\"0\" stop-color=\"#f0b858\"/><stop offset=\"0.6\" stop-color=\"#d8993c\"/><stop offset=\"1\" stop-color=\"#b0752a\"/></radialGradient><linearGradient id=\"blaze\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#fbf6ee\"/><stop offset=\"1\" stop-color=\"#ece0cd\"/></linearGradient><radialGradient id=\"muzzle\" cx=\"50%\" cy=\"35%\" r=\"70%\"><stop offset=\"0\" stop-color=\"#f3dcb4\"/><stop offset=\"1\" stop-color=\"#dcb57c\"/></radialGradient><radialGradient id=\"nose\" cx=\"40%\" cy=\"30%\" r=\"75%\"><stop offset=\"0\" stop-color=\"#5a5468\"/><stop offset=\"0.5\" stop-color=\"#2f2a3a\"/><stop offset=\"1\" stop-color=\"#1c1824\"/></radialGradient><radialGradient id=\"iris\" cx=\"50%\" cy=\"60%\" r=\"55%\"><stop offset=\"0\" stop-color=\"#b07a4a\"/><stop offset=\"0.7\" stop-color=\"#7a4a26\"/><stop offset=\"1\" stop-color=\"#4e2c14\"/></radialGradient></defs><path d=\"M256 76 C340 74 382 130 380 196 C378 262 330 306 256 306 C182 306 134 262 132 196 C130 130 172 78 256 76 Z\" fill=\"url(#fur)\"/><path d=\"M226 80 C236 77 276 77 286 80 C294 120 290 160 300 200 L212 200 C222 160 218 120 226 80 Z\" fill=\"url(#blaze)\"/><path d=\"M256 196 C312 194 336 226 334 256 C332 290 298 304 256 304 C214 304 180 290 178 256 C176 226 200 194 256 196 Z\" fill=\"url(#muzzle)\" stroke=\"#2b2238\" stroke-width=\"6\" stroke-opacity=\"0.35\"/><path d=\"M256 76 C340 74 382 130 380 196 C378 262 330 306 256 306 C182 306 134 262 132 196 C130 130 172 78 256 76 Z\" fill=\"none\" stroke=\"#2b2238\" stroke-width=\"9\"/><ellipse cx=\"208\" cy=\"176\" rx=\"25\" ry=\"28\" fill=\"#fdfbf7\" stroke=\"#2b2238\" stroke-width=\"6\"/><ellipse cx=\"304\" cy=\"176\" rx=\"25\" ry=\"28\" fill=\"#fdfbf7\" stroke=\"#2b2238\" stroke-width=\"6\"/><circle cx=\"211\" cy=\"180\" r=\"16\" fill=\"url(#iris)\"/><circle cx=\"301\" cy=\"180\" r=\"16\" fill=\"url(#iris)\"/><circle cx=\"211\" cy=\"181\" r=\"8.5\" fill=\"#1c1824\"/><circle cx=\"301\" cy=\"181\" r=\"8.5\" fill=\"#1c1824\"/><circle cx=\"205\" cy=\"172\" r=\"6\" fill=\"#fff\"/><circle cx=\"295\" cy=\"172\" r=\"6\" fill=\"#fff\"/><circle cx=\"217\" cy=\"189\" r=\"2.8\" fill=\"#fff\"/><circle cx=\"307\" cy=\"189\" r=\"2.8\" fill=\"#fff\"/><g fill=\"none\" stroke=\"#2b2238\" stroke-width=\"7\" stroke-linecap=\"round\"><path d=\"M188 136 Q200 128 214 134\"/><path d=\"M324 136 Q312 128 298 134\"/></g><path d=\"M256 214 C279 213 290 222 289 236 C288 252 272 265 256 265 C240 265 224 252 223 236 C222 222 233 213 256 214 Z\" fill=\"url(#nose)\" stroke=\"#2b2238\" stroke-width=\"6\"/><ellipse cx=\"245\" cy=\"225\" rx=\"10\" ry=\"5\" fill=\"#fff\" opacity=\"0.35\"/><g fill=\"none\" stroke=\"#2b2238\" stroke-width=\"6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M256 265 L256 280\"/><path d=\"M226 278 Q240 292 256 280 Q272 292 286 278\"/></g><g fill=\"#8a5a2a\" opacity=\"0.7\"><circle cx=\"206\" cy=\"262\" r=\"3.2\"/><circle cx=\"196\" cy=\"274\" r=\"3.2\"/><circle cx=\"214\" cy=\"278\" r=\"3.2\"/><circle cx=\"306\" cy=\"262\" r=\"3.2\"/><circle cx=\"316\" cy=\"274\" r=\"3.2\"/><circle cx=\"298\" cy=\"278\" r=\"3.2\"/></g></svg>"},"lids":{"box":[172,140,340,212],"pivot":[0,0],"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"172 140 168 72\" width=\"168\" height=\"72\"><defs></defs><g stroke=\"#2b2238\" stroke-width=\"6\"><ellipse cx=\"208\" cy=\"176\" rx=\"28\" ry=\"31\" fill=\"#dea449\"/><ellipse cx=\"304\" cy=\"176\" rx=\"28\" ry=\"31\" fill=\"#dea449\"/></g><g fill=\"none\" stroke=\"#2b2238\" stroke-width=\"6\" stroke-linecap=\"round\"><path d=\"M188 180 Q208 194 228 180\"/><path d=\"M284 180 Q304 194 324 180\"/></g></svg>"}}};
+const PUP_RIG = {"order":["legL","legR","torso","earL","earR","armL","armR","head","lids"],"parts":{"legL":{"box":[168,366,268,470],"pivot":[226,380],"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"168 366 100 104\" width=\"100\" height=\"104\"><defs><linearGradient id=\"pants\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#4a4a5c\"/><stop offset=\"1\" stop-color=\"#34343f\"/></linearGradient><pattern id=\"sockStripes\" patternUnits=\"userSpaceOnUse\" x=\"0\" y=\"0\" width=\"22\" height=\"512\" patternTransform=\"rotate(8)\"><rect width=\"22\" height=\"512\" fill=\"#b9bccb\"/><rect width=\"9\" height=\"512\" fill=\"#f1f1f6\"/></pattern></defs><g stroke=\"#2b2238\" stroke-width=\"9\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M204 378 L202 420 Q222 426 244 420 L248 378 Z\" fill=\"url(#pants)\"/><path d=\"M180 446 Q178 418 206 414 L232 414 Q256 418 256 442 Q256 458 218 458 Q180 458 180 446 Z\" fill=\"url(#sockStripes)\"/></g><g fill=\"none\" stroke=\"#2b2238\" stroke-width=\"4\" stroke-linecap=\"round\" opacity=\"0.5\"><path d=\"M206 444 L206 452\"/><path d=\"M228 444 L228 452\"/></g></svg>"},"legR":{"box":[244,366,344,470],"pivot":[286,380],"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"244 366 100 104\" width=\"100\" height=\"104\"><defs><linearGradient id=\"pants\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#4a4a5c\"/><stop offset=\"1\" stop-color=\"#34343f\"/></linearGradient><pattern id=\"sockStripes\" patternUnits=\"userSpaceOnUse\" x=\"0\" y=\"0\" width=\"22\" height=\"512\" patternTransform=\"rotate(8)\"><rect width=\"22\" height=\"512\" fill=\"#b9bccb\"/><rect width=\"9\" height=\"512\" fill=\"#f1f1f6\"/></pattern></defs><g transform=\"translate(512 0) scale(-1 1)\"><g stroke=\"#2b2238\" stroke-width=\"9\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M204 378 L202 420 Q222 426 244 420 L248 378 Z\" fill=\"url(#pants)\"/><path d=\"M180 446 Q178 418 206 414 L232 414 Q256 418 256 442 Q256 458 218 458 Q180 458 180 446 Z\" fill=\"url(#sockStripes)\"/></g><g fill=\"none\" stroke=\"#2b2238\" stroke-width=\"4\" stroke-linecap=\"round\" opacity=\"0.5\"><path d=\"M206 444 L206 452\"/><path d=\"M228 444 L228 452\"/></g></g></svg>"},"torso":{"box":[144,274,368,398],"pivot":[0,0],"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"144 274 224 124\" width=\"224\" height=\"124\"><defs><linearGradient id=\"shade\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#000\" stop-opacity=\"0\"/><stop offset=\"1\" stop-color=\"#1a1530\" stop-opacity=\"0.28\"/></linearGradient><pattern id=\"stripes\" patternUnits=\"userSpaceOnUse\" x=\"0\" y=\"296\" width=\"40\" height=\"38\"><rect width=\"40\" height=\"38\" fill=\"#ecebf2\"/><rect width=\"40\" height=\"19\" fill=\"#565b72\"/></pattern></defs><g stroke=\"#2b2238\" stroke-width=\"9\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M198 290 L314 290 Q340 290 340 316 L340 364 Q340 390 314 390 L198 390 Q172 390 172 364 L172 316 Q172 290 198 290 Z\" fill=\"url(#stripes)\"/><path d=\"M198 290 L314 290 Q340 290 340 316 L340 364 Q340 390 314 390 L198 390 Q172 390 172 364 L172 316 Q172 290 198 290 Z\" fill=\"url(#shade)\" stroke=\"none\"/><path d=\"M198 290 L314 290 Q340 290 340 316 L340 364 Q340 390 314 390 L198 390 Q172 390 172 364 L172 316 Q172 290 198 290 Z\" fill=\"none\"/></g></svg>"},"armL":{"box":[100,290,200,414],"pivot":[180,316],"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"100 290 100 124\" width=\"100\" height=\"124\"><defs><linearGradient id=\"paw\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#e3a549\"/><stop offset=\"1\" stop-color=\"#bb7f2e\"/></linearGradient><pattern id=\"stripes\" patternUnits=\"userSpaceOnUse\" x=\"0\" y=\"296\" width=\"40\" height=\"38\"><rect width=\"40\" height=\"38\" fill=\"#ecebf2\"/><rect width=\"40\" height=\"19\" fill=\"#565b72\"/></pattern></defs><g stroke=\"#2b2238\" stroke-width=\"9\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M178 304 Q144 318 130 356 L126 372 L158 378 L162 362 Q168 344 186 334 Z\" fill=\"url(#stripes)\"/><ellipse cx=\"140\" cy=\"386\" rx=\"22\" ry=\"19\" fill=\"url(#paw)\"/></g><g fill=\"none\" stroke=\"#2b2238\" stroke-width=\"4\" stroke-linecap=\"round\" opacity=\"0.55\"><path d=\"M134 379 L134 393\"/><path d=\"M146 379 L146 393\"/></g></svg>"},"armR":{"box":[312,290,412,414],"pivot":[332,316],"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"312 290 100 124\" width=\"100\" height=\"124\"><defs><linearGradient id=\"paw\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#e3a549\"/><stop offset=\"1\" stop-color=\"#bb7f2e\"/></linearGradient><pattern id=\"stripes\" patternUnits=\"userSpaceOnUse\" x=\"0\" y=\"296\" width=\"40\" height=\"38\"><rect width=\"40\" height=\"38\" fill=\"#ecebf2\"/><rect width=\"40\" height=\"19\" fill=\"#565b72\"/></pattern></defs><g transform=\"translate(512 0) scale(-1 1)\"><g stroke=\"#2b2238\" stroke-width=\"9\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M178 304 Q144 318 130 356 L126 372 L158 378 L162 362 Q168 344 186 334 Z\" fill=\"url(#stripes)\"/><ellipse cx=\"140\" cy=\"386\" rx=\"22\" ry=\"19\" fill=\"url(#paw)\"/></g><g fill=\"none\" stroke=\"#2b2238\" stroke-width=\"4\" stroke-linecap=\"round\" opacity=\"0.55\"><path d=\"M134 379 L134 393\"/><path d=\"M146 379 L146 393\"/></g></g></svg>"},"earL":{"box":[72,92,190,326],"pivot":[160,122],"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"72 92 118 234\" width=\"118\" height=\"234\"><defs><linearGradient id=\"earOut\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#d9983c\"/><stop offset=\"1\" stop-color=\"#b37628\"/></linearGradient><linearGradient id=\"earIn\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#e9ddcc\"/><stop offset=\"1\" stop-color=\"#f6efe4\"/></linearGradient></defs><g stroke=\"#2b2238\" stroke-width=\"9\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M160 112 Q110 100 92 150 Q72 212 96 290 Q106 318 128 306 Q146 290 146 250 Q150 190 178 140 Z\" fill=\"url(#earOut)\"/></g><path d=\"M150 128 Q116 128 106 168 Q94 222 112 282 Q120 296 128 286 Q136 270 136 240 Q140 186 162 146 Z\" fill=\"url(#earIn)\"/></svg>"},"earR":{"box":[322,92,440,326],"pivot":[352,122],"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"322 92 118 234\" width=\"118\" height=\"234\"><defs><linearGradient id=\"earOut\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#d9983c\"/><stop offset=\"1\" stop-color=\"#b37628\"/></linearGradient><linearGradient id=\"earIn\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#e9ddcc\"/><stop offset=\"1\" stop-color=\"#f6efe4\"/></linearGradient></defs><g transform=\"translate(512 0) scale(-1 1)\"><g stroke=\"#2b2238\" stroke-width=\"9\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M160 112 Q110 100 92 150 Q72 212 96 290 Q106 318 128 306 Q146 290 146 250 Q150 190 178 140 Z\" fill=\"url(#earOut)\"/></g><path d=\"M150 128 Q116 128 106 168 Q94 222 112 282 Q120 296 128 286 Q136 270 136 240 Q140 186 162 146 Z\" fill=\"url(#earIn)\"/></g></svg>"},"head":{"box":[124,68,388,316],"pivot":[256,300],"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"124 68 264 248\" width=\"264\" height=\"248\"><defs><radialGradient id=\"fur\" cx=\"45%\" cy=\"30%\" r=\"75%\"><stop offset=\"0\" stop-color=\"#f0b858\"/><stop offset=\"0.6\" stop-color=\"#d8993c\"/><stop offset=\"1\" stop-color=\"#b0752a\"/></radialGradient><linearGradient id=\"blaze\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#fbf6ee\"/><stop offset=\"1\" stop-color=\"#ece0cd\"/></linearGradient><radialGradient id=\"muzzle\" cx=\"50%\" cy=\"35%\" r=\"70%\"><stop offset=\"0\" stop-color=\"#f3dcb4\"/><stop offset=\"1\" stop-color=\"#dcb57c\"/></radialGradient><radialGradient id=\"nose\" cx=\"40%\" cy=\"30%\" r=\"75%\"><stop offset=\"0\" stop-color=\"#5a5468\"/><stop offset=\"0.5\" stop-color=\"#2f2a3a\"/><stop offset=\"1\" stop-color=\"#1c1824\"/></radialGradient><radialGradient id=\"iris\" cx=\"50%\" cy=\"60%\" r=\"55%\"><stop offset=\"0\" stop-color=\"#b07a4a\"/><stop offset=\"0.7\" stop-color=\"#7a4a26\"/><stop offset=\"1\" stop-color=\"#4e2c14\"/></radialGradient></defs><path d=\"M256 76 C340 74 382 130 380 196 C378 262 330 306 256 306 C182 306 134 262 132 196 C130 130 172 78 256 76 Z\" fill=\"url(#fur)\"/><path d=\"M226 80 C236 77 276 77 286 80 C294 120 290 160 300 200 L212 200 C222 160 218 120 226 80 Z\" fill=\"url(#blaze)\"/><path d=\"M256 196 C312 194 336 226 334 256 C332 290 298 304 256 304 C214 304 180 290 178 256 C176 226 200 194 256 196 Z\" fill=\"url(#muzzle)\" stroke=\"#2b2238\" stroke-width=\"6\" stroke-opacity=\"0.35\"/><path d=\"M256 76 C340 74 382 130 380 196 C378 262 330 306 256 306 C182 306 134 262 132 196 C130 130 172 78 256 76 Z\" fill=\"none\" stroke=\"#2b2238\" stroke-width=\"9\"/><ellipse cx=\"208\" cy=\"176\" rx=\"25\" ry=\"28\" fill=\"#fdfbf7\" stroke=\"#2b2238\" stroke-width=\"6\"/><ellipse cx=\"304\" cy=\"176\" rx=\"25\" ry=\"28\" fill=\"#fdfbf7\" stroke=\"#2b2238\" stroke-width=\"6\"/><circle cx=\"211\" cy=\"180\" r=\"16\" fill=\"url(#iris)\"/><circle cx=\"301\" cy=\"180\" r=\"16\" fill=\"url(#iris)\"/><circle cx=\"211\" cy=\"181\" r=\"8.5\" fill=\"#1c1824\"/><circle cx=\"301\" cy=\"181\" r=\"8.5\" fill=\"#1c1824\"/><circle cx=\"205\" cy=\"172\" r=\"6\" fill=\"#fff\"/><circle cx=\"295\" cy=\"172\" r=\"6\" fill=\"#fff\"/><circle cx=\"217\" cy=\"189\" r=\"2.8\" fill=\"#fff\"/><circle cx=\"307\" cy=\"189\" r=\"2.8\" fill=\"#fff\"/><g fill=\"none\" stroke=\"#2b2238\" stroke-width=\"7\" stroke-linecap=\"round\"><path d=\"M188 136 Q200 128 214 134\"/><path d=\"M324 136 Q312 128 298 134\"/></g><path d=\"M256 214 C279 213 290 222 289 236 C288 252 272 265 256 265 C240 265 224 252 223 236 C222 222 233 213 256 214 Z\" fill=\"url(#nose)\" stroke=\"#2b2238\" stroke-width=\"6\"/><ellipse cx=\"245\" cy=\"225\" rx=\"10\" ry=\"5\" fill=\"#fff\" opacity=\"0.35\"/><g fill=\"none\" stroke=\"#2b2238\" stroke-width=\"6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M256 265 L256 280\"/><path d=\"M226 278 Q240 292 256 280 Q272 292 286 278\"/></g><g fill=\"#8a5a2a\" opacity=\"0.7\"><circle cx=\"206\" cy=\"262\" r=\"3.2\"/><circle cx=\"196\" cy=\"274\" r=\"3.2\"/><circle cx=\"214\" cy=\"278\" r=\"3.2\"/><circle cx=\"306\" cy=\"262\" r=\"3.2\"/><circle cx=\"316\" cy=\"274\" r=\"3.2\"/><circle cx=\"298\" cy=\"278\" r=\"3.2\"/></g></svg>"},"lids":{"box":[172,140,340,212],"pivot":[0,0],"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"172 140 168 72\" width=\"168\" height=\"72\"><defs></defs><g stroke=\"#2b2238\" stroke-width=\"6\"><ellipse cx=\"208\" cy=\"176\" rx=\"28\" ry=\"31\" fill=\"#dea449\"/><ellipse cx=\"304\" cy=\"176\" rx=\"28\" ry=\"31\" fill=\"#dea449\"/></g><g fill=\"none\" stroke=\"#2b2238\" stroke-width=\"6\" stroke-linecap=\"round\"><path d=\"M188 180 Q208 194 228 180\"/><path d=\"M284 180 Q304 194 324 180\"/></g></svg>"}}};
 const RIG_CHARS = { hero11: PUP_RIG };
 const RIG_OY = 36;
 const RIG_HI = 1;
@@ -1943,12 +1946,36 @@ for (const id of Object.keys(OUTFITS.char)){
   else loadCharImage(id);
 }
 
-const rigLive = { armL: 0.9, armR: -0.9, legL: 0, legR: 0, earL: 0, earR: 0, head: 0, tuck: 0, blink: 0 };
-let rigLiveT = 0;
+const RIG_CACHE_MAX = 72;
+const RIG_FRAME_PAD = 0.2;
+const RIG_FRAME_MAX_PX = 200;
+const rigFrameCache = new Map();
+let rigFrameScale = 0;
+let rigU = 0, rigPhase = 0, rigLiveT = 0;
 let rigDrawPose = null;
+const rigLive = rigPoseFrom(0, 0, 0, false);
 
 function rigBlinkAt(now){
   return (now % 3.7) < 0.13 ? 1 : 0;
+}
+
+function rigPoseFrom(u, phaseIdx, blink, holding){
+  const rise = Math.max(0, -u), fall = Math.max(0, u);
+  const ph = phaseIdx / 8 * Math.PI * 2;
+  const arm = 0.9 + rise * 1.0 + fall * 0.5 + Math.sin(ph) * 0.35 * fall;
+  const ear = -0.3 * rise + 1.3 * fall + Math.sin(ph + 1.1) * 0.22 * fall;
+  const kick = Math.sin(ph + 0.6) * 0.3 * fall;
+  return {
+    armL: arm,
+    armR: holding ? -(0.2 + 0.25 * rise + 0.1 * fall) : -arm,
+    earL: ear, earR: -ear,
+    legL: 0.14 * rise + 0.08 * fall + kick,
+    legR: -0.14 * rise - 0.08 * fall + kick,
+    head: Math.sin(ph) * 0.05 * fall,
+    tuck: rise,
+    blink: blink,
+    key: u + '|' + phaseIdx + '|' + blink + '|' + (holding ? 1 : 0)
+  };
 }
 
 function rigIdlePose(){
@@ -1969,35 +1996,22 @@ function updateRigPose(){
   const now = performance.now() / 1000;
   const dt = rigLiveT ? Math.min(0.05, Math.max(0, now - rigLiveT)) : 0.016;
   rigLiveT = now;
-  const u = clamp(hero.vy / -JUMP_V, -1, 1);
-  const rise = Math.max(0, -u), fall = Math.max(0, u);
-  const arm = 0.9 + rise * 1.0 + fall * 0.5 + Math.sin(now * 17) * 0.35 * fall;
+  const target = clamp(hero.vy / -JUMP_V, -1, 1);
+  rigU += (target - rigU) * (1 - Math.exp(-dt * 14));
+  rigPhase = (rigPhase + dt * 2.8) % 1;
+  const uq = Math.round(rigU * 5) / 5;
+  const phaseIdx = uq > 0 ? Math.floor(rigPhase * 8) % 8 : 0;
   const holding = outfit.tool !== 'none' && isOwned('tool', outfit.tool);
-  const armR = holding ? -(0.2 + 0.25 * rise + 0.1 * fall) : -arm;
-  const ear = -0.3 * rise + 1.3 * fall + Math.sin(now * 21) * 0.22 * fall;
-  const kick = Math.sin(now * 13) * 0.3 * fall;
-  const k = 1 - Math.exp(-dt * 16);
-  const R = rigLive;
-  R.armL += (arm - R.armL) * k;
-  R.armR += (armR - R.armR) * k;
-  R.earL += (ear - R.earL) * k;
-  R.earR += (-ear - R.earR) * k;
-  R.legL += (0.14 * rise + 0.08 * fall + kick - R.legL) * k;
-  R.legR += (-0.14 * rise - 0.08 * fall + kick - R.legR) * k;
-  R.tuck += (rise - R.tuck) * k;
-  R.head += (Math.sin(now * 9) * 0.05 * fall - R.head) * k;
-  R.blink = rigBlinkAt(now);
+  const pose = rigPoseFrom(uq, phaseIdx, rigBlinkAt(now), holding);
+  if (pose.key !== rigLive.key) Object.assign(rigLive, pose);
 }
 
 function rigPoseKey(){
-  const R = rigLive;
-  return [Math.round(R.armL * 5), Math.round(R.armR * 5), Math.round(R.earL * 5), Math.round(R.legL * 8), Math.round(R.legR * 8), Math.round(R.tuck * 4)].join(',');
+  return rigLive.key;
 }
 
-function paintRig(c, w, h, rec, pose){
+function paintRigParts(c, s, rec, set, pose){
   const def = rec.rig;
-  const set = c === ctx ? rec.lo : rec.hi;
-  const s = w / 512;
   for (const name of def.order){
     if (name === 'lids' && !pose.blink) continue;
     const part = def.parts[name];
@@ -2020,6 +2034,50 @@ function paintRig(c, w, h, rec, pose){
   }
 }
 
+function rigFramePx(w){
+  const px = Math.ceil(w * (1 + 2 * RIG_FRAME_PAD) * S * DPR);
+  return Math.max(48, Math.min(RIG_FRAME_MAX_PX, px));
+}
+
+function getRigFrame(rec, pose, w){
+  const px = rigFramePx(w);
+  if (px !== rigFrameScale){ rigFrameCache.clear(); rigFrameScale = px; }
+  const key = pose.key;
+  let cv = rigFrameCache.get(key);
+  if (cv){
+    rigFrameCache.delete(key);
+    rigFrameCache.set(key, cv);
+    return cv;
+  }
+  try {
+    cv = document.createElement('canvas');
+    cv.width = px; cv.height = px;
+    const g = cv.getContext('2d');
+    g.imageSmoothingEnabled = true;
+    g.imageSmoothingQuality = 'high';
+    g.translate(px / 2, px / 2);
+    paintRigParts(g, px / ((1 + 2 * RIG_FRAME_PAD) * 512), rec, rec.hi, pose);
+  } catch (e) { return null; }
+  rigFrameCache.set(key, cv);
+  while (rigFrameCache.size > RIG_CACHE_MAX) rigFrameCache.delete(rigFrameCache.keys().next().value);
+  return cv;
+}
+
+function paintRig(c, w, h, rec, pose){
+  if (pose.key){
+    const frame = getRigFrame(rec, pose, w);
+    if (frame){
+      const fw = w * (1 + 2 * RIG_FRAME_PAD);
+      const q = c.imageSmoothingQuality;
+      c.imageSmoothingQuality = 'medium';
+      c.drawImage(frame, -fw / 2, -fw / 2, fw, fw);
+      c.imageSmoothingQuality = q;
+      return;
+    }
+  }
+  paintRigParts(c, w / 512, rec, c === ctx ? rec.lo : rec.hi, pose);
+}
+
 function rigCharActive(){
   const rec = charImgs[outfit.char];
   return !!(rec && rec.rig && rec.ready);
@@ -2030,7 +2088,8 @@ function paintToolRigged(c, w, h, kind, A, phase){
   if (!(rec && rec.rig && rec.ready && rigDrawPose)){ paintTool(c, w, h, kind, A, phase); return; }
   const piv = rec.rig.parts.armR.pivot;
   const s = w / 512;
-  const px = (piv[0] - 256) * s, py = (piv[1] - 256 + RIG_OY) * s;
+  const oy = rec.rig.oy != null ? rec.rig.oy : RIG_OY;
+  const px = (piv[0] - 256) * s, py = (piv[1] - 256 + oy) * s;
   c.save();
   c.translate(px, py);
   c.rotate(rigDrawPose.armR || 0);
@@ -2078,9 +2137,9 @@ const FIXED_DT = 1 / 120;
 let glassUsedThisRun = false;
 let fallSoundPlayed = false;
 let deathPortal = null;
-const PORTAL_DUR = 1.5;
+const PORTAL_DUR = 1.25;
 const PORTAL_R = 60;
-const PORTAL_CLOSE_AT = 1.12;
+const PORTAL_CLOSE_AT = 0.92;
 const multiOn = () => isOwned('perk', 'multiacc');
 const hasHat  = (v) => (outfit.hat === v || (multiOn() && outfit.hat2 === v)) && isOwned('hat', v);
 const hasAcc  = (v) => (outfit.acc === v || (multiOn() && outfit.acc2 === v)) && isOwned('acc', v);
@@ -2519,6 +2578,20 @@ function resolveMonsterEvent(success){
 }
 
 
+function heroDoomed(){
+  if (airJumps > 0) return false;
+  const feet = hero.y + hero.h * 0.5;
+  const floor = camY + VH;
+  for (let i = 0; i < platforms.length; i++){
+    const p = platforms[i];
+    if (!p.broken && p.y + 2 >= feet && p.y < floor) return false;
+  }
+  for (let i = 0; i < monsters.length; i++){
+    if (monsters[i].y >= hero.y && monsters[i].y < floor + 30) return false;
+  }
+  return true;
+}
+
 function handleFatalEvent(){
   if (monsterEvent){
     removeMonster(monsterEvent.monster);
@@ -2556,7 +2629,7 @@ function portalScale(t){
 }
 
 function portalSuck(t){
-  const s = clamp((t - 0.2) / 0.74, 0, 1);
+  const s = clamp((t - 0.12) / 0.62, 0, 1);
   return s * s * s;
 }
 
@@ -3199,6 +3272,12 @@ function updateWorld(dt){
 
   updateLasers(dt);
   if (state !== STATE.PLAY){ tapEvent = false; return; }
+
+  if (hero.vy > 120 && hero.y - camY > VH * 0.6 && heroDoomed()){
+    handleFatalEvent();
+    tapEvent = false;
+    return;
+  }
 
   if (!fallSoundPlayed && hero.y - camY > VH){
     fallSoundPlayed = true;
@@ -4373,9 +4452,10 @@ function getHeroShadowCanvas(){
   if (key === heroShadowKey) return heroShadowCvs;
   heroShadowKey = key;
   const size = HERO_SHADOW_SRC;
-  heroShadowTmp.width = size;
-  heroShadowTmp.height = size;
+  if (heroShadowTmp.width !== size) heroShadowTmp.width = size;
+  if (heroShadowTmp.height !== size) heroShadowTmp.height = size;
   const g = heroShadowTmp.getContext('2d');
+  g.setTransform(1, 0, 0, 1, 0, 0);
   g.clearRect(0, 0, size, size);
   g.save();
   g.translate(size / 2, size / 2);
@@ -4403,8 +4483,8 @@ function getHeroShadowCanvas(){
   g.fillRect(0, 0, size, size);
   g.globalCompositeOperation = 'source-over';
 
-  heroShadowCvs.width = HERO_SHADOW_BLUR;
-  heroShadowCvs.height = HERO_SHADOW_BLUR;
+  if (heroShadowCvs.width !== HERO_SHADOW_BLUR) heroShadowCvs.width = HERO_SHADOW_BLUR;
+  if (heroShadowCvs.height !== HERO_SHADOW_BLUR) heroShadowCvs.height = HERO_SHADOW_BLUR;
   const b = heroShadowCvs.getContext('2d');
   b.clearRect(0, 0, HERO_SHADOW_BLUR, HERO_SHADOW_BLUR);
   b.imageSmoothingEnabled = true;
@@ -4423,7 +4503,9 @@ function drawHeroShadow(x, y, sx, sy, tilt, face){
   ctx.translate(x + ox, y + oy);
   ctx.rotate(tilt);
   ctx.scale(face * sx, sy);
+  ctx.imageSmoothingQuality = 'low';
   ctx.drawImage(getHeroShadowCanvas(), -W / 2, -W / 2, W, W);
+  ctx.imageSmoothingQuality = 'high';
   ctx.restore();
 }
 
@@ -4988,6 +5070,7 @@ const menuBest  = document.getElementById('menuBest');
 const menuCoins = document.getElementById('menuCoins');
 const finalEl   = document.getElementById('finalScore');
 const bestLine  = document.getElementById('bestLine');
+const rankLine  = document.getElementById('rankLine');
 const coinLine  = document.getElementById('coinLine');
 const overTitle = document.getElementById('overTitle');
 const blurToggle = document.getElementById('blurToggle');
@@ -5469,6 +5552,44 @@ function resumeGame(){
   showTouchControls();
 }
 
+let rankReqId = 0;
+
+async function fetchRankFor(sc){
+  if (!cloudReady() || !(sc > 0)) return 0;
+  try {
+    const res = await fetch(cloudBase() + ':runAggregationQuery?key=' + CLOUD.apiKey, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        structuredAggregationQuery: {
+          structuredQuery: {
+            from: [{ collectionId: 'players' }],
+            where: { fieldFilter: { field: { fieldPath: 'best' }, op: 'GREATER_THAN', value: { integerValue: String(Math.floor(sc)) } } }
+          },
+          aggregations: [{ alias: 'n', count: {} }]
+        }
+      })
+    });
+    if (!res.ok) return 0;
+    const data = await res.json();
+    const row = Array.isArray(data) ? data.find(r => r && r.result && r.result.aggregateFields) : null;
+    const f = row && row.result.aggregateFields.n;
+    const n = f ? parseInt(f.integerValue, 10) : NaN;
+    return isFinite(n) && n >= 0 ? n + 1 : 0;
+  } catch (e) { return 0; }
+}
+
+function showRankLine(isNewBest){
+  const id = ++rankReqId;
+  if (!rankLine) return;
+  rankLine.innerHTML = '';
+  fetchRankFor(best).then((rank) => {
+    if (id !== rankReqId || state !== STATE.OVER || !rank) return;
+    if (isNewBest && rank === 1) rankLine.innerHTML = '<span class="newbest">' + t('overTop1') + '</span>';
+    else rankLine.textContent = t('overRank') + ': #' + rank;
+  });
+}
+
 function gameOver(){
   if (state !== STATE.PLAY && state !== STATE.DYING) return;
   state = STATE.OVER;
@@ -5493,6 +5614,7 @@ function gameOver(){
 
   hideAllScreens();
   show(overEl);
+  showRankLine(isNewBest);
 
   const targetScore = score, t0 = performance.now();
   const dur = Math.min(900, 240 + targetScore * 0.8);
