@@ -837,10 +837,10 @@
   }
 
   body.lg{
-    --lg-fill:radial-gradient(120% 70% at 50% 0%,rgba(255,255,255,.22),rgba(255,255,255,0) 62%),linear-gradient(160deg,rgba(255,255,255,.2) 0%,rgba(255,255,255,.06) 46%,rgba(255,255,255,.12) 100%);
-    --lg-warm:radial-gradient(120% 70% at 50% 0%,rgba(255,255,255,.55),rgba(255,255,255,0) 60%),linear-gradient(165deg,rgba(255,224,160,.96) 0%,rgba(255,165,72,.86) 58%,rgba(255,196,118,.92) 100%);
-    --lg-rim:inset 0 1.5px 0 rgba(255,255,255,.72),inset 0 -1px 1px rgba(255,255,255,.22),inset 1px 0 0 rgba(255,255,255,.16),inset -1px 0 0 rgba(255,255,255,.16);
-    --lg-drop:0 10px 30px rgba(10,4,30,.34);
+    --lg-fill:transparent;
+    --lg-warm:linear-gradient(180deg,rgba(255,208,138,.92),rgba(255,159,69,.9));
+    --lg-rim:inset 0 0 0 1px rgba(255,255,255,.1);
+    --lg-drop:0 10px 26px rgba(8,3,24,.32);
   }
   body.lg .btn,
   body.lg #settingsBox, body.lg .setCat,
@@ -851,23 +851,22 @@
   }
   body.lg .btn{
     background:var(--lg-warm);color:#3a1f00;
-    box-shadow:var(--lg-rim),0 6px 0 rgba(170,84,20,.55),var(--lg-drop);
-    text-shadow:0 1px 0 rgba(255,255,255,.35);
+    box-shadow:0 6px 0 #c26a1d,var(--lg-drop);
   }
-  body.lg .btn:active{box-shadow:var(--lg-rim),0 2px 0 rgba(170,84,20,.55),0 5px 14px rgba(10,4,30,.3);}
+  body.lg .btn:active{box-shadow:0 2px 0 #c26a1d,0 5px 14px rgba(8,3,24,.3);}
   body.lg .btn.ghost{
-    background:var(--lg-fill);color:#fdf6e8;text-shadow:0 1px 2px rgba(0,0,0,.35);
+    background:var(--lg-fill);color:#fdf6e8;
     box-shadow:var(--lg-rim),var(--lg-drop);
   }
   body.lg .btn.ghost:active{box-shadow:var(--lg-rim),0 4px 12px rgba(10,4,30,.3);}
-  body.lg #settingsBox{background:rgba(255,255,255,.05);box-shadow:var(--lg-rim),var(--lg-drop);border-radius:24px;}
+  body.lg #settingsBox{background:transparent;box-shadow:var(--lg-rim),var(--lg-drop);border-radius:24px;}
   body.lg .setCat{background:var(--lg-fill);box-shadow:var(--lg-rim);border-radius:18px;}
-  body.lg .setCatIcon{background:linear-gradient(160deg,rgba(255,255,255,.35),rgba(255,255,255,.08));box-shadow:inset 0 1px 0 rgba(255,255,255,.6);color:#fff;}
+
   body.lg .chip{background:var(--lg-fill);box-shadow:var(--lg-rim);color:#fdf6e8;}
-  body.lg .chip[aria-pressed="true"]{background:var(--lg-warm);color:#3a1f00;box-shadow:var(--lg-rim),0 4px 14px rgba(255,160,70,.35);}
-  body.lg .profileCard, body.lg .chatCard{background:linear-gradient(160deg,rgba(60,36,110,.62),rgba(24,12,50,.72));box-shadow:var(--lg-rim),0 20px 50px rgba(0,0,0,.45);}
+  body.lg .chip[aria-pressed="true"]{background:var(--lg-warm);color:#3a1f00;box-shadow:none;}
+  body.lg .profileCard, body.lg .chatCard{background:rgba(30,16,62,.18);box-shadow:var(--lg-rim),0 20px 50px rgba(0,0,0,.45);}
   body.lg #pauseBtn, body.lg .ctrlBtn, body.lg .backIconBtn, body.lg .inboxBtn, body.lg .charArrow{
-    background:var(--lg-fill);box-shadow:var(--lg-rim),0 6px 18px rgba(10,4,30,.3);
+    background:var(--lg-fill);box-shadow:var(--lg-rim),0 6px 18px rgba(8,3,24,.28);
   }
   body.lg .ctrlBtn:active{background:var(--lg-warm);}
   body.lg .shopTab{background:var(--lg-fill);box-shadow:var(--lg-rim);}
