@@ -376,7 +376,32 @@
   }
   .chatDay{align-self:center;font-size:11px;font-weight:700;opacity:.6;padding:6px 10px;margin:4px 0;border-radius:999px;background:rgba(255,255,255,.06);}
   .chatEmpty{font-size:12px;opacity:.6;text-align:center;padding:10px 0;margin:auto 0;}
-  .chatForm{display:flex;gap:8px;width:100%;}
+  .chatForm{display:flex;gap:6px;width:100%;align-items:center;}
+  .chatToolBtn{
+    flex:0 0 auto;width:38px;height:38px;border:none;border-radius:50%;cursor:pointer;padding:0;
+    background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;
+  }
+  .chatToolBtn svg{width:21px;height:21px;}
+  .chatToolBtn.active{background:rgba(255,211,77,.3);}
+  .stickerPanel{
+    display:grid;grid-template-columns:repeat(5,1fr);gap:4px;width:100%;max-height:170px;overflow-y:auto;
+    padding:6px;border-radius:14px;background:rgba(10,6,20,.55);box-sizing:border-box;
+  }
+  .stickerPanel.hidden{display:none;}
+  .stickerPick{border:none;background:none;cursor:pointer;padding:2px;border-radius:10px;}
+  .stickerPick:active{background:rgba(255,255,255,.12);}
+  .stickerPick canvas{width:56px;height:56px;display:block;margin:0 auto;}
+  .chatMsgRow.sticker{background:none !important;box-shadow:none;padding:2px 4px;}
+  .chatMsgRow.sticker canvas{width:112px;height:112px;display:block;}
+  .chatMsgRow.sticker .chatMsgMeta{color:#fff;opacity:1;background:rgba(0,0,0,.35);border-radius:10px;padding:1px 7px;align-self:flex-end;}
+  .chatMsgRow.sticker .chatMsgTick.isRead{color:#8fb4ff;}
+  .chatMsgRow.photo{padding:4px;flex-direction:column;align-items:stretch;}
+  .chatPhoto{position:relative;width:200px;max-width:100%;min-height:120px;border-radius:14px;overflow:hidden;background:rgba(0,0,0,.25);cursor:pointer;}
+  .chatPhoto img{display:block;width:100%;height:auto;}
+  .chatPhoto.blurred img{filter:blur(18px);transform:scale(1.1);}
+  .chatPhotoCover{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;font-size:12px;padding:8px;color:#fff;background:rgba(0,0,0,.25);}
+  .chatPhotoNote{font-size:12px;opacity:.8;padding:18px 10px;text-align:center;}
+  .chatReportBtn{border:none;background:none;color:inherit;opacity:.65;font-size:11px;cursor:pointer;padding:4px 2px 0;text-align:left;font-family:inherit;}
   #chatInput{
     flex:1;min-width:0;border-radius:999px;border:none;padding:11px 16px;font-size:16px;
     background:rgba(255,255,255,.1);color:#fdf6e8;box-shadow:inset 0 0 0 1px rgba(255,255,255,.14);
@@ -1004,6 +1029,12 @@
           <div id="adminPhotoList" class="adminPhotoList"></div>
         </div>
 
+        <div class="adminCard">
+          <div class="adminCardTitle">Жалобы на фото</div>
+          <button id="adminReportsBtn" type="button" class="adminPwResetBtn">Показать жалобы</button>
+          <div id="adminReportsList" class="adminPhotoList"></div>
+        </div>
+
         <div id="adminPlayerBox" class="adminPlayerBox hidden">
           <p id="adminCodeLine" class="adminCodeLine"></p>
 
@@ -1292,7 +1323,15 @@
         </div>
       </div>
       <div id="chatMessagesList" class="chatMessagesList"></div>
+      <div id="stickerPanel" class="stickerPanel hidden"></div>
       <div class="chatForm">
+        <button id="chatStickerBtn" class="chatToolBtn" type="button" aria-label="Стикеры">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fdf6e8" stroke-width="2"/><circle cx="9" cy="10" r="1.3" fill="#fdf6e8"/><circle cx="15" cy="10" r="1.3" fill="#fdf6e8"/><path d="M8 14.5 Q12 18 16 14.5" stroke="#fdf6e8" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+        <button id="chatPhotoBtn" class="chatToolBtn" type="button" aria-label="Фото">
+          <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="3" stroke="#fdf6e8" stroke-width="2"/><circle cx="9" cy="10" r="1.8" fill="#fdf6e8"/><path d="M5 17 L10 12.5 L13 15 L16 12 L20 16" stroke="#fdf6e8" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg>
+        </button>
+        <input id="chatPhotoInput" type="file" accept="image/*" class="hidden">
         <input id="chatInput" type="text" maxlength="200" enterkeyhint="send" autocomplete="off" data-i18n-placeholder="chatPlaceholder" placeholder="Написать сообщение...">
         <button id="chatSendBtn" type="button" aria-label="Отправить">
           <svg viewBox="0 0 24 24" fill="none"><path d="M4 12 L20 4 L14 20 L11 13 Z" fill="#3a2400"/></svg>
@@ -1827,7 +1866,10 @@ const I18N = {
     chatTooLong: 'Слишком длинно (макс 200)', chatNeedNick: 'Придумайте ник в настройках',
     inboxTitle: 'Сообщения', inboxEmpty: 'Пока никто не писал. Открой профиль игрока в рейтинге и нажми «Написать».',
     chatOnlineNow: 'в сети', chatYou: 'Вы: ', newMsgToast: 'Новое сообщение от ',
-    onlineNow: 'онлайн', onlineTotal: 'всего',
+    msgSticker: '[Стикер]', msgPhoto: '[Фото]', photoTap: 'Фото скрыто — нажми, чтобы посмотреть', photoLoading: 'Загрузка фото…',
+    photoRemoved: 'Фото удалено модератором', photoReport: 'Пожаловаться', photoReported: 'Жалоба отправлена ✓', photoBanned: 'Тебе запрещено отправлять фото',
+    photoTooBig: 'Не получилось сжать фото, попробуй другое', photoSending: 'Отправка фото…',
+    onlineNow: 'онлайн', onlineTotal: 'всего', onlineErr: 'нет связи',
     eventProgress: 'Игроков: {n} / {g} — на {g} будет праздник!', eventLiveTitle: '★ Нас уже 100! ★', eventLiveText: 'Праздник: монеты ×2', eventDaysLeft: 'ещё {n} дн.',
     eventGift: 'Нас 100! Подарок на 7 дней: праздничный колпак и корона + 500 монет',
     notifyLabel: 'Уведомления о сообщениях', notifyOnTxt: 'Уведомления: вкл', notifyOffTxt: 'Уведомления: выкл',
@@ -1928,7 +1970,10 @@ const I18N = {
     chatTooLong: 'Too long (max 200)', chatNeedNick: 'Set a nickname in settings',
     inboxTitle: 'Messages', inboxEmpty: 'Nobody has written yet. Open a player\'s profile in the leaderboard and tap “Message”.',
     chatOnlineNow: 'online', chatYou: 'You: ', newMsgToast: 'New message from ',
-    onlineNow: 'online', onlineTotal: 'total',
+    msgSticker: '[Sticker]', msgPhoto: '[Photo]', photoTap: 'Photo hidden — tap to view', photoLoading: 'Loading photo…',
+    photoRemoved: 'Photo removed by a moderator', photoReport: 'Report', photoReported: 'Report sent ✓', photoBanned: 'You are not allowed to send photos',
+    photoTooBig: 'Could not compress the photo, try another one', photoSending: 'Sending photo…',
+    onlineNow: 'online', onlineTotal: 'total', onlineErr: 'no connection',
     eventProgress: 'Players: {n} / {g} — a party at {g}!', eventLiveTitle: '★ We are 100! ★', eventLiveText: 'Party: coins ×2', eventDaysLeft: '{n} days left',
     eventGift: 'We are 100! 7-day gift: party hat and crown + 500 coins',
     notifyLabel: 'Message notifications', notifyOnTxt: 'Notifications: on', notifyOffTxt: 'Notifications: off',
@@ -6036,6 +6081,7 @@ function goToMenu(){
   document.getElementById('continueBtn').disabled = true;
   updateInboxBtn();
   refreshEventBanner();
+  refreshOnlineCounter();
   if (cloudReady()){ checkPendingGrant(); fetchInbox(); if (Date.now() - eventInfo.checked > 5 * 60 * 1000) checkEvent(); }
 }
 
@@ -6260,6 +6306,8 @@ async function cloudFetchOwnTitle(){
     Store.set('titleColor', myTitleColor);
     applyOwnBadgeFromFields(f);
     setKeepFromFields(f);
+    myNoImages = !!(f.noImages && f.noImages.booleanValue);
+    Store.set('noImages', myNoImages ? '1' : '0');
     myAvatarOk = !!(f.avatarOk && f.avatarOk.booleanValue);
     Store.set('avatarOk', myAvatarOk ? '1' : '0');
     if (f.avatarRejected && f.avatarRejected.booleanValue){
@@ -6977,6 +7025,182 @@ function chatSignature(list){
   return (list || []).map(m => m.id + (m.read ? 'r' : 'u')).join(',') + '|' + chatPending.map(p => p.tempId).join(',');
 }
 
+const STICKERS = [
+  { id: 'hi',     pose: { armR: -2.25, earL: 0.1, earR: -0.1 }, front: ['armR'], text: 'Привет!' },
+  { id: 'love',   pose: { earL: 0.5, earR: -0.5, armL: 0.4, armR: -0.4 }, hearts: true },
+  { id: 'lol',    pose: { earL: 0.9, earR: -0.9, armL: 1.1, armR: -1.1 }, rot: 0.12, text: 'ХА-ХА' },
+  { id: 'gg',     pose: { armL: 2.1, armR: -2.1, earL: 0.4, earR: -0.4 }, front: ['armL', 'armR'], text: 'GG', gold: true },
+  { id: 'sleep',  pose: { earL: -0.12, earR: 0.12 }, lids: true, zzz: true },
+  { id: 'dance',  pose: { armL: 2.0, armR: -0.8, legL: 0.25, earL: 0.6, earR: -0.2 }, front: ['armL'], rot: -0.12, notes: true },
+  { id: 'fly',    pose: { earL: 1.45, earR: -1.45, armL: 0.7, armR: -0.7 }, lift: true },
+  { id: 'what',   pose: { earL: 0.2, earR: -0.7 }, rot: 0.16, text: '?!' },
+  { id: 'thanks', pose: { earL: 0.3, earR: -0.3, armL: 0.3, armR: -0.3 }, text: 'Спасибо!', heart: true },
+  { id: 'ok',     pose: { armR: -1.7, earL: 0.15, earR: -0.15 }, front: ['armR'], text: 'ОК' }
+];
+const STICKER_IDS = STICKERS.map(x => x.id);
+
+function drawStickerHeart(g, x, y, r, col){
+  g.save(); g.translate(x, y); g.scale(r / 10, r / 10);
+  g.beginPath(); g.moveTo(0, 4); g.bezierCurveTo(-12, -5, -6, -14, 0, -7); g.bezierCurveTo(6, -14, 12, -5, 0, 4); g.closePath();
+  g.fillStyle = col; g.strokeStyle = '#2b2238'; g.lineWidth = 1.6; g.fill(); g.stroke(); g.restore();
+}
+
+function drawStickerText(g, text, x, y, size, rot, color){
+  g.save(); g.translate(x, y); g.rotate(rot || 0);
+  g.font = size + 'px ' + GAME_FONT; g.textAlign = 'center'; g.textBaseline = 'middle';
+  g.lineJoin = 'round'; g.lineWidth = size * 0.2; g.strokeStyle = '#2b2238'; g.strokeText(text, 0, 0);
+  g.fillStyle = color || '#fdf6e8'; g.fillText(text, 0, 0); g.restore();
+}
+
+function drawStickerPart(g, s, rec, name, ang){
+  const part = rec.rig.parts[name];
+  const cv = rec.hi[name];
+  if (!part || !cv) return;
+  const b = part.box;
+  const x0 = (b[0] - 256) * s, y0 = (b[1] - 256 + RIG_OY) * s;
+  const px = (part.pivot[0] - 256) * s, py = (part.pivot[1] - 256 + RIG_OY) * s;
+  g.save(); g.translate(px, py); g.rotate(ang || 0); g.translate(-px, -py);
+  g.drawImage(cv, x0, y0, (b[2] - b[0]) * s, (b[3] - b[1]) * s);
+  g.restore();
+}
+
+function makeStickerCanvas(id, cssSize){
+  const st = STICKERS.find(x => x.id === id);
+  const cvs2 = document.createElement('canvas');
+  const k = Math.min(3, Math.max(1, window.devicePixelRatio || 1));
+  cvs2.width = Math.round(cssSize * k); cvs2.height = Math.round(cssSize * k);
+  const g = cvs2.getContext('2d');
+  if (!st || !g || !g.scale) return cvs2;
+  g.scale(k * cssSize / 128, k * cssSize / 128);
+  const rec = charImgs.hero11;
+  if (!rec || !rec.ready){
+    drawStickerText(g, st.text || '♥', 64, 64, 30, 0);
+    return cvs2;
+  }
+  const dogSize = 100;
+  const sc = dogSize / 512;
+  const pose = Object.assign({ armL: 0, armR: 0, legL: 0, legR: 0, earL: 0, earR: 0, head: 0, tuck: 0 }, st.pose);
+  const front = st.front || [];
+  const drawPose = Object.assign({}, pose);
+  for (const n of front) drawPose[n] = 0;
+  g.save();
+  g.translate(64, st.lift ? 70 : 76);
+  g.rotate(st.rot || 0);
+  if (front.length){
+    for (const n of rec.rig.order){
+      if (front.indexOf(n) !== -1) continue;
+      if (n === 'lids') continue;
+      drawStickerPart(g, sc, rec, n, pose[n] || 0);
+    }
+    for (const n of front) drawStickerPart(g, sc, rec, n, pose[n]);
+  } else {
+    paintRigParts(g, sc, rec, rec.hi, drawPose);
+  }
+  if (st.lids){
+    for (const ex of [208, 304]){
+      const x = (ex - 256) * sc, y = (176 - 256 + RIG_OY) * sc;
+      g.fillStyle = '#dea449'; g.strokeStyle = '#2b2238'; g.lineWidth = 6 * sc;
+      g.beginPath(); g.ellipse(x, y, 28 * sc, 31 * sc, 0, 0, 6.2832); g.fill(); g.stroke();
+      g.beginPath(); g.moveTo(x - 20 * sc, y + 4 * sc); g.quadraticCurveTo(x, y + 18 * sc, x + 20 * sc, y + 4 * sc); g.stroke();
+    }
+  }
+  g.restore();
+  if (st.hearts){ drawStickerHeart(g, 22, 34, 12, '#ff6b9a'); drawStickerHeart(g, 104, 26, 14, '#ff9fc0'); drawStickerHeart(g, 108, 70, 9, '#ff6b9a'); }
+  if (st.heart) drawStickerHeart(g, 106, 40, 12, '#ff6b9a');
+  if (st.zzz){ drawStickerText(g, 'Z', 92, 36, 18, 0.2); drawStickerText(g, 'Z', 104, 20, 13, 0.2); drawStickerText(g, 'z', 112, 8, 10, 0.2); }
+  if (st.notes){ drawStickerText(g, '♪', 18, 34, 22, -0.2); drawStickerText(g, '♫', 110, 24, 22, 0.2); }
+  if (st.gold){ drawStickerText(g, '✦', 16, 30, 16, 0, '#ffd34d'); drawStickerText(g, '✦', 112, 44, 12, 0, '#ffd34d'); }
+  if (st.text) drawStickerText(g, st.text, 64, 16, st.text.length > 5 ? 20 : 26, -0.06, st.gold ? '#ffd34d' : '#fdf6e8');
+  return cvs2;
+}
+
+let stickerPanelBuilt = false;
+function toggleStickerPanel(force){
+  const panel = document.getElementById('stickerPanel');
+  const btn = document.getElementById('chatStickerBtn');
+  if (!panel) return;
+  const show = typeof force === 'boolean' ? force : panel.classList.contains('hidden');
+  if (show && !stickerPanelBuilt){
+    panel.innerHTML = '';
+    for (const st of STICKERS){
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'stickerPick';
+      b.appendChild(makeStickerCanvas(st.id, 56));
+      b.addEventListener('click', () => { sendChatPayload({ sticker: st.id }); toggleStickerPanel(false); });
+      panel.appendChild(b);
+    }
+    stickerPanelBuilt = charImgs.hero11 && charImgs.hero11.ready;
+  }
+  panel.classList.toggle('hidden', !show);
+  if (btn) btn.classList.toggle('active', show);
+}
+
+const chatImgCache = {};
+const chatImgRevealed = {};
+let myNoImages = Store.get('noImages', '0') === '1';
+
+function loadChatImage(convId, ref){
+  if (!ref || chatImgCache[ref]) return;
+  chatImgCache[ref] = { state: 'loading' };
+  fetch(cloudBase() + '/conversations/_images/messages/' + ref + '?key=' + CLOUD.apiKey)
+    .then(r => r.ok ? r.json() : null)
+    .then((d) => {
+      const f = (d && d.fields) || {};
+      const data = (f.data && f.data.stringValue) || '';
+      chatImgCache[ref] = (f.removed && f.removed.booleanValue) || !data
+        ? { state: 'removed' }
+        : { state: 'ok', data: data.indexOf('data:image/') === 0 ? data : '' };
+      chatLastSig = null;
+      renderChatMessages(chatMessages, false);
+    })
+    .catch(() => { chatImgCache[ref] = { state: 'error' }; });
+}
+
+function compressPhoto(file){
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const tries = [[720, 0.62], [520, 0.5], [380, 0.45]];
+        for (const [max, q] of tries){
+          const w0 = img.naturalWidth || img.width, h0 = img.naturalHeight || img.height;
+          const k = Math.min(1, max / Math.max(w0, h0));
+          const c = document.createElement('canvas');
+          c.width = Math.max(1, Math.round(w0 * k)); c.height = Math.max(1, Math.round(h0 * k));
+          c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+          const url = c.toDataURL('image/jpeg', q);
+          if (url.length < 320000){ resolve(url); return; }
+        }
+        resolve('');
+      };
+      img.onerror = () => resolve('');
+      img.src = reader.result;
+    };
+    reader.onerror = () => resolve('');
+    reader.readAsDataURL(file);
+  });
+}
+
+async function reportChatPhoto(m){
+  if (!cloudReady() || !m || !m.imgRef) return;
+  const convId = chatConvId(cloudCode, chatWithCode);
+  try {
+    await fetch(cloudBase() + '/conversations/_reports/messages?key=' + CLOUD.apiKey, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fields: {
+        convId: { stringValue: convId }, imgRef: { stringValue: m.imgRef }, msgId: { stringValue: m.id || '' },
+        from: { stringValue: m.from || '' }, fromNick: { stringValue: chatWithNickName || '' },
+        reporter: { stringValue: cloudCode }, ts: { integerValue: String(Date.now()) }
+      } })
+    });
+    const st = document.getElementById('chatStatus');
+    if (st) st.textContent = t('photoReported');
+  } catch (e) {}
+}
+
 function refreshChatBlockUI(){
   const btn = document.getElementById('chatBlockBtn');
   if (!btn) return;
@@ -7017,8 +7241,9 @@ function renderChatMessages(list, forceBottom){
   chatLastSig = sig;
 
   const all = chatMessages.concat(chatPending.map(p => ({
-    id: p.tempId, from: cloudCode, text: p.text, ts: p.ts, read: false, pending: true
+    id: p.tempId, from: cloudCode, text: p.text, ts: p.ts, read: false, pending: true, sticker: p.sticker || '', localImg: p.localImg || ''
   })));
+  const convIdNow = chatWithCode ? chatConvId(cloudCode, chatWithCode) : '';
   box.innerHTML = '';
   if (!all.length){
     const empty = document.createElement('div');
@@ -7048,7 +7273,44 @@ function renderChatMessages(list, forceBottom){
       else meta += '<span class="chatMsgTick' + (m.read ? ' isRead' : '') + '">' + (m.read ? '✓✓' : '✓') + '</span>';
     }
     meta += '</span>';
-    row.innerHTML = '<span class="chatMsgText">' + escapeHtml(cleanText(m.text || '')) + '</span>' + meta;
+    if (m.sticker && STICKER_IDS.indexOf(m.sticker) !== -1){
+      row.className += ' sticker';
+      row.appendChild(makeStickerCanvas(m.sticker, 112));
+      const metaEl = document.createElement('span');
+      metaEl.innerHTML = meta;
+      row.appendChild(metaEl.firstChild);
+    } else if (m.imgRef || m.localImg){
+      row.className += ' photo';
+      const wrap = document.createElement('div');
+      wrap.className = 'chatPhoto';
+      const cached = m.imgRef ? chatImgCache[m.imgRef] : null;
+      const src = m.localImg || (cached && cached.state === 'ok' ? cached.data : '');
+      if (cached && cached.state === 'removed'){
+        wrap.innerHTML = '<div class="chatPhotoNote">' + escapeHtml(t('photoRemoved')) + '</div>';
+      } else if (!src){
+        wrap.innerHTML = '<div class="chatPhotoNote">' + escapeHtml(t('photoLoading')) + '</div>';
+        if (m.imgRef && convIdNow) loadChatImage(convIdNow, m.imgRef);
+      } else {
+        const hide = !isOwn && !chatImgRevealed[m.imgRef];
+        if (hide) wrap.className += ' blurred';
+        wrap.innerHTML = '<img src="' + src + '" alt="">' + (hide ? '<div class="chatPhotoCover">' + escapeHtml(t('photoTap')) + '</div>' : '');
+        if (hide) wrap.addEventListener('click', () => { chatImgRevealed[m.imgRef] = true; chatLastSig = null; renderChatMessages(chatMessages, false); });
+      }
+      row.appendChild(wrap);
+      if (!isOwn && m.imgRef && !(cached && cached.state === 'removed')){
+        const rb = document.createElement('button');
+        rb.type = 'button';
+        rb.className = 'chatReportBtn';
+        rb.textContent = '⚠ ' + t('photoReport');
+        rb.addEventListener('click', () => reportChatPhoto(m));
+        row.appendChild(rb);
+      }
+      const metaEl2 = document.createElement('span');
+      metaEl2.innerHTML = meta;
+      row.appendChild(metaEl2.firstChild);
+    } else {
+      row.innerHTML = '<span class="chatMsgText">' + escapeHtml(cleanText(m.text || '')) + '</span>' + meta;
+    }
     box.appendChild(row);
   }
   if (firstRender || nearBottom || forceBottom) box.scrollTop = box.scrollHeight;
@@ -7071,6 +7333,8 @@ async function fetchChatMessages(){
         id: path.substring(path.lastIndexOf('/') + 1),
         from: (f.from && f.from.stringValue) || '',
         text: (f.text && f.text.stringValue) || '',
+        sticker: (f.sticker && f.sticker.stringValue) || '',
+        imgRef: (f.imgRef && f.imgRef.stringValue) || '',
         ts: parseInt((f.ts && f.ts.integerValue) || '0', 10) || 0,
         read: !!(f.read && f.read.booleanValue)
       };
@@ -7466,21 +7730,36 @@ document.getElementById('linkChoiceModal').addEventListener('click', (e) => {
 });
 
 async function postChatMessage(){
+  const input = document.getElementById('chatInput');
+  const text = (input && input.value || '').trim();
+  if (!text) return;
+  return sendChatPayload({ text });
+}
+
+async function sendChatPayload(payload){
   if (!chatWithCode) return;
+  if (isBlocked(chatWithCode)) return;
   const input = document.getElementById('chatInput');
   const statusEl = document.getElementById('chatStatus');
-  if (isBlocked(chatWithCode)) return;
-  let text = (input && input.value || '').trim();
-  if (!text) return;
-  const spamKey = spamCheck(text);
+  let text = String(payload.text || '').trim();
+  const sticker = payload.sticker && STICKER_IDS.indexOf(payload.sticker) !== -1 ? payload.sticker : '';
+  const imgData = payload.imgData || '';
+  if (!text && !sticker && !imgData) return;
+  if (imgData && myNoImages){
+    if (statusEl) statusEl.textContent = t('photoBanned');
+    return;
+  }
+  const spamKey = spamCheck(sticker ? 'sticker:' + sticker : (imgData ? 'photo:' + imgData.length : text));
   if (spamKey){
     if (statusEl) statusEl.textContent = t(spamKey);
     return;
   }
-  text = cleanText(text);
-  if (text.length > 200){
-    if (statusEl) statusEl.textContent = t('chatTooLong');
-    return;
+  if (text){
+    text = cleanText(text);
+    if (text.length > 200){
+      if (statusEl) statusEl.textContent = t('chatTooLong');
+      return;
+    }
   }
   if (!cloudReady()){
     if (statusEl) statusEl.textContent = t('cloudErr');
@@ -7495,51 +7774,78 @@ async function postChatMessage(){
   const toNick = chatWithNickName;
   const id = chatConvId(cloudCode, toCode);
   const ts = Date.now();
-  const pend = { tempId: 'p' + ts + Math.random().toString(36).slice(2, 7), text, ts };
+  const pend = { tempId: 'p' + ts + Math.random().toString(36).slice(2, 7), text, ts, sticker, localImg: imgData };
   chatPending.push(pend);
-  if (input) input.value = '';
-  if (statusEl) statusEl.textContent = '';
+  if (input && text) input.value = '';
+  if (statusEl) statusEl.textContent = imgData ? t('photoSending') : '';
   renderChatMessages(chatMessages, true);
   const dropPending = () => {
     const i = chatPending.indexOf(pend);
     if (i >= 0) chatPending.splice(i, 1);
   };
-  try {
-    const res = await fetch(cloudBase() + '/conversations/' + id + '/messages?key=' + CLOUD.apiKey, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        fields: {
-          from: { stringValue: cloudCode },
-          fromNick: { stringValue: nickname },
-          text: { stringValue: text },
-          ts: { integerValue: String(ts) },
-          read: { booleanValue: false }
-        }
-      })
-    });
-    dropPending();
-    if (res.ok){
-      updateConvMeta(id, toCode, toNick, text, ts);
-      if (chatWithCode === toCode) fetchChatMessages();
-    } else {
-      if (chatWithCode === toCode){
-        if (statusEl) statusEl.textContent = t('chatError');
-        if (input && !input.value) input.value = text;
-        renderChatMessages(chatMessages, true);
-      }
-    }
-  } catch (e) {
+  const fail = () => {
     dropPending();
     if (chatWithCode === toCode){
       if (statusEl) statusEl.textContent = t('chatError');
-      if (input && !input.value) input.value = text;
+      if (text && input && !input.value) input.value = text;
       renderChatMessages(chatMessages, true);
     }
+  };
+  try {
+    let imgRef = '';
+    if (imgData){
+      const ir = await fetch(cloudBase() + '/conversations/_images/messages?key=' + CLOUD.apiKey, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fields: { data: { stringValue: imgData }, from: { stringValue: cloudCode }, convId: { stringValue: id }, ts: { integerValue: String(ts) } } })
+      });
+      if (!ir.ok){ fail(); return; }
+      const idoc = await ir.json();
+      imgRef = docCode(idoc);
+      chatImgCache[imgRef] = { state: 'ok', data: imgData };
+    }
+    const fields = {
+      from: { stringValue: cloudCode },
+      fromNick: { stringValue: nickname },
+      text: { stringValue: text },
+      ts: { integerValue: String(ts) },
+      read: { booleanValue: false }
+    };
+    if (sticker) fields.sticker = { stringValue: sticker };
+    if (imgRef) fields.imgRef = { stringValue: imgRef };
+    const res = await fetch(cloudBase() + '/conversations/' + id + '/messages?key=' + CLOUD.apiKey, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fields })
+    });
+    dropPending();
+    if (res.ok){
+      if (statusEl && imgData) statusEl.textContent = '';
+      updateConvMeta(id, toCode, toNick, sticker ? t('msgSticker') : (imgRef ? t('msgPhoto') : text), ts);
+      if (chatWithCode === toCode) fetchChatMessages();
+    } else {
+      fail();
+    }
+  } catch (e) {
+    fail();
   }
 }
 
 document.getElementById('chatBlockBtn').addEventListener('click', toggleBlockChat);
+document.getElementById('chatStickerBtn').addEventListener('click', () => toggleStickerPanel());
+document.getElementById('chatPhotoBtn').addEventListener('click', () => {
+  if (myNoImages){ const st = document.getElementById('chatStatus'); if (st) st.textContent = t('photoBanned'); return; }
+  document.getElementById('chatPhotoInput').click();
+});
+document.getElementById('chatPhotoInput').addEventListener('change', async (e) => {
+  const inp = e.target;
+  const file = inp.files && inp.files[0];
+  inp.value = '';
+  if (!file) return;
+  const data = await compressPhoto(file);
+  if (!data){ const st = document.getElementById('chatStatus'); if (st) st.textContent = t('photoTooBig'); return; }
+  sendChatPayload({ imgData: data });
+});
 const chatSendBtnEl = document.getElementById('chatSendBtn');
 if (chatSendBtnEl) chatSendBtnEl.addEventListener('click', postChatMessage);
 const chatInputEl = document.getElementById('chatInput');
@@ -7674,9 +7980,12 @@ async function refreshOnlineCounter(){
   const txt = document.getElementById('onlineCounterText');
   if (!el || !txt) return;
   if (!isStaff() || !cloudReady()){ el.classList.add('hidden'); return; }
+  el.classList.remove('hidden');
+  if (!txt.textContent) txt.textContent = '… ' + t('onlineNow');
   if (document.hidden) return;
   const n = await fetchOnlineCount();
-  if (n < 0 || !isStaff()) return;
+  if (!isStaff()){ el.classList.add('hidden'); return; }
+  if (n < 0){ txt.textContent = t('onlineNow') + ': ' + t('onlineErr'); return; }
   txt.textContent = n + ' ' + t('onlineNow') + (eventInfo && eventInfo.count ? ' · ' + eventInfo.count + ' ' + t('onlineTotal') : '');
   el.classList.remove('hidden');
 }
@@ -8031,6 +8340,60 @@ async function adminLoadPhotos(){
     box.innerHTML = '<div class="adminPhotoInfo">Ошибка связи</div>';
   }
 }
+
+async function adminLoadReports(){
+  const box = document.getElementById('adminReportsList');
+  if (!box || !cloudReady() || !isStaff()) return;
+  box.innerHTML = '<div class="adminPhotoInfo">Загрузка...</div>';
+  try {
+    const res = await fetch(cloudBase() + '/conversations/_reports/messages?pageSize=30&key=' + CLOUD.apiKey);
+    const data = res.ok ? await res.json() : {};
+    const docs = (data && data.documents) || [];
+    box.innerHTML = '';
+    for (const d of docs){
+      const f = d.fields || {};
+      const g = (k) => (f[k] && f[k].stringValue) || '';
+      const repId = docCode(d);
+      const item = document.createElement('div');
+      item.className = 'adminPhotoItem';
+      item.innerHTML = '<img alt=""><div class="adminPhotoInfo">' + escapeHtml(g('fromNick') || '?') + '<br>' + escapeHtml(g('from')) + '</div>' +
+        '<button type="button" class="adminPhotoNo" title="Удалить фото">✕</button><button type="button" class="adminPhotoNo" title="Удалить и запретить фото">⛔</button><button type="button" class="adminPhotoOk" title="Оставить">✓</button>';
+      const imgEl = item.querySelector('img');
+      fetch(cloudBase() + '/conversations/_images/messages/' + g('imgRef') + '?key=' + CLOUD.apiKey)
+        .then(r => r.ok ? r.json() : null)
+        .then((idoc) => { const v = idoc && idoc.fields && idoc.fields.data && idoc.fields.data.stringValue; if (v && v.indexOf('data:image/') === 0) imgEl.src = v; })
+        .catch(() => {});
+      const btns = item.querySelectorAll('button');
+      btns[0].addEventListener('click', () => adminResolveReport(repId, g('convId'), g('imgRef'), g('from'), true, false, item));
+      btns[1].addEventListener('click', () => adminResolveReport(repId, g('convId'), g('imgRef'), g('from'), true, true, item));
+      btns[2].addEventListener('click', () => adminResolveReport(repId, g('convId'), g('imgRef'), g('from'), false, false, item));
+      box.appendChild(item);
+    }
+    if (!docs.length) box.innerHTML = '<div class="adminPhotoInfo">Жалоб нет ✓</div>';
+  } catch (e){
+    box.innerHTML = '<div class="adminPhotoInfo">Ошибка связи</div>';
+  }
+}
+
+async function adminResolveReport(repId, convId, imgRef, from, removePhoto, banPhotos, item){
+  if (!isStaff() || !cloudReady()) return;
+  const H = { 'Content-Type': 'application/json' };
+  try {
+    if (removePhoto && convId && imgRef){
+      await fetch(cloudBase() + '/conversations/_images/messages/' + imgRef + '?updateMask.fieldPaths=data&updateMask.fieldPaths=removed&key=' + CLOUD.apiKey, {
+        method: 'PATCH', headers: H, body: JSON.stringify({ fields: { data: { stringValue: '' }, removed: { booleanValue: true } } })
+      });
+    }
+    if (banPhotos && from){
+      await fetch(cloudBase() + '/players/' + from + '?updateMask.fieldPaths=noImages&key=' + CLOUD.apiKey, {
+        method: 'PATCH', headers: H, body: JSON.stringify({ fields: { noImages: { booleanValue: true } } })
+      });
+    }
+    await fetch(cloudBase() + '/conversations/_reports/messages/' + repId + '?key=' + CLOUD.apiKey, { method: 'DELETE' });
+    if (item && item.parentNode) item.parentNode.removeChild(item);
+  } catch (e) {}
+}
+document.getElementById('adminReportsBtn').addEventListener('click', adminLoadReports);
 
 async function adminModeratePhoto(code, ok, item){
   if (!isStaff() || !cloudReady()) return;
