@@ -836,40 +836,6 @@
     .hint{display:none;}
   }
 
-  body.lg{
-    --lg-fill:transparent;
-    --lg-warm:linear-gradient(180deg,rgba(255,208,138,.92),rgba(255,159,69,.9));
-    --lg-rim:inset 0 0 0 1px rgba(255,255,255,.1);
-    --lg-drop:0 10px 26px rgba(8,3,24,.32);
-  }
-  body.lg .btn,
-  body.lg #settingsBox, body.lg .setCat,
-  body.lg .profileCard, body.lg .chatCard,
-  body.lg #pauseBtn, body.lg .ctrlBtn, body.lg .backIconBtn, body.lg .inboxBtn, body.lg .charArrow{
-    backdrop-filter:blur(16px) saturate(180%);
-    -webkit-backdrop-filter:blur(16px) saturate(180%);
-  }
-  body.lg .btn{
-    background:var(--lg-warm);color:#3a1f00;
-    box-shadow:0 6px 0 #c26a1d,var(--lg-drop);
-  }
-  body.lg .btn:active{box-shadow:0 2px 0 #c26a1d,0 5px 14px rgba(8,3,24,.3);}
-  body.lg .btn.ghost{
-    background:var(--lg-fill);color:#fdf6e8;
-    box-shadow:var(--lg-rim),var(--lg-drop);
-  }
-  body.lg .btn.ghost:active{box-shadow:var(--lg-rim),0 4px 12px rgba(10,4,30,.3);}
-  body.lg #settingsBox{background:transparent;box-shadow:var(--lg-rim),var(--lg-drop);border-radius:24px;}
-  body.lg .setCat{background:var(--lg-fill);box-shadow:var(--lg-rim);border-radius:18px;}
-
-  body.lg .chip{background:var(--lg-fill);box-shadow:var(--lg-rim);color:#fdf6e8;}
-  body.lg .chip[aria-pressed="true"]{background:var(--lg-warm);color:#3a1f00;box-shadow:none;}
-  body.lg .profileCard, body.lg .chatCard{background:rgba(30,16,62,.18);box-shadow:var(--lg-rim),0 20px 50px rgba(0,0,0,.45);}
-  body.lg #pauseBtn, body.lg .ctrlBtn, body.lg .backIconBtn, body.lg .inboxBtn, body.lg .charArrow{
-    background:var(--lg-fill);box-shadow:var(--lg-rim),0 6px 18px rgba(8,3,24,.28);
-  }
-  body.lg .ctrlBtn:active{background:var(--lg-warm);}
-  body.lg .shopTab{background:var(--lg-fill);box-shadow:var(--lg-rim);}
 </style>
 </head>
 <body>
@@ -1083,7 +1049,7 @@
               <button class="chip" type="button" data-gfx="low" data-i18n="gfx_low">Быстро</button>
               <button class="chip gfxUltraChip" type="button" data-gfx="ultra"><span data-i18n="gfx_ultra">Ультра</span><span class="expBadge" data-i18n="expBadge">эксперимент</span></button>
             </div>
-            <p id="gfxUltraNote" class="gfxUltraNote hidden" data-i18n="gfxUltraNote">Экспериментальная функция: объёмные платформы, тени и стеклянный интерфейс (Liquid Glass). На слабых телефонах может тормозить.</p>
+            <p id="gfxUltraNote" class="gfxUltraNote hidden" data-i18n="gfxUltraNote">Экспериментальная функция: объёмные платформы и тени. На слабых телефонах может тормозить.</p>
           </div>
 
           <div class="settingRow">
@@ -1322,7 +1288,6 @@ function resize(){
   ctx.imageSmoothingQuality = lowGfx() ? 'low' : 'high';
 }
 resize();
-if (document.body) document.body.classList.toggle('lg', ultraGfx());
 
 const worldTransform = () => ctx.setTransform(S * DPR, 0, 0, S * DPR, 0, 0);
 const pixelTransform = () => ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -1726,7 +1691,7 @@ const I18N = {
     cont: 'Продолжить', back: 'Назад', language: 'Язык', motionBlur: 'Motion blur',
     gfxLabel: 'Графика', gfx_auto: 'Авто', gfx_high: 'Красиво', gfx_low: 'Быстро', gfx_ultra: 'Ультра',
     expBadge: 'эксперимент',
-    gfxUltraNote: '⚗ Экспериментальная функция: объёмные платформы, тени и стеклянный интерфейс (Liquid Glass). На слабых телефонах может тормозить.',
+    gfxUltraNote: '⚗ Экспериментальная функция: объёмные платформы и тени. На слабых телефонах может тормозить.',
     catMain: 'Основное', catGfx: 'Графика и вид', catProfile: 'Профиль', catSound: 'Звук', catOnline: 'Онлайн',
     settingsSave: '✓ Сохранить', settingsSaved: 'Сохранено ✓',
     gfxAutoLowNote: '(лагало — включён быстрый режим)',
@@ -1814,7 +1779,7 @@ const I18N = {
     cont: 'Continue', back: 'Back', language: 'Language', motionBlur: 'Motion blur',
     gfxLabel: 'Graphics', gfx_auto: 'Auto', gfx_high: 'Pretty', gfx_low: 'Fast', gfx_ultra: 'Ultra',
     expBadge: 'experimental',
-    gfxUltraNote: '⚗ Experimental feature: 3D-looking platforms, shadows and a glass interface (Liquid Glass). May lag on weak phones.',
+    gfxUltraNote: '⚗ Experimental feature: 3D-looking platforms and shadows. May lag on weak phones.',
     catMain: 'General', catGfx: 'Graphics & look', catProfile: 'Profile', catSound: 'Sound', catOnline: 'Online',
     settingsSave: '✓ Save', settingsSaved: 'Saved ✓',
     gfxAutoLowNote: '(lag detected — fast mode on)',
@@ -5157,7 +5122,6 @@ function trackPerformance(realDt){
 
 function applyGfxChange(){
   resize();
-  document.body.classList.toggle('lg', ultraGfx());
   wakeScene(600);
   bgCacheKey = '';
   const vig = document.getElementById('vignette');
