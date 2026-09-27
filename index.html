@@ -2026,7 +2026,7 @@ const I18N = {
     pwLabel: 'Пароль аккаунта', pwNewPh: 'Новый пароль', pwPh: 'Пароль', pwSave: 'Сохранить', restoreLabel: 'Войти в другой аккаунт',
     pwOn: '✓ Пароль установлен — без него в аккаунт не войти, даже зная код', pwOff: '⚠ Пароля нет: любой, кто знает твой код, может зайти в аккаунт и потратить монеты',
     pwShort: 'Пароль должен быть хотя бы из 4 символов', pwSaved: 'Пароль сохранён ✓', pwNeed: 'Этот аккаунт защищён паролем — введи пароль', pwWrong: 'Неверный пароль', pwWait: 'Подожди пару секунд и попробуй снова',
-    cloudNotFound: 'Код не найден', cloudErr: 'Нет связи с сервером', cloudLoading: 'Загрузка…',
+    cloudNotFound: 'Код не найден', accountDeleted: 'Этот аккаунт удалён администрацией. Игра начнётся с нуля.', cloudErr: 'Нет связи с сервером', cloudLoading: 'Загрузка…',
     smashToast: 'СОКРУШИТЕЛЬНЫЙ УДАР!', kickToast: 'ПИНОК!', perfectToast: 'ИДЕАЛЬНО!',
     laserToast: 'ОСТОРОЖНО: ЛАЗЕРЫ!',
     glassToast: 'СТЕКЛО СПАСЛО ТЕБЯ!', tapPrompt: 'ЖМИ!',
@@ -2130,7 +2130,7 @@ const I18N = {
     pwLabel: 'Account password', pwNewPh: 'New password', pwPh: 'Password', pwSave: 'Save', restoreLabel: 'Log into another account',
     pwOn: '✓ Password set — nobody can log in with just your code', pwOff: '⚠ No password: anyone who knows your code can log in and spend your coins',
     pwShort: 'Password must be at least 4 characters', pwSaved: 'Password saved ✓', pwNeed: 'This account is protected — enter the password', pwWrong: 'Wrong password', pwWait: 'Wait a couple of seconds and try again',
-    cloudNotFound: 'Code not found', cloudErr: 'Could not reach the server', cloudLoading: 'Loading…',
+    cloudNotFound: 'Code not found', accountDeleted: 'This account was deleted by the administration. The game will start from scratch.', cloudErr: 'Could not reach the server', cloudLoading: 'Loading…',
     smashToast: 'MACE SMASH!', kickToast: 'KICKED!', perfectToast: 'PERFECT!',
     laserToast: 'WATCH OUT: LASERS!',
     glassToast: 'THE GLASS SAVED YOU!', tapPrompt: 'TAP!',
@@ -6411,6 +6411,40 @@ function makeCloudCode(){
 let cloudCode = Store.get('cloudCode', '') || makeCloudCode();
 Store.set('cloudCode', cloudCode);
 
+let accountGone = false;
+let ownDocChecked = false;
+const ACCOUNT_KEEP_KEYS = ['lang', 'gfxMode', 'vibro', 'platformTheme', 'musicVolume', 'music', 'notify', 'chatTheme', 'blur', 'bgTheme'];
+
+function wipeDeletedAccount(){
+  if (accountGone) return;
+  accountGone = true;
+  try {
+    const ls = window.localStorage;
+    const drop = [];
+    for (let i = 0; i < ls.length; i++){
+      const k = ls.key(i);
+      if (k && k.indexOf('doodlecabbit.') === 0 && ACCOUNT_KEEP_KEYS.indexOf(k.slice(13)) === -1) drop.push(k);
+    }
+    drop.forEach(k => ls.removeItem(k));
+  } catch (e) {}
+  Store.mem = {};
+  try { alert(t('accountDeleted')); } catch (e) {}
+  try { location.reload(); } catch (e) {}
+}
+
+function checkAccountAlive(status, f){
+  if (status === 404){
+    if (Store.get('cloudSeen', '') === cloudCode) wipeDeletedAccount();
+    return !accountGone;
+  }
+  if (f && f.deleted && f.deleted.booleanValue){
+    wipeDeletedAccount();
+    return false;
+  }
+  if (status >= 200 && status < 300) Store.set('cloudSeen', cloudCode);
+  return true;
+}
+
 let myTitle = Store.get('titleText', '');
 let myTitleColor = Store.get('titleColor', '');
 let myBadge = Store.get('badge', '');
@@ -6422,12 +6456,15 @@ function applyOwnBadgeFromFields(f){
 }
 
 async function cloudFetchOwnTitle(){
-  if (!cloudReady()) return;
+  if (!cloudReady() || accountGone) return;
   try {
     const res = await fetch(cloudBase() + '/players/' + cloudCode + '?key=' + CLOUD.apiKey);
+    if (res.status === 404){ checkAccountAlive(404, null); ownDocChecked = true; return; }
     if (!res.ok) return;
     const doc = await res.json();
     const f = (doc && doc.fields) || {};
+    if (!checkAccountAlive(res.status || 200, f)) return;
+    ownDocChecked = true;
     myTitle = (f.title && f.title.stringValue) || '';
     myTitleColor = (f.titleColor && f.titleColor.stringValue) || '';
     Store.set('titleText', myTitle);
@@ -6473,7 +6510,11 @@ function cloudPushSoon(){
   cloudPushTimer = setTimeout(cloudPush, 1200);
 }
 async function cloudPush(){
-  if (!cloudReady()) return;
+  if (!cloudReady() || accountGone) return;
+  if (!ownDocChecked){
+    await cloudFetchOwnTitle();
+    if (accountGone || !ownDocChecked) return;
+  }
   const fields = {
     nick:  { stringValue: nickname || 'Котокролик' },
     nickLower: { stringValue: String(nickname || 'Котокролик').toLowerCase() },
@@ -6495,11 +6536,12 @@ async function cloudPush(){
   };
   const mask = Object.keys(fields).map(k => 'updateMask.fieldPaths=' + k).join('&');
   try {
-    await fetch(cloudBase() + '/players/' + cloudCode + '?' + mask + '&key=' + CLOUD.apiKey, {
+    const pr = await fetch(cloudBase() + '/players/' + cloudCode + '?' + mask + '&key=' + CLOUD.apiKey, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ fields })
     });
+    if (pr && pr.ok) Store.set('cloudSeen', cloudCode);
   } catch (e) {  }
 }
 
@@ -6510,7 +6552,7 @@ function isOnline(f){
 }
 
 async function updatePresence(){
-  if (!cloudReady()) return;
+  if (!cloudReady() || accountGone || !ownDocChecked) return;
   try {
     await fetch(cloudBase() + '/players/' + cloudCode + '?updateMask.fieldPaths=lastSeen&key=' + CLOUD.apiKey, {
       method: 'PATCH',
@@ -6605,6 +6647,7 @@ async function cloudRestore(rawCode, rawPw){
     if (!res.ok){ setCloudStatus(t('cloudNotFound')); return; }
     const doc = await res.json();
     const f = (doc && doc.fields) || {};
+    if (f.deleted && f.deleted.booleanValue){ setCloudStatus(t('cloudNotFound')); return; }
     const storedHash = (f.pwHash && f.pwHash.stringValue) || '';
     if (storedHash){
       const pw = String(rawPw || '');
@@ -6666,6 +6709,8 @@ async function cloudRestore(rawCode, rawPw){
 
     cloudCode = code;
     Store.set('cloudCode', cloudCode);
+    Store.set('cloudSeen', cloudCode);
+    ownDocChecked = true;
     const pwIn = document.getElementById('cloudRestorePw');
     if (pwIn) pwIn.value = '';
     dropUnownedLockedOutfit();
@@ -6680,9 +6725,10 @@ async function checkPendingGrant(){
   if (!cloudReady()) return;
   try {
     const res = await fetch(cloudBase() + '/players/' + cloudCode + '?key=' + CLOUD.apiKey);
-    if (!res.ok) return;
+    if (!res.ok || accountGone) return;
     const doc = await res.json();
     const f = (doc && doc.fields) || {};
+    if (f.deleted && f.deleted.booleanValue) return;
     if (!(f.pending && f.pending.booleanValue)) return;
 
     if (f.coins) { coins = parseInt(f.coins.integerValue || '0', 10) || 0; Store.set('coins', coins); }
@@ -6811,7 +6857,9 @@ async function searchPlayers(query){
     for (const row of (Array.isArray(list) ? list : [])){
       if (!row || !row.document) continue;
       const code = docCode(row.document);
-      if (code && !found.has(code)) found.set(code, row.document.fields || {});
+      const df = row.document.fields || {};
+      if (df.deleted && df.deleted.booleanValue) continue;
+      if (code && !found.has(code)) found.set(code, df);
     }
   }
   return Array.from(found.entries()).map(([code, f]) => ({ code, f }))
@@ -6865,6 +6913,7 @@ async function cloudFetchLeaderboard(){
     for (const row of (Array.isArray(data) ? data : [])){
       if (!row.document) continue;
       const f = row.document.fields || {};
+      if (f.deleted && f.deleted.booleanValue) continue;
       const path = row.document.name || '';
       const rowCode = path.substring(path.lastIndexOf('/') + 1);
       lbFieldsByCode[rowCode] = f;
@@ -9162,7 +9211,9 @@ async function adminDeleteAccount(){
   const deletedCode = adminCurrentCode;
   try {
     const res = await fetch(cloudBase() + '/players/' + deletedCode + '?key=' + CLOUD.apiKey, {
-      method: 'DELETE'
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fields: { deleted: { booleanValue: true }, deletedAt: { integerValue: String(Date.now()) } } })
     });
     if (res.ok){
       document.getElementById('adminPlayerBox').classList.add('hidden');
