@@ -1083,6 +1083,12 @@
               <input id="musicVolumeSlider" type="range" min="0" max="100" value="28" style="width:150px;accent-color:#ff9f45;">
             </div>
           </div>
+          <div class="settingRow">
+            <span class="settingLabel" data-i18n="vibroLabel">Вибрация</span>
+            <div class="btnRow">
+              <button id="vibroToggle" class="chip"></button>
+            </div>
+          </div>
         </div>
       </div>
       <div class="setCat" data-cat="online">
@@ -1632,6 +1638,11 @@ const sfxPopupOpen  = () => { ensureAudio(); beep(680, 0.05, 'sine', 0.10); beep
 const sfxPopupClose = () => { ensureAudio(); beep(560, 0.06, 'sine', 0.08); beep(360, 0.08, 'sine', 0.06); };
 
 let musicOn = Store.get('music', '1') === '1';
+let vibroOn = Store.get('vibro', '1') === '1';
+function buzz(ms){
+  if (!vibroOn) return;
+  try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {}
+}
 let musicVolume = parseInt(Store.get('musicVolume', '28'), 10);
 if (!isFinite(musicVolume) || musicVolume < 0 || musicVolume > 100) musicVolume = 28;
 let ambientReady = true;
@@ -1672,7 +1683,7 @@ const I18N = {
     frame_none: 'Без рамки', frame_gold: 'Золотое сияние', frame_neon: 'Неон', frame_rainbow: 'Радуга',
     frame_fire: 'Пламя', frame_frost: 'Иней', frame_orbit: 'Звёздная орбита', frame_ears: 'Ушки котокролика',
     frame_crown: 'Корона', frame_hearts: 'Сердечки',
-    musicLabel: 'Музыка', musicVolumeLabel: 'Громкость музыки',
+    musicLabel: 'Музыка', musicVolumeLabel: 'Громкость музыки', vibroLabel: 'Вибрация',
     profileCommentsLabel: 'Комментарии', profileCommentPlaceholder: 'Оставить комментарий...',
     profileCommentSend: 'Отправить', profileCommentEmpty: 'Пока нет комментариев',
     profileCommentSending: 'Отправка...', profileCommentError: 'Не удалось загрузить',
@@ -1760,7 +1771,7 @@ const I18N = {
     frame_none: 'No frame', frame_gold: 'Golden Glow', frame_neon: 'Neon', frame_rainbow: 'Rainbow',
     frame_fire: 'Blaze', frame_frost: 'Frost', frame_orbit: 'Star Orbit', frame_ears: 'Cabbit Ears',
     frame_crown: 'Crown', frame_hearts: 'Hearts',
-    musicLabel: 'Music', musicVolumeLabel: 'Music volume',
+    musicLabel: 'Music', musicVolumeLabel: 'Music volume', vibroLabel: 'Vibration',
     profileCommentsLabel: 'Comments', profileCommentPlaceholder: 'Leave a comment...',
     profileCommentSend: 'Send', profileCommentEmpty: 'No comments yet',
     profileCommentSending: 'Sending...', profileCommentError: 'Failed to load',
@@ -1855,6 +1866,11 @@ function applyStaticI18n(){
   if (typeof musicToggle !== 'undefined'){
     musicToggle.textContent = t('musicLabel') + ': ' + (musicOn ? t('on') : t('off'));
     musicToggle.setAttribute('aria-pressed', musicOn ? 'true' : 'false');
+  }
+  const vibroEl = document.getElementById('vibroToggle');
+  if (vibroEl){
+    vibroEl.textContent = t('vibroLabel') + ': ' + (vibroOn ? t('on') : t('off'));
+    vibroEl.setAttribute('aria-pressed', vibroOn ? 'true' : 'false');
   }
 }
 
@@ -2237,6 +2253,7 @@ let platforms = [], particles = [], coinsOnMap = [], toasts = [], monsters = [];
 let crawlers = [], arrows = [];      
 let shootCd = 0, airJumps = 0;       
 let camY = 0, camTarget = 0;
+let hitStop = 0, speedFx = 0;
 let startY = 0, minY = 0, score = 0, runCoins = 0;
 let shake = 0, shakeX = 0, shakeY = 0;
 let lastPlatY = 0, flash = 0, flashColor = '#fff3c4', blurAmount = 0, blurWanted = 0, coinPulse = 0;
@@ -2532,6 +2549,19 @@ function burstGlassShards(x, y){
   }
 }
 
+function landDust(x, y){
+  if (lowGfx()) return;
+  for (let k = -1; k <= 1; k += 2){
+    for (let j = 0; j < 2; j++){
+      addParticle({
+        kind: 'puff', x: x + k * rand(6, 14), y: y - rand(0, 4),
+        vx: k * rand(70, 130), vy: rand(-26, -6),
+        life: 1, decay: rand(2.4, 3.4), r: rand(4, 7), color: '#fff6e2'
+      });
+    }
+  }
+}
+
 function trailPuff(){
   addParticle({
     kind: 'puff', x: hero.x + rand(-10, 10), y: hero.y + hero.h * 0.35 + rand(-6, 6),
@@ -2588,6 +2618,8 @@ function killMonster(m, success, perfect){
     if (smash) sfxSmash(); else sfxSpring();
     if (perfect) beep(1200, 0.1, 'square', 0.16);
     shake = Math.max(shake, (smash ? 18 : 13) + (perfect ? 8 : 0));
+    hitStop = perfect ? 0.11 : (smash ? 0.08 : 0.06);
+    buzz(perfect ? 55 : 35);
     flash = (smash ? 0.65 : 0.45) + (perfect ? 0.2 : 0); flashColor = perfect ? '#ffe37a' : '#b268ff';
     const launchMult = perfect ? 1.22 : 1;
     hero.vy = (smash ? MACE_LAUNCH : KICK_LAUNCH) * launchMult;
@@ -2661,6 +2693,7 @@ function handleFatalEvent(){
   if (hasGlass()){
     burstGlassShards(hero.x, hero.y);
     sfxGlass();
+    buzz(60);
     addToast(t('glassToast'), hero.x, hero.y - 30, '#bdeaff');
     shake = Math.max(shake, 10);
     flash = 0.55; flashColor = '#bdeaff';
@@ -2707,6 +2740,7 @@ function startDeathPortal(){
     gulped: false, closing: false, done: false, bits: [], bitAcc: 0
   };
   shake = Math.max(shake, 5);
+  buzz([40, 60, 90]);
   sfxPortalOpen();
 }
 
@@ -2889,6 +2923,7 @@ function resetGame(){
   glassUsedThisRun = false;
   fallSoundPlayed = false;
   deathPortal = null;
+  hitStop = 0; speedFx = 0;
   maceSwing = 0;
   shootCd = 0;
   airJumps = 0;
@@ -3023,11 +3058,14 @@ function stepPhysics(dt){
       burstLeaves(hero.x, top, 1.4);
       shake = Math.max(shake, 9);
       flash = 0.5; flashColor = '#fff3c4';
+      hitStop = 0.035;
+      buzz(20);
       sfxSpring();
     } else {
       hero.vy = JUMP_V;
       burstLeaves(hero.x, top, 1);
       burstSpark(hero.x, top, '#dff9c9', 8, 0.7);
+      landDust(hero.x, top);
       shake = Math.max(shake, 3);
       sfxLand();
     }
@@ -3077,8 +3115,10 @@ function shootArrow(){
 
 
 function updateWorld(dt){
-  const camT = hero.y - VH * 0.45;
+  const lead = clamp(-hero.vy / 1100, 0, 1);
+  const camT = hero.y - VH * (0.45 + 0.1 * lead);
   if (camT < camTarget) camTarget = camT;
+  speedFx = approach(speedFx, clamp((-hero.vy - 800) / 350, 0, 1), 6, dt);
   camY = approach(camY, camTarget, 13, dt);
 
   if (hero.y < minY) minY = hero.y;
@@ -3184,6 +3224,7 @@ function updateWorld(dt){
       coinPulse = 1;
       burstSpark(c.x, c.y, '#ffd34d', 14, 0.8);
       burstSpark(c.x, c.y, '#fff3b0', 8, 0.5);
+      addToast('+' + gain, c.x + 14, c.y - 18, '#ffd34d');
       sfxCoin();
       continue;
     }
@@ -3423,6 +3464,135 @@ function drawBackground(){
         }
       }
     }
+  }
+  ctx.globalAlpha = 1;
+}
+
+const WEATHER = ['petals', 'snow', 'embers', 'spores', 'stars'];
+const WEATHER_N = 32;
+
+function hash01(i, k){
+  const v = Math.sin(i * 127.1 + k * 311.7) * 43758.5453;
+  return v - Math.floor(v);
+}
+
+function drawWeather(){
+  if (lowGfx()) return;
+  const kind = WEATHER[worldIndex() % WEATHER.length];
+  const time = performance.now() / 1000;
+  const n = ultraGfx() ? WEATHER_N + 10 : WEATHER_N;
+  const H = VH + 60;
+  for (let i = 0; i < n; i++){
+    const r1 = hash01(i, 1), r2 = hash01(i, 2), r3 = hash01(i, 3);
+    let x, y, a;
+    if (kind === 'embers' || kind === 'spores'){
+      const sp = kind === 'embers' ? 60 + r2 * 70 : 18 + r2 * 22;
+      y = H - ((r1 * H + time * sp - camY * 0.35) % H + H) % H - 30;
+      x = r3 * VW + Math.sin(time * (0.8 + r2) + i) * (kind === 'embers' ? 10 : 22);
+    } else {
+      const sp = kind === 'snow' ? 34 + r2 * 40 : kind === 'petals' ? 40 + r2 * 45 : 8 + r2 * 10;
+      y = ((r1 * H + time * sp - camY * 0.35) % H + H) % H - 30;
+      x = ((r3 * VW + Math.sin(time * (0.6 + r2) + i * 1.7) * 26 + time * (kind === 'petals' ? 14 : 0)) % VW + VW) % VW;
+    }
+    if (kind === 'petals'){
+      a = 0.7;
+      ctx.globalAlpha = a;
+      ctx.fillStyle = i % 2 ? '#ffc4dc' : '#ffe0ec';
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(time * (1 + r2) + i);
+      ctx.beginPath();
+      ctx.ellipse(0, 0, 5.5 + r1 * 3, 3, 0, 0, 6.2832);
+      ctx.fill();
+      ctx.restore();
+    } else if (kind === 'snow'){
+      ctx.globalAlpha = 0.45 + r2 * 0.4;
+      ctx.fillStyle = '#f4fbff';
+      ctx.beginPath();
+      ctx.arc(x, y, 2 + r1 * 3, 0, 6.2832);
+      ctx.fill();
+    } else if (kind === 'embers'){
+      ctx.globalAlpha = 0.35 + 0.45 * (0.5 + 0.5 * Math.sin(time * 6 + i));
+      ctx.fillStyle = i % 3 ? '#ffb347' : '#ff6a3d';
+      ctx.beginPath();
+      ctx.arc(x, y, 1.8 + r1 * 2.6, 0, 6.2832);
+      ctx.fill();
+    } else if (kind === 'spores'){
+      ctx.globalAlpha = 0.28 + 0.25 * Math.sin(time * 2 + i);
+      ctx.fillStyle = '#b8ff8a';
+      ctx.beginPath();
+      ctx.arc(x, y, 2.6 + r1 * 3.4, 0, 6.2832);
+      ctx.fill();
+    } else {
+      ctx.globalAlpha = 0.25 + 0.6 * (0.5 + 0.5 * Math.sin(time * (2 + r2 * 3) + i * 2));
+      ctx.fillStyle = '#fff6d8';
+      ctx.fillRect(x - 0.9, y - 0.9, 1.8, 1.8);
+    }
+  }
+  drawSkyEvent(kind, time);
+  ctx.globalAlpha = 1;
+}
+
+function drawSkyEvent(kind, time){
+  if (kind === 'stars' || kind === 'snow'){
+    const cyc = 7.5, ph = (time % cyc) / cyc;
+    if (ph > 0.14) return;
+    const k = Math.floor(time / cyc);
+    const p = ph / 0.14;
+    const sx = VW * (0.15 + 0.7 * hash01(k, 7)), sy = VH * (0.08 + 0.3 * hash01(k, 8));
+    const hx = sx + p * 170, hy = sy + p * 90;
+    const g = ctx.createLinearGradient(hx - 70, hy - 37, hx, hy);
+    g.addColorStop(0, 'rgba(255,255,255,0)');
+    g.addColorStop(1, 'rgba(255,250,225,' + (0.9 * (1 - p)) + ')');
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = g;
+    ctx.lineWidth = 2.2;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(hx - 70, hy - 37);
+    ctx.lineTo(hx, hy);
+    ctx.stroke();
+    return;
+  }
+  const cyc = 13, ph = (time % cyc) / cyc;
+  if (ph > 0.42) return;
+  const k = Math.floor(time / cyc);
+  const dir = hash01(k, 3) < 0.5 ? 1 : -1;
+  const p = ph / 0.42;
+  const baseX = dir > 0 ? -60 + p * (VW + 120) : VW + 60 - p * (VW + 120);
+  const baseY = VH * (0.12 + 0.28 * hash01(k, 4)) + Math.sin(p * 9) * 6;
+  ctx.globalAlpha = 0.55;
+  ctx.strokeStyle = kind === 'embers' ? '#3a0f08' : '#1c1233';
+  ctx.lineWidth = 2;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  for (let b = 0; b < 3; b++){
+    const bx = baseX - dir * b * 22, by = baseY + (b === 1 ? -10 : b * 8);
+    const flap = Math.sin(time * 11 + b * 1.3) * 5;
+    ctx.beginPath();
+    ctx.moveTo(bx - 8, by - 2 - flap);
+    ctx.quadraticCurveTo(bx - 4, by - 4, bx, by);
+    ctx.quadraticCurveTo(bx + 4, by - 4, bx + 8, by - 2 - flap);
+    ctx.stroke();
+  }
+}
+
+function drawSpeedLines(){
+  if (speedFx < 0.02 || lowGfx() || state !== STATE.PLAY) return;
+  const time = performance.now() / 1000;
+  ctx.lineCap = 'round';
+  ctx.strokeStyle = '#fff6e2';
+  for (let i = 0; i < 16; i++){
+    const r1 = hash01(i, 11), r2 = hash01(i, 12);
+    const side = i % 2 ? r1 * VW * 0.22 : VW - r1 * VW * 0.22;
+    const len = 60 + r2 * 90;
+    const y = ((r2 * VH + time * (900 + r1 * 700)) % (VH + len)) - len;
+    ctx.globalAlpha = speedFx * (0.12 + 0.2 * r2);
+    ctx.lineWidth = 1.5 + r1 * 2;
+    ctx.beginPath();
+    ctx.moveTo(side, y);
+    ctx.lineTo(side, y + len);
+    ctx.stroke();
   }
   ctx.globalAlpha = 1;
 }
@@ -4864,6 +5034,7 @@ function render(){
   }
 
   worldTransform();
+  drawWeather();
   ctx.save();
   ctx.translate(shakeX, shakeY);
   drawShadows();
@@ -4878,6 +5049,7 @@ function render(){
   drawHeroWithWrap();
   drawToasts();
   ctx.restore();
+  drawSpeedLines();
 
   if (flash > 0.01){
     ctx.globalAlpha = flash * 0.35;
@@ -4975,6 +5147,8 @@ function frame(now){
     } else if (tapEvent){
       handleTapAction();
     }
+
+    if (hitStop > 0){ hitStop -= realDt; dt = 0; }
 
     acc += dt;
     let steps = 0;
@@ -7173,6 +7347,13 @@ blurToggle.addEventListener('click', () => {
     blurAmount = 0;
     blurCtx.clearRect(0, 0, blurCvs.width, blurCvs.height);
   }
+  applyStaticI18n();
+});
+
+document.getElementById('vibroToggle').addEventListener('click', () => {
+  vibroOn = !vibroOn;
+  Store.set('vibro', vibroOn ? '1' : '0');
+  if (vibroOn) buzz(30);
   applyStaticI18n();
 });
 
