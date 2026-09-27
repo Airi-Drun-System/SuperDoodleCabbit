@@ -582,6 +582,12 @@
     background:rgba(255,255,255,.9);color:#2a1550;font-family:inherit;
     font-size:14px;font-weight:600;text-align:center;text-transform:uppercase;
   }
+  .playerSearchInput{text-transform:none;text-align:left;}
+  .pwInput{text-transform:none;}
+  .pwBox{display:flex;flex-direction:column;gap:6px;width:100%;align-items:flex-start;text-align:left;}
+  .pwState{margin:0;font-size:12px;line-height:1.35;}
+  .pwState.ok{color:#8be36a;}
+  .pwState.warn{color:#ffb347;}
   .cloudBtn{
     border:none;cursor:pointer;padding:9px 14px;border-radius:10px;
     background:var(--peach);color:#2a1550;font-weight:800;font-size:13px;
@@ -589,18 +595,18 @@
   }
   .cloudBtn:active{transform:scale(.95);}
   .cloudStatus{font-size:12px;opacity:.75;min-height:14px;}
-  #onlineLbRows .lbRow{
+  #onlineLbRows .lbRow, #playerSearchRows .lbRow{
     font-size:13px;display:flex;align-items:center;justify-content:space-between;
     gap:12px;padding:5px 2px;
   }
-  #onlineLbRows .lbRow span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
-  #onlineLbRows .lbRow b{color:var(--gold);flex:0 0 auto;}
-  #onlineLbRows .lbRow{padding-top:9px;padding-bottom:4px;}
+  #onlineLbRows .lbRow span, #playerSearchRows .lbRow span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
+  #onlineLbRows .lbRow b, #playerSearchRows .lbRow b{color:var(--gold);flex:0 0 auto;}
+  #onlineLbRows .lbRow, #playerSearchRows .lbRow{padding-top:9px;padding-bottom:4px;}
   .lbLeft{display:flex;align-items:center;gap:7px;min-width:0;}
   .lbRank{flex:0 0 auto;}
   .lbAv{--av:22px;}
-  #onlineLbRows .lbRow span.avFrame{overflow:visible;}
-  #onlineLbRows .lbRow span.avInner{overflow:hidden;}
+  #onlineLbRows .lbRow span.avFrame, #playerSearchRows .lbRow span.avFrame{overflow:visible;}
+  #onlineLbRows .lbRow span.avInner, #playerSearchRows .lbRow span.avInner{overflow:hidden;}
   .devNick{
     background:linear-gradient(90deg,#c084fc,#8a2be2,#ff6f91,#8a2be2,#c084fc);
     background-size:200% auto;
@@ -613,7 +619,7 @@
     letter-spacing:.5px; vertical-align:middle;
   }
   @keyframes devShine{ to{ background-position:200% center; } }
-  #onlineLbRows{width:100%;}
+  #onlineLbRows, #playerSearchRows{width:100%;}
 
   #nickBox{
     width:min(340px,92vw);background:rgba(255,255,255,.06);border-radius:20px;
@@ -804,6 +810,10 @@
   .adminRoleOpt.active{color:#3a1f00;background:linear-gradient(180deg,#ffd08a,#ff9f45);box-shadow:none;}
   .adminRoleHint{margin:6px 0 0;font-size:11.5px;opacity:.65;}
   .adminItemChip.isDisabled{opacity:.4;}
+  .adminPwResetBtn{
+    border:none;cursor:pointer;font-family:inherit;font-size:13px;padding:10px 14px;border-radius:12px;
+    color:#e8d9ff;background:rgba(255,255,255,.08);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.18);
+  }
 
   .adminDangerZone{
     border-top:1px dashed rgba(255,106,106,.35);padding-top:10px;margin-top:2px;
@@ -1011,6 +1021,8 @@
 
           <button id="adminSaveBtn" class="adminSaveBtn" type="button">✓ Сохранить изменения</button>
 
+          <button id="adminPwResetBtn" type="button" class="adminPwResetBtn adminOnly">Сбросить пароль игрока</button>
+
           <div class="adminDangerZone adminOnly">
             <div class="adminDangerLabel">Опасная зона</div>
             <button id="adminDeleteBtn" type="button" class="adminDeleteBtn">Удалить аккаунт</button>
@@ -1119,11 +1131,27 @@
               <span class="cloudCode" id="cloudCodeDisplay">------</span>
               <button class="cloudBtn" id="cloudCopyBtn" data-i18n="cloudCopy">Копировать</button>
             </div>
+            <div class="pwBox">
+              <span class="settingLabel" data-i18n="pwLabel">Пароль аккаунта</span>
+              <p id="pwState" class="pwState"></p>
+              <div class="cloudRow">
+                <input class="cloudInput pwInput" id="pwNewInput" type="password" maxlength="32" autocomplete="new-password" data-i18n-placeholder="pwNewPh" placeholder="Новый пароль">
+                <button class="cloudBtn" id="pwSaveBtn" data-i18n="pwSave">Сохранить</button>
+              </div>
+            </div>
+            <span class="settingLabel" data-i18n="restoreLabel">Войти в другой аккаунт</span>
             <div class="cloudRow">
               <input class="cloudInput" id="cloudRestoreInput" maxlength="8" data-i18n-placeholder="cloudEnterCode" placeholder="КОД">
-              <button class="cloudBtn" id="cloudRestoreBtn" data-i18n="cloudRestore">Восстановить</button>
+              <input class="cloudInput pwInput" id="cloudRestorePw" type="password" maxlength="32" autocomplete="current-password" data-i18n-placeholder="pwPh" placeholder="Пароль">
             </div>
+            <button class="cloudBtn" id="cloudRestoreBtn" data-i18n="cloudRestore">Восстановить</button>
             <div class="cloudStatus" id="cloudStatus"></div>
+            <span class="settingLabel" data-i18n="searchLabel">Найти игрока</span>
+            <div class="cloudRow">
+              <input class="cloudInput playerSearchInput" id="playerSearchInput" maxlength="16" data-i18n-placeholder="searchPlaceholder" placeholder="Ник или код">
+              <button class="cloudBtn" id="playerSearchBtn" data-i18n="searchBtn">Найти</button>
+            </div>
+            <div id="playerSearchRows"></div>
             <span class="settingLabel" data-i18n="cloudTop">Рейтинг игроков</span>
             <div id="onlineLbRows"></div>
             <button class="cloudBtn" id="cloudRefreshBtn" data-i18n="cloudRefresh">Обновить рейтинг</button>
@@ -1730,8 +1758,11 @@ const I18N = {
     overCoins: 'собрано монет', overRecordLabel: 'Рекорд', overNewBest: 'новый личный рекорд', overRank: 'место в рейтинге', overTop1: 'выше не прыгал никто',
     retry: 'Повторить', toMenu: 'В меню', scoreWord: 'рекорд',
     cloudTitle: 'Онлайн-профиль', cloudCopy: 'Копировать', cloudRestore: 'Восстановить',
-    cloudEnterCode: 'КОД', cloudTop: 'Рейтинг игроков', cloudRefresh: 'Обновить рейтинг',
+    cloudEnterCode: 'КОД', cloudTop: 'Рейтинг игроков', searchLabel: 'Найти игрока', searchPlaceholder: 'Ник или код', searchBtn: 'Найти', searchNone: 'Никого не нашли', cloudRefresh: 'Обновить рейтинг',
     cloudCopied: 'Код скопирован', cloudRestored: 'Прогресс восстановлен!',
+    pwLabel: 'Пароль аккаунта', pwNewPh: 'Новый пароль', pwPh: 'Пароль', pwSave: 'Сохранить', restoreLabel: 'Войти в другой аккаунт',
+    pwOn: '✓ Пароль установлен — без него в аккаунт не войти, даже зная код', pwOff: '⚠ Пароля нет: любой, кто знает твой код, может зайти в аккаунт и потратить монеты',
+    pwShort: 'Пароль должен быть хотя бы из 4 символов', pwSaved: 'Пароль сохранён ✓', pwNeed: 'Этот аккаунт защищён паролем — введи пароль', pwWrong: 'Неверный пароль', pwWait: 'Подожди пару секунд и попробуй снова',
     cloudNotFound: 'Код не найден', cloudErr: 'Нет связи с сервером', cloudLoading: 'Загрузка…',
     smashToast: 'СОКРУШИТЕЛЬНЫЙ УДАР!', kickToast: 'ПИНОК!', perfectToast: 'ИДЕАЛЬНО!',
     laserToast: 'ОСТОРОЖНО: ЛАЗЕРЫ!',
@@ -1818,8 +1849,11 @@ const I18N = {
     overCoins: 'coins collected', overRecordLabel: 'Best', overNewBest: 'new personal best', overRank: 'leaderboard place', overTop1: 'nobody jumped higher',
     retry: 'Retry', toMenu: 'Menu', scoreWord: 'best',
     cloudTitle: 'Online profile', cloudCopy: 'Copy', cloudRestore: 'Restore',
-    cloudEnterCode: 'CODE', cloudTop: 'Leaderboard', cloudRefresh: 'Refresh ranking',
+    cloudEnterCode: 'CODE', cloudTop: 'Leaderboard', searchLabel: 'Find a player', searchPlaceholder: 'Nickname or code', searchBtn: 'Find', searchNone: 'Nobody found', cloudRefresh: 'Refresh ranking',
     cloudCopied: 'Code copied', cloudRestored: 'Progress restored!',
+    pwLabel: 'Account password', pwNewPh: 'New password', pwPh: 'Password', pwSave: 'Save', restoreLabel: 'Log into another account',
+    pwOn: '✓ Password set — nobody can log in with just your code', pwOff: '⚠ No password: anyone who knows your code can log in and spend your coins',
+    pwShort: 'Password must be at least 4 characters', pwSaved: 'Password saved ✓', pwNeed: 'This account is protected — enter the password', pwWrong: 'Wrong password', pwWait: 'Wait a couple of seconds and try again',
     cloudNotFound: 'Code not found', cloudErr: 'Could not reach the server', cloudLoading: 'Loading…',
     smashToast: 'MACE SMASH!', kickToast: 'KICKED!', perfectToast: 'PERFECT!',
     laserToast: 'WATCH OUT: LASERS!',
@@ -5941,6 +5975,9 @@ async function cloudFetchOwnTitle(){
     Store.set('titleText', myTitle);
     Store.set('titleColor', myTitleColor);
     applyOwnBadgeFromFields(f);
+    myPwSet = !!(f.pwHash && f.pwHash.stringValue);
+    Store.set('pwSet', myPwSet ? '1' : '0');
+    if (typeof refreshPwState === 'function') refreshPwState();
     myRole = (f.role && f.role.stringValue) === 'mod' ? 'mod' : '';
     Store.set('role', myRole);
     if (typeof refreshStaffUI === 'function') refreshStaffUI();
@@ -5965,6 +6002,7 @@ async function cloudPush(){
   if (!cloudReady()) return;
   const fields = {
     nick:  { stringValue: nickname || 'Котокролик' },
+    nickLower: { stringValue: String(nickname || 'Котокролик').toLowerCase() },
     coins: { integerValue: String(coins) },
     best:  { integerValue: String(best) },
     owned: { arrayValue: { values: Array.from(owned).map(v => ({ stringValue: v })) } },
@@ -6008,16 +6046,102 @@ async function updatePresence(){
 }
 
 
-async function cloudRestore(rawCode){
+function sha256Hex(str){
+  const K = [0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2];
+  const bytes = unescape(encodeURIComponent(str));
+  const words = [];
+  const len = bytes.length;
+  for (let i = 0; i < len; i++) words[i >> 2] |= (bytes.charCodeAt(i) & 0xff) << (24 - (i % 4) * 8);
+  words[len >> 2] |= 0x80 << (24 - (len % 4) * 8);
+  const total = (((len + 8) >> 6) + 1) * 16;
+  for (let i = words.length; i < total; i++) words[i] = words[i] | 0;
+  words[total - 1] = len * 8;
+  let h0 = 0x6a09e667, h1 = 0xbb67ae85, h2 = 0x3c6ef372, h3 = 0xa54ff53a, h4 = 0x510e527f, h5 = 0x9b05688c, h6 = 0x1f83d9ab, h7 = 0x5be0cd19;
+  const w = new Array(64);
+  const rot = (x, n) => (x >>> n) | (x << (32 - n));
+  for (let b = 0; b < total; b += 16){
+    for (let i = 0; i < 16; i++) w[i] = words[b + i] | 0;
+    for (let i = 16; i < 64; i++){
+      const s0 = rot(w[i - 15], 7) ^ rot(w[i - 15], 18) ^ (w[i - 15] >>> 3);
+      const s1 = rot(w[i - 2], 17) ^ rot(w[i - 2], 19) ^ (w[i - 2] >>> 10);
+      w[i] = (w[i - 16] + s0 + w[i - 7] + s1) | 0;
+    }
+    let a = h0, bb = h1, c = h2, d = h3, e = h4, f = h5, g = h6, h = h7;
+    for (let i = 0; i < 64; i++){
+      const S1 = rot(e, 6) ^ rot(e, 11) ^ rot(e, 25);
+      const ch = (e & f) ^ (~e & g);
+      const t1 = (h + S1 + ch + K[i] + w[i]) | 0;
+      const S0 = rot(a, 2) ^ rot(a, 13) ^ rot(a, 22);
+      const mj = (a & bb) ^ (a & c) ^ (bb & c);
+      const t2 = (S0 + mj) | 0;
+      h = g; g = f; f = e; e = (d + t1) | 0; d = c; c = bb; bb = a; a = (t1 + t2) | 0;
+    }
+    h0 = (h0 + a) | 0; h1 = (h1 + bb) | 0; h2 = (h2 + c) | 0; h3 = (h3 + d) | 0;
+    h4 = (h4 + e) | 0; h5 = (h5 + f) | 0; h6 = (h6 + g) | 0; h7 = (h7 + h) | 0;
+  }
+  return [h0, h1, h2, h3, h4, h5, h6, h7].map(x => ('00000000' + (x >>> 0).toString(16)).slice(-8)).join('');
+}
+
+function hashPassword(code, pw){
+  let h = sha256Hex('cabbit|' + String(code).toUpperCase() + '|' + pw);
+  for (let i = 0; i < 1500; i++) h = sha256Hex(h + pw);
+  return h;
+}
+
+let myPwSet = Store.get('pwSet', '0') === '1';
+let restoreLockUntil = 0;
+
+function refreshPwState(){
+  const el = document.getElementById('pwState');
+  if (!el) return;
+  el.textContent = myPwSet ? t('pwOn') : t('pwOff');
+  el.className = 'pwState ' + (myPwSet ? 'ok' : 'warn');
+}
+
+async function savePassword(){
+  const input = document.getElementById('pwNewInput');
+  const pw = input ? input.value : '';
+  if (!pw || pw.length < 4){ setCloudStatus(t('pwShort')); return; }
+  if (!cloudReady()){ setCloudStatus(t('cloudErr')); return; }
+  const hash = hashPassword(cloudCode, pw);
+  try {
+    const res = await fetch(cloudBase() + '/players/' + cloudCode + '?updateMask.fieldPaths=pwHash&key=' + CLOUD.apiKey, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fields: { pwHash: { stringValue: hash } } })
+    });
+    if (!res.ok){ setCloudStatus(t('cloudErr')); return; }
+    myPwSet = true;
+    Store.set('pwSet', '1');
+    if (input) input.value = '';
+    refreshPwState();
+    setCloudStatus(t('pwSaved'));
+  } catch (e) { setCloudStatus(t('cloudErr')); }
+}
+
+async function cloudRestore(rawCode, rawPw){
   if (!cloudReady()){ setCloudStatus(t('cloudErr')); return; }
   const code = String(rawCode || '').trim().toUpperCase();
   if (!code) return;
+  if (Date.now() < restoreLockUntil){ setCloudStatus(t('pwWait')); return; }
   setCloudStatus(t('cloudLoading'));
   try {
     const res = await fetch(cloudBase() + '/players/' + code + '?key=' + CLOUD.apiKey);
     if (!res.ok){ setCloudStatus(t('cloudNotFound')); return; }
     const doc = await res.json();
     const f = (doc && doc.fields) || {};
+    const storedHash = (f.pwHash && f.pwHash.stringValue) || '';
+    if (storedHash){
+      const pw = String(rawPw || '');
+      if (!pw){ setCloudStatus(t('pwNeed')); return; }
+      if (hashPassword(code, pw) !== storedHash){
+        restoreLockUntil = Date.now() + 3000;
+        setCloudStatus(t('pwWrong'));
+        return;
+      }
+    }
+    myPwSet = !!storedHash;
+    Store.set('pwSet', myPwSet ? '1' : '0');
     if (f.coins) { coins = parseInt(f.coins.integerValue || '0', 10) || 0; Store.set('coins', coins); }
     if (f.best)  { best  = parseInt(f.best.integerValue  || '0', 10) || 0; Store.set('best', best); }
     if (f.nick && f.nick.stringValue){ nickname = f.nick.stringValue; Store.set('nick', nickname); }
@@ -6067,6 +6191,8 @@ async function cloudRestore(rawCode){
 
     cloudCode = code;
     Store.set('cloudCode', cloudCode);
+    const pwIn = document.getElementById('cloudRestorePw');
+    if (pwIn) pwIn.value = '';
     dropUnownedLockedOutfit();
     previewChar = outfit.char;
     refreshCloudUI();
@@ -6134,6 +6260,109 @@ async function checkPendingGrant(){
 
 let lbFieldsByCode = {};
 
+function buildPlayerRow(rowCode, f, rankText){
+  const nick = (f.nick && f.nick.stringValue) || '?';
+  const sc = (f.best && f.best.integerValue) || '0';
+  const rowAvatarVal = (f.avatar && f.avatar.stringValue && isValidAvatar(f.avatar.stringValue)) ? f.avatar.stringValue : AVATAR_LIST[0];
+  const rowFrame = (f.frame && f.frame.stringValue) || 'none';
+  const rowAvatar = avatarHtml(rowAvatarVal, rowFrame, 'lbAv');
+  const isDev = DEV_CODE && rowCode === DEV_CODE;
+  const titleText = (f.title && f.title.stringValue) || '';
+  const titleColor = (f.titleColor && f.titleColor.stringValue) || '';
+  const div = document.createElement('div');
+  div.className = 'lbRow';
+  let nameHtml;
+  if (isDev){
+    nameHtml = '<span class="devNick">' + escapeHtml(nick) + '</span><span class="devBadge">DEV</span>';
+  } else if (titleText && titleColor){
+    const isGrad = /gradient\(/i.test(titleColor);
+    const nickStyle = isGrad
+      ? 'background:' + titleColor + ';background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800;'
+      : 'color:' + titleColor + ';font-weight:800;';
+    const badgeStyle = isGrad
+      ? 'background:' + titleColor + ';background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;'
+      : 'color:' + titleColor + ';';
+    nameHtml = '<span style="' + nickStyle + '">' + escapeHtml(nick) + '</span><span class="devBadge" style="' + badgeStyle + '">' + escapeHtml(titleText) + '</span>';
+  } else {
+    nameHtml = escapeHtml(nick);
+  }
+  const rowBadge = badgeImgHtml(f.badge && f.badge.stringValue);
+  div.innerHTML = '<div class="lbLeft"><span class="lbRank">' + escapeHtml(rankText) + '</span>' + rowAvatar + '<span>' + nameHtml + rowBadge + '</span></div><b>' + escapeHtml(sc) + '</b>';
+  div.style.cursor = 'pointer';
+  div.addEventListener('click', () => {
+    if (isStaff()) openAdminChoice(rowCode, nick);
+    else openProfile(rowCode);
+  });
+  return div;
+}
+
+function docCode(doc){
+  const path = (doc && doc.name) || '';
+  return path.substring(path.lastIndexOf('/') + 1);
+}
+
+async function searchPlayers(query){
+  const q = String(query || '').trim();
+  if (!q || !cloudReady()) return [];
+  const found = new Map();
+  const lower = q.toLowerCase();
+  const runQ = (field, value, prefix) => fetch(cloudBase() + ':runQuery?key=' + CLOUD.apiKey, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      structuredQuery: prefix ? {
+        from: [{ collectionId: 'players' }],
+        where: { compositeFilter: { op: 'AND', filters: [
+          { fieldFilter: { field: { fieldPath: field }, op: 'GREATER_THAN_OR_EQUAL', value: { stringValue: value } } },
+          { fieldFilter: { field: { fieldPath: field }, op: 'LESS_THAN', value: { stringValue: value + '\uf8ff' } } }
+        ] } },
+        orderBy: [{ field: { fieldPath: field }, direction: 'ASCENDING' }],
+        limit: 20
+      } : {
+        from: [{ collectionId: 'players' }],
+        where: { fieldFilter: { field: { fieldPath: field }, op: 'EQUAL', value: { stringValue: value } } },
+        limit: 20
+      }
+    })
+  }).then(r => r.ok ? r.json() : []).catch(() => []);
+  const tasks = [runQ('nickLower', lower, true), runQ('nick', q, true), runQ('nick', q, false)];
+  const codeGuess = q.toUpperCase();
+  if (/^[A-Z0-9]{6,8}$/.test(codeGuess)){
+    tasks.push(fetch(cloudBase() + '/players/' + codeGuess + '?key=' + CLOUD.apiKey)
+      .then(r => r.ok ? r.json() : null).then(d => (d && d.fields) ? [{ document: d }] : []).catch(() => []));
+  }
+  const results = await Promise.all(tasks);
+  for (const list of results){
+    for (const row of (Array.isArray(list) ? list : [])){
+      if (!row || !row.document) continue;
+      const code = docCode(row.document);
+      if (code && !found.has(code)) found.set(code, row.document.fields || {});
+    }
+  }
+  return Array.from(found.entries()).map(([code, f]) => ({ code, f }))
+    .sort((a, b) => (parseInt((b.f.best && b.f.best.integerValue) || '0', 10) || 0) - (parseInt((a.f.best && a.f.best.integerValue) || '0', 10) || 0))
+    .slice(0, 20);
+}
+
+let searchReqId = 0;
+async function runPlayerSearch(){
+  const input = document.getElementById('playerSearchInput');
+  const box = document.getElementById('playerSearchRows');
+  if (!input || !box) return;
+  const q = input.value.trim();
+  const id = ++searchReqId;
+  if (!q){ box.innerHTML = ''; return; }
+  box.innerHTML = '<div class="lbRow"><span>' + t('cloudLoading') + '</span></div>';
+  const list = await searchPlayers(q);
+  if (id !== searchReqId) return;
+  box.innerHTML = '';
+  if (!list.length){ box.innerHTML = '<div class="lbRow"><span>' + t('searchNone') + '</span></div>'; return; }
+  for (const it of list){
+    lbFieldsByCode[it.code] = it.f;
+    box.appendChild(buildPlayerRow(it.code, it.f, '•'));
+  }
+}
+
 async function cloudFetchLeaderboard(){
   const rows = document.getElementById('onlineLbRows');
   if (!rows || !cloudReady()) return;
@@ -6161,48 +6390,11 @@ async function cloudFetchLeaderboard(){
     for (const row of (Array.isArray(data) ? data : [])){
       if (!row.document) continue;
       const f = row.document.fields || {};
-      const nick = (f.nick && f.nick.stringValue) || '?';
-      const sc = (f.best && f.best.integerValue) || '0';
-      const rowAvatarVal = (f.avatar && f.avatar.stringValue && isValidAvatar(f.avatar.stringValue)) ? f.avatar.stringValue : AVATAR_LIST[0];
-      const rowFrame = (f.frame && f.frame.stringValue) || 'none';
-      const rowAvatar = avatarHtml(rowAvatarVal, rowFrame, 'lbAv');
-
       const path = row.document.name || '';
       const rowCode = path.substring(path.lastIndexOf('/') + 1);
       lbFieldsByCode[rowCode] = f;
-      const isDev = DEV_CODE && rowCode === DEV_CODE;
-      const titleText = (f.title && f.title.stringValue) || '';
-      const titleColor = (f.titleColor && f.titleColor.stringValue) || '';
       i++;
-      const div = document.createElement('div');
-      div.className = 'lbRow';
-      let nameHtml;
-      if (isDev){
-        nameHtml = '<span class="devNick">' + escapeHtml(nick) + '</span><span class="devBadge">DEV</span>';
-      } else if (titleText && titleColor){
-        const isGrad = /gradient\(/i.test(titleColor);
-        const nickStyle = isGrad
-          ? 'background:' + titleColor + ';background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800;'
-          : 'color:' + titleColor + ';font-weight:800;';
-        const badgeStyle = isGrad
-          ? 'background:' + titleColor + ';background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;'
-          : 'color:' + titleColor + ';';
-        nameHtml = '<span style="' + nickStyle + '">' + escapeHtml(nick) + '</span><span class="devBadge" style="' + badgeStyle + '">' + escapeHtml(titleText) + '</span>';
-      } else {
-        nameHtml = escapeHtml(nick);
-      }
-      const rowBadge = badgeImgHtml(f.badge && f.badge.stringValue);
-      div.innerHTML = '<div class="lbLeft"><span class="lbRank">' + i + '.</span>' + rowAvatar + '<span>' + nameHtml + rowBadge + '</span></div><b>' + sc + '</b>';
-      
-      
-      if (isStaff()){
-        div.style.cursor = 'pointer';
-        div.title = 'Тап — выбрать действие';
-        div.addEventListener('click', () => openAdminChoice(rowCode, nick));
-      } else {
-        div.style.cursor = 'pointer';
-        div.addEventListener('click', () => openProfile(rowCode));
-      }
+      const div = buildPlayerRow(rowCode, f, i + '.');
       rows.appendChild(div);
     }
     if (i === 0) rows.innerHTML = '<div class="lbRow"><span>' + t('empty') + '</span></div>';
@@ -6961,6 +7153,7 @@ function refreshCloudUI(){
   if (!cloudReady()) return;
   const codeEl = document.getElementById('cloudCodeDisplay');
   if (codeEl) codeEl.textContent = cloudCode;
+  refreshPwState();
   setCloudStatus('');
 }
 
@@ -6971,9 +7164,12 @@ document.getElementById('cloudCopyBtn').addEventListener('click', () => {
   } catch (e) {}
 });
 document.getElementById('cloudRestoreBtn').addEventListener('click', () => {
-  cloudRestore(document.getElementById('cloudRestoreInput').value);
+  cloudRestore(document.getElementById('cloudRestoreInput').value, document.getElementById('cloudRestorePw').value);
 });
+document.getElementById('pwSaveBtn').addEventListener('click', savePassword);
 document.getElementById('cloudRefreshBtn').addEventListener('click', cloudFetchLeaderboard);
+document.getElementById('playerSearchBtn').addEventListener('click', runPlayerSearch);
+document.getElementById('playerSearchInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') runPlayerSearch(); });
 
 function setCatOpen(cat, open){
   if (!cat) return;
@@ -7135,7 +7331,7 @@ async function adminLoad(codeOverride){
       hat2: (f.hat2 && f.hat2.stringValue) || 'none',
       acc2: (f.acc2 && f.acc2.stringValue) || 'none'
     };
-    document.getElementById('adminCodeLine').textContent = 'Код: ' + code;
+    document.getElementById('adminCodeLine').textContent = 'Код: ' + code + (isModOnly() ? '' : ' · пароль: ' + ((f.pwHash && f.pwHash.stringValue) ? 'есть' : 'нет'));
     document.getElementById('adminNickInput').value = (f.nick && f.nick.stringValue) || '';
     document.getElementById('adminCoinsInput').value = parseInt((f.coins && f.coins.integerValue) || '0', 10);
     document.getElementById('adminBestInput').value  = parseInt((f.best  && f.best.integerValue)  || '0', 10);
@@ -7303,6 +7499,7 @@ async function adminSave(){
   adminSetStatus('Сохранение...');
   const saveFields = {
     nick:  { stringValue: nickMatch },
+    nickLower: { stringValue: nickMatch.toLowerCase() },
     coins: { integerValue: String(coinsVal) },
     best:  { integerValue: String(bestVal) },
     owned: { arrayValue: { values: ownedList.map(v => ({ stringValue: v })) } },
@@ -7353,6 +7550,20 @@ async function adminSave(){
     adminSetStatus('Ошибка связи при сохранении');
   }
 }
+
+async function adminResetPassword(){
+  if (!adminCurrentCode || !cloudReady() || !adminMode) return;
+  try {
+    const res = await fetch(cloudBase() + '/players/' + adminCurrentCode + '?updateMask.fieldPaths=pwHash&key=' + CLOUD.apiKey, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fields: { pwHash: { stringValue: '' } } })
+    });
+    adminSetStatus(res.ok ? 'Пароль сброшен ✓ — игрок может войти по коду и поставить новый' : 'Не удалось сбросить пароль');
+    if (res.ok) document.getElementById('adminCodeLine').textContent = 'Код: ' + adminCurrentCode + ' · пароль: нет';
+  } catch (e){ adminSetStatus('Ошибка связи'); }
+}
+document.getElementById('adminPwResetBtn').addEventListener('click', adminResetPassword);
 
 let adminDeleteArmedCode = null;
 let adminDeleteArmTimer = null;
