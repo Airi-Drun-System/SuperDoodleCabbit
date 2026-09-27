@@ -1477,6 +1477,7 @@ let actx = null;
 function ensureAudio(){
   if (actx) return;
   try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {}
+  if (actx && typeof SFX_BUFFERS !== 'undefined') for (const k in SFX_BUFFERS) decodeBufferSfx(SFX_BUFFERS[k]);
 }
 function beep(freq, dur, type, gainPeak){
   if (!actx) return;
@@ -1533,6 +1534,51 @@ function loadCustomSfx(key, filename){
 }
 loadCustomSfx('kill', 'sfx-monster-kill.mp3');
 loadCustomSfx('fall', 'sfx-fall.mp3');
+
+const SFX_BUFFERS = {};
+function loadBufferSfx(key, files){
+  const rec = { data: null, buf: null, failed: false, decoding: false };
+  SFX_BUFFERS[key] = rec;
+  const tryAt = (i) => {
+    if (i >= files.length || typeof fetch !== 'function'){ rec.failed = true; return; }
+    try {
+      fetch(files[i])
+        .then((r) => r.ok ? r.arrayBuffer() : Promise.reject(new Error('missing')))
+        .then((ab) => { rec.data = ab; decodeBufferSfx(rec); })
+        .catch(() => tryAt(i + 1));
+    } catch (e) { tryAt(i + 1); }
+  };
+  tryAt(0);
+}
+function decodeBufferSfx(rec){
+  if (!actx || !rec || !rec.data || rec.buf || rec.decoding) return;
+  rec.decoding = true;
+  const data = rec.data;
+  rec.data = null;
+  const ok = (b) => { if (b) rec.buf = b; };
+  const bad = () => { rec.failed = true; };
+  try {
+    const pr = actx.decodeAudioData(data, ok, bad);
+    if (pr && typeof pr.then === 'function') pr.then(ok, bad);
+  } catch (e) { bad(); }
+}
+function playBufferSfx(key, volume, rate){
+  const rec = SFX_BUFFERS[key];
+  if (!rec || rec.failed || !actx) return false;
+  if (!rec.buf){ decodeBufferSfx(rec); return false; }
+  try {
+    const src = actx.createBufferSource();
+    src.buffer = rec.buf;
+    src.playbackRate.value = rate || 1;
+    const g = actx.createGain();
+    g.gain.value = volume != null ? volume : 1;
+    src.connect(g);
+    g.connect(actx.destination);
+    src.start();
+    return true;
+  } catch (e) { return false; }
+}
+loadBufferSfx('jump', ['sfx-jump.mp3', 'sfx-jump.ogg', 'sfx-jump.wav']);
 function playCustomSfx(key, volume){
   const s = CUSTOM_SFX[key];
   if (!s || !s.ok) return false;
@@ -1546,6 +1592,7 @@ function playCustomSfx(key, volume){
 }
 const sfxCoin  = () => beep(920, 0.10, 'triangle', 0.14);
 const sfxJump  = () => beep(300, 0.08, 'square', 0.05);
+const sfxLand  = () => { if (playBufferSfx('jump', 0.75, 0.94 + Math.random() * 0.12)) return; sfxJump(); };
 const sfxSpring= () => { beep(500, 0.12, 'sawtooth', 0.12); beep(760, 0.14, 'sawtooth', 0.10); };
 const sfxGlass = () => { beep(1400, 0.05, 'square', 0.12); beep(200, 0.18, 'sawtooth', 0.10); };
 const sfxSmash = () => { if (playCustomSfx('kill')) return; beep(90, 0.22, 'sawtooth', 0.22); beep(660, 0.12, 'square', 0.14); };
@@ -2982,7 +3029,7 @@ function stepPhysics(dt){
       burstLeaves(hero.x, top, 1);
       burstSpark(hero.x, top, '#dff9c9', 8, 0.7);
       shake = Math.max(shake, 3);
-      sfxJump();
+      sfxLand();
     }
     return;
   }
