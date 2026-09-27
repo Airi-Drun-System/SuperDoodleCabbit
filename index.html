@@ -66,6 +66,12 @@
   }
   #menu.paused .pauseLabel{display:block;}
   #menuPreview{width:130px;height:130px;filter:drop-shadow(0 14px 16px rgba(0,0,0,.45));}
+  .heroBob{animation:heroBob 3.4s ease-in-out infinite;will-change:transform;transform-origin:50% 80%;}
+  @keyframes heroBob{
+    0%,100%{transform:translateY(-4px) rotate(-2.5deg) scaleY(1.02);}
+    50%{transform:translateY(5px) rotate(2.5deg) scaleY(.975);}
+  }
+  @media (prefers-reduced-motion:reduce){ .heroBob{animation:none;} }
   #settings{background:radial-gradient(120% 90% at 50% 14%, rgba(87,45,140,.65), rgba(21,10,43,.96));}
   #wardrobe{background:radial-gradient(120% 90% at 50% 14%, rgba(60,30,100,.82), rgba(12,6,24,.985));}
   #nickname{background:radial-gradient(120% 90% at 50% 30%, rgba(87,45,140,.65), rgba(21,10,43,.97));justify-content:center;}
@@ -241,9 +247,27 @@
 
   #settingsBox{
     width:min(360px,92vw);background:rgba(255,255,255,.06);border-radius:20px;
-    padding:18px;display:flex;flex-direction:column;gap:16px;
+    padding:14px;display:flex;flex-direction:column;gap:10px;
     box-shadow:inset 0 0 0 1px rgba(255,255,255,.14);
   }
+  .setCat{width:100%;border-radius:16px;background:rgba(255,255,255,.05);box-shadow:inset 0 0 0 1px rgba(255,255,255,.1);}
+  .setCatHead{
+    width:100%;display:flex;align-items:center;gap:10px;padding:12px 14px;border:none;background:none;
+    color:#fdf6e8;font-family:inherit;font-size:16px;cursor:pointer;text-align:left;-webkit-tap-highlight-color:transparent;
+  }
+  .setCatHead:active{opacity:.75;}
+  .setCatIcon{
+    width:28px;height:28px;border-radius:9px;background:rgba(255,159,69,.18);color:var(--peach);
+    display:flex;align-items:center;justify-content:center;font-size:15px;flex:0 0 auto;
+  }
+  .setCatName{flex:1;}
+  .setCatArrow{font-size:22px;line-height:1;opacity:.6;transition:transform .2s ease;}
+  .setCat.open .setCatArrow{transform:rotate(90deg);}
+  .setCatBody{display:none;flex-direction:column;gap:16px;padding:4px 14px 16px;}
+  .setCat.open .setCatBody{display:flex;}
+  .settingsSaveBtn{width:100%;margin-top:4px;}
+  .settingsSaveStatus{margin:0;font-size:13px;color:var(--gold);text-align:center;}
+  .settingsSaveStatus:empty{display:none;}
   .settingRow{display:flex;flex-direction:column;gap:8px;align-items:flex-start;width:100%;}
   .settingLabel{font-size:13px;opacity:.7;font-weight:600;}
 
@@ -845,12 +869,12 @@
       <span id="inboxBadge" class="inboxBadge hidden">0</span>
     </button>
     <div class="spacer"></div>
-    <canvas id="menuPreview" class="rise d1" width="220" height="220"></canvas>
+    <canvas id="menuPreview" class="heroBob" width="220" height="220"></canvas>
     <div class="titleSwing" id="titleSwing"><h1 class="title" id="titleSign">Cabbit Jump!</h1></div>
 
     <p class="stats rise d1">
-      <span data-i18n="best">Лучший результат</span>: <b id="menuBest">0</b>
-      &nbsp;·&nbsp;
+      <span><span data-i18n="best">Лучший результат</span>: <b id="menuBest">0</b></span>
+      <span>·</span>
       <span><i class="coinDot"></i><span class="coinNum" id="menuCoins">0</span></span>
     </p>
 
@@ -875,7 +899,7 @@
     <h1 class="title pop" data-i18n="wardrobe" style="font-size:clamp(24px,7vw,40px);">Гардероб</h1>
     <div class="charSwitcher rise d1">
       <button id="charPrev" class="charArrow" aria-label="Предыдущий персонаж">‹</button>
-      <canvas id="preview2" width="220" height="220"></canvas>
+      <canvas id="preview2" class="heroBob" width="220" height="220"></canvas>
       <button id="charNext" class="charArrow" aria-label="Следующий персонаж">›</button>
     </div>
     <div id="charInfo" class="charInfo rise d1"></div>
@@ -899,14 +923,6 @@
     <div class="spacer"></div>
     <h1 id="settingsTitle" class="title pop" data-i18n="settings" style="font-size:clamp(24px,7vw,40px);">Настройки</h1>
     <div id="settingsBox" class="rise d1">
-      <div class="settingRow">
-        <span class="settingLabel" data-i18n="language">Язык</span>
-        <div class="btnRow">
-          <button class="chip" data-lang="ru">Русский</button>
-          <button class="chip" data-lang="en">English</button>
-        </div>
-      </div>
-
       <div id="adminGate" class="adminGate hidden">
         <input id="adminPinInput" class="adminInput adminPinInput" type="password" placeholder="PIN" inputmode="numeric">
         <button id="adminPinBtn" class="btn small">Войти</button>
@@ -915,7 +931,7 @@
       <div id="adminTool" class="adminPanel hidden">
         <div class="adminHeader">
           <span class="adminHeaderTitle">⚒ Админка</span>
-          <p class="adminHint">Тапни по игроку в рейтинге ниже, чтобы выдать ему вещи или монеты</p>
+          <p class="adminHint">Открой раздел «Онлайн» ниже и тапни по игроку в рейтинге, чтобы выдать ему вещи или монеты</p>
         </div>
 
         <div class="adminSearchRow">
@@ -984,78 +1000,113 @@
         <p id="adminStatus" class="adminStatus"></p>
       </div>
 
-      <div class="settingRow">
-        <span class="settingLabel"><span data-i18n="gfxLabel">Графика</span> <span id="gfxNote" class="gfxNote"></span></span>
-        <div id="gfxRow" class="btnRow">
-          <button class="chip" type="button" data-gfx="auto" data-i18n="gfx_auto">Авто</button>
-          <button class="chip" type="button" data-gfx="high" data-i18n="gfx_high">Красиво</button>
-          <button class="chip" type="button" data-gfx="low" data-i18n="gfx_low">Быстро</button>
-          <button class="chip gfxUltraChip" type="button" data-gfx="ultra"><span data-i18n="gfx_ultra">Ультра</span><span class="expBadge" data-i18n="expBadge">эксперимент</span></button>
-        </div>
-        <p id="gfxUltraNote" class="gfxUltraNote hidden" data-i18n="gfxUltraNote">Экспериментальная функция: объёмные платформы и параллакс. На слабых телефонах может тормозить.</p>
-      </div>
+      <div class="setCat" data-cat="main">
+        <button class="setCatHead" type="button" aria-expanded="false"><span class="setCatIcon">⚙</span><span class="setCatName" data-i18n="catMain">Основное</span><span class="setCatArrow">›</span></button>
+        <div class="setCatBody">
+          <div class="settingRow">
+            <span class="settingLabel" data-i18n="language">Язык</span>
+            <div class="btnRow">
+              <button class="chip" data-lang="ru">Русский</button>
+              <button class="chip" data-lang="en">English</button>
+            </div>
+          </div>
 
-      <div class="settingRow">
-        <span class="settingLabel" data-i18n="motionBlur">Motion blur</span>
-        <div class="btnRow">
-          <button id="blurToggle" class="chip"></button>
+          <div class="settingRow">
+            <span class="settingLabel" data-i18n="nickLabel">Ник</span>
+            <div class="btnRow">
+              <button id="changeNickBtn" class="chip" data-i18n="changeNickBtn">Изменить</button>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="settingRow">
-        <span class="settingLabel" data-i18n="avatarLabel">Аватар</span>
-        <div class="avatarPickerRow">
-          <span id="avatarPreviewFrame" class="avFrame avPreviewFrame frame-none"><span id="avatarPreview" class="avatarPreview"></span></span>
-          <button id="avatarUploadBtn" class="chip" type="button" data-i18n="avatarUpload">Фото из галереи</button>
-          <button id="avatarRemoveBtn" class="chip hidden" type="button" data-i18n="avatarRemove">Убрать фото</button>
-          <input id="avatarFileInput" type="file" accept="image/*" class="hidden">
-        </div>
-        <div id="avatarRow" class="swatchRow avatarRow"></div>
-      </div>
-      <div class="settingRow">
-        <span class="settingLabel"><span data-i18n="frameLabel">Рамка аватара</span>: <b id="frameNameLine" class="frameNameLine"></b></span>
-        <div id="frameRow" class="frameRow"></div>
-      </div>
-      <div class="settingRow">
-        <span class="settingLabel" data-i18n="bgColorLabel">Цвет фона</span>
-        <div id="bgColorRow" class="swatchRow"></div>
-      </div>
-      <div class="settingRow">
-        <span class="settingLabel" data-i18n="platformColorLabel">Цвет платформ</span>
-        <div id="platformColorRow" class="swatchRow"></div>
-      </div>
-      <div class="settingRow">
-        <span class="settingLabel" data-i18n="musicLabel">Музыка</span>
-        <div class="btnRow">
-          <button id="musicToggle" class="chip"></button>
-        </div>
-      </div>
-      <div class="settingRow">
-        <span class="settingLabel" data-i18n="musicVolumeLabel">Громкость музыки</span>
-        <div class="btnRow">
-          <input id="musicVolumeSlider" type="range" min="0" max="100" value="28" style="width:150px;accent-color:#ff9f45;">
+      <div class="setCat" data-cat="gfx">
+        <button class="setCatHead" type="button" aria-expanded="false"><span class="setCatIcon">✦</span><span class="setCatName" data-i18n="catGfx">Графика и вид</span><span class="setCatArrow">›</span></button>
+        <div class="setCatBody">
+          <div class="settingRow">
+            <span class="settingLabel"><span data-i18n="gfxLabel">Графика</span> <span id="gfxNote" class="gfxNote"></span></span>
+            <div id="gfxRow" class="btnRow">
+              <button class="chip" type="button" data-gfx="auto" data-i18n="gfx_auto">Авто</button>
+              <button class="chip" type="button" data-gfx="high" data-i18n="gfx_high">Красиво</button>
+              <button class="chip" type="button" data-gfx="low" data-i18n="gfx_low">Быстро</button>
+              <button class="chip gfxUltraChip" type="button" data-gfx="ultra"><span data-i18n="gfx_ultra">Ультра</span><span class="expBadge" data-i18n="expBadge">эксперимент</span></button>
+            </div>
+            <p id="gfxUltraNote" class="gfxUltraNote hidden" data-i18n="gfxUltraNote">Экспериментальная функция: объёмные платформы и тени. На слабых телефонах может тормозить.</p>
+          </div>
+
+          <div class="settingRow">
+            <span class="settingLabel" data-i18n="motionBlur">Motion blur</span>
+            <div class="btnRow">
+              <button id="blurToggle" class="chip"></button>
+            </div>
+          </div>
+          <div class="settingRow">
+            <span class="settingLabel" data-i18n="bgColorLabel">Цвет фона</span>
+            <div id="bgColorRow" class="swatchRow"></div>
+          </div>
+          <div class="settingRow">
+            <span class="settingLabel" data-i18n="platformColorLabel">Цвет платформ</span>
+            <div id="platformColorRow" class="swatchRow"></div>
+          </div>
         </div>
       </div>
-      <div class="settingRow">
-        <span class="settingLabel" data-i18n="nickLabel">Ник</span>
-        <div class="btnRow">
-          <button id="changeNickBtn" class="chip" data-i18n="changeNickBtn">Изменить</button>
+      <div class="setCat" data-cat="profile">
+        <button class="setCatHead" type="button" aria-expanded="false"><span class="setCatIcon">☺</span><span class="setCatName" data-i18n="catProfile">Профиль</span><span class="setCatArrow">›</span></button>
+        <div class="setCatBody">
+          <div class="settingRow">
+            <span class="settingLabel" data-i18n="avatarLabel">Аватар</span>
+            <div class="avatarPickerRow">
+              <span id="avatarPreviewFrame" class="avFrame avPreviewFrame frame-none"><span id="avatarPreview" class="avatarPreview"></span></span>
+              <button id="avatarUploadBtn" class="chip" type="button" data-i18n="avatarUpload">Фото из галереи</button>
+              <button id="avatarRemoveBtn" class="chip hidden" type="button" data-i18n="avatarRemove">Убрать фото</button>
+              <input id="avatarFileInput" type="file" accept="image/*" class="hidden">
+            </div>
+            <div id="avatarRow" class="swatchRow avatarRow"></div>
+          </div>
+          <div class="settingRow">
+            <span class="settingLabel"><span data-i18n="frameLabel">Рамка аватара</span>: <b id="frameNameLine" class="frameNameLine"></b></span>
+            <div id="frameRow" class="frameRow"></div>
+          </div>
         </div>
       </div>
-      <div class="settingRow" id="cloudSection" style="border-top:1px solid rgba(255,255,255,.1);padding-top:14px;">
-        <span class="settingLabel" data-i18n="cloudTitle">Онлайн-профиль</span>
-        <div class="cloudRow">
-          <span class="cloudCode" id="cloudCodeDisplay">------</span>
-          <button class="cloudBtn" id="cloudCopyBtn" data-i18n="cloudCopy">Копировать</button>
+      <div class="setCat" data-cat="sound">
+        <button class="setCatHead" type="button" aria-expanded="false"><span class="setCatIcon">♪</span><span class="setCatName" data-i18n="catSound">Звук</span><span class="setCatArrow">›</span></button>
+        <div class="setCatBody">
+          <div class="settingRow">
+            <span class="settingLabel" data-i18n="musicLabel">Музыка</span>
+            <div class="btnRow">
+              <button id="musicToggle" class="chip"></button>
+            </div>
+          </div>
+          <div class="settingRow">
+            <span class="settingLabel" data-i18n="musicVolumeLabel">Громкость музыки</span>
+            <div class="btnRow">
+              <input id="musicVolumeSlider" type="range" min="0" max="100" value="28" style="width:150px;accent-color:#ff9f45;">
+            </div>
+          </div>
         </div>
-        <div class="cloudRow">
-          <input class="cloudInput" id="cloudRestoreInput" maxlength="8" data-i18n-placeholder="cloudEnterCode" placeholder="КОД">
-          <button class="cloudBtn" id="cloudRestoreBtn" data-i18n="cloudRestore">Восстановить</button>
-        </div>
-        <div class="cloudStatus" id="cloudStatus"></div>
-        <span class="settingLabel" data-i18n="cloudTop">Рейтинг игроков</span>
-        <div id="onlineLbRows"></div>
-        <button class="cloudBtn" id="cloudRefreshBtn" data-i18n="cloudRefresh">Обновить рейтинг</button>
       </div>
+      <div class="setCat" data-cat="online">
+        <button class="setCatHead" type="button" aria-expanded="false"><span class="setCatIcon">☁</span><span class="setCatName" data-i18n="catOnline">Онлайн</span><span class="setCatArrow">›</span></button>
+        <div class="setCatBody">
+          <div class="settingRow" id="cloudSection">
+            <span class="settingLabel" data-i18n="cloudTitle">Онлайн-профиль</span>
+            <div class="cloudRow">
+              <span class="cloudCode" id="cloudCodeDisplay">------</span>
+              <button class="cloudBtn" id="cloudCopyBtn" data-i18n="cloudCopy">Копировать</button>
+            </div>
+            <div class="cloudRow">
+              <input class="cloudInput" id="cloudRestoreInput" maxlength="8" data-i18n-placeholder="cloudEnterCode" placeholder="КОД">
+              <button class="cloudBtn" id="cloudRestoreBtn" data-i18n="cloudRestore">Восстановить</button>
+            </div>
+            <div class="cloudStatus" id="cloudStatus"></div>
+            <span class="settingLabel" data-i18n="cloudTop">Рейтинг игроков</span>
+            <div id="onlineLbRows"></div>
+            <button class="cloudBtn" id="cloudRefreshBtn" data-i18n="cloudRefresh">Обновить рейтинг</button>
+          </div>
+        </div>
+      </div>
+      <button id="settingsSaveBtn" class="adminSaveBtn settingsSaveBtn" type="button" data-i18n="settingsSave">✓ Сохранить</button>
+      <p id="settingsSaveStatus" class="settingsSaveStatus"></p>
     </div>
     <div class="spacer"></div>
   </div>
@@ -1178,6 +1229,9 @@ if (document.fonts && document.fonts.load) document.fonts.load('20px "BIPs"').ca
 const VW = 420;
 let   VH = 740;
 let   DPR = 1, S = 1, cssW = 0, cssH = 0;
+const IDLE_RENDER_MS = 1000;
+const IDLE_FULL_MS = 1200;
+let sceneState = -1, sceneFullUntil = 0, lastIdleRender = 0;
 
 const GFX_MODES = ['auto', 'high', 'low', 'ultra'];
 let gfxMode = 'auto';
@@ -1560,7 +1614,9 @@ const I18N = {
     cont: 'Продолжить', back: 'Назад', language: 'Язык', motionBlur: 'Motion blur',
     gfxLabel: 'Графика', gfx_auto: 'Авто', gfx_high: 'Красиво', gfx_low: 'Быстро', gfx_ultra: 'Ультра',
     expBadge: 'эксперимент',
-    gfxUltraNote: '⚗ Экспериментальная функция: объёмные платформы и параллакс. На слабых телефонах может тормозить.',
+    gfxUltraNote: '⚗ Экспериментальная функция: объёмные платформы и тени. На слабых телефонах может тормозить.',
+    catMain: 'Основное', catGfx: 'Графика и вид', catProfile: 'Профиль', catSound: 'Звук', catOnline: 'Онлайн',
+    settingsSave: '✓ Сохранить', settingsSaved: 'Сохранено ✓',
     gfxAutoLowNote: '(лагало — включён быстрый режим)',
     pauseMenu: 'Меню',
     bgColorLabel: 'Цвет фона', platformColorLabel: 'Цвет платформ',
@@ -1646,7 +1702,9 @@ const I18N = {
     cont: 'Continue', back: 'Back', language: 'Language', motionBlur: 'Motion blur',
     gfxLabel: 'Graphics', gfx_auto: 'Auto', gfx_high: 'Pretty', gfx_low: 'Fast', gfx_ultra: 'Ultra',
     expBadge: 'experimental',
-    gfxUltraNote: '⚗ Experimental feature: 3D-looking platforms and parallax. May lag on weak phones.',
+    gfxUltraNote: '⚗ Experimental feature: 3D-looking platforms and shadows. May lag on weak phones.',
+    catMain: 'General', catGfx: 'Graphics & look', catProfile: 'Profile', catSound: 'Sound', catOnline: 'Online',
+    settingsSave: '✓ Save', settingsSaved: 'Saved ✓',
     gfxAutoLowNote: '(lag detected — fast mode on)',
     pauseMenu: 'Menu',
     bgColorLabel: 'Background color', platformColorLabel: 'Platform color',
@@ -1902,7 +1960,7 @@ function loadCharImage(id){
   rec.img.src = id + '.png';
   charImgs[id] = rec;
 }
-const PUP_RIG = {"order":["legL","legR","torso","earL","earR","armL","armR","head","lids"],"parts":{"legL":{"box":[168,366,268,470],"pivot":[226,380],"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"168 366 100 104\" width=\"100\" height=\"104\"><defs><linearGradient id=\"pants\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#4a4a5c\"/><stop offset=\"1\" stop-color=\"#34343f\"/></linearGradient><pattern id=\"sockStripes\" patternUnits=\"userSpaceOnUse\" x=\"0\" y=\"0\" width=\"22\" height=\"512\" patternTransform=\"rotate(8)\"><rect width=\"22\" height=\"512\" fill=\"#b9bccb\"/><rect width=\"9\" height=\"512\" fill=\"#f1f1f6\"/></pattern></defs><g stroke=\"#2b2238\" stroke-width=\"9\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M204 378 L202 420 Q222 426 244 420 L248 378 Z\" fill=\"url(#pants)\"/><path d=\"M180 446 Q178 418 206 414 L232 414 Q256 418 256 442 Q256 458 218 458 Q180 458 180 446 Z\" fill=\"url(#sockStripes)\"/></g><g fill=\"none\" stroke=\"#2b2238\" stroke-width=\"4\" stroke-linecap=\"round\" opacity=\"0.5\"><path d=\"M206 444 L206 452\"/><path d=\"M228 444 L228 452\"/></g></svg>"},"legR":{"box":[244,366,344,470],"pivot":[286,380],"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"244 366 100 104\" width=\"100\" height=\"104\"><defs><linearGradient id=\"pants\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#4a4a5c\"/><stop offset=\"1\" stop-color=\"#34343f\"/></linearGradient><pattern id=\"sockStripes\" patternUnits=\"userSpaceOnUse\" x=\"0\" y=\"0\" width=\"22\" height=\"512\" patternTransform=\"rotate(8)\"><rect width=\"22\" height=\"512\" fill=\"#b9bccb\"/><rect width=\"9\" height=\"512\" fill=\"#f1f1f6\"/></pattern></defs><g transform=\"translate(512 0) scale(-1 1)\"><g stroke=\"#2b2238\" stroke-width=\"9\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M204 378 L202 420 Q222 426 244 420 L248 378 Z\" fill=\"url(#pants)\"/><path d=\"M180 446 Q178 418 206 414 L232 414 Q256 418 256 442 Q256 458 218 458 Q180 458 180 446 Z\" fill=\"url(#sockStripes)\"/></g><g fill=\"none\" stroke=\"#2b2238\" stroke-width=\"4\" stroke-linecap=\"round\" opacity=\"0.5\"><path d=\"M206 444 L206 452\"/><path d=\"M228 444 L228 452\"/></g></g></svg>"},"torso":{"box":[144,274,368,398],"pivot":[0,0],"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"144 274 224 124\" width=\"224\" height=\"124\"><defs><linearGradient id=\"shade\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#000\" stop-opacity=\"0\"/><stop offset=\"1\" stop-color=\"#1a1530\" stop-opacity=\"0.28\"/></linearGradient><pattern id=\"stripes\" patternUnits=\"userSpaceOnUse\" x=\"0\" y=\"296\" width=\"40\" height=\"38\"><rect width=\"40\" height=\"38\" fill=\"#ecebf2\"/><rect width=\"40\" height=\"19\" fill=\"#565b72\"/></pattern></defs><g stroke=\"#2b2238\" stroke-width=\"9\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M198 290 L314 290 Q340 290 340 316 L340 364 Q340 390 314 390 L198 390 Q172 390 172 364 L172 316 Q172 290 198 290 Z\" fill=\"url(#stripes)\"/><path d=\"M198 290 L314 290 Q340 290 340 316 L340 364 Q340 390 314 390 L198 390 Q172 390 172 364 L172 316 Q172 290 198 290 Z\" fill=\"url(#shade)\" stroke=\"none\"/><path d=\"M198 290 L314 290 Q340 290 340 316 L340 364 Q340 390 314 390 L198 390 Q172 390 172 364 L172 316 Q172 290 198 290 Z\" fill=\"none\"/></g></svg>"},"armL":{"box":[100,290,200,414],"pivot":[180,316],"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"100 290 100 124\" width=\"100\" height=\"124\"><defs><linearGradient id=\"paw\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#e3a549\"/><stop offset=\"1\" stop-color=\"#bb7f2e\"/></linearGradient><pattern id=\"stripes\" patternUnits=\"userSpaceOnUse\" x=\"0\" y=\"296\" width=\"40\" height=\"38\"><rect width=\"40\" height=\"38\" fill=\"#ecebf2\"/><rect width=\"40\" height=\"19\" fill=\"#565b72\"/></pattern></defs><g stroke=\"#2b2238\" stroke-width=\"9\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M178 304 Q144 318 130 356 L126 372 L158 378 L162 362 Q168 344 186 334 Z\" fill=\"url(#stripes)\"/><ellipse cx=\"140\" cy=\"386\" rx=\"22\" ry=\"19\" fill=\"url(#paw)\"/></g><g fill=\"none\" stroke=\"#2b2238\" stroke-width=\"4\" stroke-linecap=\"round\" opacity=\"0.55\"><path d=\"M134 379 L134 393\"/><path d=\"M146 379 L146 393\"/></g></svg>"},"armR":{"box":[312,290,412,414],"pivot":[332,316],"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"312 290 100 124\" width=\"100\" height=\"124\"><defs><linearGradient id=\"paw\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#e3a549\"/><stop offset=\"1\" stop-color=\"#bb7f2e\"/></linearGradient><pattern id=\"stripes\" patternUnits=\"userSpaceOnUse\" x=\"0\" y=\"296\" width=\"40\" height=\"38\"><rect width=\"40\" height=\"38\" fill=\"#ecebf2\"/><rect width=\"40\" height=\"19\" fill=\"#565b72\"/></pattern></defs><g transform=\"translate(512 0) scale(-1 1)\"><g stroke=\"#2b2238\" stroke-width=\"9\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M178 304 Q144 318 130 356 L126 372 L158 378 L162 362 Q168 344 186 334 Z\" fill=\"url(#stripes)\"/><ellipse cx=\"140\" cy=\"386\" rx=\"22\" ry=\"19\" fill=\"url(#paw)\"/></g><g fill=\"none\" stroke=\"#2b2238\" stroke-width=\"4\" stroke-linecap=\"round\" opacity=\"0.55\"><path d=\"M134 379 L134 393\"/><path d=\"M146 379 L146 393\"/></g></g></svg>"},"earL":{"box":[72,92,190,326],"pivot":[160,122],"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"72 92 118 234\" width=\"118\" height=\"234\"><defs><linearGradient id=\"earOut\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#d9983c\"/><stop offset=\"1\" stop-color=\"#b37628\"/></linearGradient><linearGradient id=\"earIn\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#e9ddcc\"/><stop offset=\"1\" stop-color=\"#f6efe4\"/></linearGradient></defs><g stroke=\"#2b2238\" stroke-width=\"9\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M160 112 Q110 100 92 150 Q72 212 96 290 Q106 318 128 306 Q146 290 146 250 Q150 190 178 140 Z\" fill=\"url(#earOut)\"/></g><path d=\"M150 128 Q116 128 106 168 Q94 222 112 282 Q120 296 128 286 Q136 270 136 240 Q140 186 162 146 Z\" fill=\"url(#earIn)\"/></svg>"},"earR":{"box":[322,92,440,326],"pivot":[352,122],"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"322 92 118 234\" width=\"118\" height=\"234\"><defs><linearGradient id=\"earOut\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#d9983c\"/><stop offset=\"1\" stop-color=\"#b37628\"/></linearGradient><linearGradient id=\"earIn\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#e9ddcc\"/><stop offset=\"1\" stop-color=\"#f6efe4\"/></linearGradient></defs><g transform=\"translate(512 0) scale(-1 1)\"><g stroke=\"#2b2238\" stroke-width=\"9\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M160 112 Q110 100 92 150 Q72 212 96 290 Q106 318 128 306 Q146 290 146 250 Q150 190 178 140 Z\" fill=\"url(#earOut)\"/></g><path d=\"M150 128 Q116 128 106 168 Q94 222 112 282 Q120 296 128 286 Q136 270 136 240 Q140 186 162 146 Z\" fill=\"url(#earIn)\"/></g></svg>"},"head":{"box":[124,68,388,316],"pivot":[256,300],"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"124 68 264 248\" width=\"264\" height=\"248\"><defs><radialGradient id=\"fur\" cx=\"45%\" cy=\"30%\" r=\"75%\"><stop offset=\"0\" stop-color=\"#f0b858\"/><stop offset=\"0.6\" stop-color=\"#d8993c\"/><stop offset=\"1\" stop-color=\"#b0752a\"/></radialGradient><linearGradient id=\"blaze\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#fbf6ee\"/><stop offset=\"1\" stop-color=\"#ece0cd\"/></linearGradient><radialGradient id=\"muzzle\" cx=\"50%\" cy=\"35%\" r=\"70%\"><stop offset=\"0\" stop-color=\"#f3dcb4\"/><stop offset=\"1\" stop-color=\"#dcb57c\"/></radialGradient><radialGradient id=\"nose\" cx=\"40%\" cy=\"30%\" r=\"75%\"><stop offset=\"0\" stop-color=\"#5a5468\"/><stop offset=\"0.5\" stop-color=\"#2f2a3a\"/><stop offset=\"1\" stop-color=\"#1c1824\"/></radialGradient><radialGradient id=\"iris\" cx=\"50%\" cy=\"60%\" r=\"55%\"><stop offset=\"0\" stop-color=\"#b07a4a\"/><stop offset=\"0.7\" stop-color=\"#7a4a26\"/><stop offset=\"1\" stop-color=\"#4e2c14\"/></radialGradient></defs><path d=\"M256 76 C340 74 382 130 380 196 C378 262 330 306 256 306 C182 306 134 262 132 196 C130 130 172 78 256 76 Z\" fill=\"url(#fur)\"/><path d=\"M226 80 C236 77 276 77 286 80 C294 120 290 160 300 200 L212 200 C222 160 218 120 226 80 Z\" fill=\"url(#blaze)\"/><path d=\"M256 196 C312 194 336 226 334 256 C332 290 298 304 256 304 C214 304 180 290 178 256 C176 226 200 194 256 196 Z\" fill=\"url(#muzzle)\" stroke=\"#2b2238\" stroke-width=\"6\" stroke-opacity=\"0.35\"/><path d=\"M256 76 C340 74 382 130 380 196 C378 262 330 306 256 306 C182 306 134 262 132 196 C130 130 172 78 256 76 Z\" fill=\"none\" stroke=\"#2b2238\" stroke-width=\"9\"/><ellipse cx=\"208\" cy=\"176\" rx=\"25\" ry=\"28\" fill=\"#fdfbf7\" stroke=\"#2b2238\" stroke-width=\"6\"/><ellipse cx=\"304\" cy=\"176\" rx=\"25\" ry=\"28\" fill=\"#fdfbf7\" stroke=\"#2b2238\" stroke-width=\"6\"/><circle cx=\"211\" cy=\"180\" r=\"16\" fill=\"url(#iris)\"/><circle cx=\"301\" cy=\"180\" r=\"16\" fill=\"url(#iris)\"/><circle cx=\"211\" cy=\"181\" r=\"8.5\" fill=\"#1c1824\"/><circle cx=\"301\" cy=\"181\" r=\"8.5\" fill=\"#1c1824\"/><circle cx=\"205\" cy=\"172\" r=\"6\" fill=\"#fff\"/><circle cx=\"295\" cy=\"172\" r=\"6\" fill=\"#fff\"/><circle cx=\"217\" cy=\"189\" r=\"2.8\" fill=\"#fff\"/><circle cx=\"307\" cy=\"189\" r=\"2.8\" fill=\"#fff\"/><g fill=\"none\" stroke=\"#2b2238\" stroke-width=\"7\" stroke-linecap=\"round\"><path d=\"M188 136 Q200 128 214 134\"/><path d=\"M324 136 Q312 128 298 134\"/></g><path d=\"M256 214 C279 213 290 222 289 236 C288 252 272 265 256 265 C240 265 224 252 223 236 C222 222 233 213 256 214 Z\" fill=\"url(#nose)\" stroke=\"#2b2238\" stroke-width=\"6\"/><ellipse cx=\"245\" cy=\"225\" rx=\"10\" ry=\"5\" fill=\"#fff\" opacity=\"0.35\"/><g fill=\"none\" stroke=\"#2b2238\" stroke-width=\"6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M256 265 L256 280\"/><path d=\"M226 278 Q240 292 256 280 Q272 292 286 278\"/></g><g fill=\"#8a5a2a\" opacity=\"0.7\"><circle cx=\"206\" cy=\"262\" r=\"3.2\"/><circle cx=\"196\" cy=\"274\" r=\"3.2\"/><circle cx=\"214\" cy=\"278\" r=\"3.2\"/><circle cx=\"306\" cy=\"262\" r=\"3.2\"/><circle cx=\"316\" cy=\"274\" r=\"3.2\"/><circle cx=\"298\" cy=\"278\" r=\"3.2\"/></g></svg>"},"lids":{"box":[172,140,340,212],"pivot":[0,0],"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"172 140 168 72\" width=\"168\" height=\"72\"><defs></defs><g stroke=\"#2b2238\" stroke-width=\"6\"><ellipse cx=\"208\" cy=\"176\" rx=\"28\" ry=\"31\" fill=\"#dea449\"/><ellipse cx=\"304\" cy=\"176\" rx=\"28\" ry=\"31\" fill=\"#dea449\"/></g><g fill=\"none\" stroke=\"#2b2238\" stroke-width=\"6\" stroke-linecap=\"round\"><path d=\"M188 180 Q208 194 228 180\"/><path d=\"M284 180 Q304 194 324 180\"/></g></svg>"}}};
+const PUP_RIG = {"order":["legL","legR","torso","earL","earR","armL","armR","head"],"parts":{"legL":{"box":[168,366,268,470],"pivot":[226,380],"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"168 366 100 104\" width=\"100\" height=\"104\"><defs><linearGradient id=\"pants\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#4a4a5c\"/><stop offset=\"1\" stop-color=\"#34343f\"/></linearGradient><pattern id=\"sockStripes\" patternUnits=\"userSpaceOnUse\" x=\"0\" y=\"0\" width=\"22\" height=\"512\" patternTransform=\"rotate(8)\"><rect width=\"22\" height=\"512\" fill=\"#b9bccb\"/><rect width=\"9\" height=\"512\" fill=\"#f1f1f6\"/></pattern></defs><g stroke=\"#2b2238\" stroke-width=\"9\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M204 378 L202 420 Q222 426 244 420 L248 378 Z\" fill=\"url(#pants)\"/><path d=\"M180 446 Q178 418 206 414 L232 414 Q256 418 256 442 Q256 458 218 458 Q180 458 180 446 Z\" fill=\"url(#sockStripes)\"/></g><g fill=\"none\" stroke=\"#2b2238\" stroke-width=\"4\" stroke-linecap=\"round\" opacity=\"0.5\"><path d=\"M206 444 L206 452\"/><path d=\"M228 444 L228 452\"/></g></svg>"},"legR":{"box":[244,366,344,470],"pivot":[286,380],"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"244 366 100 104\" width=\"100\" height=\"104\"><defs><linearGradient id=\"pants\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#4a4a5c\"/><stop offset=\"1\" stop-color=\"#34343f\"/></linearGradient><pattern id=\"sockStripes\" patternUnits=\"userSpaceOnUse\" x=\"0\" y=\"0\" width=\"22\" height=\"512\" patternTransform=\"rotate(8)\"><rect width=\"22\" height=\"512\" fill=\"#b9bccb\"/><rect width=\"9\" height=\"512\" fill=\"#f1f1f6\"/></pattern></defs><g transform=\"translate(512 0) scale(-1 1)\"><g stroke=\"#2b2238\" stroke-width=\"9\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M204 378 L202 420 Q222 426 244 420 L248 378 Z\" fill=\"url(#pants)\"/><path d=\"M180 446 Q178 418 206 414 L232 414 Q256 418 256 442 Q256 458 218 458 Q180 458 180 446 Z\" fill=\"url(#sockStripes)\"/></g><g fill=\"none\" stroke=\"#2b2238\" stroke-width=\"4\" stroke-linecap=\"round\" opacity=\"0.5\"><path d=\"M206 444 L206 452\"/><path d=\"M228 444 L228 452\"/></g></g></svg>"},"torso":{"box":[144,274,368,398],"pivot":[0,0],"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"144 274 224 124\" width=\"224\" height=\"124\"><defs><linearGradient id=\"shade\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#000\" stop-opacity=\"0\"/><stop offset=\"1\" stop-color=\"#1a1530\" stop-opacity=\"0.28\"/></linearGradient><pattern id=\"stripes\" patternUnits=\"userSpaceOnUse\" x=\"0\" y=\"296\" width=\"40\" height=\"38\"><rect width=\"40\" height=\"38\" fill=\"#ecebf2\"/><rect width=\"40\" height=\"19\" fill=\"#565b72\"/></pattern></defs><g stroke=\"#2b2238\" stroke-width=\"9\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M198 290 L314 290 Q340 290 340 316 L340 364 Q340 390 314 390 L198 390 Q172 390 172 364 L172 316 Q172 290 198 290 Z\" fill=\"url(#stripes)\"/><path d=\"M198 290 L314 290 Q340 290 340 316 L340 364 Q340 390 314 390 L198 390 Q172 390 172 364 L172 316 Q172 290 198 290 Z\" fill=\"url(#shade)\" stroke=\"none\"/><path d=\"M198 290 L314 290 Q340 290 340 316 L340 364 Q340 390 314 390 L198 390 Q172 390 172 364 L172 316 Q172 290 198 290 Z\" fill=\"none\"/></g></svg>"},"armL":{"box":[100,290,200,414],"pivot":[180,316],"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"100 290 100 124\" width=\"100\" height=\"124\"><defs><linearGradient id=\"paw\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#e3a549\"/><stop offset=\"1\" stop-color=\"#bb7f2e\"/></linearGradient><pattern id=\"stripes\" patternUnits=\"userSpaceOnUse\" x=\"0\" y=\"296\" width=\"40\" height=\"38\"><rect width=\"40\" height=\"38\" fill=\"#ecebf2\"/><rect width=\"40\" height=\"19\" fill=\"#565b72\"/></pattern></defs><g stroke=\"#2b2238\" stroke-width=\"9\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M178 304 Q144 318 130 356 L126 372 L158 378 L162 362 Q168 344 186 334 Z\" fill=\"url(#stripes)\"/><ellipse cx=\"140\" cy=\"386\" rx=\"22\" ry=\"19\" fill=\"url(#paw)\"/></g><g fill=\"none\" stroke=\"#2b2238\" stroke-width=\"4\" stroke-linecap=\"round\" opacity=\"0.55\"><path d=\"M134 379 L134 393\"/><path d=\"M146 379 L146 393\"/></g></svg>"},"armR":{"box":[312,290,412,414],"pivot":[332,316],"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"312 290 100 124\" width=\"100\" height=\"124\"><defs><linearGradient id=\"paw\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#e3a549\"/><stop offset=\"1\" stop-color=\"#bb7f2e\"/></linearGradient><pattern id=\"stripes\" patternUnits=\"userSpaceOnUse\" x=\"0\" y=\"296\" width=\"40\" height=\"38\"><rect width=\"40\" height=\"38\" fill=\"#ecebf2\"/><rect width=\"40\" height=\"19\" fill=\"#565b72\"/></pattern></defs><g transform=\"translate(512 0) scale(-1 1)\"><g stroke=\"#2b2238\" stroke-width=\"9\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M178 304 Q144 318 130 356 L126 372 L158 378 L162 362 Q168 344 186 334 Z\" fill=\"url(#stripes)\"/><ellipse cx=\"140\" cy=\"386\" rx=\"22\" ry=\"19\" fill=\"url(#paw)\"/></g><g fill=\"none\" stroke=\"#2b2238\" stroke-width=\"4\" stroke-linecap=\"round\" opacity=\"0.55\"><path d=\"M134 379 L134 393\"/><path d=\"M146 379 L146 393\"/></g></g></svg>"},"earL":{"box":[72,92,190,326],"pivot":[160,122],"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"72 92 118 234\" width=\"118\" height=\"234\"><defs><linearGradient id=\"earOut\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#d9983c\"/><stop offset=\"1\" stop-color=\"#b37628\"/></linearGradient><linearGradient id=\"earIn\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#e9ddcc\"/><stop offset=\"1\" stop-color=\"#f6efe4\"/></linearGradient></defs><g stroke=\"#2b2238\" stroke-width=\"9\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M160 112 Q110 100 92 150 Q72 212 96 290 Q106 318 128 306 Q146 290 146 250 Q150 190 178 140 Z\" fill=\"url(#earOut)\"/></g><path d=\"M150 128 Q116 128 106 168 Q94 222 112 282 Q120 296 128 286 Q136 270 136 240 Q140 186 162 146 Z\" fill=\"url(#earIn)\"/></svg>"},"earR":{"box":[322,92,440,326],"pivot":[352,122],"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"322 92 118 234\" width=\"118\" height=\"234\"><defs><linearGradient id=\"earOut\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#d9983c\"/><stop offset=\"1\" stop-color=\"#b37628\"/></linearGradient><linearGradient id=\"earIn\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#e9ddcc\"/><stop offset=\"1\" stop-color=\"#f6efe4\"/></linearGradient></defs><g transform=\"translate(512 0) scale(-1 1)\"><g stroke=\"#2b2238\" stroke-width=\"9\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M160 112 Q110 100 92 150 Q72 212 96 290 Q106 318 128 306 Q146 290 146 250 Q150 190 178 140 Z\" fill=\"url(#earOut)\"/></g><path d=\"M150 128 Q116 128 106 168 Q94 222 112 282 Q120 296 128 286 Q136 270 136 240 Q140 186 162 146 Z\" fill=\"url(#earIn)\"/></g></svg>"},"head":{"box":[124,68,388,316],"pivot":[256,300],"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"124 68 264 248\" width=\"264\" height=\"248\"><defs><radialGradient id=\"fur\" cx=\"45%\" cy=\"30%\" r=\"75%\"><stop offset=\"0\" stop-color=\"#f0b858\"/><stop offset=\"0.6\" stop-color=\"#d8993c\"/><stop offset=\"1\" stop-color=\"#b0752a\"/></radialGradient><linearGradient id=\"blaze\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#fbf6ee\"/><stop offset=\"1\" stop-color=\"#ece0cd\"/></linearGradient><radialGradient id=\"muzzle\" cx=\"50%\" cy=\"35%\" r=\"70%\"><stop offset=\"0\" stop-color=\"#f3dcb4\"/><stop offset=\"1\" stop-color=\"#dcb57c\"/></radialGradient><radialGradient id=\"nose\" cx=\"40%\" cy=\"30%\" r=\"75%\"><stop offset=\"0\" stop-color=\"#5a5468\"/><stop offset=\"0.5\" stop-color=\"#2f2a3a\"/><stop offset=\"1\" stop-color=\"#1c1824\"/></radialGradient><radialGradient id=\"iris\" cx=\"50%\" cy=\"60%\" r=\"55%\"><stop offset=\"0\" stop-color=\"#b07a4a\"/><stop offset=\"0.7\" stop-color=\"#7a4a26\"/><stop offset=\"1\" stop-color=\"#4e2c14\"/></radialGradient></defs><path d=\"M256 76 C340 74 382 130 380 196 C378 262 330 306 256 306 C182 306 134 262 132 196 C130 130 172 78 256 76 Z\" fill=\"url(#fur)\"/><path d=\"M226 80 C236 77 276 77 286 80 C294 120 290 160 300 200 L212 200 C222 160 218 120 226 80 Z\" fill=\"url(#blaze)\"/><path d=\"M256 196 C312 194 336 226 334 256 C332 290 298 304 256 304 C214 304 180 290 178 256 C176 226 200 194 256 196 Z\" fill=\"url(#muzzle)\" stroke=\"#2b2238\" stroke-width=\"6\" stroke-opacity=\"0.35\"/><path d=\"M256 76 C340 74 382 130 380 196 C378 262 330 306 256 306 C182 306 134 262 132 196 C130 130 172 78 256 76 Z\" fill=\"none\" stroke=\"#2b2238\" stroke-width=\"9\"/><ellipse cx=\"208\" cy=\"176\" rx=\"25\" ry=\"28\" fill=\"#fdfbf7\" stroke=\"#2b2238\" stroke-width=\"6\"/><ellipse cx=\"304\" cy=\"176\" rx=\"25\" ry=\"28\" fill=\"#fdfbf7\" stroke=\"#2b2238\" stroke-width=\"6\"/><circle cx=\"211\" cy=\"180\" r=\"16\" fill=\"url(#iris)\"/><circle cx=\"301\" cy=\"180\" r=\"16\" fill=\"url(#iris)\"/><circle cx=\"211\" cy=\"181\" r=\"8.5\" fill=\"#1c1824\"/><circle cx=\"301\" cy=\"181\" r=\"8.5\" fill=\"#1c1824\"/><circle cx=\"205\" cy=\"172\" r=\"6\" fill=\"#fff\"/><circle cx=\"295\" cy=\"172\" r=\"6\" fill=\"#fff\"/><circle cx=\"217\" cy=\"189\" r=\"2.8\" fill=\"#fff\"/><circle cx=\"307\" cy=\"189\" r=\"2.8\" fill=\"#fff\"/><g fill=\"none\" stroke=\"#2b2238\" stroke-width=\"7\" stroke-linecap=\"round\"><path d=\"M188 136 Q200 128 214 134\"/><path d=\"M324 136 Q312 128 298 134\"/></g><path d=\"M256 214 C279 213 290 222 289 236 C288 252 272 265 256 265 C240 265 224 252 223 236 C222 222 233 213 256 214 Z\" fill=\"url(#nose)\" stroke=\"#2b2238\" stroke-width=\"6\"/><ellipse cx=\"245\" cy=\"225\" rx=\"10\" ry=\"5\" fill=\"#fff\" opacity=\"0.35\"/><g fill=\"none\" stroke=\"#2b2238\" stroke-width=\"6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M256 265 L256 280\"/><path d=\"M226 278 Q240 292 256 280 Q272 292 286 278\"/></g><g fill=\"#8a5a2a\" opacity=\"0.7\"><circle cx=\"206\" cy=\"262\" r=\"3.2\"/><circle cx=\"196\" cy=\"274\" r=\"3.2\"/><circle cx=\"214\" cy=\"278\" r=\"3.2\"/><circle cx=\"306\" cy=\"262\" r=\"3.2\"/><circle cx=\"316\" cy=\"274\" r=\"3.2\"/><circle cx=\"298\" cy=\"278\" r=\"3.2\"/></g></svg>"}}};
 const RIG_CHARS = { hero11: PUP_RIG };
 const RIG_OY = 36;
 const RIG_HI = 1;
@@ -1953,43 +2011,23 @@ const rigFrameCache = new Map();
 let rigFrameScale = 0;
 let rigU = 0, rigPhase = 0, rigLiveT = 0;
 let rigDrawPose = null;
-const rigLive = rigPoseFrom(0, 0, 0, false);
+const rigLive = rigPoseFrom(0, 0);
 
-function rigBlinkAt(now){
-  return (now % 3.7) < 0.13 ? 1 : 0;
-}
-
-function rigPoseFrom(u, phaseIdx, blink, holding){
+function rigPoseFrom(u, phaseIdx){
   const rise = Math.max(0, -u), fall = Math.max(0, u);
   const ph = phaseIdx / 8 * Math.PI * 2;
-  const arm = 0.9 + rise * 1.0 + fall * 0.5 + Math.sin(ph) * 0.35 * fall;
-  const ear = -0.3 * rise + 1.3 * fall + Math.sin(ph + 1.1) * 0.22 * fall;
-  const kick = Math.sin(ph + 0.6) * 0.3 * fall;
+  const ear = -0.3 * rise + 1.3 * fall + Math.sin(ph) * 0.22 * fall;
   return {
-    armL: arm,
-    armR: holding ? -(0.2 + 0.25 * rise + 0.1 * fall) : -arm,
+    armL: 0, armR: 0, legL: 0, legR: 0, head: 0, tuck: 0, blink: 0,
     earL: ear, earR: -ear,
-    legL: 0.14 * rise + 0.08 * fall + kick,
-    legR: -0.14 * rise - 0.08 * fall + kick,
-    head: Math.sin(ph) * 0.05 * fall,
-    tuck: rise,
-    blink: blink,
-    key: u + '|' + phaseIdx + '|' + blink + '|' + (holding ? 1 : 0)
+    key: u + '|' + phaseIdx
   };
 }
 
 function rigIdlePose(){
   const now = performance.now() / 1000;
   const sway = Math.sin(now * 1.7 + 0.8) * 0.12;
-  return {
-    armL: 0.12 + Math.sin(now * 1.7) * 0.08,
-    armR: -(0.12 + Math.sin(now * 1.7 + 0.5) * 0.08),
-    legL: 0, legR: 0,
-    earL: sway, earR: -sway,
-    head: Math.sin(now * 0.9) * 0.03,
-    tuck: 0,
-    blink: rigBlinkAt(now)
-  };
+  return { armL: 0, armR: 0, legL: 0, legR: 0, head: 0, tuck: 0, blink: 0, earL: sway, earR: -sway };
 }
 
 function updateRigPose(){
@@ -2001,8 +2039,7 @@ function updateRigPose(){
   rigPhase = (rigPhase + dt * 2.8) % 1;
   const uq = Math.round(rigU * 5) / 5;
   const phaseIdx = uq > 0 ? Math.floor(rigPhase * 8) % 8 : 0;
-  const holding = outfit.tool !== 'none' && isOwned('tool', outfit.tool);
-  const pose = rigPoseFrom(uq, phaseIdx, rigBlinkAt(now), holding);
+  const pose = rigPoseFrom(uq, phaseIdx);
   if (pose.key !== rigLive.key) Object.assign(rigLive, pose);
 }
 
@@ -2013,7 +2050,6 @@ function rigPoseKey(){
 function paintRigParts(c, s, rec, set, pose){
   const def = rec.rig;
   for (const name of def.order){
-    if (name === 'lids' && !pose.blink) continue;
     const part = def.parts[name];
     const cv = set[name];
     if (!cv) continue;
@@ -2081,21 +2117,6 @@ function paintRig(c, w, h, rec, pose){
 function rigCharActive(){
   const rec = charImgs[outfit.char];
   return !!(rec && rec.rig && rec.ready);
-}
-
-function paintToolRigged(c, w, h, kind, A, phase){
-  const rec = charImgs[outfit.char];
-  if (!(rec && rec.rig && rec.ready && rigDrawPose)){ paintTool(c, w, h, kind, A, phase); return; }
-  const piv = rec.rig.parts.armR.pivot;
-  const s = w / 512;
-  const oy = rec.rig.oy != null ? rec.rig.oy : RIG_OY;
-  const px = (piv[0] - 256) * s, py = (piv[1] - 256 + oy) * s;
-  c.save();
-  c.translate(px, py);
-  c.rotate(rigDrawPose.armR || 0);
-  c.translate(-px, -py);
-  paintTool(c, w, h, kind, A, phase);
-  c.restore();
 }
 
 const currentCharReady = () => !!(charImgs[outfit.char] && charImgs[outfit.char].ready);
@@ -2311,16 +2332,7 @@ function buildLayers(){
     leaves.items.push({ x: rand(0, VW), y: rand(0, BAND), r: rand(4, 9), a: rand(0.18, 0.4), rot: rand(0, 6.28), spin: rand(-1.2, 1.2) });
 
   layers = [stars, far, near, leaves];
-
-  ultraFar = [];
-  for (let i = 0; i < 3; i++)
-    ultraFar.push({ x: rand(40, VW - 40), y: rand(0, BAND), r: rand(26, 48), hue: pick(['#ffb3d9', '#9fd8ff', '#ffd98a']), ring: Math.random() < 0.5 });
-
-  ultraFront = [];
-  for (let i = 0; i < 5; i++)
-    ultraFront.push({ x: rand(-30, VW + 30), y: rand(0, BAND), r: rand(28, 54), a: rand(0.035, 0.07) });
 }
-let ultraFar = [], ultraFront = [];
 buildLayers();
 
 
@@ -3326,21 +3338,10 @@ function drawBackground(){
 
   const time = performance.now() / 1000;
   const low = lowGfx();
-  const ultra = ultraGfx();
   const reps = Math.ceil(VH / BAND) + 2;
-
-  if (ultra){
-    const leanTarget = state === STATE.PLAY ? (VW / 2 - hero.x) * 0.5 : 0;
-    ultraLean += (leanTarget - ultraLean) * 0.06;
-    drawUltraFar(reps);
-  } else {
-    ultraLean = 0;
-  }
 
   for (const L of layers){
     const off = ((-camY * L.factor) % BAND + BAND) % BAND;
-    const sideShift = ultra ? ultraLean * L.factor : 0;
-    if (sideShift){ ctx.save(); ctx.translate(sideShift, 0); }
     for (let ii = 0; ii < L.items.length; ii++){
       if (low && L.kind === 0 && (ii % 3) !== 0) continue;
       const it = L.items[ii];
@@ -3375,69 +3376,9 @@ function drawBackground(){
         }
       }
     }
-    if (sideShift) ctx.restore();
   }
   ctx.globalAlpha = 1;
 }
-
-let ultraLean = 0;
-
-function drawUltraFar(reps){
-  const f = 0.06;
-  const off = ((-camY * f) % BAND + BAND) % BAND;
-  const sx = ultraLean * f;
-  for (const it of ultraFar){
-    for (let k = -1; k < reps; k++){
-      const y = it.y + off + k * BAND;
-      if (y < -120 || y > VH + 120) continue;
-      const x = it.x + sx;
-      ctx.globalAlpha = 0.22;
-      ctx.fillStyle = it.hue;
-      ctx.beginPath();
-      ctx.arc(x, y, it.r, 0, 6.2832);
-      ctx.fill();
-      ctx.globalAlpha = 0.18;
-      ctx.fillStyle = '#1a0f33';
-      ctx.beginPath();
-      ctx.arc(x + it.r * 0.28, y - it.r * 0.18, it.r * 0.92, 0, 6.2832);
-      ctx.fill();
-      if (it.ring){
-        ctx.globalAlpha = 0.2;
-        ctx.strokeStyle = it.hue;
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.ellipse(x, y, it.r * 1.7, it.r * 0.42, -0.35, 0, 6.2832);
-        ctx.stroke();
-      }
-    }
-  }
-  ctx.globalAlpha = 1;
-}
-
-function drawUltraFront(){
-  if (!ultraGfx()) return;
-  const f = 1.4;
-  const reps = Math.ceil(VH / BAND) + 2;
-  const off = ((-camY * f) % BAND + BAND) % BAND;
-  const sx = ultraLean * f;
-  ctx.fillStyle = '#fdf6e8';
-  for (const it of ultraFront){
-    for (let k = -1; k < reps; k++){
-      const y = it.y + off + k * BAND;
-      if (y < -80 || y > VH + 80) continue;
-      ctx.globalAlpha = it.a;
-      ctx.beginPath();
-      ctx.arc(it.x + sx, y, it.r, 0, 6.2832);
-      ctx.fill();
-      ctx.globalAlpha = it.a * 0.6;
-      ctx.beginPath();
-      ctx.arc(it.x + sx, y, it.r * 0.62, 0, 6.2832);
-      ctx.fill();
-    }
-  }
-  ctx.globalAlpha = 1;
-}
-
 
 function drawShadows(){
   if (ultraGfx()) return;
@@ -3469,7 +3410,7 @@ function platformGradient(c1, c2, h){
 const ULTRA_DEPTH_X = 13;
 const ULTRA_DEPTH_Y = 14;
 function ultraDepthVector(sx, sy){
-  const vx = VW / 2 + ultraLean * 0.35;
+  const vx = VW / 2;
   const vy = VH / 2;
   return {
     dx: clamp((vx - sx) * 0.055, -ULTRA_DEPTH_X, ULTRA_DEPTH_X),
@@ -4429,7 +4370,7 @@ function drawHero(x, y, sx, sy, tilt, face, alpha, ear, phase){
     paintHat(ctx, hero.w, hero.h, outfit.hat2, A);
     ctx.restore();
   }
-  paintToolRigged(ctx, hero.w, hero.h, outfit.tool, A, phase);
+  paintTool(ctx, hero.w, hero.h, outfit.tool, A, phase);
   rigDrawPose = null;
   ctx.restore();
 }
@@ -4475,7 +4416,7 @@ function getHeroShadowCanvas(){
     paintHat(g, hero.w, hero.h, outfit.hat2, A);
     g.restore();
   }
-  paintToolRigged(g, hero.w, hero.h, outfit.tool, A, 0);
+  paintTool(g, hero.w, hero.h, outfit.tool, A, 0);
   rigDrawPose = null;
   g.restore();
   g.globalCompositeOperation = 'source-in';
@@ -4888,7 +4829,6 @@ function render(){
   drawParticles();
   drawDeathPortal();
   drawHeroWithWrap();
-  drawUltraFront();
   drawToasts();
   ctx.restore();
 
@@ -4936,6 +4876,7 @@ function trackPerformance(realDt){
 
 function applyGfxChange(){
   resize();
+  wakeScene(600);
   bgCacheKey = '';
   const vig = document.getElementById('vignette');
   if (vig) vig.classList.toggle('off', lowGfx());
@@ -4949,6 +4890,19 @@ function setGfxMode(mode){
   if (mode !== 'auto') autoLowGfx = false;
   perfSampleSum = 0; perfSampleCount = 0;
   applyGfxChange();
+}
+
+
+function wakeScene(ms){
+  sceneFullUntil = Math.max(sceneFullUntil, performance.now() + (ms || IDLE_FULL_MS));
+}
+
+function sceneNeedsRender(now){
+  if (state !== sceneState){ sceneState = state; wakeScene(); }
+  if (state === STATE.PLAY || state === STATE.DYING) return true;
+  if (now < sceneFullUntil) return true;
+  if (now - lastIdleRender >= IDLE_RENDER_MS){ lastIdleRender = now; return true; }
+  return false;
 }
 
 function frame(now){
@@ -5000,7 +4954,7 @@ function frame(now){
     else shakeX = shakeY = 0;
   }
 
-  render();
+  if (sceneNeedsRender(now)) render();
   tapEvent = false;
 }
 
@@ -6769,13 +6723,48 @@ document.getElementById('cloudRestoreBtn').addEventListener('click', () => {
 });
 document.getElementById('cloudRefreshBtn').addEventListener('click', cloudFetchLeaderboard);
 
+function setCatOpen(cat, open){
+  if (!cat) return;
+  cat.classList.toggle('open', open);
+  const head = cat.querySelector ? cat.querySelector('.setCatHead') : null;
+  if (head && head.setAttribute) head.setAttribute('aria-expanded', open ? 'true' : 'false');
+  if (open && cat.dataset && cat.dataset.cat === 'online' && cloudReady()) cloudFetchLeaderboard();
+}
+
+function collapseSettings(){
+  document.querySelectorAll('.setCat').forEach((c) => setCatOpen(c, false));
+}
+
+document.querySelectorAll('.setCatHead').forEach((head) => {
+  head.addEventListener('click', () => {
+    const cat = head.closest ? head.closest('.setCat') : head.parentElement;
+    if (cat) setCatOpen(cat, !cat.classList.contains('open'));
+  });
+});
+
+let settingsSaveTimer = null;
+function saveSettings(){
+  Store.set('gfxMode', gfxMode);
+  cloudPushSoon();
+  const st = document.getElementById('settingsSaveStatus');
+  if (st){
+    st.textContent = t('settingsSaved');
+    clearTimeout(settingsSaveTimer);
+    settingsSaveTimer = setTimeout(() => { st.textContent = ''; }, 1800);
+  }
+  sfxPopupClose();
+}
+document.getElementById('settingsSaveBtn').addEventListener('click', saveSettings);
+
 function openSettings(){
   state = STATE.SETTINGS;
   hideAllScreens();
   show(settingsEl);
   reanimate(settingsEl);
+  collapseSettings();
+  const st = document.getElementById('settingsSaveStatus');
+  if (st) st.textContent = '';
   refreshCloudUI();
-  if (cloudReady()) cloudFetchLeaderboard();
 }
 
 function closeSettings(){
@@ -7178,6 +7167,8 @@ function refreshBgColorRow(){
   buildThemeSwatchRow('bgColorRow', BG_THEMES, bgTheme, (key) => {
     bgTheme = key;
     Store.set('bgTheme', key);
+    bgCacheKey = '';
+    wakeScene(400);
     refreshBgColorRow();
   });
 }
@@ -7186,6 +7177,7 @@ function refreshPlatformColorRow(){
   buildThemeSwatchRow('platformColorRow', PLATFORM_THEMES, platformTheme, (key) => {
     platformTheme = key;
     Store.set('platformTheme', key);
+    wakeScene(400);
     refreshPlatformColorRow();
   });
 }
@@ -7326,50 +7318,60 @@ const previewCtxs = ['menuPreview', 'preview2']
   .map(id => ({ id, el: document.getElementById(id) }))
   .filter(o => !!o.el)
   .map(o => ({ id: o.id, ctx: o.el.getContext('2d') }));
-let prevT = performance.now();
 
-(function previewLoop(now){
-  requestAnimationFrame(previewLoop);
-  const t2 = (now || performance.now()) / 1000;
-  const dt = Math.min(0.05, ((now || performance.now()) - prevT) / 1000);
-  prevT = now || performance.now();
-  if (state !== STATE.MENU && state !== STATE.PAUSED && state !== STATE.WARDROBE) return;
+const previewSigs = {};
 
-  const bob  = Math.sin(t2 * 1.7) * 10;
-  const ear  = Math.sin(t2 * 1.7 + 0.8) * 0.3;
-  const tilt = Math.sin(t2 * 0.9) * 0.07;
-  const sq   = 1 + Math.sin(t2 * 1.7 + 1.6) * 0.045;
+function previewSignature(entryId){
+  const ch = entryId === 'preview2' ? previewChar : outfit.char;
+  const rec = charImgs[ch];
+  const multi = isOwned('perk', 'multiacc');
+  return [ch, rec && rec.ready ? 1 : 0, outfit.hat, outfit.acc, outfit.tool,
+    multi ? outfit.hat2 : '', multi ? outfit.acc2 : '', maceReady ? 1 : 0].join('|');
+}
+
+function drawPreviewHero(entry){
+  const pctx = entry.ctx;
   const realChar = outfit.char;
-
-  for (const entry of previewCtxs){
-    const pctx = entry.ctx;
-    if (entry.id === 'preview2') outfit.char = previewChar;
-    const A = anchors();
-
-    pctx.setTransform(1, 0, 0, 1, 0, 0);
-    pctx.clearRect(0, 0, 220, 220);
-    pctx.imageSmoothingQuality = 'high';
+  if (entry.id === 'preview2') outfit.char = previewChar;
+  const A = anchors();
+  pctx.setTransform(1, 0, 0, 1, 0, 0);
+  pctx.clearRect(0, 0, 220, 220);
+  pctx.imageSmoothingEnabled = true;
+  pctx.imageSmoothingQuality = 'high';
+  pctx.save();
+  pctx.translate(110, 114);
+  pctx.scale(2.9, 2.9);
+  rigDrawPose = null;
+  paintHeroBody(pctx, hero.w, hero.h, 0);
+  paintAccessory(pctx, hero.w, hero.h, outfit.acc, A);
+  if (outfit.acc2 !== 'none' && isOwned('perk', 'multiacc')) paintAccessory(pctx, hero.w, hero.h, outfit.acc2, A);
+  paintHat(pctx, hero.w, hero.h, outfit.hat, A);
+  if (outfit.hat2 !== 'none' && isOwned('perk', 'multiacc')){
     pctx.save();
-    pctx.translate(110, 114 + bob);
-    pctx.rotate(tilt);
-    pctx.scale(2.9 / sq, 2.9 * sq);
-    paintHeroBody(pctx, hero.w, hero.h, ear);
-    paintAccessory(pctx, hero.w, hero.h, outfit.acc, A);
-    if (outfit.acc2 !== 'none' && isOwned('perk', 'multiacc')) paintAccessory(pctx, hero.w, hero.h, outfit.acc2, A);
-    paintHat(pctx, hero.w, hero.h, outfit.hat, A);
-    if (outfit.hat2 !== 'none' && isOwned('perk', 'multiacc')){
-      pctx.save();
-      pctx.translate(0, -hero.h * 0.20);
-      pctx.scale(0.7, 0.7);
-      paintHat(pctx, hero.w, hero.h, outfit.hat2, A);
-      pctx.restore();
-    }
-    paintTool(pctx, hero.w, hero.h, outfit.tool, A, t2);
+    pctx.translate(0, -hero.h * 0.20);
+    pctx.scale(0.7, 0.7);
+    paintHat(pctx, hero.w, hero.h, outfit.hat2, A);
     pctx.restore();
-
-    outfit.char = realChar;
   }
-})(performance.now());
+  paintTool(pctx, hero.w, hero.h, outfit.tool, A, 0);
+  pctx.restore();
+  outfit.char = realChar;
+}
+
+function refreshPreviews(force){
+  for (const entry of previewCtxs){
+    const sig = previewSignature(entry.id);
+    if (!force && previewSigs[entry.id] === sig) continue;
+    previewSigs[entry.id] = sig;
+    drawPreviewHero(entry);
+  }
+}
+
+(function previewLoop(){
+  requestAnimationFrame(previewLoop);
+  if (state !== STATE.MENU && state !== STATE.PAUSED && state !== STATE.WARDROBE) return;
+  refreshPreviews(false);
+})();
 
 
 resetGame();
