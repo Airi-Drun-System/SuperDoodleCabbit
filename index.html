@@ -966,7 +966,7 @@
               <button type="button" class="adminRoleOpt" data-role="">Игрок</button>
               <button type="button" class="adminRoleOpt" data-role="mod">Помощник</button>
             </div>
-            <p class="adminRoleHint">Помощник может выдавать только обычные вещи и монеты</p>
+            <p class="adminRoleHint">Помощник может выдавать только обычные вещи, монеты и очки рекорда</p>
           </div>
 
           <div class="adminCard">
@@ -975,7 +975,7 @@
               <span>Монеты</span>
               <input id="adminCoinsInput" class="adminInput adminInputNum" type="number">
             </label>
-            <label class="adminField adminOnly">
+            <label class="adminField">
               <span>Рекорд</span>
               <input id="adminBestInput" class="adminInput adminInputNum" type="number">
             </label>
@@ -7256,12 +7256,14 @@ refreshAdminBadgePreview();
 
 async function modSave(){
   const coinsVal = Math.max(0, parseInt(document.getElementById('adminCoinsInput').value, 10) || 0);
+  const bestVal = Math.max(0, parseInt(document.getElementById('adminBestInput').value, 10) || 0);
   const checked = Array.from(document.querySelectorAll('#adminItemsGrid input[type=checkbox]:checked')).map(cb => cb.dataset.item);
   const isLimitedKey = (k) => { const i = k.indexOf(':'); const sl = k.slice(0, i), v = k.slice(i + 1); return !!(OUTFITS[sl] && OUTFITS[sl][v] && OUTFITS[sl][v].locked); };
   const ownedList = checked.filter(k => !isLimitedKey(k));
   adminCurrentOwned.forEach((k) => { if (isLimitedKey(k) && ownedList.indexOf(k) === -1) ownedList.push(k); });
   const saveFields = {
     coins: { integerValue: String(coinsVal) },
+    best: { integerValue: String(bestVal) },
     owned: { arrayValue: { values: ownedList.map(v => ({ stringValue: v })) } },
     pending: { booleanValue: true }
   };
