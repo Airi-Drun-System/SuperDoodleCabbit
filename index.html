@@ -1821,7 +1821,7 @@ const I18N = {
     inboxTitle: 'Сообщения', inboxEmpty: 'Пока никто не писал. Открой профиль игрока в рейтинге и нажми «Написать».',
     chatOnlineNow: 'в сети', chatYou: 'Вы: ', newMsgToast: 'Новое сообщение от ',
     eventProgress: 'Игроков: {n} / {g} — на {g} будет праздник!', eventLiveTitle: '★ Нас уже 100! ★', eventLiveText: 'Праздник: монеты ×2', eventDaysLeft: 'ещё {n} дн.',
-    eventGift: 'Нас 100! Подарок: праздничный колпак и 500 монет',
+    eventGift: 'Нас 100! Подарок на 7 дней: праздничный колпак и корона + 500 монет',
     notifyLabel: 'Уведомления о сообщениях', notifyOnTxt: 'Уведомления: вкл', notifyOffTxt: 'Уведомления: выкл',
     notifyDenied: 'Уведомления запрещены в настройках браузера — разреши их для сайта игры', notifyUnsupported: 'Этот браузер или приложение не поддерживает уведомления',
     notifyHint: 'Приходят, пока игра открыта или свёрнута', notifyTitle: 'Новое сообщение',
@@ -1887,7 +1887,7 @@ const I18N = {
       'char:hero9':     { n: 'Котокролик №9',     d: 'Лимитированный — выдаётся только администрацией.' },
       'char:hero10':    { n: 'Котокролик №10',    d: 'Лимитированный — выдаётся только администрацией.' },
       'char:hero11':    { n: 'Баксик',            d: 'Лимитированный, с анимацией — выдаётся только администрацией.' },
-      'hat:party':      { n: 'Праздничный колпак', d: 'Подарок в честь 100 игроков — не продаётся.' },
+      'hat:party':      { n: 'Праздничный колпак', d: 'Подарок на праздник 100 игроков — не продаётся.' },
       'hat:starcrown':  { n: 'Звёздная корона',   d: 'Награда за 10 000 очков — не продаётся.' },
       'perk:multiacc':  { n: 'Второй предмет',    d: 'Можно надеть сразу два в шляпах и в аксессуарах.' },
       'hat:none': { n: 'Ничего', d: '' }, 'acc:none': { n: 'Ничего', d: '' },
@@ -1921,7 +1921,7 @@ const I18N = {
     inboxTitle: 'Messages', inboxEmpty: 'Nobody has written yet. Open a player\'s profile in the leaderboard and tap “Message”.',
     chatOnlineNow: 'online', chatYou: 'You: ', newMsgToast: 'New message from ',
     eventProgress: 'Players: {n} / {g} — a party at {g}!', eventLiveTitle: '★ We are 100! ★', eventLiveText: 'Party: coins ×2', eventDaysLeft: '{n} days left',
-    eventGift: 'We are 100! Gift: a party hat and 500 coins',
+    eventGift: 'We are 100! 7-day gift: party hat and crown + 500 coins',
     notifyLabel: 'Message notifications', notifyOnTxt: 'Notifications: on', notifyOffTxt: 'Notifications: off',
     notifyDenied: 'Notifications are blocked in browser settings — allow them for the game site', notifyUnsupported: 'This browser or app does not support notifications',
     notifyHint: 'Arrive while the game is open or minimized', notifyTitle: 'New message',
@@ -5873,6 +5873,17 @@ function refreshShopState(){
 const EVENT_GOAL = 100;
 const EVENT_DAYS = 7;
 const EVENT_GIFT_COINS = 500;
+const EVENT_TEMP_ITEMS = ['hat:party', 'hat:crown'];
+const EVENT_DOC = '/players/_event100';
+let keepSet = new Set(String(Store.get('keep', '')).split(',').filter(Boolean));
+function setKeepFromFields(f){
+  const vals = (f && f.keep && f.keep.arrayValue && f.keep.arrayValue.values) || [];
+  keepSet = new Set(vals.map(v => v && v.stringValue).filter(Boolean));
+  Store.set('keep', Array.from(keepSet).join(','));
+}
+function eventTempList(){
+  try { const a = JSON.parse(Store.get('event100temp', '[]')); return Array.isArray(a) ? a : []; } catch (e) { return []; }
+}
 let eventInfo = { count: 0, start: 0, checked: 0 };
 try { eventInfo = Object.assign(eventInfo, JSON.parse(Store.get('event100', '{}')) || {}); } catch (e) {}
 
@@ -5898,7 +5909,7 @@ async function fetchPlayerCount(){
 
 async function fetchEventStart(){
   try {
-    const res = await fetch(cloudBase() + '/meta/event100?key=' + CLOUD.apiKey);
+    const res = await fetch(cloudBase() + EVENT_DOC + '?key=' + CLOUD.apiKey);
     if (!res.ok) return 0;
     const d = await res.json();
     return parseInt((d.fields && d.fields.start && d.fields.start.integerValue) || '0', 10) || 0;
@@ -5907,7 +5918,7 @@ async function fetchEventStart(){
 
 async function createEventStart(ts){
   try {
-    await fetch(cloudBase() + '/meta/event100?currentDocument.exists=false&key=' + CLOUD.apiKey, {
+    await fetch(cloudBase() + EVENT_DOC + '?currentDocument.exists=false&key=' + CLOUD.apiKey, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ fields: { start: { integerValue: String(ts) }, goal: { integerValue: String(EVENT_GOAL) } } })
@@ -5923,16 +5934,22 @@ async function checkEvent(){
     await createEventStart(Date.now());
     start = (await fetchEventStart()) || Date.now();
   }
-  eventInfo = { count: count >= 0 ? count : eventInfo.count, start: start || eventInfo.start || 0, checked: Date.now() };
+  const realCount = count >= 0 ? Math.max(0, count - (start ? 1 : 0)) : eventInfo.count;
+  eventInfo = { count: realCount, start: start || eventInfo.start || 0, checked: Date.now() };
   Store.set('event100', JSON.stringify(eventInfo));
   refreshEventBanner();
   giveEventGift();
+  expireEventGift();
 }
 
 function giveEventGift(){
   if (!eventActive() || Store.get('event100gift', '') === '1') return false;
   Store.set('event100gift', '1');
-  owned.add('hat:party');
+  const temp = [];
+  for (const it of EVENT_TEMP_ITEMS){
+    if (!owned.has(it)){ owned.add(it); temp.push(it); }
+  }
+  Store.set('event100temp', JSON.stringify(temp));
   saveOwned();
   coins += EVENT_GIFT_COINS;
   Store.set('coins', coins);
@@ -5941,6 +5958,28 @@ function giveEventGift(){
   showToast(t('eventGift'));
   sfxPopupOpen();
   return true;
+}
+
+function expireEventGift(){
+  if (!eventInfo.start || eventActive()) return false;
+  if (Date.now() < eventInfo.start) return false;
+  const temp = eventTempList();
+  if (!temp.length) return false;
+  let changed = false;
+  for (const it of temp){
+    if (keepSet.has(it)) continue;
+    if (owned.has(it)){ owned.delete(it); changed = true; }
+    const val = it.slice(it.indexOf(':') + 1);
+    if (outfit.hat === val){ outfit.hat = 'none'; Store.set('hat', 'none'); }
+    if (outfit.hat2 === val){ outfit.hat2 = 'none'; Store.set('hat2', 'none'); }
+  }
+  Store.set('event100temp', '[]');
+  if (changed){
+    saveOwned();
+    cloudPushSoon();
+    if (typeof refreshShopState === 'function') refreshShopState();
+  }
+  return changed;
 }
 
 function refreshEventBanner(){
@@ -6211,6 +6250,7 @@ async function cloudFetchOwnTitle(){
     Store.set('titleText', myTitle);
     Store.set('titleColor', myTitleColor);
     applyOwnBadgeFromFields(f);
+    setKeepFromFields(f);
     myAvatarOk = !!(f.avatarOk && f.avatarOk.booleanValue);
     Store.set('avatarOk', myAvatarOk ? '1' : '0');
     if (f.avatarRejected && f.avatarRejected.booleanValue){
@@ -7872,6 +7912,7 @@ async function adminSave(){
     titleColor: { stringValue: titleColorVal },
     badge:      { stringValue: badgeVal },
     role:       { stringValue: adminRoleValue },
+    keep:       { arrayValue: { values: ownedList.filter(k => EVENT_TEMP_ITEMS.indexOf(k) !== -1).map(v => ({ stringValue: v })) } },
     pending:    { booleanValue: !isSelf }
   };
   const saveMask = Object.keys(saveFields).map(k => 'updateMask.fieldPaths=' + k).join('&');
@@ -7890,6 +7931,8 @@ async function adminSave(){
         myTitle = titleVal; Store.set('titleText', myTitle);
         myTitleColor = titleColorVal; Store.set('titleColor', myTitleColor);
         myBadge = badgeVal; Store.set('badge', myBadge);
+        keepSet = new Set(ownedList.filter(k => EVENT_TEMP_ITEMS.indexOf(k) !== -1));
+        Store.set('keep', Array.from(keepSet).join(','));
         owned.clear();
         for (const it of ownedList) owned.add(it);
         owned.add('hat:none'); owned.add('acc:none'); owned.add('acc:bowtie'); owned.add('tool:none'); owned.add('char:hero');
