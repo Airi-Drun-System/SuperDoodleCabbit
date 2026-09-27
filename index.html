@@ -432,6 +432,44 @@
     box-shadow:0 0 0 2px #1a0f33;
   }
   .inboxCard{gap:8px;}
+  #chatModal,#inboxModal{padding:0;align-items:stretch;justify-content:stretch;background:#1c0e2e;backdrop-filter:none;-webkit-backdrop-filter:none;}
+  #chatModal .chatCard,#inboxModal .chatCard{
+    width:100%;height:100vh;height:100dvh;max-width:none;border-radius:0;border:none;box-shadow:none;
+    background:linear-gradient(180deg,#2c1640,#1c0e2e);animation:chatSlideIn .22s ease-out;
+    padding:calc(env(safe-area-inset-top,0px) + 10px) max(12px,calc((100vw - 760px) / 2)) calc(env(safe-area-inset-bottom,0px) + 8px);
+  }
+  body:has(#chatModal:not(.hidden)) #toastBanner{top:calc(env(safe-area-inset-top,0px) + 76px) !important;}
+  @keyframes chatSlideIn{from{transform:translateX(24px);opacity:0;}to{transform:none;opacity:1;}}
+  #chatModal #chatClose,#inboxModal #inboxClose{top:calc(env(safe-area-inset-top,0px) + 10px);right:max(10px,calc((100vw - 760px) / 2 - 4px));}
+  #chatModal .chatBackBtn{top:calc(env(safe-area-inset-top,0px) + 10px);left:max(10px,calc((100vw - 760px) / 2 - 4px));}
+  #chatModal .chatHeader{padding-right:150px;}
+  #chatModal .chatMessagesList{border-radius:18px;}
+  .chatMsgRow{position:relative;transition:transform .18s ease-out;touch-action:pan-y;-webkit-user-select:none;user-select:none;}
+  .chatMsgRow.swiping{transition:none;}
+  .chatMsgRow.flash{animation:msgFlash 1.1s ease-out;}
+  @keyframes msgFlash{0%,40%{filter:brightness(1.45) drop-shadow(0 0 8px rgba(255,211,77,.8));}100%{filter:none;}}
+  .chatReplyIcon{position:absolute;right:-30px;top:50%;margin-top:-12px;width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;font-size:13px;color:#fff;}
+  .chatReplyHover{display:none;}
+  @media (hover:hover){
+    .chatReplyHover{display:flex;position:absolute;top:50%;margin-top:-13px;width:26px;height:26px;border:none;border-radius:50%;cursor:pointer;background:rgba(255,255,255,.14);color:#fff;font-size:14px;align-items:center;justify-content:center;opacity:0;transition:opacity .15s;padding:0;}
+    .chatMsgRow.own .chatReplyHover{left:-34px;}
+    .chatMsgRow.their .chatReplyHover{right:-34px;}
+    .chatMsgRow:hover .chatReplyHover{opacity:.85;}
+  }
+  .chatQuote{flex-basis:100%;display:flex;flex-direction:column;gap:1px;min-width:0;margin:0 0 5px;padding:4px 8px;border-left:3px solid currentColor;border-radius:6px;background:rgba(0,0,0,.12);cursor:pointer;font-size:12.5px;line-height:1.25;}
+  .chatMsgRow.their .chatQuote{border-left-color:#ffd34d;background:rgba(255,255,255,.08);}
+  .chatMsgRow.sticker .chatQuote,.chatMsgRow.photo .chatQuote{background:rgba(20,10,34,.8);color:#fdf6e8;border-left-color:#ffd34d;}
+  .chatMsgRow.sticker{flex-direction:column;align-items:flex-start;}
+  .chatMsgRow.sticker.own{align-items:flex-end;}
+  .chatQuoteName{font-weight:800;font-size:12px;}
+  .chatQuoteText{opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px;}
+  .chatReplyBar{display:flex;align-items:center;gap:8px;width:100%;box-sizing:border-box;padding:6px 6px 6px 10px;border-radius:12px;background:rgba(255,255,255,.07);}
+  .chatReplyBar.hidden{display:none;}
+  .chatReplyBarIcon{color:#ffd34d;font-size:18px;flex:0 0 auto;}
+  .chatReplyBarBody{flex:1;min-width:0;display:flex;flex-direction:column;border-left:3px solid #ffd34d;padding-left:8px;}
+  .chatReplyBarName{font-size:12px;font-weight:800;color:#ffd34d;}
+  .chatReplyBarText{font-size:12.5px;opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .chatReplyBarClose{flex:0 0 auto;width:30px;height:30px;border:none;border-radius:50%;background:none;color:#fdf6e8;font-size:18px;cursor:pointer;}
   .inboxTitle{font-size:18px;font-weight:800;text-align:center;padding:8px 44px 4px;}
   .inboxList{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:6px;padding:2px;}
   .inboxRow{
@@ -631,7 +669,7 @@
   .notifyNote:empty{display:none;}
   .avatarModNote{margin:0;font-size:12px;color:#ffb347;text-align:left;}
   .chatBlockBtn{
-    position:absolute;top:58px;right:14px;z-index:2;
+    position:absolute;top:calc(env(safe-area-inset-top,0px) + 17px);right:max(56px,calc((100vw - 760px) / 2 + 42px));z-index:2;
     border:none;cursor:pointer;font-family:inherit;font-size:11px;padding:4px 10px;border-radius:999px;
     color:#ffb3b3;background:rgba(255,90,90,.14);
   }
@@ -1324,6 +1362,11 @@
       </div>
       <div id="chatMessagesList" class="chatMessagesList"></div>
       <div id="stickerPanel" class="stickerPanel hidden"></div>
+      <div id="chatReplyBar" class="chatReplyBar hidden">
+        <span class="chatReplyBarIcon">↩</span>
+        <div class="chatReplyBarBody"><span id="chatReplyBarName" class="chatReplyBarName"></span><span id="chatReplyBarText" class="chatReplyBarText"></span></div>
+        <button id="chatReplyBarClose" class="chatReplyBarClose" type="button" aria-label="Отменить ответ">✕</button>
+      </div>
       <div class="chatForm">
         <button id="chatStickerBtn" class="chatToolBtn" type="button" aria-label="Стикеры">
           <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fdf6e8" stroke-width="2"/><circle cx="9" cy="10" r="1.3" fill="#fdf6e8"/><circle cx="15" cy="10" r="1.3" fill="#fdf6e8"/><path d="M8 14.5 Q12 18 16 14.5" stroke="#fdf6e8" stroke-width="2" stroke-linecap="round"/></svg>
@@ -1868,7 +1911,7 @@ const I18N = {
     chatOnlineNow: 'в сети', chatYou: 'Вы: ', newMsgToast: 'Новое сообщение от ',
     msgSticker: '[Стикер]', msgPhoto: '[Фото]', photoTap: 'Фото скрыто — нажми, чтобы посмотреть', photoLoading: 'Загрузка фото…',
     photoRemoved: 'Фото удалено модератором', photoReport: 'Пожаловаться', photoReported: 'Жалоба отправлена ✓', photoBanned: 'Тебе запрещено отправлять фото',
-    photoTooBig: 'Не получилось сжать фото, попробуй другое', photoSending: 'Отправка фото…',
+    photoTooBig: 'Не получилось сжать фото, попробуй другое', photoSending: 'Отправка фото…', replyYou: 'Ты', replyAction: 'Ответить', replyGone: 'Сообщение не найдено',
     onlineNow: 'онлайн', onlineTotal: 'всего', onlineErr: 'нет связи',
     eventProgress: 'Игроков: {n} / {g} — на {g} будет праздник!', eventLiveTitle: '★ Нас уже 100! ★', eventLiveText: 'Праздник: монеты ×2', eventDaysLeft: 'ещё {n} дн.',
     eventGift: 'Нас 100! Подарок на 7 дней: праздничный колпак и корона + 500 монет',
@@ -1972,7 +2015,7 @@ const I18N = {
     chatOnlineNow: 'online', chatYou: 'You: ', newMsgToast: 'New message from ',
     msgSticker: '[Sticker]', msgPhoto: '[Photo]', photoTap: 'Photo hidden — tap to view', photoLoading: 'Loading photo…',
     photoRemoved: 'Photo removed by a moderator', photoReport: 'Report', photoReported: 'Report sent ✓', photoBanned: 'You are not allowed to send photos',
-    photoTooBig: 'Could not compress the photo, try another one', photoSending: 'Sending photo…',
+    photoTooBig: 'Could not compress the photo, try another one', photoSending: 'Sending photo…', replyYou: 'You', replyAction: 'Reply', replyGone: 'Message not found',
     onlineNow: 'online', onlineTotal: 'total', onlineErr: 'no connection',
     eventProgress: 'Players: {n} / {g} — a party at {g}!', eventLiveTitle: '★ We are 100! ★', eventLiveText: 'Party: coins ×2', eventDaysLeft: '{n} days left',
     eventGift: 'We are 100! 7-day gift: party hat and crown + 500 coins',
@@ -2185,8 +2228,11 @@ function saveOwned(){ Store.set('owned', Array.from(owned).join(',')); }
 
 const toastBanner = document.getElementById('toastBanner');
 let toastBannerTimer = null;
-function showToast(text){
+function showToast(text, onTap){
   toastBanner.textContent = text;
+  toastBanner.style.pointerEvents = onTap ? 'auto' : 'none';
+  toastBanner.style.cursor = onTap ? 'pointer' : '';
+  toastBanner.onclick = onTap ? () => { toastBanner.style.opacity = '0'; toastBanner.style.pointerEvents = 'none'; onTap(); } : null;
   toastBanner.classList.remove('hidden');
   toastBanner.style.opacity = '1';
   clearTimeout(toastBannerTimer);
@@ -7224,6 +7270,110 @@ function toggleBlockChat(){
   fetchInbox();
 }
 
+let chatReplyTo = null;
+
+function msgSnippet(m){
+  if (!m) return '';
+  if (m.sticker) return '[' + t('msgSticker').replace(/^\[|\]$/g, '') + ']';
+  if (m.imgRef || m.localImg) return '[' + t('msgPhoto').replace(/^\[|\]$/g, '') + ']';
+  return cleanText(String(m.text || '')).replace(/\s+/g, ' ').slice(0, 90);
+}
+
+function replyNameFor(from){
+  return from === cloudCode ? t('replyYou') : (chatWithNickName || '?');
+}
+
+function setChatReply(m){
+  if (m && (m.pending || !m.id)) return;
+  chatReplyTo = m ? { id: m.id, from: m.from, text: msgSnippet(m) } : null;
+  const bar = document.getElementById('chatReplyBar');
+  if (!bar) return;
+  bar.classList.toggle('hidden', !chatReplyTo);
+  if (chatReplyTo){
+    document.getElementById('chatReplyBarName').textContent = replyNameFor(chatReplyTo.from);
+    document.getElementById('chatReplyBarText').textContent = chatReplyTo.text;
+    buzz(10);
+    const inputEl = document.getElementById('chatInput');
+    if (inputEl && inputEl.focus) inputEl.focus();
+  }
+}
+
+function jumpToChatMsg(id){
+  const box = document.getElementById('chatMessagesList');
+  if (!box || !id) return;
+  const rows = box.querySelectorAll('.chatMsgRow');
+  let target = null;
+  for (let i = 0; i < rows.length; i++) if (rows[i].dataset && rows[i].dataset.mid === id) target = rows[i];
+  const st = document.getElementById('chatStatus');
+  if (!target){ if (st) st.textContent = t('replyGone'); return; }
+  if (target.scrollIntoView) target.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  target.classList.remove('flash');
+  void target.offsetWidth;
+  target.classList.add('flash');
+  setTimeout(() => target.classList.remove('flash'), 1200);
+}
+
+function attachReplyGestures(row, m, isOwn){
+  if (m.pending || !m.id) return;
+  const icon = document.createElement('span');
+  icon.className = 'chatReplyIcon';
+  icon.textContent = '↩';
+  row.appendChild(icon);
+  const hb = document.createElement('button');
+  hb.type = 'button';
+  hb.className = 'chatReplyHover';
+  hb.title = t('replyAction');
+  hb.textContent = '↩';
+  hb.addEventListener('click', (e) => { e.stopPropagation(); setChatReply(m); });
+  row.appendChild(hb);
+  let sx = 0, sy = 0, dx = 0, mode = '', pressT = null;
+  row.addEventListener('touchstart', (e) => {
+    const tt = e.touches && e.touches[0];
+    if (!tt) return;
+    sx = tt.clientX; sy = tt.clientY; dx = 0; mode = '';
+    clearTimeout(pressT);
+    pressT = setTimeout(() => { if (!mode){ mode = 'press'; setChatReply(m); } }, 480);
+  }, { passive: true });
+  row.addEventListener('touchmove', (e) => {
+    const tt = e.touches && e.touches[0];
+    if (!tt) return;
+    const mx = tt.clientX - sx, my = tt.clientY - sy;
+    if (!mode){
+      if (Math.abs(mx) > 10 || Math.abs(my) > 10){
+        clearTimeout(pressT);
+        mode = (Math.abs(mx) > Math.abs(my) * 1.3 && mx < 0) ? 'swipe' : 'scroll';
+        if (mode === 'swipe') row.classList.add('swiping');
+      }
+    }
+    if (mode === 'swipe'){
+      dx = Math.max(-90, Math.min(0, mx));
+      row.style.transform = 'translateX(' + dx + 'px)';
+      icon.style.opacity = String(Math.min(1, Math.abs(dx) / 60));
+    }
+  }, { passive: true });
+  const end = () => {
+    clearTimeout(pressT);
+    if (mode === 'swipe'){
+      row.classList.remove('swiping');
+      row.style.transform = '';
+      icon.style.opacity = '0';
+      if (Math.abs(dx) >= 55) setChatReply(m);
+    }
+    mode = '';
+  };
+  row.addEventListener('touchend', end);
+  row.addEventListener('touchcancel', end);
+  row.addEventListener('dblclick', (e) => { e.preventDefault(); setChatReply(m); });
+}
+
+function makeQuoteEl(m){
+  const q = document.createElement('div');
+  q.className = 'chatQuote';
+  q.innerHTML = '<span class="chatQuoteName">' + escapeHtml(replyNameFor(m.replyFrom)) + '</span><span class="chatQuoteText">' + escapeHtml(cleanText(m.replyText || '')) + '</span>';
+  q.addEventListener('click', (e) => { e.stopPropagation(); jumpToChatMsg(m.replyTo); });
+  return q;
+}
+
 function renderChatMessages(list, forceBottom){
   if (isBlocked(chatWithCode)){
     const bx = document.getElementById('chatMessagesList');
@@ -7241,7 +7391,8 @@ function renderChatMessages(list, forceBottom){
   chatLastSig = sig;
 
   const all = chatMessages.concat(chatPending.map(p => ({
-    id: p.tempId, from: cloudCode, text: p.text, ts: p.ts, read: false, pending: true, sticker: p.sticker || '', localImg: p.localImg || ''
+    id: p.tempId, from: cloudCode, text: p.text, ts: p.ts, read: false, pending: true, sticker: p.sticker || '', localImg: p.localImg || '',
+    replyTo: p.replyTo || '', replyFrom: p.replyFrom || '', replyText: p.replyText || ''
   })));
   const convIdNow = chatWithCode ? chatConvId(cloudCode, chatWithCode) : '';
   box.innerHTML = '';
@@ -7267,6 +7418,8 @@ function renderChatMessages(list, forceBottom){
     const row = document.createElement('div');
     const isOwn = m.from === cloudCode;
     row.className = 'chatMsgRow ' + (isOwn ? 'own' : 'their') + (m.pending ? ' pending' : '');
+    if (m.id) row.dataset.mid = m.id;
+    const hasQuote = !!(m.replyTo && m.replyText);
     let meta = '<span class="chatMsgMeta">' + (m.ts ? fmtTime(m.ts) : '');
     if (isOwn){
       if (m.pending) meta += '<span class="chatMsgTick">🕓</span>';
@@ -7275,12 +7428,14 @@ function renderChatMessages(list, forceBottom){
     meta += '</span>';
     if (m.sticker && STICKER_IDS.indexOf(m.sticker) !== -1){
       row.className += ' sticker';
+      if (hasQuote) row.appendChild(makeQuoteEl(m));
       row.appendChild(makeStickerCanvas(m.sticker, 112));
       const metaEl = document.createElement('span');
       metaEl.innerHTML = meta;
       row.appendChild(metaEl.firstChild);
     } else if (m.imgRef || m.localImg){
       row.className += ' photo';
+      if (hasQuote) row.appendChild(makeQuoteEl(m));
       const wrap = document.createElement('div');
       wrap.className = 'chatPhoto';
       const cached = m.imgRef ? chatImgCache[m.imgRef] : null;
@@ -7310,7 +7465,9 @@ function renderChatMessages(list, forceBottom){
       row.appendChild(metaEl2.firstChild);
     } else {
       row.innerHTML = '<span class="chatMsgText">' + escapeHtml(cleanText(m.text || '')) + '</span>' + meta;
+      if (hasQuote) row.insertBefore(makeQuoteEl(m), row.firstChild);
     }
+    attachReplyGestures(row, m, isOwn);
     box.appendChild(row);
   }
   if (firstRender || nearBottom || forceBottom) box.scrollTop = box.scrollHeight;
@@ -7335,6 +7492,9 @@ async function fetchChatMessages(){
         text: (f.text && f.text.stringValue) || '',
         sticker: (f.sticker && f.sticker.stringValue) || '',
         imgRef: (f.imgRef && f.imgRef.stringValue) || '',
+        replyTo: (f.replyTo && f.replyTo.stringValue) || '',
+        replyFrom: (f.replyFrom && f.replyFrom.stringValue) || '',
+        replyText: (f.replyText && f.replyText.stringValue) || '',
         ts: parseInt((f.ts && f.ts.integerValue) || '0', 10) || 0,
         read: !!(f.read && f.read.booleanValue)
       };
@@ -7392,6 +7552,38 @@ let inboxConvs = [];
 let inboxUnread = 0;
 let inboxLoadedOnce = false;
 
+const chatPeerFields = {};
+const chatPeerFetchAt = {};
+
+function peerFields(code){
+  return chatPeerFields[code] || lbFieldsByCode[code] || null;
+}
+
+async function ensurePeers(codes, maxAgeMs){
+  if (!cloudReady()) return;
+  const now = Date.now();
+  const age = maxAgeMs || 120000;
+  const need = [];
+  for (const c of codes || []){
+    if (!c || need.indexOf(c) !== -1) continue;
+    if (lbFieldsByCode[c] && !maxAgeMs) continue;
+    if (chatPeerFetchAt[c] && now - chatPeerFetchAt[c] < age) continue;
+    need.push(c);
+  }
+  if (!need.length) return;
+  need.forEach(c => { chatPeerFetchAt[c] = now; });
+  const got = await Promise.all(need.slice(0, 40).map(c =>
+    fetch(cloudBase() + '/players/' + encodeURIComponent(c) + '?key=' + CLOUD.apiKey)
+      .then(r => r.ok ? r.json() : null)
+      .then(d => { if (d && d.fields){ chatPeerFields[c] = d.fields; return true; } return false; })
+      .catch(() => false)
+  ));
+  if (got.indexOf(true) === -1) return;
+  const inboxEl = document.getElementById('inboxModal');
+  if (inboxEl && !inboxEl.classList.contains('hidden')) renderInbox();
+  if (chatWithCode && need.indexOf(chatWithCode) !== -1) refreshChatHeader();
+}
+
 function parseConv(doc){
   const f = (doc && doc.fields) || {};
   const path = (doc && doc.name) || '';
@@ -7403,7 +7595,7 @@ function parseConv(doc){
   if (isBlocked(other)) return null;
   const s = (k) => (f[k] && f[k].stringValue) || '';
   const n = (k) => parseInt((f[k] && f[k].integerValue) || '0', 10) || 0;
-  const lb = lbFieldsByCode[other];
+  const lb = peerFields(other);
   const lastTs = n('lastTs');
   const lastFrom = s('lastFrom');
   const seen = Math.max(n('seen_' + cloudCode), convSeenSent[id] || 0);
@@ -7448,11 +7640,70 @@ function systemNotify(c){
   if (!notifyOn || !notifySupported() || Notification.permission !== 'granted') return;
   if (!document.hidden && state !== STATE.PLAY) return;
   const title = t('notifyTitle') + ' · ' + cleanText(c.nick);
-  const opts = { body: cleanText(c.lastText).slice(0, 120), tag: 'conv-' + c.id, icon: 'hero.png', badge: 'hero.png', renotify: true };
+  const opts = { body: cleanText(c.lastText).slice(0, 120), tag: 'conv-' + c.id, icon: 'hero.png', badge: 'hero.png', renotify: true,
+    data: { other: c.other || '', nick: c.nick || '' } };
+  const plain = () => {
+    try {
+      const n = new Notification(title, opts);
+      n.onclick = () => { try { window.focus(); } catch (e) {} n.close(); openChatFromNotify(c.other, c.nick); };
+    } catch (e) {}
+  };
   const viaSw = swReg && swReg.showNotification ? swReg.showNotification(title, opts) : null;
-  if (viaSw && viaSw.catch) viaSw.catch(() => { try { new Notification(title, opts); } catch (e) {} });
-  else if (!viaSw){ try { new Notification(title, opts); } catch (e) {} }
+  if (viaSw && viaSw.catch) viaSw.catch(plain);
+  else if (!viaSw) plain();
 }
+
+let notifyOpenPending = null;
+let notifyOpenTimer = null;
+
+function openChatFromNotify(code, nick){
+  code = String(code || '').toUpperCase().replace(/[^A-Z0-9_]/g, '').slice(0, 24);
+  if (!code) return;
+  notifyOpenPending = { code, nick: String(nick || '').slice(0, 40), tries: 0 };
+  clearInterval(notifyOpenTimer);
+  const attempt = () => {
+    const pnd = notifyOpenPending;
+    if (!pnd){ clearInterval(notifyOpenTimer); return; }
+    pnd.tries++;
+    if (!(cloudReady() && cloudCode)){
+      if (pnd.tries > 60){ notifyOpenPending = null; clearInterval(notifyOpenTimer); }
+      return;
+    }
+    notifyOpenPending = null;
+    clearInterval(notifyOpenTimer);
+    if (code === cloudCode) return;
+    if (state === STATE.PLAY) pauseGame();
+    const inboxEl = document.getElementById('inboxModal');
+    if (inboxEl && !inboxEl.classList.contains('hidden')) closeInbox(true);
+    const conv = inboxConvs.find(x => x.other === code);
+    const pf = peerFields(code);
+    const nk = (conv && conv.nick && conv.nick !== '?' ? conv.nick : '') || (pf && pf.nick && pf.nick.stringValue) || pnd.nick || '?';
+    if (chatWithCode === code){ fetchChatMessages(); return; }
+    if (chatWithCode) closeChat();
+    openChat(code, nk, true);
+  };
+  attempt();
+  if (notifyOpenPending) notifyOpenTimer = setInterval(attempt, 250);
+}
+
+if ('serviceWorker' in navigator && navigator.serviceWorker.addEventListener){
+  navigator.serviceWorker.addEventListener('message', (e) => {
+    const d = e && e.data;
+    if (d && d.type === 'openChat') openChatFromNotify(d.other, d.nick);
+  });
+}
+
+(function(){
+  try {
+    const qs = new URLSearchParams(location.search);
+    const code = qs.get('chat');
+    if (code){
+      const nick = qs.get('nick') || '';
+      if (history.replaceState) history.replaceState(null, '', location.pathname);
+      setTimeout(() => openChatFromNotify(code, nick), 0);
+    }
+  } catch (e) {}
+})();
 
 function refreshNotifyUI(){
   const btn = document.getElementById('notifyToggle');
@@ -7506,9 +7757,12 @@ async function fetchInbox(){
     const prevUnread = inboxUnread;
     inboxConvs = list;
     recountInboxUnread();
+    const inboxShown = !document.getElementById('inboxModal').classList.contains('hidden');
+    if (inboxShown) ensurePeers(list.map(c => c.other));
     if (inboxLoadedOnce && inboxUnread > prevUnread){
       const c = list.find(x => x.unread && x.other !== chatWithCode);
-      if (c){ showToast(t('newMsgToast') + c.nick); sfxPopupOpen(); }
+      const inboxOpen = !document.getElementById('inboxModal').classList.contains('hidden');
+      if (c && !inboxOpen){ showToast(t('newMsgToast') + c.nick, () => openChatFromNotify(c.other, c.nick)); sfxPopupOpen(); }
     }
     for (const c of list){
       if (!c.unread || c.other === chatWithCode) continue;
@@ -7531,7 +7785,7 @@ function renderInbox(){
     return;
   }
   for (const c of inboxConvs){
-    const lb = lbFieldsByCode[c.other];
+    const lb = peerFields(c.other);
     const avVal = lb ? shownAvatar(lb, c.other) : (c.av || AVATAR_LIST[0]);
     const frame = (lb && lb.frame && lb.frame.stringValue) || 'none';
     const preview = (c.lastFrom === cloudCode ? t('chatYou') : '') + cleanText(c.lastText);
@@ -7559,6 +7813,7 @@ function openInbox(){
   modal.classList.remove('hidden');
   sfxPopupOpen();
   renderInbox();
+  ensurePeers(inboxConvs.map(c => c.other));
   fetchInbox();
 }
 
@@ -7591,15 +7846,14 @@ async function markIncomingRead(convId, list){
   } catch (e) {}
 }
 
-function openChat(code, nick, fromInbox){
-  chatWithCode = code;
-  chatWithNickName = nick || '';
-  chatFromInbox = !!fromInbox;
-  chatLastSig = null;
-  chatMessages = [];
-  chatPending = [];
-  document.getElementById('chatWithNick').textContent = nick || '?';
-  const f = lbFieldsByCode[code];
+function refreshChatHeader(){
+  if (!chatWithCode) return;
+  const f = peerFields(chatWithCode);
+  const realNick = f && f.nick && f.nick.stringValue;
+  if (realNick && realNick !== chatWithNickName){
+    chatWithNickName = realNick;
+    document.getElementById('chatWithNick').textContent = realNick;
+  }
   setBadgeImg(document.getElementById('chatBadge'), f && f.badge && f.badge.stringValue);
   const online = !!f && isOnline(f);
   const chatDotEl = document.getElementById('chatOnlineDot');
@@ -7611,11 +7865,24 @@ function openChat(code, nick, fromInbox){
   if (presenceEl) presenceEl.textContent = online ? t('chatOnlineNow') : '';
   const avEl = document.getElementById('chatWithAvatar');
   if (avEl){
-    const conv = inboxConvs.find(c => c.other === code);
-    const avVal = f ? shownAvatar(f, code) : ((conv && conv.av) || AVATAR_LIST[0]);
+    const conv = inboxConvs.find(c => c.other === chatWithCode);
+    const avVal = f ? shownAvatar(f, chatWithCode) : ((conv && conv.av) || AVATAR_LIST[0]);
     const frame = (f && f.frame && f.frame.stringValue) || 'none';
     avEl.innerHTML = avatarHtml(avVal, frame, '');
   }
+}
+
+function openChat(code, nick, fromInbox){
+  chatWithCode = code;
+  chatWithNickName = nick || '';
+  chatFromInbox = !!fromInbox;
+  chatLastSig = null;
+  chatMessages = [];
+  chatPending = [];
+  setChatReply(null);
+  document.getElementById('chatWithNick').textContent = nick || '?';
+  refreshChatHeader();
+  ensurePeers([code], 30000);
   const backBtn = document.getElementById('chatBackBtn');
   if (backBtn) backBtn.classList.toggle('hidden', !chatFromInbox);
   refreshChatBlockUI();
@@ -7640,6 +7907,7 @@ function closeChat(){
   chatWithNickName = '';
   chatPending = [];
   chatLastSig = null;
+  setChatReply(null);
   clearInterval(chatPollTimer);
   chatPollTimer = null;
   const inputEl = document.getElementById('chatInput');
@@ -7649,6 +7917,7 @@ function closeChat(){
   fetchInbox();
 }
 document.getElementById('chatClose').addEventListener('click', closeChat);
+document.getElementById('chatReplyBarClose').addEventListener('click', () => setChatReply(null));
 document.getElementById('chatBackBtn').addEventListener('click', () => {
   closeChat();
   openInbox();
@@ -7774,7 +8043,10 @@ async function sendChatPayload(payload){
   const toNick = chatWithNickName;
   const id = chatConvId(cloudCode, toCode);
   const ts = Date.now();
-  const pend = { tempId: 'p' + ts + Math.random().toString(36).slice(2, 7), text, ts, sticker, localImg: imgData };
+  const reply = chatReplyTo;
+  const pend = { tempId: 'p' + ts + Math.random().toString(36).slice(2, 7), text, ts, sticker, localImg: imgData,
+    replyTo: reply ? reply.id : '', replyFrom: reply ? reply.from : '', replyText: reply ? reply.text : '' };
+  if (reply) setChatReply(null);
   chatPending.push(pend);
   if (input && text) input.value = '';
   if (statusEl) statusEl.textContent = imgData ? t('photoSending') : '';
@@ -7813,6 +8085,11 @@ async function sendChatPayload(payload){
     };
     if (sticker) fields.sticker = { stringValue: sticker };
     if (imgRef) fields.imgRef = { stringValue: imgRef };
+    if (reply){
+      fields.replyTo = { stringValue: reply.id };
+      fields.replyFrom = { stringValue: reply.from };
+      fields.replyText = { stringValue: String(reply.text).slice(0, 90) };
+    }
     const res = await fetch(cloudBase() + '/conversations/' + id + '/messages?key=' + CLOUD.apiKey, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
