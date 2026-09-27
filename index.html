@@ -2958,7 +2958,14 @@ function resetGame(){
 const keys = { left: false, right: false };
 const pointers = new Map();
 
+function isTypingTarget(el){
+  if (!el) return false;
+  const tag = (el.tagName || '').toUpperCase();
+  return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || !!el.isContentEditable;
+}
+
 window.addEventListener('keydown', e => {
+  if (isTypingTarget(e.target) || isTypingTarget(document.activeElement)) return;
   if (e.code === 'ArrowLeft'  || e.code === 'KeyA'){ keys.left = true;  e.preventDefault(); }
   if (e.code === 'ArrowRight' || e.code === 'KeyD'){ keys.right = true; e.preventDefault(); }
   if (e.code === 'Space'){ tapEvent = true; if (state === STATE.MENU || state === STATE.OVER) startGame(); e.preventDefault(); }
@@ -2969,6 +2976,7 @@ window.addEventListener('keydown', e => {
 }, { passive: false });
 
 window.addEventListener('keyup', e => {
+  if (isTypingTarget(e.target)) return;
   if (e.code === 'ArrowLeft'  || e.code === 'KeyA') keys.left = false;
   if (e.code === 'ArrowRight' || e.code === 'KeyD') keys.right = false;
 });
