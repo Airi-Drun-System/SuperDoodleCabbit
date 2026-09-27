@@ -795,6 +795,15 @@
     box-shadow:0 3px 0 #c26a1d;
   }
   .adminSaveBtn:active{transform:translateY(2px);box-shadow:0 1px 0 #c26a1d;}
+  .adminPanel.modMode .adminOnly{display:none !important;}
+  .adminRoleRow{display:flex;gap:8px;}
+  .adminRoleOpt{
+    flex:1;border:none;cursor:pointer;font-family:inherit;font-size:13px;padding:9px 10px;border-radius:12px;
+    color:#e8d9ff;background:rgba(255,255,255,.08);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.16);
+  }
+  .adminRoleOpt.active{color:#3a1f00;background:linear-gradient(180deg,#ffd08a,#ff9f45);box-shadow:none;}
+  .adminRoleHint{margin:6px 0 0;font-size:11.5px;opacity:.65;}
+  .adminItemChip.isDisabled{opacity:.4;}
 
   .adminDangerZone{
     border-top:1px dashed rgba(255,106,106,.35);padding-top:10px;margin-top:2px;
@@ -826,6 +835,42 @@
     .btn{padding:11px 28px;font-size:17px;}
     .hint{display:none;}
   }
+
+  body.lg{
+    --lg-fill:radial-gradient(120% 70% at 50% 0%,rgba(255,255,255,.22),rgba(255,255,255,0) 62%),linear-gradient(160deg,rgba(255,255,255,.2) 0%,rgba(255,255,255,.06) 46%,rgba(255,255,255,.12) 100%);
+    --lg-warm:radial-gradient(120% 70% at 50% 0%,rgba(255,255,255,.55),rgba(255,255,255,0) 60%),linear-gradient(165deg,rgba(255,224,160,.96) 0%,rgba(255,165,72,.86) 58%,rgba(255,196,118,.92) 100%);
+    --lg-rim:inset 0 1.5px 0 rgba(255,255,255,.72),inset 0 -1px 1px rgba(255,255,255,.22),inset 1px 0 0 rgba(255,255,255,.16),inset -1px 0 0 rgba(255,255,255,.16);
+    --lg-drop:0 10px 30px rgba(10,4,30,.34);
+  }
+  body.lg .btn,
+  body.lg #settingsBox, body.lg .setCat,
+  body.lg .profileCard, body.lg .chatCard,
+  body.lg #pauseBtn, body.lg .ctrlBtn, body.lg .backIconBtn, body.lg .inboxBtn, body.lg .charArrow{
+    backdrop-filter:blur(16px) saturate(180%);
+    -webkit-backdrop-filter:blur(16px) saturate(180%);
+  }
+  body.lg .btn{
+    background:var(--lg-warm);color:#3a1f00;
+    box-shadow:var(--lg-rim),0 6px 0 rgba(170,84,20,.55),var(--lg-drop);
+    text-shadow:0 1px 0 rgba(255,255,255,.35);
+  }
+  body.lg .btn:active{box-shadow:var(--lg-rim),0 2px 0 rgba(170,84,20,.55),0 5px 14px rgba(10,4,30,.3);}
+  body.lg .btn.ghost{
+    background:var(--lg-fill);color:#fdf6e8;text-shadow:0 1px 2px rgba(0,0,0,.35);
+    box-shadow:var(--lg-rim),var(--lg-drop);
+  }
+  body.lg .btn.ghost:active{box-shadow:var(--lg-rim),0 4px 12px rgba(10,4,30,.3);}
+  body.lg #settingsBox{background:rgba(255,255,255,.05);box-shadow:var(--lg-rim),var(--lg-drop);border-radius:24px;}
+  body.lg .setCat{background:var(--lg-fill);box-shadow:var(--lg-rim);border-radius:18px;}
+  body.lg .setCatIcon{background:linear-gradient(160deg,rgba(255,255,255,.35),rgba(255,255,255,.08));box-shadow:inset 0 1px 0 rgba(255,255,255,.6);color:#fff;}
+  body.lg .chip{background:var(--lg-fill);box-shadow:var(--lg-rim);color:#fdf6e8;}
+  body.lg .chip[aria-pressed="true"]{background:var(--lg-warm);color:#3a1f00;box-shadow:var(--lg-rim),0 4px 14px rgba(255,160,70,.35);}
+  body.lg .profileCard, body.lg .chatCard{background:linear-gradient(160deg,rgba(60,36,110,.62),rgba(24,12,50,.72));box-shadow:var(--lg-rim),0 20px 50px rgba(0,0,0,.45);}
+  body.lg #pauseBtn, body.lg .ctrlBtn, body.lg .backIconBtn, body.lg .inboxBtn, body.lg .charArrow{
+    background:var(--lg-fill);box-shadow:var(--lg-rim),0 6px 18px rgba(10,4,30,.3);
+  }
+  body.lg .ctrlBtn:active{background:var(--lg-warm);}
+  body.lg .shopTab{background:var(--lg-fill);box-shadow:var(--lg-rim);}
 </style>
 </head>
 <body>
@@ -930,7 +975,7 @@
 
       <div id="adminTool" class="adminPanel hidden">
         <div class="adminHeader">
-          <span class="adminHeaderTitle">⚒ Админка</span>
+          <span id="adminHeaderTitle" class="adminHeaderTitle">⚒ Админка</span>
           <p class="adminHint">Открой раздел «Онлайн» ниже и тапни по игроку в рейтинге, чтобы выдать ему вещи или монеты</p>
         </div>
 
@@ -942,12 +987,21 @@
         <div id="adminPlayerBox" class="adminPlayerBox hidden">
           <p id="adminCodeLine" class="adminCodeLine"></p>
 
-          <div class="adminCard">
+          <div class="adminCard adminOnly">
             <div class="adminCardTitle">Игрок</div>
             <label class="adminField">
               <span>Ник</span>
               <input id="adminNickInput" class="adminInput" type="text" maxlength="14">
             </label>
+          </div>
+
+          <div class="adminCard adminOnly">
+            <div class="adminCardTitle">Роль</div>
+            <div id="adminRoleRow" class="adminRoleRow">
+              <button type="button" class="adminRoleOpt" data-role="">Игрок</button>
+              <button type="button" class="adminRoleOpt" data-role="mod">Помощник</button>
+            </div>
+            <p class="adminRoleHint">Помощник может выдавать только обычные вещи и монеты</p>
           </div>
 
           <div class="adminCard">
@@ -956,13 +1010,13 @@
               <span>Монеты</span>
               <input id="adminCoinsInput" class="adminInput adminInputNum" type="number">
             </label>
-            <label class="adminField">
+            <label class="adminField adminOnly">
               <span>Рекорд</span>
               <input id="adminBestInput" class="adminInput adminInputNum" type="number">
             </label>
           </div>
 
-          <div class="adminCard">
+          <div class="adminCard adminOnly">
             <div class="adminCardTitle">Титул</div>
             <label class="adminField">
               <span>Текст</span>
@@ -975,7 +1029,7 @@
             <div id="adminGradientPresets" class="adminGradientPresets"></div>
           </div>
 
-          <div class="adminCard">
+          <div class="adminCard adminOnly">
             <div class="adminCardTitle">Галочка</div>
             <div class="adminBadgePreviewRow">
               <span id="adminBadgeNickPreview" class="adminBadgeNickPreview">Ник</span>
@@ -992,7 +1046,7 @@
 
           <button id="adminSaveBtn" class="adminSaveBtn" type="button">✓ Сохранить изменения</button>
 
-          <div class="adminDangerZone">
+          <div class="adminDangerZone adminOnly">
             <div class="adminDangerLabel">Опасная зона</div>
             <button id="adminDeleteBtn" type="button" class="adminDeleteBtn">Удалить аккаунт</button>
           </div>
@@ -1030,7 +1084,7 @@
               <button class="chip" type="button" data-gfx="low" data-i18n="gfx_low">Быстро</button>
               <button class="chip gfxUltraChip" type="button" data-gfx="ultra"><span data-i18n="gfx_ultra">Ультра</span><span class="expBadge" data-i18n="expBadge">эксперимент</span></button>
             </div>
-            <p id="gfxUltraNote" class="gfxUltraNote hidden" data-i18n="gfxUltraNote">Экспериментальная функция: объёмные платформы и тени. На слабых телефонах может тормозить.</p>
+            <p id="gfxUltraNote" class="gfxUltraNote hidden" data-i18n="gfxUltraNote">Экспериментальная функция: объёмные платформы, тени и стеклянный интерфейс (Liquid Glass). На слабых телефонах может тормозить.</p>
           </div>
 
           <div class="settingRow">
@@ -1269,6 +1323,7 @@ function resize(){
   ctx.imageSmoothingQuality = lowGfx() ? 'low' : 'high';
 }
 resize();
+if (document.body) document.body.classList.toggle('lg', ultraGfx());
 
 const worldTransform = () => ctx.setTransform(S * DPR, 0, 0, S * DPR, 0, 0);
 const pixelTransform = () => ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -1672,7 +1727,7 @@ const I18N = {
     cont: 'Продолжить', back: 'Назад', language: 'Язык', motionBlur: 'Motion blur',
     gfxLabel: 'Графика', gfx_auto: 'Авто', gfx_high: 'Красиво', gfx_low: 'Быстро', gfx_ultra: 'Ультра',
     expBadge: 'эксперимент',
-    gfxUltraNote: '⚗ Экспериментальная функция: объёмные платформы и тени. На слабых телефонах может тормозить.',
+    gfxUltraNote: '⚗ Экспериментальная функция: объёмные платформы, тени и стеклянный интерфейс (Liquid Glass). На слабых телефонах может тормозить.',
     catMain: 'Основное', catGfx: 'Графика и вид', catProfile: 'Профиль', catSound: 'Звук', catOnline: 'Онлайн',
     settingsSave: '✓ Сохранить', settingsSaved: 'Сохранено ✓',
     gfxAutoLowNote: '(лагало — включён быстрый режим)',
@@ -1760,7 +1815,7 @@ const I18N = {
     cont: 'Continue', back: 'Back', language: 'Language', motionBlur: 'Motion blur',
     gfxLabel: 'Graphics', gfx_auto: 'Auto', gfx_high: 'Pretty', gfx_low: 'Fast', gfx_ultra: 'Ultra',
     expBadge: 'experimental',
-    gfxUltraNote: '⚗ Experimental feature: 3D-looking platforms and shadows. May lag on weak phones.',
+    gfxUltraNote: '⚗ Experimental feature: 3D-looking platforms, shadows and a glass interface (Liquid Glass). May lag on weak phones.',
     catMain: 'General', catGfx: 'Graphics & look', catProfile: 'Profile', catSound: 'Sound', catOnline: 'Online',
     settingsSave: '✓ Save', settingsSaved: 'Saved ✓',
     gfxAutoLowNote: '(lag detected — fast mode on)',
@@ -5103,6 +5158,7 @@ function trackPerformance(realDt){
 
 function applyGfxChange(){
   resize();
+  document.body.classList.toggle('lg', ultraGfx());
   wakeScene(600);
   bgCacheKey = '';
   const vig = document.getElementById('vignette');
@@ -5903,6 +5959,7 @@ Store.set('cloudCode', cloudCode);
 let myTitle = Store.get('titleText', '');
 let myTitleColor = Store.get('titleColor', '');
 let myBadge = Store.get('badge', '');
+let myRole = Store.get('role', '');
 
 function applyOwnBadgeFromFields(f){
   myBadge = (f && f.badge && f.badge.stringValue) || '';
@@ -5921,6 +5978,9 @@ async function cloudFetchOwnTitle(){
     Store.set('titleText', myTitle);
     Store.set('titleColor', myTitleColor);
     applyOwnBadgeFromFields(f);
+    myRole = (f.role && f.role.stringValue) === 'mod' ? 'mod' : '';
+    Store.set('role', myRole);
+    if (typeof refreshStaffUI === 'function') refreshStaffUI();
   } catch (e) {}
 }
 
@@ -6172,7 +6232,7 @@ async function cloudFetchLeaderboard(){
       div.innerHTML = '<div class="lbLeft"><span class="lbRank">' + i + '.</span>' + rowAvatar + '<span>' + nameHtml + rowBadge + '</span></div><b>' + sc + '</b>';
       
       
-      if (adminMode){
+      if (isStaff()){
         div.style.cursor = 'pointer';
         div.title = 'Тап — выбрать действие';
         div.addEventListener('click', () => openAdminChoice(rowCode, nick));
@@ -6994,6 +7054,8 @@ function openSettings(){
   const st = document.getElementById('settingsSaveStatus');
   if (st) st.textContent = '';
   refreshCloudUI();
+  refreshStaffUI();
+  if (cloudReady()) cloudFetchOwnTitle();
 }
 
 function closeSettings(){
@@ -7013,7 +7075,37 @@ const ADMIN_PIN = '1337';
 let adminMode = localStorage.getItem('cabbitAdminMode') === '1';
 let adminCurrentCode = null;
 let adminCurrentEquipped = null;
-if (adminMode) document.getElementById('adminTool').classList.remove('hidden');
+let adminCurrentOwned = new Set();
+let adminCurrentRole = '';
+let adminRoleValue = '';
+
+const isModOnly = () => !adminMode && myRole === 'mod';
+const isStaff = () => adminMode || myRole === 'mod';
+
+function refreshStaffUI(){
+  const tool = document.getElementById('adminTool');
+  if (!tool) return;
+  tool.classList.toggle('hidden', !isStaff());
+  tool.classList.toggle('modMode', isModOnly());
+  const title = document.getElementById('adminHeaderTitle');
+  if (title) title.textContent = isModOnly() ? '⚒ Панель помощника' : '⚒ Админка';
+  if (!isStaff()){
+    const box = document.getElementById('adminPlayerBox');
+    if (box) box.classList.add('hidden');
+    adminCurrentCode = null;
+  }
+}
+refreshStaffUI();
+
+function selectAdminRole(role){
+  adminRoleValue = role === 'mod' ? 'mod' : '';
+  document.querySelectorAll('.adminRoleOpt').forEach((b) => {
+    b.classList.toggle('active', (b.dataset.role || '') === adminRoleValue);
+  });
+}
+document.querySelectorAll('.adminRoleOpt').forEach((b) => {
+  b.addEventListener('click', () => selectAdminRole(b.dataset.role || ''));
+});
 
 let secretTaps = 0, secretTapTimer = null;
 document.getElementById('secretZone').addEventListener('click', () => {
@@ -7034,7 +7126,7 @@ document.getElementById('adminPinBtn').addEventListener('click', () => {
     adminMode = true;
     localStorage.setItem('cabbitAdminMode', '1');
     document.getElementById('adminGate').classList.add('hidden');
-    document.getElementById('adminTool').classList.remove('hidden');
+    refreshStaffUI();
   } else {
     input.value = '';
     input.placeholder = 'Неверный PIN';
@@ -7062,8 +7154,15 @@ async function adminLoad(codeOverride){
     if (!res.ok){ adminSetStatus('Игрок с таким кодом не найден'); return; }
     const doc = await res.json();
     const f = doc.fields || {};
+    const targetRole = (f.role && f.role.stringValue) || '';
+    if (isModOnly() && (code === cloudCode || targetRole === 'mod' || (DEV_CODE && code === DEV_CODE))){
+      adminSetStatus(code === cloudCode ? 'Помощник не может менять свой профиль' : 'Помощник не может менять профиль администрации');
+      return;
+    }
 
     adminCurrentCode = code;
+    adminCurrentRole = targetRole;
+    selectAdminRole(targetRole);
     adminCurrentEquipped = {
       hat:  (f.hat  && f.hat.stringValue)  || 'none',
       acc:  (f.acc  && f.acc.stringValue)  || 'none',
@@ -7087,6 +7186,7 @@ async function adminLoad(codeOverride){
     if (f.owned && f.owned.arrayValue && Array.isArray(f.owned.arrayValue.values)){
       for (const v of f.owned.arrayValue.values) if (v && v.stringValue) ownedSet.add(v.stringValue);
     }
+    adminCurrentOwned = new Set(ownedSet);
     renderAdminItemsGrid(ownedSet);
 
     document.getElementById('adminPlayerBox').classList.remove('hidden');
@@ -7110,11 +7210,13 @@ function renderAdminItemsGrid(ownedSet){
       const key = slot + ':' + val;
       const label = document.createElement('label');
       const isLimited = !!OUTFITS[slot][val].locked;
-      label.className = 'adminItemChip' + (isLimited ? ' isLimited' : '');
+      const locked = isLimited && isModOnly();
+      label.className = 'adminItemChip' + (isLimited ? ' isLimited' : '') + (locked ? ' isDisabled' : '');
       const cb = document.createElement('input');
       cb.type = 'checkbox';
       cb.dataset.item = key;
       cb.checked = ownedSet.has(key);
+      if (locked) cb.disabled = true;
       const span = document.createElement('span');
       span.textContent = (isLimited ? '★ ' : '') + ti(slot, val).n;
       label.appendChild(cb);
@@ -7189,8 +7291,37 @@ function refreshAdminBadgePreview(){
 renderAdminBadgeGrid();
 refreshAdminBadgePreview();
 
+async function modSave(){
+  const coinsVal = Math.max(0, parseInt(document.getElementById('adminCoinsInput').value, 10) || 0);
+  const checked = Array.from(document.querySelectorAll('#adminItemsGrid input[type=checkbox]:checked')).map(cb => cb.dataset.item);
+  const isLimitedKey = (k) => { const i = k.indexOf(':'); const sl = k.slice(0, i), v = k.slice(i + 1); return !!(OUTFITS[sl] && OUTFITS[sl][v] && OUTFITS[sl][v].locked); };
+  const ownedList = checked.filter(k => !isLimitedKey(k));
+  adminCurrentOwned.forEach((k) => { if (isLimitedKey(k) && ownedList.indexOf(k) === -1) ownedList.push(k); });
+  const saveFields = {
+    coins: { integerValue: String(coinsVal) },
+    owned: { arrayValue: { values: ownedList.map(v => ({ stringValue: v })) } },
+    pending: { booleanValue: true }
+  };
+  const saveMask = Object.keys(saveFields).map(k => 'updateMask.fieldPaths=' + k).join('&');
+  adminSetStatus('Сохранение...');
+  try {
+    const res = await fetch(cloudBase() + '/players/' + adminCurrentCode + '?' + saveMask + '&key=' + CLOUD.apiKey, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fields: saveFields })
+    });
+    adminSetStatus(res.ok ? 'Сохранено ✓ — игрок получит это автоматически, как только откроет игру' : 'Не удалось сохранить');
+  } catch (e){
+    adminSetStatus('Ошибка связи при сохранении');
+  }
+}
+
 async function adminSave(){
-  if (!adminCurrentCode || !cloudReady()) return;
+  if (!adminCurrentCode || !cloudReady() || !isStaff()) return;
+  if (isModOnly()){
+    if (adminCurrentCode === cloudCode || adminCurrentRole === 'mod') return;
+    return modSave();
+  }
   const coinsVal = parseInt(document.getElementById('adminCoinsInput').value, 10) || 0;
   const bestVal  = parseInt(document.getElementById('adminBestInput').value, 10) || 0;
   const ownedList = Array.from(document.querySelectorAll('#adminItemsGrid input[type=checkbox]:checked'))
@@ -7220,6 +7351,7 @@ async function adminSave(){
     title:      { stringValue: titleVal },
     titleColor: { stringValue: titleColorVal },
     badge:      { stringValue: badgeVal },
+    role:       { stringValue: adminRoleValue },
     pending:    { booleanValue: !isSelf }
   };
   const saveMask = Object.keys(saveFields).map(k => 'updateMask.fieldPaths=' + k).join('&');
@@ -7271,7 +7403,7 @@ function adminResetDeleteArm(){
 }
 
 async function adminDeleteAccount(){
-  if (!adminCurrentCode || !cloudReady()) return;
+  if (!adminCurrentCode || !cloudReady() || !adminMode) return;
   if (adminDeleteArmedCode !== adminCurrentCode){
     adminDeleteArmedCode = adminCurrentCode;
     if (adminDeleteArmTimer) clearTimeout(adminDeleteArmTimer);
