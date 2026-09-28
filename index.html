@@ -658,6 +658,119 @@
   }
   .adminChoiceNick{font-size:16px;font-weight:800;text-align:center;margin-bottom:4px;}
 
+
+  .styleRow{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;width:100%;}
+  .styleCard{position:relative;border:none;cursor:pointer;font-family:inherit;border-radius:14px;height:64px;overflow:hidden;
+    display:flex;align-items:flex-end;padding:6px 9px;font-size:14px;font-weight:800;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.25);}
+  .styleCard.active{box-shadow:0 0 0 3px #ffd34d,inset 0 0 0 1.5px rgba(255,255,255,.4);}
+  .styleCard[data-style="classic"]{background:radial-gradient(90% 90% at 70% 20%,#8a4fcf,#2a1150);color:#ffd34d;}
+  .styleCard[data-style="aero"]{background:linear-gradient(180deg,#1a86e0,#9fe0ff 60%,#6fdc3c 61%,#2fa625);color:#fff;text-shadow:0 1px 2px rgba(0,50,100,.7);}
+  .styleCard[data-style="neon"]{background:linear-gradient(180deg,#0c0220,#3a0858);color:#fff;text-shadow:0 0 6px #ff4fd8,0 0 14px #ff4fd8;}
+  .styleCard[data-style="neon"]::after{content:"";position:absolute;left:0;right:0;bottom:0;height:22px;background:repeating-linear-gradient(90deg,transparent 0 14px,rgba(57,243,255,.6) 14px 15px),linear-gradient(180deg,transparent,rgba(255,79,216,.35));}
+  .styleCard[data-style="paper"]{background:repeating-linear-gradient(180deg,#fcfaf2 0 11px,#b9cdf0 11px 12px);color:#243b8c;}
+  .styleCard[data-style="paper"]::before{content:"";position:absolute;left:14px;top:0;bottom:0;width:1.5px;background:rgba(230,90,90,.55);}
+  .styleCard span{position:relative;z-index:1;}
+  body:not(.st-classic) #bgColorSetting{display:none;}
+
+  body.st-aero{background:#bfe9ff;}
+  .st-aero .vignette,.st-paper .vignette{display:none;}
+  .st-aero #menu,.st-aero #settings,.st-aero #wardrobe,.st-aero #nickname{background:radial-gradient(120% 80% at 15% 0%,rgba(255,255,255,.55),rgba(160,225,255,.28) 45%,rgba(10,111,209,.28));color:#08426e;}
+  .st-aero #menu.paused{background:rgba(190,235,255,.72);}
+  .st-aero #over{background:rgba(200,240,255,.6);color:#08426e;}
+  .st-aero .title{color:transparent;background:linear-gradient(180deg,#fff 0%,#e8f8ff 45%,#7fd3ff 52%,#1d8fe0 100%);-webkit-background-clip:text;background-clip:text;
+    text-shadow:none;filter:drop-shadow(0 0 1.5px #073f78) drop-shadow(0 3px 0 #073f78) drop-shadow(0 0 14px rgba(0,40,110,.45));}
+  .st-aero .stats,.st-aero .hint,.st-aero .settingLabel,.st-aero .pauseLabel,.st-aero #overTitle,.st-aero #bestLine{color:#0a4a7a;text-shadow:0 1px 0 rgba(255,255,255,.8);opacity:1;}
+  .st-aero .btn{color:#fff;text-shadow:0 1px 2px rgba(0,50,20,.55);border:1px solid #1a7a0e;
+    background:linear-gradient(180deg,rgba(255,255,255,.92) 0%,rgba(255,255,255,.2) 48%,rgba(255,255,255,0) 50%),linear-gradient(180deg,#9df25a,#48c21f 50%,#1f8f10);
+    box-shadow:0 6px 16px rgba(20,100,10,.4),inset 0 -6px 10px rgba(255,255,255,.25);}
+  .st-aero .btn:active{transform:translateY(2px);box-shadow:0 2px 8px rgba(20,100,10,.4);}
+  .st-aero #wardrobeBtn,.st-aero #menuBtn{border-color:#0a549e;
+    background:linear-gradient(180deg,rgba(255,255,255,.92) 0%,rgba(255,255,255,.2) 48%,rgba(255,255,255,0) 50%),linear-gradient(180deg,#8fe0ff,#2aa2ec 50%,#0b62b8);box-shadow:0 6px 16px rgba(0,60,140,.4);}
+  .st-aero .btn.ghost,.st-aero .chip,.st-aero .shopTab,.st-aero .charArrow{color:#08426e;text-shadow:0 1px 0 #fff;border:1px solid rgba(255,255,255,.9);
+    background:linear-gradient(180deg,rgba(255,255,255,.75),rgba(255,255,255,.35) 48%,rgba(255,255,255,.2) 52%,rgba(255,255,255,.45));box-shadow:0 4px 12px rgba(0,70,140,.2);}
+  .st-aero .chip[aria-pressed="true"],.st-aero .shopTab.active{color:#fff;text-shadow:0 1px 2px rgba(0,50,20,.5);border-color:#1a7a0e;
+    background:linear-gradient(180deg,rgba(255,255,255,.85),rgba(255,255,255,.15) 48%,rgba(255,255,255,0) 50%),linear-gradient(180deg,#9df25a,#48c21f 50%,#1f8f10);}
+  .st-aero .chip .idesc,.st-aero .chip .iname{color:inherit;}
+  .st-aero #settingsBox,.st-aero .setCat,.st-aero #shop,.st-aero #nickBox,.st-aero .profileCard,.st-aero .passCard,.st-aero .topPill,.st-aero .inboxBtn,.st-aero #pauseBtn,.st-aero .ctrlBtn{
+    color:#08426e;border:1px solid rgba(255,255,255,.9);
+    background:linear-gradient(180deg,rgba(255,255,255,.72),rgba(255,255,255,.3) 48%,rgba(255,255,255,.18) 52%,rgba(255,255,255,.42));
+    box-shadow:0 8px 22px rgba(0,70,140,.22),inset 0 1px 0 #fff;}
+  .st-aero .setCatHead,.st-aero .profileCard{color:#08426e;}
+  .st-aero .passLogo{color:#0a5a9a;text-shadow:0 1px 0 #fff;}
+  .st-aero .passBar,.st-aero .passXpBar{background:rgba(0,60,110,.18);}
+  .st-aero .passBar i,.st-aero .passXpBar i{background:linear-gradient(180deg,#c9ff8a,#5ad12a 50%,#2e9c16);}
+  .st-aero .trophyPill b{color:#c77800;}
+  .st-aero .coinNum{color:#c77800;}
+  .st-aero #finalScore{color:#1d8fe0;text-shadow:0 2px 0 #fff,0 0 30px rgba(255,255,255,.9);}
+  .st-aero .ctrlBtn svg [stroke],.st-aero .backIconBtn svg [stroke],.st-aero .inboxBtn svg [stroke]{stroke:#08426e;}
+  .st-aero #pauseBtn svg [fill],.st-aero .inboxBtn svg [fill]{fill:#08426e;}
+  .st-aero .passFull{background:linear-gradient(180deg,#0a6fd1,#2aa4f0 30%,#9be2ff 75%,#e8fbff);}
+  .st-aero .passCell{background:linear-gradient(180deg,rgba(255,255,255,.7),rgba(255,255,255,.3));color:#08426e;box-shadow:inset 0 0 0 1px #fff;}
+  .st-aero .passCell.gold{background:linear-gradient(180deg,rgba(255,250,210,.9),rgba(255,215,90,.55));}
+  .st-aero .passQuest{background:rgba(255,255,255,.5);color:#08426e;}
+
+  .st-aero .trophyLine.up,.st-paper .trophyLine.up{color:#1f8f10;}
+  .st-aero .trophyLine.down,.st-paper .trophyLine.down{color:#d42a2a;}
+  .st-aero .trophyLine.zero,.st-paper .trophyLine.zero{color:#243b8c;}
+  .st-aero .trophyLine small,.st-paper .trophyLine small{color:#243b8c;opacity:.8;}
+  .st-aero .passLine,.st-aero #coinLine,.st-aero #rankLine{color:#b56d00;text-shadow:0 1px 0 rgba(255,255,255,.8);}
+  .st-paper .passLine,.st-paper #coinLine,.st-paper #rankLine{color:#c05a00;}
+  .st-aero #settings,.st-aero #wardrobe,.st-aero #nickname{background:linear-gradient(180deg,rgba(200,236,255,.9),rgba(232,250,255,.94));}
+  .st-neon #settings,.st-neon #wardrobe,.st-neon #nickname{background:rgba(9,1,20,.93);}
+  .st-paper #settings,.st-paper #wardrobe,.st-paper #nickname{background:rgba(252,250,242,.94);}
+  .st-aero .settingsSaveBtn{color:#fff;text-shadow:0 1px 2px rgba(0,50,20,.55);border:1px solid #1a7a0e;
+    background:linear-gradient(180deg,rgba(255,255,255,.92) 0%,rgba(255,255,255,.2) 48%,rgba(255,255,255,0) 50%),linear-gradient(180deg,#9df25a,#48c21f 50%,#1f8f10);box-shadow:0 6px 16px rgba(20,100,10,.4);}
+  .st-neon .settingsSaveBtn{color:#fff;background:rgba(20,0,40,.65);text-shadow:0 0 8px #ff4fd8;box-shadow:0 0 0 2px #ff4fd8,0 0 18px rgba(255,79,216,.65);}
+  .st-paper .settingsSaveBtn{color:#243b8c;background:#fff6a8;border:2.5px solid #243b8c;box-shadow:4px 5px 0 #243b8c;}
+  body.st-neon{background:#07010f;}
+  .st-neon #menu,.st-neon #settings,.st-neon #wardrobe,.st-neon #nickname{background:radial-gradient(120% 80% at 50% 10%,rgba(90,10,120,.55),rgba(7,1,15,.9));}
+  .st-neon .title{color:#fff;text-shadow:0 0 4px #fff,0 0 10px #ff4fd8,0 0 22px #ff4fd8,0 0 44px #b02cff;}
+  .st-neon .pauseLabel{color:#39f3ff;text-shadow:0 0 10px #39f3ff;}
+  .st-neon .stats,.st-neon .hint{color:#e7d6ff;}
+  .st-neon .btn{color:#fff;background:rgba(20,0,40,.65);text-shadow:0 0 8px #ff4fd8;
+    box-shadow:0 0 0 2px #ff4fd8,0 0 18px rgba(255,79,216,.65),inset 0 0 14px rgba(255,79,216,.35);}
+  .st-neon .btn:active{transform:scale(.97);box-shadow:0 0 0 2px #ff4fd8,0 0 28px rgba(255,79,216,.9),inset 0 0 22px rgba(255,79,216,.5);}
+  .st-neon #wardrobeBtn,.st-neon #menuBtn{text-shadow:0 0 8px #39f3ff;box-shadow:0 0 0 2px #39f3ff,0 0 18px rgba(57,243,255,.6),inset 0 0 14px rgba(57,243,255,.3);}
+  .st-neon .btn.ghost,.st-neon .chip,.st-neon .shopTab,.st-neon .charArrow{color:#dff9ff;background:rgba(10,0,25,.6);box-shadow:0 0 0 1.5px rgba(57,243,255,.7),0 0 10px rgba(57,243,255,.35);}
+  .st-neon .chip[aria-pressed="true"],.st-neon .shopTab.active{color:#fff;background:rgba(255,79,216,.35);box-shadow:0 0 0 2px #ff4fd8,0 0 14px rgba(255,79,216,.6);}
+  .st-neon #settingsBox,.st-neon .setCat,.st-neon #shop,.st-neon #nickBox,.st-neon .profileCard,.st-neon .topPill,.st-neon .inboxBtn,.st-neon #pauseBtn,.st-neon .ctrlBtn{
+    background:rgba(12,0,30,.72);box-shadow:0 0 0 1px rgba(57,243,255,.55),0 0 16px rgba(57,243,255,.25);}
+  .st-neon .passCard{background:rgba(12,0,30,.8);box-shadow:0 0 0 2px #ffe14d,0 0 18px rgba(255,225,77,.45),inset 0 0 18px rgba(255,225,77,.18);}
+  .st-neon .passBar i,.st-neon .passXpBar i{background:linear-gradient(90deg,#ff4fd8,#39f3ff);box-shadow:0 0 10px #ff4fd8;}
+  .st-neon #finalScore{color:#fff;text-shadow:0 0 8px #39f3ff,0 0 24px #39f3ff,0 0 48px #1a8cff;}
+  .st-neon .passFull{background:linear-gradient(180deg,#2a0648,#07010f 420px);}
+  .st-neon .passCell{background:rgba(20,0,40,.7);box-shadow:0 0 0 1px rgba(57,243,255,.45);}
+  .st-neon .passCell.gold{box-shadow:0 0 0 1px rgba(255,225,77,.6);}
+
+  body.st-paper{background:#fcfaf2;}
+  .st-paper #menu,.st-paper #settings,.st-paper #wardrobe,.st-paper #nickname{background:rgba(252,250,242,.55);color:#243b8c;}
+  .st-paper #menu.paused{background:rgba(252,250,242,.9);}
+  .st-paper #over{background:rgba(252,250,242,.78);color:#243b8c;}
+  .st-paper .screen,.st-paper .stats,.st-paper .hint,.st-paper .settingLabel,.st-paper .setCatHead,.st-paper #overTitle,.st-paper #bestLine,.st-paper .pauseLabel{color:#243b8c;text-shadow:none;opacity:1;}
+  .st-paper .title{color:#243b8c;text-shadow:3px 3px 0 #ffd34d;transform:rotate(-2deg);}
+  .st-paper .btn{color:#243b8c;background:#fff6a8;border:2.5px solid #243b8c;border-radius:18px 22px 16px 24px;box-shadow:4px 5px 0 #243b8c;transform:rotate(-.8deg);text-shadow:none;}
+  .st-paper .btn:active{transform:translate(3px,4px) rotate(-.8deg);box-shadow:1px 1px 0 #243b8c;}
+  .st-paper #wardrobeBtn,.st-paper #menuBtn{background:#cfe8ff;transform:rotate(.8deg);}
+  .st-paper .btn.ghost,.st-paper .chip,.st-paper .shopTab,.st-paper .charArrow{color:#243b8c;background:#fffdf6;border:2px dashed #243b8c;box-shadow:none;}
+  .st-paper .chip[aria-pressed="true"],.st-paper .shopTab.active{background:#fff06a;border-style:solid;box-shadow:3px 3px 0 #243b8c;color:#243b8c;}
+  .st-paper .chip .idesc{color:#43569a;}
+  .st-paper #settingsBox,.st-paper .setCat,.st-paper #shop,.st-paper #nickBox,.st-paper .profileCard,.st-paper .passCard,.st-paper .topPill,.st-paper .inboxBtn,.st-paper #pauseBtn,.st-paper .ctrlBtn{
+    color:#243b8c;background:#fffdf6;border:2px solid #243b8c;box-shadow:4px 5px 0 rgba(36,59,140,.25);}
+  .st-paper .setCat{border-radius:14px 18px 12px 20px;}
+  .st-paper .passLogo{color:#e0521f;text-shadow:none;}
+  .st-paper .passBar,.st-paper .passXpBar{background:#e6ebf7;box-shadow:inset 0 0 0 1.5px #243b8c;}
+  .st-paper .passBar i,.st-paper .passXpBar i{background:repeating-linear-gradient(135deg,#ffd34d 0 6px,#ffb13b 6px 12px);}
+  .st-paper .coinNum,.st-paper .trophyPill b{color:#c05a00;}
+  .st-paper #finalScore{color:#e0521f;text-shadow:3px 3px 0 #243b8c;}
+  .st-paper .ctrlBtn svg [stroke],.st-paper .backIconBtn svg [stroke],.st-paper .inboxBtn svg [stroke]{stroke:#243b8c;}
+  .st-paper #pauseBtn svg [fill],.st-paper .inboxBtn svg [fill]{fill:#243b8c;}
+  .st-paper .passFull{background:repeating-linear-gradient(180deg,#fcfaf2 0 25px,#c5d5f2 25px 26px);color:#243b8c;}
+  .st-paper .passTitle{color:#243b8c;text-shadow:3px 3px 0 #ffd34d;}
+  .st-paper .passCell{background:#fffdf6;color:#243b8c;box-shadow:inset 0 0 0 2px #243b8c;}
+  .st-paper .passCell.gold{background:#fff6a8;}
+  .st-paper .passQuest{background:#fffdf6;color:#243b8c;box-shadow:inset 0 0 0 1.5px #243b8c;}
+  .st-paper .passColsHead,.st-paper .passSeason,.st-paper .passXpText,.st-paper .passQTitle{color:#243b8c;}
+
   .swatchRow{display:flex;gap:9px;flex-wrap:wrap;}
   .swatchBtn{
     width:30px;height:30px;border-radius:50%;border:2px solid rgba(255,255,255,.25);
@@ -1368,6 +1481,10 @@
             </div>
           </div>
           <div class="settingRow">
+            <span class="settingLabel" data-i18n="styleLabel">Стиль игры</span>
+            <div id="styleRow" class="styleRow"></div>
+          </div>
+          <div class="settingRow" id="bgColorSetting">
             <span class="settingLabel" data-i18n="bgColorLabel">Цвет фона</span>
             <div id="bgColorRow" class="swatchRow"></div>
           </div>
@@ -2002,6 +2119,34 @@ const PLATFORM_THEMES = {
   yellow: { c1: '#fff3a0', c2: '#f0c93e', c3: '#b8901c', swatch: '#f0c93e' },
   silver: { c1: '#f5f5f8', c2: '#c9c9d4', c3: '#8f8f99', swatch: '#c9c9d4' }
 };
+const UI_STYLES = ['classic', 'aero', 'neon', 'paper'];
+const STYLE_BG = {
+  aero:  { bg1: [18, 124, 222], bg2: [220, 246, 255], glow: 'rgba(255,255,255,.42)' },
+  neon:  { bg1: [10, 2, 26],    bg2: [62, 8, 90],     glow: 'rgba(255,60,200,.32)' },
+  paper: { bg1: [252, 250, 242], bg2: [247, 244, 232], glow: 'rgba(255,255,255,0)' }
+};
+let uiStyle = Store.get('uiStyle', 'classic');
+if (UI_STYLES.indexOf(uiStyle) === -1) uiStyle = 'classic';
+function applyUiStyle(id){
+  if (UI_STYLES.indexOf(id) === -1) id = 'classic';
+  uiStyle = id;
+  Store.set('uiStyle', id);
+  const cl = document.body && document.body.classList;
+  if (cl){ UI_STYLES.forEach(x => cl.remove('st-' + x)); cl.add('st-' + id); }
+  const row = document.getElementById('styleRow');
+  if (row){
+    row.innerHTML = '';
+    for (const x of UI_STYLES){
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'styleCard' + (x === uiStyle ? ' active' : '');
+      b.dataset.style = x;
+      b.innerHTML = '<span>' + escapeHtml(t('st_' + x)) + '</span>';
+      b.addEventListener('click', () => { applyUiStyle(x); if (typeof bgCacheKey !== 'undefined') bgCacheKey = ''; if (typeof wakeScene === 'function') wakeScene(400); });
+      row.appendChild(b);
+    }
+  }
+}
 let bgTheme = Store.get('bgTheme', 'auto');
 if (!BG_THEMES[bgTheme]) bgTheme = 'auto';
 let platformTheme = Store.get('platformTheme', 'auto');
@@ -2423,7 +2568,7 @@ const I18N = {
     rotateMsg: 'Переверни телефон вертикально',
     leaderboard: 'Таблица лидеров', empty: '—', wardrobe: 'Гардероб',
     overTitleNormal: 'Котокролик приземлился', overTitleRecord: 'Новый рекорд',
-    overCoins: 'собрано монет', overRecordLabel: 'Рекорд', overNewBest: 'новый личный рекорд', overRank: 'место в рейтинге', overTop1: 'ты первый по кубкам!', passFree: 'Бесплатно', passGold: 'Золотой', passSeasonTxt: 'Сезон {s} · осталось {d} дн.', passXpTxt: '{x} / {n} жетонов до уровня {l}', passMaxTxt: 'Максимальный уровень!', passBuy: 'Золотой пасс · {p}', passOwned: 'Золотой пасс активен ✓', passNoCoins: 'Не хватает монет: нужно {p}', passBought: 'Золотой пасс открыт!', passClaim: 'Забрать', passRunXp: 'Cabbit Pass: +{x} жетонов', passLvlUp: 'Новый уровень пасса: {l}!', passQuestsTitle: 'Задания на сегодня', questDone: 'Задание выполнено! +{x} жетонов', qRuns3: 'Сыграй 3 забега', qRuns5: 'Сыграй 5 забегов', qScore: 'Набери {n} очков за забег', qCoins: 'Собери {n} монет', passTitleReward: 'Титул «Cabbit Pass»', coinsWord: 'монет', trophiesTitle: 'Кубки', trophyInfoTxt: 'За каждый забег кубки прибавляются или отнимаются. Цель забега сейчас — <b>{t}</b> очков: прыгнешь выше — получишь кубки, ниже — потеряешь. Чем больше кубков, тем выше цель. До 100 кубков минуса нет.', trophyRowX2: '×2 цели и больше', trophyRowX15: '×1.5 цели', trophyRowX12: '×1.2 цели', trophyRowX1: 'цель', trophyRowX08: '80% цели', trophyRowX06: '60% цели', trophyRowX04: '40% цели', trophyRowX02: '20% цели', trophyRowX0: 'меньше',
+    overCoins: 'собрано монет', overRecordLabel: 'Рекорд', overNewBest: 'новый личный рекорд', overRank: 'место в рейтинге', overTop1: 'ты первый по кубкам!', passFree: 'Бесплатно', passGold: 'Золотой', styleLabel: 'Стиль игры', st_classic: 'Кэббит', st_aero: 'Frutiger Aero', st_neon: 'Неон', st_paper: 'Тетрадка', trophyGoal: 'цель', passSeasonTxt: 'Сезон {s} · осталось {d} дн.', passXpTxt: '{x} / {n} жетонов до уровня {l}', passMaxTxt: 'Максимальный уровень!', passBuy: 'Золотой пасс · {p}', passOwned: 'Золотой пасс активен ✓', passNoCoins: 'Не хватает монет: нужно {p}', passBought: 'Золотой пасс открыт!', passClaim: 'Забрать', passRunXp: 'Cabbit Pass: +{x} жетонов', passLvlUp: 'Новый уровень пасса: {l}!', passQuestsTitle: 'Задания на сегодня', questDone: 'Задание выполнено! +{x} жетонов', qRuns3: 'Сыграй 3 забега', qRuns5: 'Сыграй 5 забегов', qScore: 'Набери {n} очков за забег', qCoins: 'Собери {n} монет', passTitleReward: 'Титул «Cabbit Pass»', coinsWord: 'монет', trophiesTitle: 'Кубки', trophyInfoTxt: 'За каждый забег кубки прибавляются или отнимаются. Цель забега сейчас — <b>{t}</b> очков: прыгнешь выше — получишь кубки, ниже — потеряешь. Чем больше кубков, тем выше цель. До 100 кубков минуса нет.', trophyRowX2: '×2 цели и больше', trophyRowX15: '×1.5 цели', trophyRowX12: '×1.2 цели', trophyRowX1: 'цель', trophyRowX08: '80% цели', trophyRowX06: '60% цели', trophyRowX04: '40% цели', trophyRowX02: '20% цели', trophyRowX0: 'меньше',
     retry: 'Повторить', toMenu: 'В меню', scoreWord: 'рекорд',
     cloudTitle: 'Онлайн-профиль', cloudCopy: 'Копировать', cloudRestore: 'Восстановить',
     cloudEnterCode: 'КОД', cloudTop: 'Рейтинг игроков', searchLabel: 'Найти игрока', searchPlaceholder: 'Ник или код', searchBtn: 'Найти', searchNone: 'Никого не нашли', cloudRefresh: 'Обновить рейтинг',
@@ -2527,7 +2672,7 @@ const I18N = {
     rotateMsg: 'Please rotate your phone back to portrait',
     leaderboard: 'Leaderboard', empty: '—', wardrobe: 'Wardrobe',
     overTitleNormal: 'The cabbit has landed', overTitleRecord: 'New record',
-    overCoins: 'coins collected', overRecordLabel: 'Best', overNewBest: 'new personal best', overRank: 'leaderboard place', overTop1: 'you are #1 in trophies!', passFree: 'Free', passGold: 'Gold', passSeasonTxt: 'Season {s} · {d} days left', passXpTxt: '{x} / {n} tokens to level {l}', passMaxTxt: 'Max level!', passBuy: 'Gold pass · {p}', passOwned: 'Gold pass active ✓', passNoCoins: 'Not enough coins: need {p}', passBought: 'Gold pass unlocked!', passClaim: 'Claim', passRunXp: 'Cabbit Pass: +{x} tokens', passLvlUp: 'Pass level up: {l}!', passQuestsTitle: 'Today\'s quests', questDone: 'Quest done! +{x} tokens', qRuns3: 'Play 3 runs', qRuns5: 'Play 5 runs', qScore: 'Score {n} in one run', qCoins: 'Collect {n} coins', passTitleReward: '“Cabbit Pass” title', coinsWord: 'coins', trophiesTitle: 'Trophies', trophyInfoTxt: 'Every run adds or removes trophies. Your run target is now <b>{t}</b> points: beat it to win trophies, fall short to lose some. More trophies means a higher target. Below 100 trophies you never lose any.', trophyRowX2: '×2 target or more', trophyRowX15: '×1.5 target', trophyRowX12: '×1.2 target', trophyRowX1: 'target', trophyRowX08: '80% of target', trophyRowX06: '60% of target', trophyRowX04: '40% of target', trophyRowX02: '20% of target', trophyRowX0: 'less',
+    overCoins: 'coins collected', overRecordLabel: 'Best', overNewBest: 'new personal best', overRank: 'leaderboard place', overTop1: 'you are #1 in trophies!', passFree: 'Free', passGold: 'Gold', styleLabel: 'Game style', st_classic: 'Cabbit', st_aero: 'Frutiger Aero', st_neon: 'Neon', st_paper: 'Notebook', trophyGoal: 'target', passSeasonTxt: 'Season {s} · {d} days left', passXpTxt: '{x} / {n} tokens to level {l}', passMaxTxt: 'Max level!', passBuy: 'Gold pass · {p}', passOwned: 'Gold pass active ✓', passNoCoins: 'Not enough coins: need {p}', passBought: 'Gold pass unlocked!', passClaim: 'Claim', passRunXp: 'Cabbit Pass: +{x} tokens', passLvlUp: 'Pass level up: {l}!', passQuestsTitle: 'Today\'s quests', questDone: 'Quest done! +{x} tokens', qRuns3: 'Play 3 runs', qRuns5: 'Play 5 runs', qScore: 'Score {n} in one run', qCoins: 'Collect {n} coins', passTitleReward: '“Cabbit Pass” title', coinsWord: 'coins', trophiesTitle: 'Trophies', trophyInfoTxt: 'Every run adds or removes trophies. Your run target is now <b>{t}</b> points: beat it to win trophies, fall short to lose some. More trophies means a higher target. Below 100 trophies you never lose any.', trophyRowX2: '×2 target or more', trophyRowX15: '×1.5 target', trophyRowX12: '×1.2 target', trophyRowX1: 'target', trophyRowX08: '80% of target', trophyRowX06: '60% of target', trophyRowX04: '40% of target', trophyRowX02: '20% of target', trophyRowX0: 'less',
     retry: 'Retry', toMenu: 'Menu', scoreWord: 'best',
     cloudTitle: 'Online profile', cloudCopy: 'Copy', cloudRestore: 'Restore',
     cloudEnterCode: 'CODE', cloudTop: 'Leaderboard', searchLabel: 'Find a player', searchPlaceholder: 'Nickname or code', searchBtn: 'Find', searchNone: 'Nobody found', cloudRefresh: 'Refresh ranking',
@@ -4140,7 +4285,7 @@ const bgCacheCvs = document.createElement('canvas');
 let bgCacheKey = '';
 function getBgCache(w){
   const withGlow = !lowGfx();
-  const key = w.bg1.join(',') + '|' + w.bg2.join(',') + '|' + w.glow + '|' + cvs.width + 'x' + cvs.height + '|' + withGlow;
+  const key = w.bg1.join(',') + '|' + w.bg2.join(',') + '|' + w.glow + '|' + cvs.width + 'x' + cvs.height + '|' + withGlow + '|' + uiStyle;
   if (key === bgCacheKey) return bgCacheCvs;
   bgCacheKey = key;
   bgCacheCvs.width = cvs.width;
@@ -4159,17 +4304,91 @@ function getBgCache(w){
     b.fillStyle = gl;
     b.fillRect(0, 0, VW, VH);
   }
+  if (uiStyle === 'aero'){
+    const sun = b.createRadialGradient(VW * 0.12, VH * 0.02, 4, VW * 0.12, VH * 0.02, VH * 0.5);
+    sun.addColorStop(0, 'rgba(255,255,255,.95)');
+    sun.addColorStop(0.18, 'rgba(255,255,235,.5)');
+    sun.addColorStop(0.5, 'rgba(190,240,255,.12)');
+    sun.addColorStop(1, 'rgba(190,240,255,0)');
+    b.fillStyle = sun;
+    b.fillRect(0, 0, VW, VH);
+    b.save();
+    b.translate(VW * 0.12, VH * 0.02);
+    for (let i = 0; i < 4; i++){
+      b.rotate(0.28);
+      const rg = b.createLinearGradient(0, 0, VH * 0.9, 0);
+      rg.addColorStop(0, 'rgba(255,255,255,.28)');
+      rg.addColorStop(1, 'rgba(255,255,255,0)');
+      b.fillStyle = rg;
+      b.fillRect(0, -6 - i * 2, VH * 0.9, 12 + i * 4);
+    }
+    b.restore();
+  } else if (uiStyle === 'neon'){
+    const hy = VH * 0.72;
+    const sunG = b.createLinearGradient(0, hy - 150, 0, hy);
+    sunG.addColorStop(0, '#ffe14d');
+    sunG.addColorStop(1, '#ff4fd8');
+    b.fillStyle = sunG;
+    b.globalAlpha = 0.55;
+    b.beginPath();
+    b.arc(VW / 2, hy, 110, Math.PI, 0);
+    b.fill();
+    b.globalAlpha = 1;
+    b.fillStyle = 'rgb(' + w.bg2.join(',') + ')';
+    for (let i = 0; i < 6; i++) b.fillRect(VW / 2 - 120, hy - 12 - i * 16, 240, 2 + i * 0.8);
+    b.fillStyle = 'rgba(10,0,24,.85)';
+    b.fillRect(0, hy, VW, VH - hy);
+    b.strokeStyle = 'rgba(57,243,255,.45)';
+    b.lineWidth = 1;
+    for (let i = -10; i <= 10; i++){
+      b.beginPath();
+      b.moveTo(VW / 2 + i * 22, hy);
+      b.lineTo(VW / 2 + i * 120, VH);
+      b.stroke();
+    }
+    for (let k = 1; k < 9; k++){
+      const yy = hy + Math.pow(k / 8, 1.8) * (VH - hy);
+      b.globalAlpha = 0.25 + k * 0.05;
+      b.beginPath();
+      b.moveTo(0, yy);
+      b.lineTo(VW, yy);
+      b.stroke();
+    }
+    b.globalAlpha = 1;
+    b.strokeStyle = 'rgba(255,79,216,.8)';
+    b.lineWidth = 2;
+    b.beginPath();
+    b.moveTo(0, hy);
+    b.lineTo(VW, hy);
+    b.stroke();
+  }
   return bgCacheCvs;
 }
 
 function drawBackground(){
-  const themed = bgTheme !== 'auto' && BG_THEMES[bgTheme];
-  const w = themed ? BG_THEMES[bgTheme] : currentWorld();
+  const styleBg = STYLE_BG[uiStyle];
+  const themed = !styleBg && bgTheme !== 'auto' && BG_THEMES[bgTheme];
+  const w = styleBg || (themed ? BG_THEMES[bgTheme] : currentWorld());
   const cache = getBgCache(w);
   ctx.save();
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.drawImage(cache, 0, 0);
   ctx.restore();
+  if (uiStyle === 'paper'){
+    const gap = 26;
+    const off = ((-camY * 0.5) % gap + gap) % gap;
+    ctx.strokeStyle = 'rgba(110,150,220,.38)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (let y = off; y < VH; y += gap){ ctx.moveTo(0, y); ctx.lineTo(VW, y); }
+    ctx.stroke();
+    ctx.strokeStyle = 'rgba(230,90,90,.4)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(34, 0); ctx.lineTo(34, VH);
+    ctx.stroke();
+    return;
+  }
 
   const time = performance.now() / 1000;
   const low = lowGfx();
@@ -4184,21 +4403,38 @@ function drawBackground(){
         const y = it.y + off + k * BAND;
         if (y < -120 || y > VH + 120) continue;
 
-        if (L.kind === 0){
+        if (L.kind === 0 && uiStyle === 'aero'){
+          if (ii % 2) continue;
+          const br = it.r * 4 + 4;
+          ctx.globalAlpha = 0.55;
+          ctx.strokeStyle = 'rgba(255,255,255,.85)';
+          ctx.lineWidth = 1.2;
+          ctx.beginPath();
+          ctx.arc(it.x, y, br, 0, 6.2832);
+          ctx.stroke();
+          ctx.fillStyle = 'rgba(200,240,255,.18)';
+          ctx.fill();
+          ctx.fillStyle = '#fff';
+          ctx.beginPath();
+          ctx.arc(it.x - br * 0.35, y - br * 0.38, br * 0.22, 0, 6.2832);
+          ctx.fill();
+        } else if (L.kind === 0){
           ctx.globalAlpha = it.a * (0.55 + 0.45 * Math.sin(time * 2 + it.tw));
-          ctx.fillStyle = '#fff6d8';
+          ctx.fillStyle = uiStyle === 'neon' ? (ii % 2 ? '#ff9ff5' : '#8ff6ff') : '#fff6d8';
           ctx.beginPath();
           ctx.arc(it.x, y, it.r, 0, 6.2832);
           ctx.fill();
         } else if (L.kind === 1 || L.kind === 2){
-          ctx.globalAlpha = it.a;
-          ctx.fillStyle = (L.kind === 1) ? '#b79bff' : '#ffd9f0';
+          if (uiStyle === 'neon') continue;
+          ctx.globalAlpha = uiStyle === 'aero' ? Math.min(0.85, it.a * 2.2) : it.a;
+          ctx.fillStyle = uiStyle === 'aero' ? '#ffffff' : ((L.kind === 1) ? '#b79bff' : '#ffd9f0');
           ctx.beginPath();
           ctx.ellipse(it.x, y, it.r, it.r * 0.44, 0, 0, 6.2832);
           ctx.ellipse(it.x - it.r * 0.5, y + it.r * 0.1, it.r * 0.6, it.r * 0.34, 0, 0, 6.2832);
           ctx.ellipse(it.x + it.r * 0.55, y + it.r * 0.06, it.r * 0.55, it.r * 0.3, 0, 0, 6.2832);
           ctx.fill();
         } else {
+          if (uiStyle === 'neon') continue;
           ctx.globalAlpha = it.a;
           ctx.save();
           ctx.translate(it.x, y);
@@ -4224,7 +4460,29 @@ function hash01(i, k){
 }
 
 function drawWeather(){
-  if (lowGfx()) return;
+  if (lowGfx() || uiStyle === 'paper' || uiStyle === 'neon') return;
+  if (uiStyle === 'aero'){
+    const time = performance.now() / 1000;
+    const H = VH + 60;
+    ctx.lineWidth = 1.2;
+    for (let i = 0; i < 16; i++){
+      const r1 = hash01(i, 1), r2 = hash01(i, 2), r3 = hash01(i, 3);
+      const y = H - ((r1 * H + time * (20 + r2 * 26) - camY * 0.35) % H + H) % H - 30;
+      const x = r3 * VW + Math.sin(time * (0.7 + r2) + i) * 16;
+      const r = 4 + r1 * 10;
+      ctx.globalAlpha = 0.6;
+      ctx.strokeStyle = 'rgba(255,255,255,.9)';
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, 6.2832);
+      ctx.stroke();
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.arc(x - r * 0.35, y - r * 0.38, r * 0.24, 0, 6.2832);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    return;
+  }
   const kind = WEATHER[worldIndex() % WEATHER.length];
   const time = performance.now() / 1000;
   const n = ultraGfx() ? WEATHER_N + 10 : WEATHER_N;
@@ -4431,6 +4689,8 @@ function drawPlatform(p){
   if (p.broken) ctx.rotate(p.rot * clamp(p.fallV / 400, 0, 1));
   ctx.translate(-w / 2, -h / 2);
 
+  if (uiStyle !== 'classic') drawStyledPlatformBody(p, w, h);
+  else {
   if (ultraGfx()){
     const d = ultraDepthVector(p.x + w / 2, y + h / 2);
     const dx = d.dx, dy = d.dy;
@@ -4480,6 +4740,7 @@ function drawPlatform(p){
     ctx.moveTo(w * 0.46, 4);  ctx.lineTo(w * 0.76, 6);
     ctx.stroke();
   }
+  }
 
   if (p.spring){
     const c = clamp(p.springC, -0.3, 1);
@@ -4507,6 +4768,111 @@ function drawPlatform(p){
   ctx.restore();
 }
 
+
+function drawStyledPlatformBody(p, w, h){
+  const a0 = ctx.globalAlpha;
+  const tp = p.type;
+  if (uiStyle === 'aero'){
+    const pt = PLATFORM_THEMES[platformTheme];
+    const c = tp === 'moving' ? ['#c4f0ff', '#35b0f0', '#0d6cc0'] : tp === 'broken' ? ['#ffffff', '#d8f2ff', '#8fc9e8']
+      : (platformTheme !== 'auto' && pt ? [pt.c1, pt.c2, pt.c3] : ['#c8ff8a', '#4cc822', '#1f8a12']);
+    const r = h / 2;
+    ctx.globalAlpha = a0 * 0.22;
+    ctx.fillStyle = '#003a70';
+    rr(ctx, 2, 5, w - 2, h, r);
+    ctx.fill();
+    ctx.globalAlpha = a0;
+    const g = ctx.createLinearGradient(0, 0, 0, h);
+    g.addColorStop(0, c[0]);
+    g.addColorStop(0.55, c[1]);
+    g.addColorStop(1, c[2]);
+    ctx.fillStyle = g;
+    rr(ctx, 0, 0, w, h, r);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,.75)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    const hg = ctx.createLinearGradient(0, 1, 0, h * 0.5);
+    hg.addColorStop(0, 'rgba(255,255,255,.95)');
+    hg.addColorStop(1, 'rgba(255,255,255,.08)');
+    ctx.fillStyle = hg;
+    rr(ctx, w * 0.07, 1.5, w * 0.86, h * 0.44, h * 0.22);
+    ctx.fill();
+    ctx.globalAlpha = a0 * 0.7;
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.ellipse(w * 0.82, h * 0.72, 5, 2, 0, 0, 6.2832);
+    ctx.fill();
+    ctx.globalAlpha = a0;
+    if (tp === 'broken'){
+      ctx.strokeStyle = 'rgba(80,140,180,.7)';
+      ctx.lineWidth = 1.3;
+      ctx.beginPath();
+      ctx.moveTo(w * 0.34, 1); ctx.lineTo(w * 0.42, h * 0.5); ctx.lineTo(w * 0.38, h - 1);
+      ctx.moveTo(w * 0.64, 1); ctx.lineTo(w * 0.58, h - 1);
+      ctx.stroke();
+    }
+    return;
+  }
+  if (uiStyle === 'neon'){
+    const col = tp === 'moving' ? '#ff4fd8' : tp === 'broken' ? '#ffb020' : '#39f3ff';
+    const r = 6;
+    ctx.globalAlpha = a0 * 0.2;
+    ctx.fillStyle = col;
+    rr(ctx, 0, 0, w, h, r);
+    ctx.fill();
+    if (tp === 'broken') ctx.setLineDash([7, 5]);
+    ctx.strokeStyle = col;
+    ctx.globalAlpha = a0 * 0.22;
+    ctx.lineWidth = 8;
+    ctx.stroke();
+    ctx.globalAlpha = a0 * 0.45;
+    ctx.lineWidth = 4.5;
+    ctx.stroke();
+    ctx.globalAlpha = a0;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,255,255,.85)';
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+    ctx.setLineDash([]);
+    return;
+  }
+  const fill = tp === 'moving' ? '#a9dbff' : tp === 'broken' ? '#ecd2ad' : '#b8ec9a';
+  const ink = '#243b8c';
+  const j = ((p.x * 7.3 + p.w * 3.1) % 1 + 1) % 1;
+  ctx.fillStyle = fill;
+  rr(ctx, 1, 1 + j, w - 2, h - 1, 5);
+  ctx.fill();
+  ctx.save();
+  ctx.beginPath();
+  rr(ctx, 1, 1 + j, w - 2, h - 1, 5);
+  ctx.clip();
+  ctx.strokeStyle = 'rgba(36,59,140,.28)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  for (let x = -h; x < w; x += 7){ ctx.moveTo(x, h); ctx.lineTo(x + h, 0); }
+  ctx.stroke();
+  ctx.restore();
+  ctx.strokeStyle = ink;
+  ctx.lineWidth = 2;
+  ctx.lineJoin = 'round';
+  if (tp === 'broken') ctx.setLineDash([6, 4]);
+  rr(ctx, 0, j, w, h, 6);
+  ctx.stroke();
+  ctx.globalAlpha = a0 * 0.55;
+  ctx.lineWidth = 1;
+  rr(ctx, 1.5 - j, 1.2, w - 1, h - 0.5, 6);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.globalAlpha = a0;
+  if (tp === 'broken'){
+    ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    ctx.moveTo(w * 0.4, 1); ctx.lineTo(w * 0.47, h * 0.45); ctx.lineTo(w * 0.42, h * 0.7); ctx.lineTo(w * 0.5, h - 1);
+    ctx.stroke();
+  }
+}
 
 const coinGlowCvs = document.createElement('canvas');
 let coinGlowReady = false;
@@ -5674,8 +6040,8 @@ function drawHUD(){
 
   ctx.font = '34px ' + GAME_FONT;
   ctx.lineWidth = 6;
-  ctx.strokeStyle = 'rgba(21,10,43,.6)';
-  ctx.fillStyle = '#fdf6e8';
+  ctx.strokeStyle = uiStyle === 'paper' ? 'rgba(255,255,255,.9)' : uiStyle === 'aero' ? 'rgba(8,66,110,.75)' : 'rgba(21,10,43,.6)';
+  ctx.fillStyle = uiStyle === 'paper' ? '#243b8c' : '#fdf6e8';
   ctx.strokeText(String(score), 18, 18);
   ctx.fillText(String(score), 18, 18);
 
@@ -5685,6 +6051,9 @@ function drawHUD(){
   const bl = t('scoreWord') + ' ' + Math.max(best, score);
   ctx.strokeText(bl, 19, 58);
   ctx.fillText(bl, 19, 58);
+  const tg = '🏆 ' + t('trophyGoal') + ' ' + trophyTarget(trophies);
+  ctx.strokeText(tg, 19, 78);
+  ctx.fillText(tg, 19, 78);
   ctx.globalAlpha = 1;
 
   const s = 1 + coinPulse * 0.25;
@@ -6833,7 +7202,7 @@ Store.set('cloudCode', cloudCode);
 
 let accountGone = false;
 let ownDocChecked = false;
-const ACCOUNT_KEEP_KEYS = ['lang', 'gfxMode', 'vibro', 'platformTheme', 'musicVolume', 'music', 'notify', 'chatTheme', 'blur', 'bgTheme'];
+const ACCOUNT_KEEP_KEYS = ['lang', 'gfxMode', 'vibro', 'platformTheme', 'musicVolume', 'music', 'notify', 'chatTheme', 'blur', 'bgTheme', 'uiStyle'];
 
 function wipeDeletedAccount(){
   if (accountGone) return;
@@ -9123,6 +9492,7 @@ function closeLinkChoice(){
 }
 document.getElementById('discordBtn').addEventListener('click', () => openLinkChoice(DISCORD_URL, 'Discord'));
 document.getElementById('passBtn').addEventListener('click', openPass);
+applyUiStyle(uiStyle);
 document.getElementById('passClose').addEventListener('click', closePass);
 document.getElementById('passBuyBtn').addEventListener('click', buyGoldPass);
 document.getElementById('trophyPill').addEventListener('click', openTrophyInfo);
