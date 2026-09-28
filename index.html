@@ -1422,6 +1422,10 @@
               <span>Ник</span>
               <input id="adminNickInput" class="adminInput" type="text" maxlength="14">
             </label>
+            <label class="adminField">
+              <span>Запрет на фото в чате</span>
+              <input id="adminNoImages" type="checkbox">
+            </label>
             <div class="adminField">
               <span>Аватар</span>
               <button id="adminAvatarBtn" type="button" class="adminPwResetBtn">Поставить фото</button>
@@ -7821,6 +7825,12 @@ async function cloudFetchOwnTitle(){
     applyOwnBadgeFromFields(f);
     setKeepFromFields(f);
     myNoImages = !!(f.noImages && f.noImages.booleanValue);
+    if (myNoImages && ((f.role && f.role.stringValue === 'mod') || adminMode || (DEV_CODE && cloudCode === DEV_CODE))){
+      myNoImages = false;
+      fetch(cloudBase() + '/players/' + cloudCode + '?updateMask.fieldPaths=noImages&key=' + CLOUD.apiKey, {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fields: { noImages: { booleanValue: false } } })
+      }).catch(() => {});
+    }
     Store.set('noImages', myNoImages ? '1' : '0');
     myAvatarOk = !!(f.avatarOk && f.avatarOk.booleanValue);
     Store.set('avatarOk', myAvatarOk ? '1' : '0');
@@ -8697,6 +8707,7 @@ function toggleStickerPanel(force){
 const chatImgCache = {};
 const chatImgRevealed = {};
 let myNoImages = Store.get('noImages', '0') === '1';
+function photoBanned(){ return myNoImages && !(typeof isStaff === 'function' && isStaff()); }
 
 function loadChatImage(convId, ref){
   if (!ref || chatImgCache[ref]) return;
@@ -10113,7 +10124,7 @@ async function sendChatPayload(payload){
   const sticker = payload.sticker && STICKER_IDS.indexOf(payload.sticker) !== -1 ? payload.sticker : '';
   const imgData = payload.imgData || '';
   if (!text && !sticker && !imgData) return;
-  if (imgData && myNoImages){
+  if (imgData && photoBanned()){
     if (statusEl) statusEl.textContent = t('photoBanned');
     return;
   }
@@ -10210,7 +10221,7 @@ async function sendChatPayload(payload){
 document.getElementById('chatBlockBtn').addEventListener('click', toggleBlockChat);
 document.getElementById('chatStickerBtn').addEventListener('click', () => toggleStickerPanel());
 document.getElementById('chatPhotoBtn').addEventListener('click', () => {
-  if (myNoImages){ const st = document.getElementById('chatStatus'); if (st) st.textContent = t('photoBanned'); return; }
+  if (photoBanned()){ const st = document.getElementById('chatStatus'); if (st) st.textContent = t('photoBanned'); return; }
   document.getElementById('chatPhotoInput').click();
 });
 document.getElementById('chatPhotoInput').addEventListener('change', async (e) => {
@@ -10472,6 +10483,7 @@ async function adminLoad(codeOverride){
     document.getElementById('adminTrophiesInput').value = statText(f, 'trophies', adminCurrentNums.trophies);
     adminCurrentPass = f.pass && f.pass.stringValue ? f.pass.stringValue : '';
     document.getElementById('adminPassGold').checked = !!normalizePass(parsePassStr(adminCurrentPass)).gold;
+    document.getElementById('adminNoImages').checked = !!(f.noImages && f.noImages.booleanValue);
     document.getElementById('adminTitleInput').value = (f.title && f.title.stringValue) || '';
     document.getElementById('adminTitleColorInput').value = (f.titleColor && f.titleColor.stringValue) || '';
     const badgeNickEl = document.getElementById('adminBadgeNickPreview');
@@ -10671,6 +10683,7 @@ async function adminSave(){
     best:  statA.fields.best, bestText: statA.fields.bestText,
     trophies: statA.fields.trophies, trophiesText: statA.fields.trophiesText,
     pass: { stringValue: adminPassValue() },
+    noImages: { booleanValue: !!document.getElementById('adminNoImages').checked },
     owned: { arrayValue: { values: ownedList.map(v => ({ stringValue: v })) } },
     hat:   { stringValue: (adminCurrentEquipped && adminCurrentEquipped.hat)  || 'none' },
     acc:   { stringValue: (adminCurrentEquipped && adminCurrentEquipped.acc)  || 'none' },
@@ -10700,6 +10713,7 @@ async function adminSave(){
         best  = bestVal;  Store.set('best', best);
         trophies = statA.vals.trophies; Store.set('trophies', trophies);
         pass = normalizePass(parsePassStr(adminPassValue())); savePass();
+        myNoImages = !!document.getElementById('adminNoImages').checked; Store.set('noImages', myNoImages ? '1' : '0');
         nickname = nickMatch; Store.set('nick', nickname);
         myTitle = titleVal; Store.set('titleText', myTitle);
         myTitleColor = titleColorVal; Store.set('titleColor', myTitleColor);
@@ -10804,7 +10818,16 @@ async function adminResolveReport(repId, convId, imgRef, from, removePhoto, banP
         method: 'PATCH', headers: H, body: JSON.stringify({ fields: { data: { stringValue: '' }, removed: { booleanValue: true } } })
       });
     }
-    if (banPhotos && from){
+    let canBan = !!(banPhotos && from && from !== cloudCode && !(DEV_CODE && from === DEV_CODE));
+    if (canBan){
+      try {
+        const tr = await fetch(cloudBase() + '/players/' + from + '?key=' + CLOUD.apiKey);
+        const td = tr.ok ? await tr.json() : null;
+        const tf = (td && td.fields) || {};
+        if (tf.role && tf.role.stringValue === 'mod') canBan = false;
+      } catch (e) {}
+    }
+    if (canBan){
       await fetch(cloudBase() + '/players/' + from + '?updateMask.fieldPaths=noImages&key=' + CLOUD.apiKey, {
         method: 'PATCH', headers: H, body: JSON.stringify({ fields: { noImages: { booleanValue: true } } })
       });
