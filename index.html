@@ -265,7 +265,7 @@
   .setCat.open .setCatArrow{transform:rotate(90deg);}
   .setCatBody{display:none;flex-direction:column;gap:16px;padding:4px 14px 16px;}
   .setCat.open .setCatBody{display:flex;}
-  .settingsSaveBtn{width:100%;margin-top:4px;}
+  .settingsSaveBtn{width:100%;margin:0 0 4px;position:sticky;top:48px;z-index:6;}
   .settingsSaveStatus{margin:0;font-size:13px;color:var(--gold);text-align:center;}
   .settingsSaveStatus:empty{display:none;}
   .settingRow{display:flex;flex-direction:column;gap:8px;align-items:flex-start;width:100%;}
@@ -463,8 +463,16 @@
   .menuIconBtn .dot.hidden{display:none;}
   #dailyBtn.can{animation:giftWiggle 1.6s ease-in-out infinite;}
   @keyframes giftWiggle{0%,70%,100%{transform:rotate(0);}76%{transform:rotate(-12deg);}84%{transform:rotate(10deg);}92%{transform:rotate(-6deg);}}
-  .menuTopBar{left:52px;right:156px;gap:6px;}
-  .topPill{height:34px;font-size:15px;padding:0 10px 0 7px;}
+  .menuTopBar{left:10px;right:146px;gap:6px;min-width:0;}
+  .topPill{height:34px;font-size:15px;padding:0 10px 0 7px;min-width:0;flex:0 1 auto;overflow:hidden;}
+  .topPill b,.topPill .coinNum{overflow:hidden;text-overflow:ellipsis;}
+  #secretZone{top:auto !important;bottom:0 !important;}
+  .menuIconBtn,#menu .inboxBtn{width:38px;height:38px;top:10px;font-size:18px;}
+  #menuGearBtn{right:10px;}
+  #menu .inboxBtn{right:54px;}
+  #menu .inboxBtn svg{width:20px;height:20px;}
+  #dailyBtn{right:98px;}
+  @media (max-width:360px){ .topPill{font-size:14px;padding:0 8px 0 6px;gap:4px;} .menuTopBar{gap:4px;} }
   .coinPill .coinNum{font-size:15px;}
   .trophyPill .tpIcon{font-size:16px;}
   #menuHint.hidden{display:none;}
@@ -1328,7 +1336,7 @@
       <div class="menuBtnWrap"><button id="wardrobeBtn" class="btn" data-i18n="wardrobe">Гардероб</button></div>
       <div class="menuBtnWrap"><button id="settingsBtn" class="btn ghost" data-i18n="settings">Настройки</button></div>
     </div>
-    <p id="menuHint" class="hint rise d4" data-i18n="hint">Клавиши ← → или A / D, на телефоне — кнопки внизу. Тап по экрану: выстрел из лука или двойной прыжок. Встретил монстра — жми, пока идёт отсчёт!</p>
+    <p id="menuHint" class="hint rise d4 hidden" data-i18n="hint">Клавиши ← → или A / D, на телефоне — кнопки внизу. Тап по экрану: выстрел из лука или двойной прыжок. Встретил монстра — жми, пока идёт отсчёт!</p>
     <div class="socialRow rise d4">
       <button id="discordBtn" class="btn ghost">Discord</button>
       <button id="telegramBtn" class="btn ghost">Telegram</button>
@@ -1369,6 +1377,8 @@
     <div class="spacer"></div>
     <h1 id="settingsTitle" class="title pop" data-i18n="settings" style="font-size:clamp(24px,7vw,40px);">Настройки</h1>
     <div id="settingsBox" class="rise d1">
+      <button id="settingsSaveBtn" class="adminSaveBtn settingsSaveBtn" type="button" data-i18n="settingsSave">✓ Сохранить</button>
+      <p id="settingsSaveStatus" class="settingsSaveStatus"></p>
       <div id="adminGate" class="adminGate hidden">
         <input id="adminPinInput" class="adminInput adminPinInput" type="password" placeholder="PIN" inputmode="numeric">
         <button id="adminPinBtn" class="btn small">Войти</button>
@@ -1631,8 +1641,6 @@
           </div>
         </div>
       </div>
-      <button id="settingsSaveBtn" class="adminSaveBtn settingsSaveBtn" type="button" data-i18n="settingsSave">✓ Сохранить</button>
-      <p id="settingsSaveStatus" class="settingsSaveStatus"></p>
     </div>
     <div class="spacer"></div>
   </div>
@@ -1666,6 +1674,14 @@
       <div id="passQuests" class="passQuests"></div>
       <div class="passColsHead"><span data-i18n="passFree">Бесплатно</span><span></span><span data-i18n="passGold">Золотой</span></div>
       <div id="passTrack" class="passTrack"></div>
+    </div>
+  </div>
+
+  <div id="howToModal" class="profileOverlay hidden">
+    <div class="profileCard dailyCard">
+      <div class="dailyTitle" data-i18n="howToLabel">Как играть</div>
+      <p class="howToText" data-i18n="hint"></p>
+      <button id="howToOk" class="btn dailyClaim" type="button" data-i18n="howToOk">Понятно!</button>
     </div>
   </div>
 
@@ -2099,7 +2115,7 @@ function refreshPassCard(){
   const n = passClaimableCount();
   if (dot){ dot.textContent = n > 9 ? '9+' : String(n); dot.classList.toggle('hidden', n === 0); }
   const tr = document.getElementById('menuTrophies');
-  if (tr) tr.textContent = trophies;
+  if (tr) tr.textContent = typeof compactNum === 'function' ? compactNum(trophies) : trophies;
 }
 
 function renderPass(){
@@ -2261,11 +2277,15 @@ function maybeAutoDaily(){
   if (dailyAutoShown || state !== STATE.MENU || !nickname) return;
   if (!dailyState().can) return;
   dailyAutoShown = true;
-  setTimeout(() => { if (state === STATE.MENU) openDaily(); }, 700);
+  setTimeout(() => {
+    const how = document.getElementById('howToModal');
+    if (state === STATE.MENU && (!how || how.classList.contains('hidden'))) openDaily();
+    else dailyAutoShown = false;
+  }, 700);
 }
 function refreshMenuHint(){
   const h = document.getElementById('menuHint');
-  if (h) h.classList.toggle('hidden', Store.get('playedOnce', '') === '1');
+  if (h) h.classList.add('hidden');
 }
 
 let nickname = Store.get('nick', '');
@@ -2714,7 +2734,7 @@ const I18N = {
     chatOnlineNow: 'в сети', chatYou: 'Вы: ', newMsgToast: 'Новое сообщение от ',
     msgSticker: '[Стикер]', msgPhoto: '[Фото]', photoTap: 'Фото скрыто — нажми, чтобы посмотреть', photoLoading: 'Загрузка фото…',
     photoRemoved: 'Фото удалено модератором', photoReport: 'Пожаловаться', photoReported: 'Жалоба отправлена ✓', photoBanned: 'Тебе запрещено отправлять фото',
-    photoTooBig: 'Не получилось сжать фото, попробуй другое', photoSending: 'Отправка фото…', replyYou: 'Ты', replyAction: 'Ответить', replyGone: 'Сообщение не найдено', msgCopy: 'Копировать', msgCopied: 'Скопировано', msgPin: 'Закрепить', msgUnpin: 'Открепить', msgEdit: 'Изменить', msgEditing: 'Редактирование', msgEditedMark: 'изм.', msgDelete: 'Удалить', msgDeleteSure: 'Точно удалить?', msgDeleted: 'Сообщение удалено', pinnedTitle: 'Закреплённое сообщение', typingNow: 'печатает…', chatThemeTitle: 'Тема чата', th_classic: 'Кэббит', th_tg: 'Телега', th_mint: 'Мята', th_sunset: 'Закат', th_ocean: 'Океан', th_light: 'Светлая',
+    photoTooBig: 'Не получилось сжать фото, попробуй другое', photoSending: 'Отправка фото…', replyYou: 'Ты', replyAction: 'Ответить', replyGone: 'Сообщение не найдено', msgCopy: 'Копировать', msgCopied: 'Скопировано', msgPin: 'Закрепить', msgUnpin: 'Открепить', msgEdit: 'Изменить', msgEditing: 'Редактирование', msgEditedMark: 'изм.', msgDelete: 'Удалить', msgDeleteSure: 'Точно удалить?', msgDeleted: 'Сообщение удалено', pinnedTitle: 'Закреплённое сообщение', typingNow: 'печатает…', chatThemeTitle: 'Тема чата', th_classic: 'Классика', th_tg: 'Телега', th_mint: 'Мята', th_sunset: 'Закат', th_ocean: 'Океан', th_light: 'Светлая',
     onlineNow: 'онлайн', onlineTotal: 'всего', onlineErr: 'нет связи',
     eventProgress: 'Игроков: {n} / {g} — на {g} будет праздник!', eventLiveTitle: '★ Нас уже 100! ★', eventLiveText: 'Праздник: монеты ×2', eventDaysLeft: 'ещё {n} дн.',
     eventGift: 'Нас 100! Подарок на 7 дней: праздничный колпак и корона + 500 монет',
@@ -2739,7 +2759,7 @@ const I18N = {
     rotateMsg: 'Переверни телефон вертикально',
     leaderboard: 'Таблица лидеров', empty: '—', wardrobe: 'Гардероб',
     overTitleNormal: 'Котокролик приземлился', overTitleRecord: 'Новый рекорд',
-    overCoins: 'собрано монет', overRecordLabel: 'Рекорд', overNewBest: 'новый личный рекорд', overRank: 'место в рейтинге', overTop1: 'ты первый по кубкам!', passFree: 'Бесплатно', passGold: 'Золотой', howToLabel: 'Как играть', dailyTitle: 'Ежедневная награда', dailySub: 'Заходи каждый день — награды растут. Пропустишь день — начнёшь сначала.', dailyDay: 'День {d}', dailyClaim: 'Забрать', dailyTomorrow: 'Приходи завтра!', dailyGot: 'Награда получена: {r}', slotTrail: 'Следы', styleLabel: 'Стиль игры', st_classic: 'Кэббит', st_aero: 'Frutiger Aero', st_neon: 'Неон', st_paper: 'Тетрадка', trophyGoal: 'цель', passSeasonTxt: 'Сезон {s} · осталось {d} дн.', passXpTxt: '{x} / {n} жетонов до уровня {l}', passMaxTxt: 'Максимальный уровень!', passBuy: 'Золотой пасс · {p}', passOwned: 'Золотой пасс активен ✓', passNoCoins: 'Не хватает монет: нужно {p}', passBought: 'Золотой пасс открыт!', passClaim: 'Забрать', passRunXp: 'Cabbit Pass: +{x} жетонов', passLvlUp: 'Новый уровень пасса: {l}!', passQuestsTitle: 'Задания на сегодня', questDone: 'Задание выполнено! +{x} жетонов', qRuns3: 'Сыграй 3 забега', qRuns5: 'Сыграй 5 забегов', qScore: 'Набери {n} очков за забег', qCoins: 'Собери {n} монет', passTitleReward: 'Титул «Cabbit Pass»', coinsWord: 'монет', trophiesTitle: 'Кубки', trophyInfoTxt: 'За каждый забег кубки прибавляются или отнимаются. Цель забега сейчас — <b>{t}</b> очков: прыгнешь выше — получишь кубки, ниже — потеряешь. Чем больше кубков, тем выше цель. До 100 кубков минуса нет.', trophyRowX2: '×2 цели и больше', trophyRowX15: '×1.5 цели', trophyRowX12: '×1.2 цели', trophyRowX1: 'цель', trophyRowX08: '80% цели', trophyRowX06: '60% цели', trophyRowX04: '40% цели', trophyRowX02: '20% цели', trophyRowX0: 'меньше',
+    overCoins: 'собрано монет', overRecordLabel: 'Рекорд', overNewBest: 'новый личный рекорд', overRank: 'место в рейтинге', overTop1: 'ты первый по кубкам!', passFree: 'Бесплатно', passGold: 'Золотой', howToLabel: 'Как играть', howToOk: 'Понятно!', dailyTitle: 'Ежедневная награда', dailySub: 'Заходи каждый день — награды растут. Пропустишь день — начнёшь сначала.', dailyDay: 'День {d}', dailyClaim: 'Забрать', dailyTomorrow: 'Приходи завтра!', dailyGot: 'Награда получена: {r}', slotTrail: 'Следы', styleLabel: 'Стиль игры', st_classic: 'Классика', st_aero: 'Frutiger Aero', st_neon: 'Неон', st_paper: 'Тетрадка', trophyGoal: 'цель', passSeasonTxt: 'Сезон {s} · осталось {d} дн.', passXpTxt: '{x} / {n} жетонов до уровня {l}', passMaxTxt: 'Максимальный уровень!', passBuy: 'Золотой пасс · {p}', passOwned: 'Золотой пасс активен ✓', passNoCoins: 'Не хватает монет: нужно {p}', passBought: 'Золотой пасс открыт!', passClaim: 'Забрать', passRunXp: 'Cabbit Pass: +{x} жетонов', passLvlUp: 'Новый уровень пасса: {l}!', passQuestsTitle: 'Задания на сегодня', questDone: 'Задание выполнено! +{x} жетонов', qRuns3: 'Сыграй 3 забега', qRuns5: 'Сыграй 5 забегов', qScore: 'Набери {n} очков за забег', qCoins: 'Собери {n} монет', passTitleReward: 'Титул «Cabbit Pass»', coinsWord: 'монет', trophiesTitle: 'Кубки', trophyInfoTxt: 'За каждый забег кубки прибавляются или отнимаются. Цель забега сейчас — <b>{t}</b> очков: прыгнешь выше — получишь кубки, ниже — потеряешь. Чем больше кубков, тем выше цель. До 100 кубков минуса нет.', trophyRowX2: '×2 цели и больше', trophyRowX15: '×1.5 цели', trophyRowX12: '×1.2 цели', trophyRowX1: 'цель', trophyRowX08: '80% цели', trophyRowX06: '60% цели', trophyRowX04: '40% цели', trophyRowX02: '20% цели', trophyRowX0: 'меньше',
     retry: 'Повторить', toMenu: 'В меню', scoreWord: 'рекорд',
     cloudTitle: 'Онлайн-профиль', cloudCopy: 'Копировать', cloudRestore: 'Восстановить',
     cloudEnterCode: 'КОД', cloudTop: 'Рейтинг игроков', searchLabel: 'Найти игрока', searchPlaceholder: 'Ник или код', searchBtn: 'Найти', searchNone: 'Никого не нашли', cloudRefresh: 'Обновить рейтинг',
@@ -2769,7 +2789,7 @@ const I18N = {
       'trail:none':       { n: 'Без следа',          d: '' },
       'trail:sparkle':    { n: 'Искорки',            d: 'Блёстки за спиной.' },
       'trail:bubbles':    { n: 'Пузыри',             d: 'Мыльные пузыри.' },
-      'trail:hearts':     { n: 'Сердечки',           d: 'Для влюблённых кэббитов.' },
+      'trail:hearts':     { n: 'Сердечки',           d: 'Для влюблённых котокроликов.' },
       'trail:notes':      { n: 'Ноты',               d: 'Музыкальный прыжок.' },
       'trail:fire':       { n: 'Огонь',              d: 'Горячий старт.' },
       'trail:rainbow':    { n: 'Радуга',             d: 'Радужный хвост.' },
@@ -2857,7 +2877,7 @@ const I18N = {
     rotateMsg: 'Please rotate your phone back to portrait',
     leaderboard: 'Leaderboard', empty: '—', wardrobe: 'Wardrobe',
     overTitleNormal: 'The cabbit has landed', overTitleRecord: 'New record',
-    overCoins: 'coins collected', overRecordLabel: 'Best', overNewBest: 'new personal best', overRank: 'leaderboard place', overTop1: 'you are #1 in trophies!', passFree: 'Free', passGold: 'Gold', howToLabel: 'How to play', dailyTitle: 'Daily reward', dailySub: 'Come back every day — rewards grow. Miss a day and you start over.', dailyDay: 'Day {d}', dailyClaim: 'Claim', dailyTomorrow: 'Come back tomorrow!', dailyGot: 'Reward received: {r}', slotTrail: 'Trails', styleLabel: 'Game style', st_classic: 'Cabbit', st_aero: 'Frutiger Aero', st_neon: 'Neon', st_paper: 'Notebook', trophyGoal: 'target', passSeasonTxt: 'Season {s} · {d} days left', passXpTxt: '{x} / {n} tokens to level {l}', passMaxTxt: 'Max level!', passBuy: 'Gold pass · {p}', passOwned: 'Gold pass active ✓', passNoCoins: 'Not enough coins: need {p}', passBought: 'Gold pass unlocked!', passClaim: 'Claim', passRunXp: 'Cabbit Pass: +{x} tokens', passLvlUp: 'Pass level up: {l}!', passQuestsTitle: 'Today\'s quests', questDone: 'Quest done! +{x} tokens', qRuns3: 'Play 3 runs', qRuns5: 'Play 5 runs', qScore: 'Score {n} in one run', qCoins: 'Collect {n} coins', passTitleReward: '“Cabbit Pass” title', coinsWord: 'coins', trophiesTitle: 'Trophies', trophyInfoTxt: 'Every run adds or removes trophies. Your run target is now <b>{t}</b> points: beat it to win trophies, fall short to lose some. More trophies means a higher target. Below 100 trophies you never lose any.', trophyRowX2: '×2 target or more', trophyRowX15: '×1.5 target', trophyRowX12: '×1.2 target', trophyRowX1: 'target', trophyRowX08: '80% of target', trophyRowX06: '60% of target', trophyRowX04: '40% of target', trophyRowX02: '20% of target', trophyRowX0: 'less',
+    overCoins: 'coins collected', overRecordLabel: 'Best', overNewBest: 'new personal best', overRank: 'leaderboard place', overTop1: 'you are #1 in trophies!', passFree: 'Free', passGold: 'Gold', howToLabel: 'How to play', howToOk: 'Got it!', dailyTitle: 'Daily reward', dailySub: 'Come back every day — rewards grow. Miss a day and you start over.', dailyDay: 'Day {d}', dailyClaim: 'Claim', dailyTomorrow: 'Come back tomorrow!', dailyGot: 'Reward received: {r}', slotTrail: 'Trails', styleLabel: 'Game style', st_classic: 'Cabbit', st_aero: 'Frutiger Aero', st_neon: 'Neon', st_paper: 'Notebook', trophyGoal: 'target', passSeasonTxt: 'Season {s} · {d} days left', passXpTxt: '{x} / {n} tokens to level {l}', passMaxTxt: 'Max level!', passBuy: 'Gold pass · {p}', passOwned: 'Gold pass active ✓', passNoCoins: 'Not enough coins: need {p}', passBought: 'Gold pass unlocked!', passClaim: 'Claim', passRunXp: 'Cabbit Pass: +{x} tokens', passLvlUp: 'Pass level up: {l}!', passQuestsTitle: 'Today\'s quests', questDone: 'Quest done! +{x} tokens', qRuns3: 'Play 3 runs', qRuns5: 'Play 5 runs', qScore: 'Score {n} in one run', qCoins: 'Collect {n} coins', passTitleReward: '“Cabbit Pass” title', coinsWord: 'coins', trophiesTitle: 'Trophies', trophyInfoTxt: 'Every run adds or removes trophies. Your run target is now <b>{t}</b> points: beat it to win trophies, fall short to lose some. More trophies means a higher target. Below 100 trophies you never lose any.', trophyRowX2: '×2 target or more', trophyRowX15: '×1.5 target', trophyRowX12: '×1.2 target', trophyRowX1: 'target', trophyRowX08: '80% of target', trophyRowX06: '60% of target', trophyRowX04: '40% of target', trophyRowX02: '20% of target', trophyRowX0: 'less',
     retry: 'Retry', toMenu: 'Menu', scoreWord: 'best',
     cloudTitle: 'Online profile', cloudCopy: 'Copy', cloudRestore: 'Restore',
     cloudEnterCode: 'CODE', cloudTop: 'Leaderboard', searchLabel: 'Find a player', searchPlaceholder: 'Nickname or code', searchBtn: 'Find', searchNone: 'Nobody found', cloudRefresh: 'Refresh ranking',
@@ -6941,13 +6961,29 @@ function openNicknameScreen(fromSettings){
 
 function confirmNick(){
   let nick = cleanText(nickInput.value.trim());
-  if (!nick) nick = 'Кэббит' + Math.floor(Math.random() * 900 + 100);
+  if (!nick) nick = 'Котокролик' + Math.floor(Math.random() * 900 + 100);
   if (nick.length > 14) nick = nick.slice(0, 14);
+  const firstTime = !Store.get('nick', '') && Store.get('playedOnce', '') !== '1';
   nickname = nick;
   Store.set('nick', nickname);
   cloudPushSoon();
   if (nickReturnToSettings) openSettings();
-  else goToMenu();
+  else {
+    goToMenu();
+    if (firstTime) openHowTo();
+  }
+}
+
+function openHowTo(){
+  dailyAutoShown = true;
+  document.getElementById('howToModal').classList.remove('hidden');
+  sfxPopupOpen();
+}
+function closeHowTo(){
+  document.getElementById('howToModal').classList.add('hidden');
+  sfxPopupClose();
+  dailyAutoShown = false;
+  maybeAutoDaily();
 }
 
 document.getElementById('changeNickBtn').addEventListener('click', () => openNicknameScreen(true));
@@ -7210,9 +7246,15 @@ function buyItem(slot, val, field){
 }
 
 
+function compactNum(n){
+  n = Math.floor(n) || 0;
+  if (n >= 1000000) return (Math.floor(n / 100000) / 10) + 'M';
+  if (n >= 100000 || (n >= 10000 && (window.innerWidth || 400) < 370)) return (n >= 100000 ? Math.floor(n / 1000) : Math.floor(n / 100) / 10) + 'K';
+  return String(n);
+}
 function refreshShopState(){
   menuBest.textContent  = best;
-  menuCoins.textContent = coins;
+  menuCoins.textContent = compactNum(coins);
   if (typeof refreshPassCard === 'function') refreshPassCard();
 
   shopEl.querySelectorAll('.chip').forEach(chip => {
@@ -10016,6 +10058,7 @@ document.getElementById('discordBtn').addEventListener('click', () => openLinkCh
 document.getElementById('passBtn').addEventListener('click', openPass);
 document.getElementById('tiktokBtn').addEventListener('click', () => openLinkChoice(TIKTOK_URL, 'TikTok'));
 document.getElementById('dailyBtn').addEventListener('click', openDaily);
+document.getElementById('howToOk').addEventListener('click', closeHowTo);
 document.getElementById('dailyClose').addEventListener('click', closeDaily);
 document.getElementById('dailyClaimBtn').addEventListener('click', claimDaily);
 document.getElementById('dailyModal').addEventListener('click', (e) => { if (e.target && e.target.id === 'dailyModal') closeDaily(); });
@@ -10228,7 +10271,7 @@ function setCatOpen(cat, open){
 }
 
 function collapseSettings(){
-  document.querySelectorAll('.setCat').forEach((c) => setCatOpen(c, false));
+  document.querySelectorAll('.setCat').forEach((c) => setCatOpen(c, !!(c.dataset && c.dataset.cat === 'online')));
 }
 
 document.querySelectorAll('.setCatHead').forEach((head) => {
