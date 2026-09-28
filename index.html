@@ -383,6 +383,7 @@
   }
   .chatToolBtn svg{width:21px;height:21px;}
   .chatToolBtn.active{background:rgba(255,211,77,.3);}
+  .chatToolBtn:disabled,#chatInput:disabled{opacity:.4;cursor:default;}
   .stickerPanel{
     display:grid;grid-template-columns:repeat(5,1fr);gap:4px;width:100%;max-height:170px;overflow-y:auto;
     padding:6px;border-radius:14px;background:rgba(10,6,20,.55);box-sizing:border-box;
@@ -556,6 +557,22 @@
   .inboxPreview{font-size:13px;opacity:.7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .inboxRow.unread .inboxPreview{opacity:1;font-weight:700;}
   .inboxDot{width:10px;height:10px;border-radius:50%;background:#ff4d6d;flex:0 0 auto;}
+  .inboxSection{font-size:12px;font-weight:800;opacity:.7;padding:8px 6px 2px;text-transform:uppercase;letter-spacing:.04em;}
+  .inboxReqRow{display:flex;align-items:center;gap:12px;width:100%;box-sizing:border-box;padding:10px 12px;border-radius:16px;background:rgba(255,211,77,.1);box-shadow:inset 0 0 0 1px rgba(255,211,77,.3);}
+  .inboxReqRow .avFrame{--av:44px;}
+  .inboxReqBtns{display:flex;gap:6px;flex:0 0 auto;}
+  .inboxReqBtns button{width:38px;height:38px;border:none;border-radius:50%;cursor:pointer;font-size:17px;font-weight:800;color:#fff;}
+  .inboxReqYes{background:#3fbf6a;}
+  .inboxReqNo{background:rgba(255,90,90,.75);}
+  .chatGate{margin:auto;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;padding:20px 16px;font-size:14px;line-height:1.4;max-width:300px;}
+  .chatGate .chatGateIcon{font-size:40px;}
+  .chatGate button{padding:10px 18px;font-size:14px;}
+  .profileFriendRow{display:flex;gap:8px;width:100%;}
+  .profileFriendRow .profileMessageBtn{flex:1;}
+  .profileUnfriendBtn{flex:0 0 auto;margin-top:10px;border:none;border-radius:12px;padding:0 12px;cursor:pointer;font-family:inherit;font-size:12px;color:#ffb3b3;background:rgba(255,90,90,.14);}
+  .profileUnfriendBtn.hidden{display:none;}
+  .chatMoreMenu .chatUnfriendBtn{display:block;width:100%;margin-top:8px;padding:9px 10px;font-size:13px;border:none;border-radius:12px;cursor:pointer;font-family:inherit;color:#ffb3b3;background:rgba(255,90,90,.14);}
+  .chatMoreMenu .chatUnfriendBtn.hidden{display:none;}
   .inboxEmpty{font-size:13px;opacity:.65;text-align:center;padding:30px 16px;line-height:1.45;margin:auto 0;}
 
   .adminChoiceCard{
@@ -1387,7 +1404,10 @@
         <span id="profileBest"></span>
         <span id="profileCoins"></span>
       </div>
-      <button id="profileMessageBtn" class="btn ghost profileMessageBtn hidden" data-i18n="chatWriteBtn">Написать</button>
+      <div class="profileFriendRow">
+        <button id="profileMessageBtn" class="btn ghost profileMessageBtn hidden">Написать</button>
+        <button id="profileUnfriendBtn" class="profileUnfriendBtn hidden" type="button" aria-label="Удалить из друзей">✕ 👤</button>
+      </div>
       <div class="profileComments">
         <div class="profileCommentsLabel" data-i18n="profileCommentsLabel">Комментарии</div>
         <div id="profileCommentsList" class="profileCommentsList"></div>
@@ -1424,6 +1444,7 @@
       <div id="chatMoreMenu" class="chatMoreMenu hidden">
         <div class="chatMoreTitle" data-i18n="chatThemeTitle">Тема чата</div>
         <div id="chatThemeList" class="chatThemeList"></div>
+        <button id="chatUnfriendBtn" class="chatUnfriendBtn hidden" type="button"></button>
         <button id="chatBlockBtn" class="chatBlockBtn" type="button"></button>
       </div>
       <div class="chatHeader">
@@ -1989,7 +2010,7 @@ const I18N = {
     chatWriteBtn: 'Написать', chatPlaceholder: 'Написать сообщение...', chatSend: 'Отправить',
     chatEmpty: 'Пока нет сообщений', chatSending: 'Отправка...', chatError: 'Не удалось отправить',
     chatTooLong: 'Слишком длинно (макс 200)', chatNeedNick: 'Придумайте ник в настройках',
-    inboxTitle: 'Сообщения', inboxEmpty: 'Пока никто не писал. Открой профиль игрока в рейтинге и нажми «Написать».',
+    inboxTitle: 'Сообщения', inboxEmpty: 'Пока нет друзей. Найди игрока в рейтинге или через поиск, открой профиль и нажми «Добавить в друзья».', addFriend: 'Добавить в друзья', reqSent: 'Заявка отправлена · отменить', acceptFriend: 'Принять заявку', removeFriend: 'Удалить из друзей', friendReqs: 'Заявки в друзья', dialogsTitle: 'Диалоги', friendReqToast: 'Заявка в друзья от ', friendReqNotify: 'хочет добавить тебя в друзья', friendsNow: 'Вы теперь друзья — напиши первым!', friendAdded: 'Теперь вы друзья!', chatNotFriends: 'Переписываться можно только с друзьями', chatReqIncoming: '{nick} хочет добавить тебя в друзья', chatReqOutgoing: 'Заявка отправлена. Ждём, пока {nick} примет', friendReqLimit: 'Слишком много заявок, подожди немного',
     chatOnlineNow: 'в сети', chatYou: 'Вы: ', newMsgToast: 'Новое сообщение от ',
     msgSticker: '[Стикер]', msgPhoto: '[Фото]', photoTap: 'Фото скрыто — нажми, чтобы посмотреть', photoLoading: 'Загрузка фото…',
     photoRemoved: 'Фото удалено модератором', photoReport: 'Пожаловаться', photoReported: 'Жалоба отправлена ✓', photoBanned: 'Тебе запрещено отправлять фото',
@@ -2093,7 +2114,7 @@ const I18N = {
     chatWriteBtn: 'Message', chatPlaceholder: 'Write a message...', chatSend: 'Send',
     chatEmpty: 'No messages yet', chatSending: 'Sending...', chatError: 'Failed to send',
     chatTooLong: 'Too long (max 200)', chatNeedNick: 'Set a nickname in settings',
-    inboxTitle: 'Messages', inboxEmpty: 'Nobody has written yet. Open a player\'s profile in the leaderboard and tap “Message”.',
+    inboxTitle: 'Messages', inboxEmpty: 'No friends yet. Find a player in the leaderboard or search, open their profile and tap “Add friend”.', addFriend: 'Add friend', reqSent: 'Request sent · cancel', acceptFriend: 'Accept request', removeFriend: 'Remove friend', friendReqs: 'Friend requests', dialogsTitle: 'Chats', friendReqToast: 'Friend request from ', friendReqNotify: 'wants to be your friend', friendsNow: 'You are friends now — say hi!', friendAdded: 'You are friends now!', chatNotFriends: 'You can only chat with friends', chatReqIncoming: '{nick} wants to be your friend', chatReqOutgoing: 'Request sent. Waiting for {nick} to accept', friendReqLimit: 'Too many requests, wait a bit',
     chatOnlineNow: 'online', chatYou: 'You: ', newMsgToast: 'New message from ',
     msgSticker: '[Sticker]', msgPhoto: '[Photo]', photoTap: 'Photo hidden — tap to view', photoLoading: 'Loading photo…',
     photoRemoved: 'Photo removed by a moderator', photoReport: 'Report', photoReported: 'Report sent ✓', photoBanned: 'You are not allowed to send photos',
@@ -7023,8 +7044,8 @@ function openProfile(code){
   document.getElementById('profileCoins').textContent = coinsVal + ' ' + t('profileCoinsLabel');
 
   renderProfileHero(document.getElementById('profileCanvas'), f);
-  const msgBtn = document.getElementById('profileMessageBtn');
-  if (msgBtn) msgBtn.classList.toggle('hidden', code === cloudCode);
+  refreshProfileFriendBtn();
+  loadConvStatusFor(code);
   document.getElementById('profileModal').classList.remove('hidden');
   sfxPopupOpen();
   fetchProfileComments(code);
@@ -7041,8 +7062,22 @@ function closeProfile(){
   if (statusEl) statusEl.textContent = '';
 }
 const profileMessageBtnEl = document.getElementById('profileMessageBtn');
-if (profileMessageBtnEl) profileMessageBtnEl.addEventListener('click', () => {
-  if (profileOpenCode) openChat(profileOpenCode, profileOpenNick);
+if (profileMessageBtnEl) profileMessageBtnEl.addEventListener('click', profileFriendAction);
+document.getElementById('profileUnfriendBtn').addEventListener('click', () => {
+  const b = document.getElementById('profileUnfriendBtn');
+  if (!profileOpenCode) return;
+  if (b.dataset.arm !== '1'){ b.dataset.arm = '1'; b.textContent = t('removeFriend') + '?'; setTimeout(() => { b.dataset.arm = ''; b.textContent = '✕ 👤'; }, 3000); return; }
+  b.dataset.arm = ''; b.textContent = '✕ 👤';
+  setFriendFlag(profileOpenCode, profileOpenNick, 'remove');
+});
+document.getElementById('chatUnfriendBtn').addEventListener('click', (e) => {
+  e.stopPropagation();
+  const b = document.getElementById('chatUnfriendBtn');
+  if (!chatWithCode) return;
+  if (b.dataset.arm !== '1'){ b.dataset.arm = '1'; b.textContent = t('removeFriend') + '?'; setTimeout(() => { b.dataset.arm = ''; refreshChatFriendMenu(); }, 3000); return; }
+  b.dataset.arm = '';
+  toggleChatMore(false);
+  setFriendFlag(chatWithCode, chatWithNickName, 'remove');
 });
 document.getElementById('profileClose').addEventListener('click', closeProfile);
 document.getElementById('profileModal').addEventListener('click', (e) => {
@@ -7607,10 +7642,21 @@ async function fetchConvState(){
   const convId = chatConvId(cloudCode, who);
   try {
     const res = await fetch(cloudBase() + '/conversations/' + convId + '?key=' + CLOUD.apiKey);
+    if (res.status === 404 && chatWithCode === who){
+      if (friendStatusOf(who) === 'unknown'){ chatConvStatus[who] = 'none'; refreshFriendUI(who); }
+      return;
+    }
     if (!res.ok || chatWithCode !== who) return;
     const d = await res.json();
     if (chatWithCode !== who) return;
     const f = (d && d.fields) || {};
+    const fst = convStatusFromFields(f, who).status;
+    if (fst !== friendStatusOf(who)){
+      const wasFriend = friendStatusOf(who) === 'friend';
+      setLocalFriendStatus(who, fst);
+      refreshFriendUI(who);
+      if (fst === 'friend' && !wasFriend) fetchChatMessages();
+    }
     const s = (k) => (f[k] && f[k].stringValue) || '';
     const np = { id: s('pinId'), text: s('pinText'), from: s('pinFrom') };
     if (np.id !== chatPin.id || np.text !== chatPin.text){ chatPin = np; renderPinBar(); }
@@ -7808,6 +7854,15 @@ function renderChatMessages(list, forceBottom){
     chatLastSig = 'blocked';
     return;
   }
+  if (chatWithCode){
+    const fst = friendStatusOf(chatWithCode);
+    setChatInputsEnabled(fst === 'friend');
+    if (fst !== 'friend'){
+      if (list) chatMessages = [];
+      if (chatLastSig !== 'gate:' + fst || forceBottom) renderFriendGate(fst);
+      return;
+    }
+  }
   const box = document.getElementById('chatMessagesList');
   if (!box) return;
   chatMessages = list || [];
@@ -7923,6 +7978,7 @@ async function fetchChatMessages(){
   const requestedWith = chatWithCode;
   if (!cloudReady()){ renderChatMessages([]); return; }
   const id = chatConvId(cloudCode, requestedWith);
+  if (friendStatusOf(requestedWith) !== 'friend'){ renderChatMessages(null, false); return; }
   try {
     const res = await fetch(cloudBase() + '/conversations/' + id + '/messages?pageSize=' + CHAT_PAGE + '&orderBy=ts%20desc&key=' + CLOUD.apiKey);
     if (!res.ok){ if (chatWithCode === requestedWith) renderChatMessages([]); return; }
@@ -8038,6 +8094,160 @@ async function ensurePeers(codes, maxAgeMs){
   if (chatWithCode && need.indexOf(chatWithCode) !== -1) refreshChatHeader();
 }
 
+const FRIENDS_SINCE = Date.UTC(2026, 8, 28, 8, 25);
+const chatConvStatus = {};
+const friendMigrated = {};
+const friendReqTimes = [];
+
+function convStatusFromFields(f, other){
+  const b = (k) => !!(f[k] && f[k].booleanValue);
+  const frMe = b('fr_' + cloudCode), frOther = b('fr_' + other), decl = b('decl_' + cloudCode);
+  const hasFr = Object.keys(f).some(k => k.indexOf('fr_') === 0);
+  const lastTs = parseInt((f.lastTs && f.lastTs.integerValue) || '0', 10) || 0;
+  const legacy = !hasFr && lastTs > 0 && lastTs < FRIENDS_SINCE;
+  let status = 'none';
+  if ((frMe && frOther) || legacy) status = 'friend';
+  else if (frOther && !frMe) status = decl ? 'declined' : 'incoming';
+  else if (frMe && !frOther) status = 'outgoing';
+  return { status, legacy };
+}
+
+function friendStatusOf(code){
+  if (!code) return 'none';
+  const c = inboxConvs.find(x => x.other === code);
+  if (c) return c.status;
+  return chatConvStatus[code] || 'unknown';
+}
+
+function setLocalFriendStatus(code, status){
+  chatConvStatus[code] = status;
+  const c = inboxConvs.find(x => x.other === code);
+  if (c) c.status = status;
+}
+
+async function setFriendFlag(otherCode, otherNick, mode){
+  if (!cloudReady() || !cloudCode || !otherCode || otherCode === cloudCode) return false;
+  const st = document.getElementById('chatStatus');
+  if (mode === 'request'){
+    const now = Date.now();
+    while (friendReqTimes.length && now - friendReqTimes[0] > 600000) friendReqTimes.shift();
+    if (friendReqTimes.length >= 10){ showToast(t('friendReqLimit')); return false; }
+    friendReqTimes.push(now);
+  }
+  const convId = chatConvId(cloudCode, otherCode);
+  const on = mode === 'request' || mode === 'accept' || mode === 'legacy';
+  const fields = {
+    members: { arrayValue: { values: [{ stringValue: cloudCode }, { stringValue: otherCode }] } }
+  };
+  fields['fr_' + cloudCode] = { booleanValue: on };
+  fields['decl_' + cloudCode] = { booleanValue: mode === 'decline' || mode === 'remove' };
+  fields['frTs_' + cloudCode] = { integerValue: String(Date.now()) };
+  fields['nick_' + cloudCode] = { stringValue: nickname || '' };
+  if (otherNick && otherNick !== '?') fields['nick_' + otherCode] = { stringValue: otherNick };
+  if (!isCustomAvatar(avatar)) fields['av_' + cloudCode] = { stringValue: avatar };
+  if (mode === 'legacy') fields['fr_' + otherCode] = { booleanValue: true };
+  const prev = friendStatusOf(otherCode);
+  let next = prev;
+  if (mode === 'request') next = (prev === 'incoming' || prev === 'declined') ? 'friend' : 'outgoing';
+  else if (mode === 'accept') next = 'friend';
+  else if (mode === 'legacy') next = 'friend';
+  else if (mode === 'decline') next = 'declined';
+  else if (mode === 'cancel') next = 'none';
+  else if (mode === 'remove') next = 'declined';
+  setLocalFriendStatus(otherCode, next);
+  refreshFriendUI(otherCode);
+  const mask = Object.keys(fields).map(k => 'updateMask.fieldPaths=' + k).join('&');
+  try {
+    const res = await fetch(cloudBase() + '/conversations/' + convId + '?' + mask + '&key=' + CLOUD.apiKey, {
+      method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fields })
+    });
+    if (!res.ok){ setLocalFriendStatus(otherCode, prev); refreshFriendUI(otherCode); if (st) st.textContent = t('chatError'); return false; }
+    if (next === 'friend' && mode !== 'legacy'){ showToast(t('friendAdded')); buzz(15); }
+    if (mode !== 'legacy') fetchInbox();
+    return true;
+  } catch (e) {
+    setLocalFriendStatus(otherCode, prev); refreshFriendUI(otherCode);
+    return false;
+  }
+}
+
+function refreshFriendUI(code){
+  if (profileOpenCode && profileOpenCode === code) refreshProfileFriendBtn();
+  if (chatWithCode && chatWithCode === code){ chatLastSig = null; renderChatMessages(chatMessages, true); refreshChatFriendMenu(); }
+  const modal = document.getElementById('inboxModal');
+  if (modal && !modal.classList.contains('hidden')) renderInbox();
+  recountInboxUnread();
+}
+
+function refreshProfileFriendBtn(){
+  const btn = document.getElementById('profileMessageBtn');
+  const un = document.getElementById('profileUnfriendBtn');
+  if (!btn) return;
+  const code = profileOpenCode;
+  const self = !code || code === cloudCode;
+  btn.classList.toggle('hidden', self);
+  if (un) un.classList.add('hidden');
+  if (self) return;
+  const st = friendStatusOf(code);
+  if (st === 'friend'){ btn.textContent = t('chatWriteBtn'); if (un){ un.classList.remove('hidden'); un.title = t('removeFriend'); } }
+  else if (st === 'outgoing') btn.textContent = t('reqSent');
+  else if (st === 'incoming' || st === 'declined') btn.textContent = t('acceptFriend');
+  else if (st === 'unknown') btn.textContent = t('cloudLoading');
+  else btn.textContent = t('addFriend');
+}
+
+async function loadConvStatusFor(code){
+  if (!cloudReady() || !cloudCode || !code || code === cloudCode) return;
+  const inInbox = inboxConvs.find(x => x.other === code);
+  if (inInbox) return;
+  try {
+    const res = await fetch(cloudBase() + '/conversations/' + chatConvId(cloudCode, code) + '?key=' + CLOUD.apiKey);
+    if (res.status === 404){ chatConvStatus[code] = 'none'; refreshFriendUI(code); return; }
+    if (!res.ok) return;
+    const d = await res.json();
+    chatConvStatus[code] = convStatusFromFields((d && d.fields) || {}, code).status;
+    refreshFriendUI(code);
+  } catch (e) {}
+}
+
+function profileFriendAction(){
+  const code = profileOpenCode;
+  if (!code || code === cloudCode) return;
+  const st = friendStatusOf(code);
+  if (st === 'friend') openChat(code, profileOpenNick);
+  else if (st === 'outgoing') setFriendFlag(code, profileOpenNick, 'cancel');
+  else if (st === 'incoming' || st === 'declined') setFriendFlag(code, profileOpenNick, 'accept');
+  else if (st === 'none') setFriendFlag(code, profileOpenNick, 'request');
+}
+
+function refreshChatFriendMenu(){
+  const b = document.getElementById('chatUnfriendBtn');
+  if (!b) return;
+  const isF = friendStatusOf(chatWithCode) === 'friend';
+  b.classList.toggle('hidden', !isF);
+  b.textContent = t('removeFriend');
+}
+
+function renderFriendGate(st){
+  const box = document.getElementById('chatMessagesList');
+  if (!box) return;
+  const nick = escapeHtml(chatWithNickName || '?');
+  let html = '<div class="chatGate">';
+  if (st === 'unknown') html += '<div>' + escapeHtml(t('cloudLoading')) + '</div>';
+  else if (st === 'incoming' || st === 'declined') html += '<div class="chatGateIcon">🤝</div><div>' + escapeHtml(t('chatReqIncoming')).replace('{nick}', nick) + '</div><button type="button" class="btn" data-gate="accept">' + escapeHtml(t('acceptFriend')) + '</button>';
+  else if (st === 'outgoing') html += '<div class="chatGateIcon">⏳</div><div>' + escapeHtml(t('chatReqOutgoing')).replace('{nick}', nick) + '</div>';
+  else html += '<div class="chatGateIcon">🔒</div><div>' + escapeHtml(t('chatNotFriends')) + '</div><button type="button" class="btn" data-gate="request">' + escapeHtml(t('addFriend')) + '</button>';
+  html += '</div>';
+  box.innerHTML = html;
+  const gb = box.querySelector ? box.querySelector('[data-gate]') : null;
+  if (gb) gb.addEventListener('click', () => setFriendFlag(chatWithCode, chatWithNickName, gb.dataset.gate === 'accept' ? 'accept' : 'request'));
+  chatLastSig = 'gate:' + st;
+}
+
+function setChatInputsEnabled(on){
+  ['chatInput', 'chatSendBtn', 'chatStickerBtn', 'chatPhotoBtn'].forEach((id) => { const el = document.getElementById(id); if (el) el.disabled = !on; });
+}
+
 function parseConv(doc){
   const f = (doc && doc.fields) || {};
   const path = (doc && doc.name) || '';
@@ -8053,17 +8263,21 @@ function parseConv(doc){
   const lastTs = n('lastTs');
   const lastFrom = s('lastFrom');
   const seen = Math.max(n('seen_' + cloudCode), convSeenSent[id] || 0);
+  const fs = convStatusFromFields(f, other);
+  chatConvStatus[other] = fs.status;
   return {
     id, other,
     nick: s('nick_' + other) || (lb && lb.nick && lb.nick.stringValue) || '?',
     av: s('av_' + other),
     lastText: s('lastText'), lastFrom, lastTs,
-    unread: lastFrom !== cloudCode && lastTs > seen
+    status: fs.status, legacy: fs.legacy,
+    frTs: n('frTs_' + other),
+    unread: fs.status === 'friend' && lastFrom !== cloudCode && lastTs > seen
   };
 }
 
 function recountInboxUnread(){
-  inboxUnread = inboxConvs.filter(c => c.unread && c.other !== chatWithCode).length;
+  inboxUnread = inboxConvs.filter(c => (c.unread && c.status === 'friend' && c.other !== chatWithCode) || c.status === 'incoming').length;
   updateInboxBadge();
 }
 
@@ -8209,17 +8423,29 @@ async function fetchInbox(){
     const list = (Array.isArray(data) ? data : []).filter(r => r && r.document).map(r => parseConv(r.document)).filter(Boolean);
     list.sort((a, b) => b.lastTs - a.lastTs);
     const prevUnread = inboxUnread;
+    const prevIncoming = new Set(inboxConvs.filter(c => c.status === 'incoming').map(c => c.id));
     inboxConvs = list;
+    for (const c of list){
+      if (c.legacy && !friendMigrated[c.id]){ friendMigrated[c.id] = true; setFriendFlag(c.other, c.nick, 'legacy'); }
+    }
+    if (inboxLoadedOnce){
+      const newReq = list.find(c => c.status === 'incoming' && !prevIncoming.has(c.id));
+      if (newReq){
+        showToast(t('friendReqToast') + newReq.nick, () => openInbox());
+        sfxPopupOpen();
+        if (!notifiedTs['req_' + newReq.id]){ notifiedTs['req_' + newReq.id] = 1; systemNotify({ id: 'req_' + newReq.id, other: newReq.other, nick: newReq.nick, lastText: t('friendReqNotify') }); }
+      }
+    }
     recountInboxUnread();
     const inboxShown = !document.getElementById('inboxModal').classList.contains('hidden');
     if (inboxShown) ensurePeers(list.map(c => c.other));
     if (inboxLoadedOnce && inboxUnread > prevUnread){
-      const c = list.find(x => x.unread && x.other !== chatWithCode);
+      const c = list.find(x => x.unread && x.status === 'friend' && x.other !== chatWithCode);
       const inboxOpen = !document.getElementById('inboxModal').classList.contains('hidden');
       if (c && !inboxOpen){ showToast(t('newMsgToast') + c.nick, () => openChatFromNotify(c.other, c.nick)); sfxPopupOpen(); }
     }
     for (const c of list){
-      if (!c.unread || c.other === chatWithCode) continue;
+      if (!c.unread || c.status !== 'friend' || c.other === chatWithCode) continue;
       const prevTs = notifiedTs[c.id] || 0;
       if (inboxLoadedOnce && c.lastTs > prevTs) systemNotify(c);
       notifiedTs[c.id] = Math.max(prevTs, c.lastTs);
@@ -8227,6 +8453,7 @@ async function fetchInbox(){
     inboxLoadedOnce = true;
     const modal = document.getElementById('inboxModal');
     if (modal && !modal.classList.contains('hidden')) renderInbox();
+    if (profileOpenCode) refreshProfileFriendBtn();
   } catch (e) {}
 }
 
@@ -8234,15 +8461,45 @@ function renderInbox(){
   const box = document.getElementById('inboxList');
   if (!box) return;
   box.innerHTML = '';
-  if (!inboxConvs.length){
+  const reqs = inboxConvs.filter(c => c.status === 'incoming').sort((a, b) => b.frTs - a.frTs).slice(0, 20);
+  const dialogs = inboxConvs.filter(c => c.status === 'friend');
+  if (!reqs.length && !dialogs.length){
     box.innerHTML = '<div class="inboxEmpty">' + escapeHtml(t('inboxEmpty')) + '</div>';
     return;
   }
-  for (const c of inboxConvs){
+  if (reqs.length){
+    const h = document.createElement('div');
+    h.className = 'inboxSection';
+    h.textContent = t('friendReqs') + ' · ' + reqs.length;
+    box.appendChild(h);
+    for (const c of reqs){
+      const lb = peerFields(c.other);
+      const avVal = lb ? shownAvatar(lb, c.other) : (c.av || AVATAR_LIST[0]);
+      const frame = (lb && lb.frame && lb.frame.stringValue) || 'none';
+      const row = document.createElement('div');
+      row.className = 'inboxReqRow';
+      row.dataset.code = c.other;
+      row.innerHTML = avatarHtml(avVal, frame, '') +
+        '<span class="inboxMain"><span class="inboxTop"><span class="inboxNick">' + escapeHtml(c.nick) + badgeImgHtml(lb && lb.badge && lb.badge.stringValue) + '</span></span>' +
+        '<span class="inboxPreview">' + escapeHtml(t('friendReqNotify')) + '</span></span>' +
+        '<span class="inboxReqBtns"><button type="button" class="inboxReqYes" aria-label="Принять">✓</button><button type="button" class="inboxReqNo" aria-label="Отклонить">✕</button></span>';
+      const bs = row.querySelectorAll ? row.querySelectorAll('button') : [];
+      if (bs[0]) bs[0].addEventListener('click', (e) => { e.stopPropagation(); setFriendFlag(c.other, c.nick, 'accept'); });
+      if (bs[1]) bs[1].addEventListener('click', (e) => { e.stopPropagation(); setFriendFlag(c.other, c.nick, 'decline'); });
+      box.appendChild(row);
+    }
+    if (dialogs.length){
+      const h2 = document.createElement('div');
+      h2.className = 'inboxSection';
+      h2.textContent = t('dialogsTitle');
+      box.appendChild(h2);
+    }
+  }
+  for (const c of dialogs){
     const lb = peerFields(c.other);
     const avVal = lb ? shownAvatar(lb, c.other) : (c.av || AVATAR_LIST[0]);
     const frame = (lb && lb.frame && lb.frame.stringValue) || 'none';
-    const preview = (c.lastFrom === cloudCode ? t('chatYou') : '') + cleanText(c.lastText);
+    const preview = c.lastTs ? (c.lastFrom === cloudCode ? t('chatYou') : '') + cleanText(c.lastText) : t('friendsNow');
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'inboxRow' + (c.unread ? ' unread' : '');
@@ -8250,7 +8507,7 @@ function renderInbox(){
     btn.innerHTML = avatarHtml(avVal, frame, '') +
       '<span class="inboxMain"><span class="inboxTop"><span class="inboxNick">' + escapeHtml(c.nick) +
       badgeImgHtml(lb && lb.badge && lb.badge.stringValue) +
-      '</span><span class="inboxTime">' + escapeHtml(shortTimeLabel(c.lastTs)) + '</span></span>' +
+      '</span><span class="inboxTime">' + (c.lastTs ? escapeHtml(shortTimeLabel(c.lastTs)) : '') + '</span></span>' +
       '<span class="inboxPreview">' + escapeHtml(preview) + '</span></span>' +
       (c.unread ? '<span class="inboxDot"></span>' : '');
     btn.addEventListener('click', () => {
@@ -8347,6 +8604,7 @@ function openChat(code, nick, fromInbox){
   chatLastIncomingTs = 0;
   applyChatTheme(chatTheme);
   document.getElementById('chatWithNick').textContent = nick || '?';
+  refreshChatFriendMenu();
   refreshChatHeader();
   ensurePeers([code], 30000);
   const backBtn = document.getElementById('chatBackBtn');
@@ -8485,6 +8743,7 @@ async function postChatMessage(){
 async function sendChatPayload(payload){
   if (!chatWithCode) return;
   if (isBlocked(chatWithCode)) return;
+  if (friendStatusOf(chatWithCode) !== 'friend') return;
   const input = document.getElementById('chatInput');
   const statusEl = document.getElementById('chatStatus');
   let text = String(payload.text || '').trim();
