@@ -459,9 +459,10 @@
   #menu .inboxBtn{right:60px;width:42px;height:42px;}
   #dailyBtn{right:108px;}
   #menu.paused .menuIconBtn{display:none;}
-  .menuIconBtn .dot{position:absolute;top:-2px;right:-2px;width:12px;height:12px;border-radius:50%;background:#ff4d6d;box-shadow:0 0 0 2px rgba(20,8,40,.8);}
+  .menuIconBtn .dot{position:absolute;top:1px;right:1px;width:9px;height:9px;border-radius:50%;background:#ff6b7f;box-shadow:0 0 0 2px rgba(20,8,40,.7);}
   .menuIconBtn .dot.hidden{display:none;}
-  #dailyBtn.can{animation:giftWiggle 1.6s ease-in-out infinite;}
+  .menuIconBtn svg{width:20px;height:20px;}
+  .st-aero .menuIconBtn svg [stroke],.st-paper .menuIconBtn svg [stroke]{stroke:currentColor;}
   @keyframes giftWiggle{0%,70%,100%{transform:rotate(0);}76%{transform:rotate(-12deg);}84%{transform:rotate(10deg);}92%{transform:rotate(-6deg);}}
   .menuTopBar{left:10px;right:146px;gap:6px;min-width:0;}
   .topPill{height:34px;font-size:15px;padding:0 10px 0 7px;min-width:0;flex:0 1 auto;overflow:hidden;}
@@ -477,17 +478,20 @@
   .trophyPill .tpIcon{font-size:16px;}
   #menuHint.hidden{display:none;}
   .dailyCard{width:min(360px,92vw) !important;gap:10px !important;}
-  .dailyTitle{font-size:20px;font-weight:800;color:#ffd34d;}
+  .dailyTitle{font-size:19px;font-weight:800;color:#f5e9d6;}
   .dailySub{font-size:13px;opacity:.8;text-align:center;}
   .dailyGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;width:100%;margin-top:4px;}
-  .dailyTile{position:relative;border-radius:14px;padding:7px 3px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;
+  .dailyTile{position:relative;border-radius:14px;padding:8px 3px 7px;display:flex;flex-direction:column;align-items:center;gap:4px;color:#e9dcf5;
     background:rgba(255,255,255,.07);box-shadow:inset 0 0 0 1px rgba(255,255,255,.14);font-size:11px;}
   .dailyTile b{font-size:13px;}
-  .dailyTile .dIcon{font-size:22px;line-height:1.1;}
-  .dailyTile.big{grid-column:span 2;background:linear-gradient(180deg,rgba(255,211,77,.22),rgba(255,160,60,.16));box-shadow:inset 0 0 0 1px rgba(255,211,77,.45);}
-  .dailyTile.done{opacity:.45;}
-  .dailyTile.done::after{content:"✓";position:absolute;top:2px;right:6px;color:#7dff9a;font-weight:800;font-size:13px;}
-  .dailyTile.today{box-shadow:0 0 0 2px #7dff9a,0 0 16px rgba(125,255,154,.45);}
+  .dailyTile .dIcon{width:22px;height:22px;display:flex;align-items:center;justify-content:center;}
+  .dailyTile .dIcon .coinDot{width:18px;height:18px;margin:0;box-shadow:none;}
+  .dailyTile .dIcon svg{width:22px;height:22px;}
+  .dailyTile b{color:#f5e9d6;}
+  .dailyTile.big{grid-column:span 2;background:rgba(255,255,255,.09);box-shadow:inset 0 0 0 1px rgba(255,211,77,.3);}
+  .dailyTile.done{opacity:.4;}
+  .dailyTile.done::after{content:"✓";position:absolute;top:3px;right:7px;color:#bfe8c8;font-weight:800;font-size:12px;}
+  .dailyTile.today{background:rgba(255,211,77,.1);box-shadow:inset 0 0 0 1.5px rgba(255,211,77,.75);}
   .dailyClaim{width:100%;margin-top:6px;}
   .st-aero .menuIconBtn{background:linear-gradient(180deg,rgba(255,255,255,.72),rgba(255,255,255,.3) 48%,rgba(255,255,255,.18) 52%,rgba(255,255,255,.42));border:1px solid rgba(255,255,255,.9);color:#08426e;box-shadow:0 6px 16px rgba(0,70,140,.22);}
   .st-neon .menuIconBtn{background:rgba(12,0,30,.72);box-shadow:0 0 0 1px rgba(57,243,255,.55),0 0 12px rgba(57,243,255,.25);}
@@ -1307,8 +1311,8 @@
       <svg viewBox="0 0 24 24" fill="none"><path d="M4 5.5 C4 4.7 4.7 4 5.5 4 H18.5 C19.3 4 20 4.7 20 5.5 V15 C20 15.8 19.3 16.5 18.5 16.5 H10 L6 20 V16.5 H5.5 C4.7 16.5 4 15.8 4 15 Z" fill="#fdf6e8"/></svg>
       <span id="inboxBadge" class="inboxBadge hidden">0</span>
     </button>
-    <button id="dailyBtn" class="menuIconBtn" type="button" aria-label="Ежедневная награда">🎁<span id="dailyDot" class="dot hidden"></span></button>
-    <button id="menuGearBtn" class="menuIconBtn" type="button" aria-label="Настройки">⚙</button>
+    <button id="dailyBtn" class="menuIconBtn" type="button" aria-label="Ежедневная награда"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="10" width="16" height="10" rx="2" stroke="#fdf6e8" stroke-width="2"/><rect x="3" y="7" width="18" height="4" rx="1.5" stroke="#fdf6e8" stroke-width="2"/><path d="M12 7 V20" stroke="#fdf6e8" stroke-width="2"/><path d="M12 7 C 10 3.5 6.5 4 7.5 6.2 C 8.2 7.4 12 7 12 7 Z M12 7 C 14 3.5 17.5 4 16.5 6.2 C 15.8 7.4 12 7 12 7 Z" stroke="#fdf6e8" stroke-width="1.8" stroke-linejoin="round"/></svg><span id="dailyDot" class="dot hidden"></span></button>
+    <button id="menuGearBtn" class="menuIconBtn" type="button" aria-label="Настройки"><svg viewBox="0 0 24 24" fill="none"><path d="M12 8.6 A3.4 3.4 0 1 0 12 15.4 A3.4 3.4 0 1 0 12 8.6 Z" stroke="#fdf6e8" stroke-width="2"/><path d="M12 2.8 V5.2 M12 18.8 V21.2 M2.8 12 H5.2 M18.8 12 H21.2 M5.5 5.5 L7.2 7.2 M16.8 16.8 L18.5 18.5 M5.5 18.5 L7.2 16.8 M16.8 7.2 L18.5 5.5" stroke="#fdf6e8" stroke-width="2.4" stroke-linecap="round"/></svg></button>
     <div id="menuTopBar" class="menuTopBar">
       <button id="trophyPill" class="topPill trophyPill" type="button" aria-label="Кубки"><span class="tpIcon">🏆</span><b id="menuTrophies">0</b></button>
       <div class="topPill coinPill"><i class="coinDot"></i><span class="coinNum" id="menuCoins">0</span></div>
@@ -2262,7 +2266,8 @@ function renderDaily(){
       const today = st.can && d === st.day;
       const el = document.createElement('div');
       el.className = 'dailyTile' + (d === 7 ? ' big' : '') + (done ? ' done' : '') + (today ? ' today' : '');
-      el.innerHTML = '<span>' + escapeHtml(t('dailyDay').replace('{d}', d)) + '</span><span class="dIcon">' + (r.i ? '☄️' : '🪙') + '</span><b>' + r.c + (r.i ? ' +☄' : '') + '</b>';
+      const cometSvg = '<svg viewBox="0 0 24 24" fill="none"><path d="M3 21 L13 11" stroke="#bfe0ff" stroke-width="2.4" stroke-linecap="round" opacity=".6"/><path d="M6 21 L14 13" stroke="#bfe0ff" stroke-width="1.6" stroke-linecap="round" opacity=".4"/><circle cx="16" cy="8" r="4.2" fill="#eaf6ff" stroke="#9fd0ff" stroke-width="1.4"/></svg>';
+      el.innerHTML = '<span>' + escapeHtml(t('dailyDay').replace('{d}', d)) + '</span><span class="dIcon">' + (r.i ? cometSvg : '<i class="coinDot"></i>') + '</span><b>' + r.c + (r.i ? ' + ' + escapeHtml(ti('trail', 'comet').n) : '') + '</b>';
       grid.appendChild(el);
     });
   }
@@ -2773,7 +2778,7 @@ const I18N = {
     cloudNotFound: 'Код не найден', accountDeleted: 'Этот аккаунт удалён администрацией. Игра начнётся с нуля.', cloudErr: 'Нет связи с сервером', cloudLoading: 'Загрузка…',
     smashToast: 'СОКРУШИТЕЛЬНЫЙ УДАР!', kickToast: 'ПИНОК!', perfectToast: 'ИДЕАЛЬНО!',
     laserToast: 'ОСТОРОЖНО: ЛАЗЕРЫ!',
-    glassToast: 'СТЕКЛО СПАСЛО ТЕБЯ!', tapPrompt: 'ЖМИ!',
+    extraLifeToast: 'ВТОРАЯ ЖИЗНЬ!', glassToast: 'СТЕКЛО СПАСЛО ТЕБЯ!', tapPrompt: 'ЖМИ!',
     items: {
       'hat:none':      { n: 'Без шляпы',        d: '' },
       'hat:tophat':     { n: 'Цилиндр',          d: 'Просто стильно.' },
@@ -2822,7 +2827,12 @@ const I18N = {
       'char:hero11':    { n: 'Баксик',            d: 'Лимитированный, с анимацией — выдаётся только администрацией.' },
       'hat:party':      { n: 'Праздничный колпак', d: 'Подарок на праздник 100 игроков — не продаётся.' },
       'hat:starcrown':  { n: 'Звёздная корона',   d: 'Награда за 10 000 очков — не продаётся.' },
-      'perk:multiacc':  { n: 'Второй предмет',    d: 'Можно надеть сразу два в шляпах и в аксессуарах.' },
+      'perk:multiacc':  { n: 'Второй предмет',    d: 'Можно надеть сразу два в шляпах и в аксессуарах. Работает всегда, если куплен.' },
+      'perk:springs':   { n: 'Пружинки',          d: 'Пружины на платформах попадаются в два раза чаще.' },
+      'perk:magnet':    { n: 'Магнит',            d: 'Монеты сами летят к тебе.' },
+      'perk:lucky':     { n: 'Удача',             d: 'Каждая монета с шансом 30% считается за две.' },
+      'perk:extralife': { n: 'Вторая жизнь',      d: 'Один раз за забег спасает от падения.' },
+      'tool:spear':     { n: 'Копьё',             d: 'Тапни — рывок вверх. Перезарядка 4 секунды.' },
       'hat:none': { n: 'Ничего', d: '' }, 'acc:none': { n: 'Ничего', d: '' },
       'tool:none': { n: 'Ничего', d: '' }, 'perk:none': { n: 'Ничего', d: '' }
     }
@@ -2891,7 +2901,7 @@ const I18N = {
     cloudNotFound: 'Code not found', accountDeleted: 'This account was deleted by the administration. The game will start from scratch.', cloudErr: 'Could not reach the server', cloudLoading: 'Loading…',
     smashToast: 'MACE SMASH!', kickToast: 'KICKED!', perfectToast: 'PERFECT!',
     laserToast: 'WATCH OUT: LASERS!',
-    glassToast: 'THE GLASS SAVED YOU!', tapPrompt: 'TAP!',
+    extraLifeToast: 'SECOND LIFE!', glassToast: 'THE GLASS SAVED YOU!', tapPrompt: 'TAP!',
     items: {
       'hat:none':      { n: 'No hat',           d: '' },
       'hat:tophat':     { n: 'Top Hat',          d: 'Just stylish.' },
@@ -2940,7 +2950,12 @@ const I18N = {
       'char:hero11':    { n: 'Baksik',            d: 'Limited, animated — granted by the admin only.' },
       'hat:party':      { n: 'Party Hat',         d: 'A gift for reaching 100 players — not for sale.' },
       'hat:starcrown':  { n: 'Star Crown',        d: 'A reward for 10,000 points — not for sale.' },
-      'perk:multiacc':  { n: 'Second Item',       d: 'Wear two hats and two accessories at once.' },
+      'perk:multiacc':  { n: 'Second Item',       d: 'Wear two hats and two accessories at once. Always works once bought.' },
+      'perk:springs':   { n: 'Springs',           d: 'Springs appear on platforms twice as often.' },
+      'perk:magnet':    { n: 'Magnet',            d: 'Coins fly to you.' },
+      'perk:lucky':     { n: 'Luck',              d: 'Every coin has a 30% chance to count double.' },
+      'perk:extralife': { n: 'Second Life',       d: 'Saves you from one fall per run.' },
+      'tool:spear':     { n: 'Spear',             d: 'Tap to lunge upward. 4 second cooldown.' },
       'hat:none': { n: 'None', d: '' }, 'acc:none': { n: 'None', d: '' },
       'tool:none': { n: 'None', d: '' }, 'perk:none': { n: 'None', d: '' }
     }
@@ -3010,7 +3025,8 @@ const OUTFITS = {
   tool: {
     none: { price: 0 },
     mace: { price: 250 },
-    bow:  { price: 380 }
+    bow:  { price: 1500 },
+    spear: { price: 2500 }
   },
   char: {
     hero:   { price: 0 },
@@ -3027,7 +3043,11 @@ const OUTFITS = {
   },
   perk: {
     none:     { price: 0 },
-    multiacc: { price: 2500 } 
+    multiacc: { price: 2500 },
+    springs:  { price: 1200 },
+    magnet:   { price: 1800 },
+    lucky:    { price: 2200 },
+    extralife: { price: 3500 }
   },
   trail: {
     none:    { price: 0 },
@@ -3355,8 +3375,12 @@ const gravityMult   = () => hasHat('propeller') ? 0.55 : 1;
 const scoreMult      = () => hasAcc('tie') ? 1.25 : 1;
 const hasMace       = () => outfit.tool === 'mace' && isOwned('tool', 'mace');
 const hasBow        = () => outfit.tool === 'bow'  && isOwned('tool', 'bow');
+const hasSpear      = () => outfit.tool === 'spear' && isOwned('tool', 'spear');
+const hasPerk       = (k) => outfit.perk === k && isOwned('perk', k);
+let spearCd = 0, extraLifeUsed = false;
+const SPEAR_CD = 4;
 const coinMult      = () => (hasHat('crown') ? 2 : 1) * (eventActive() ? 2 : 1);
-const hasMagnet     = () => hasHat('halo');
+const hasMagnet     = () => hasHat('halo') || hasPerk('magnet');
 const hasDoubleJump = () => hasAcc('backpack');
 
 
@@ -3525,6 +3549,8 @@ buildLayers();
 
 const PW = 76, PH = 16;
 
+const BLINK_PERIOD = 2.4, BLINK_ON = 1.5;
+function blinkSolid(p){ return ((p.blinkT || 0) % BLINK_PERIOD) < BLINK_ON + 0.1; }
 function makePlatform(y, type, spring){
   return {
     x: rand(6, VW - PW - 6),
@@ -3565,14 +3591,25 @@ function spawnAbove(){
 
   let type = 'normal';
   const r = Math.random();
-  const pMoving = lerp(0.06, 0.30, d);
-  const pBroken = lerp(0.02, 0.20, d);
-  if (r < pMoving) type = 'moving';
-  else if (r < pMoving + pBroken) type = 'broken';
+  const pMoving = lerp(0.06, 0.26, d);
+  const pBroken = lerp(0.02, 0.16, d);
+  const pCloud = lerp(0.02, 0.08, d);
+  const pBouncy = 0.045;
+  const pBlink = lerp(0.0, 0.07, d);
+  const pTele = score > 800 ? 0.022 : 0;
+  let acc = pMoving;
+  if (r < acc) type = 'moving';
+  else if (r < (acc += pBroken)) type = 'broken';
+  else if (r < (acc += pCloud)) type = 'cloud';
+  else if (r < (acc += pBouncy)) type = 'bouncy';
+  else if (r < (acc += pBlink)) type = 'blink';
+  else if (r < (acc += pTele)) type = 'tele';
 
-  const p = makePlatform(y, type, (type !== 'broken') && Math.random() < lerp(0.05, 0.11, d));
+  const springChance = lerp(0.05, 0.11, d) * (hasPerk('springs') ? 2 : 1);
+  const p = makePlatform(y, type, (type === 'normal' || type === 'moving') && Math.random() < springChance);
+  if (type === 'blink') p.blinkT = rand(0, 2.4);
 
-  if (type === 'broken'){
+  if (type === 'broken' || type === 'blink'){
     const safe = makePlatform(y - rand(4, 16), 'normal', false);
     safe.x = (p.x < VW / 2) ? rand(VW * 0.55, VW - PW - 6) : rand(6, VW * 0.45 - PW * 0.5);
     safe.x = clamp(safe.x, 6, VW - PW - 6);
@@ -3586,7 +3623,7 @@ function spawnAbove(){
   if (hasBow() && type === 'normal' && !p.spring && Math.random() < 0.24){
     crawlers.push({ plat: p, x: p.x + p.w / 2, y: p.y - 13, phase: rand(0, 6.28) });
   }
-  else if (type !== 'broken' && !p.spring && Math.random() < 0.20)
+  else if (type !== 'broken' && type !== 'blink' && type !== 'tele' && !p.spring && Math.random() < 0.20)
     addCoin(p.x + p.w / 2, p.y - 30, p);
   else if (Math.random() < 0.07)
     addCoin(rand(40, VW - 40), y - rand(20, 46), null);
@@ -3794,6 +3831,8 @@ function resolveMonsterEvent(success){
 
 function heroDoomed(){
   if (airJumps > 0) return false;
+  if (hasPerk('extralife') && !extraLifeUsed) return false;
+  if (hasSpear() && spearCd <= 0) return false;
   const feet = hero.y + hero.h * 0.5;
   const floor = camY + VH;
   for (let i = 0; i < platforms.length; i++){
@@ -3813,6 +3852,17 @@ function handleFatalEvent(){
     hitBtn.classList.add('hidden');
   }
 
+  if (hasPerk('extralife') && !extraLifeUsed){
+    extraLifeUsed = true;
+    burstSpark(hero.x, hero.y, '#ff8fb6', 26, 1.4);
+    buzz(60);
+    addToast(t('extraLifeToast'), hero.x, hero.y - 30, '#ff8fb6');
+    shake = Math.max(shake, 10);
+    flash = 0.5; flashColor = '#ffd1e3';
+    hero.y = camY + VH * 0.32;
+    hero.vy = JUMP_V;
+    return;
+  }
   if (hasGlass()){
     burstGlassShards(hero.x, hero.y);
     sfxGlass();
@@ -4046,6 +4096,7 @@ function resetGame(){
   laserTimer = LASER_FIRST_DELAY;
   laserIntroShown = false;
   glassUsedThisRun = false;
+  spearCd = 0; extraLifeUsed = false;
   fallSoundPlayed = false;
   deathPortal = null;
   hitStop = 0; speedFx = 0;
@@ -4159,6 +4210,7 @@ function stepPhysics(dt){
   for (let i = 0; i < platforms.length; i++){
     const p = platforms[i];
     if (p.broken) continue;
+    if (p.type === 'blink' && !blinkSolid(p)) continue;
 
     const top = p.y;
     if (prevBottom > top + 2) continue;
@@ -4184,6 +4236,42 @@ function stepPhysics(dt){
     p.wobble = 1;
     hero.sx = 1.35; hero.sy = 0.66;
 
+    if (p.type === 'cloud'){
+      p.broken = true; p.fallV = 0; p.rot = 0; p.vanish = true;
+      hero.vy = JUMP_V;
+      burstSpark(hero.x, top, '#ffffff', 14, 1);
+      landDust(hero.x, top);
+      sfxLand();
+      return;
+    }
+    if (p.type === 'bouncy'){
+      hero.vy = JUMP_V * 1.5;
+      p.springC = 1;
+      burstSpark(hero.x, top, '#ff9ad5', 18, 1.2);
+      shake = Math.max(shake, 5);
+      buzz(14);
+      sfxSpring();
+      return;
+    }
+    if (p.type === 'tele'){
+      let dest = null;
+      for (const q of platforms){
+        if (q === p || q.broken || q.type === 'blink' || q.type === 'tele') continue;
+        const dy = p.y - q.y;
+        if (dy > 420 && dy < 900 && (!dest || q.y > dest.y)) dest = q;
+      }
+      burstSpark(hero.x, top, '#c9a8ff', 20, 1.3);
+      if (dest){
+        hero.x = dest.x + dest.w / 2;
+        hero.y = dest.y - hero.h * 0.5;
+        burstSpark(hero.x, dest.y, '#c9a8ff', 20, 1.3);
+        flash = 0.45; flashColor = '#e6d6ff';
+      }
+      hero.vy = JUMP_V;
+      buzz(20);
+      if (typeof sfxPortalOpen === 'function') sfxPortalOpen();
+      return;
+    }
     if (p.spring){
       hero.vy = SPRING_V;
       p.springC = 1; p.springV = -9;
@@ -4209,6 +4297,7 @@ function stepPhysics(dt){
 
 function handleTapAction(){
   if (state !== STATE.PLAY || monsterEvent) return;
+  if (hasSpear()){ spearLunge(); return; }
   if (hasBow()){ shootArrow(); return; }
   if (hasDoubleJump() && airJumps > 0 && hero.vy > -140){
     airJumps--;
@@ -4218,6 +4307,21 @@ function handleTapAction(){
     burstSpark(hero.x, hero.y + hero.h * 0.4, '#ffffff', 6, 0.5);
     sfxJump();
   }
+}
+
+function spearLunge(){
+  if (spearCd > 0) return false;
+  spearCd = SPEAR_CD;
+  hero.vy = Math.min(hero.vy, JUMP_V * 1.45);
+  hero.sx = 0.72; hero.sy = 1.38;
+  burstSpark(hero.x, hero.y + hero.h * 0.4, '#dfe8ff', 16, 1.1);
+  burstSpark(hero.x, hero.y - hero.h * 0.3, '#ffffff', 8, 0.7);
+  shake = Math.max(shake, 4);
+  buzz(18);
+  ensureAudio();
+  if (typeof sweep === 'function') sweep(420, 980, 0.18, 'triangle', 0.06);
+  else beep(760, 0.08, 'triangle', 0.05);
+  return true;
 }
 
 function shootArrow(){
@@ -4301,11 +4405,20 @@ function updateWorld(dt){
       if (p.x < 4){ p.x = 4; p.vx = Math.abs(p.vx); }
       if (p.x + p.w > VW - 4){ p.x = VW - 4 - p.w; p.vx = -Math.abs(p.vx); }
     }
-    if (p.broken){
+    if (p.broken && p.vanish){
+      p.alpha -= dt * 3.2;
+      p.y -= dt * 12;
+    } else if (p.broken){
       p.fallV += GRAV * 0.6 * dt;
       p.y     += p.fallV * dt;
       p.alpha -= dt * 1.5;
     }
+    if (p.type === 'blink' && !p.broken){
+      p.blinkT = (p.blinkT || 0) + dt;
+      const ph = p.blinkT % BLINK_PERIOD;
+      p.alpha = ph < BLINK_ON ? 1 : (ph < BLINK_ON + 0.25 ? 1 - (ph - BLINK_ON) / 0.25 * 0.8 : (ph > BLINK_PERIOD - 0.25 ? 0.2 + (ph - (BLINK_PERIOD - 0.25)) / 0.25 * 0.8 : 0.2));
+    }
+    if (p.type === 'bouncy') p.springC = Math.max(0, (p.springC || 0) - dt * 4);
     if (p.spring){
       p.springV += (0 - p.springC) * 70 * dt;
       p.springV *= Math.pow(0.02, dt);
@@ -4352,7 +4465,7 @@ function updateWorld(dt){
     if (dx * dx + dy * dy < 30 * 30){
       c.got = 0.01;
 
-      const gain = coinMult();
+      const gain = coinMult() * (hasPerk('lucky') && Math.random() < 0.3 ? 2 : 1);
       runCoins += gain; coins += gain;
       Store.set('coins', coins);
       coinPulse = 1;
@@ -4387,6 +4500,7 @@ function updateWorld(dt){
 
   
   shootCd = Math.max(0, shootCd - dt);
+  spearCd = Math.max(0, spearCd - dt);
   if (hasBow() && shootCd <= 0 && state === STATE.PLAY && !monsterEvent){
     for (const cr of crawlers){
       if (cr.y > hero.y - 12) continue;
@@ -4918,6 +5032,10 @@ function drawPlatform(p){
   let c1, c2, c3;
   if (p.type === 'moving')      { c1 = '#7ad3ff'; c2 = '#2f8ddb'; c3 = '#1c5f9c'; }
   else if (p.type === 'broken') { c1 = '#c9915c'; c2 = '#9a6134'; c3 = '#6d4322'; }
+  else if (p.type === 'cloud')  { c1 = '#ffffff'; c2 = '#e4ecf6'; c3 = '#aebbd0'; }
+  else if (p.type === 'bouncy') { c1 = '#ffb3e0'; c2 = '#e8559f'; c3 = '#a3306a'; }
+  else if (p.type === 'blink')  { c1 = '#b8fff4'; c2 = '#3fd6c2'; c3 = '#1f8f82'; }
+  else if (p.type === 'tele')   { c1 = '#dcc6ff'; c2 = '#9a66f0'; c3 = '#5c34a8'; }
   else {
     const pt = PLATFORM_THEMES[platformTheme] || PLATFORM_THEMES.auto;
     c1 = pt.c1; c2 = pt.c2; c3 = pt.c3;
@@ -4985,6 +5103,28 @@ function drawPlatform(p){
   }
   }
 
+  if (p.type === 'cloud' && uiStyle === 'classic'){
+    ctx.fillStyle = '#ffffff';
+    for (const k of [0.2, 0.5, 0.8]){ ctx.beginPath(); ctx.arc(w * k, 1, h * 0.55, Math.PI, 0); ctx.fill(); }
+  }
+  if (p.type === 'bouncy'){
+    const sq = (p.springC || 0) * 3;
+    ctx.strokeStyle = 'rgba(255,255,255,.75)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(8, h * 0.5 + sq); ctx.quadraticCurveTo(w / 2, h * 0.5 + 4 + sq, w - 8, h * 0.5 + sq);
+    ctx.stroke();
+  }
+  if (p.type === 'tele'){
+    const tt = performance.now() / 600;
+    ctx.strokeStyle = 'rgba(255,255,255,.8)';
+    ctx.lineWidth = 1.6;
+    for (let k = 0; k < 3; k++){
+      ctx.beginPath();
+      ctx.ellipse(w / 2, h / 2, 6 + k * 5, 2.5 + k * 1.2, 0, tt + k, tt + k + 3.6);
+      ctx.stroke();
+    }
+  }
   if (p.spring){
     const c = clamp(p.springC, -0.3, 1);
     const baseH = 20 * (1 - c * 0.72);
@@ -5018,6 +5158,7 @@ function drawStyledPlatformBody(p, w, h){
   if (uiStyle === 'aero'){
     const pt = PLATFORM_THEMES[platformTheme];
     const c = tp === 'moving' ? ['#c4f0ff', '#35b0f0', '#0d6cc0'] : tp === 'broken' ? ['#ffffff', '#d8f2ff', '#8fc9e8']
+      : tp === 'cloud' ? ['#ffffff', '#f2f8ff', '#c8d8ea'] : tp === 'bouncy' ? ['#ffd0ec', '#ff6fb5', '#c2327a'] : tp === 'blink' ? ['#d8fff9', '#4fe0cc', '#1f9e8e'] : tp === 'tele' ? ['#eadcff', '#a878ff', '#6a3dc4']
       : (platformTheme !== 'auto' && pt ? [pt.c1, pt.c2, pt.c3] : ['#c8ff8a', '#4cc822', '#1f8a12']);
     const r = h / 2;
     ctx.globalAlpha = a0 * 0.22;
@@ -5058,7 +5199,7 @@ function drawStyledPlatformBody(p, w, h){
     return;
   }
   if (uiStyle === 'neon'){
-    const col = tp === 'moving' ? '#ff4fd8' : tp === 'broken' ? '#ffb020' : '#39f3ff';
+    const col = tp === 'moving' ? '#ff4fd8' : tp === 'broken' ? '#ffb020' : tp === 'cloud' ? '#ffffff' : tp === 'bouncy' ? '#ff7ad9' : tp === 'blink' ? '#7dffb0' : tp === 'tele' ? '#b388ff' : '#39f3ff';
     const r = 6;
     ctx.globalAlpha = a0 * 0.2;
     ctx.fillStyle = col;
@@ -5081,7 +5222,7 @@ function drawStyledPlatformBody(p, w, h){
     ctx.setLineDash([]);
     return;
   }
-  const fill = tp === 'moving' ? '#a9dbff' : tp === 'broken' ? '#ecd2ad' : '#b8ec9a';
+  const fill = tp === 'moving' ? '#a9dbff' : tp === 'broken' ? '#ecd2ad' : tp === 'cloud' ? '#ffffff' : tp === 'bouncy' ? '#ffc4e4' : tp === 'blink' ? '#c4f5ec' : tp === 'tele' ? '#dccbff' : '#b8ec9a';
   const ink = '#243b8c';
   const j = ((p.x * 7.3 + p.w * 3.1) % 1 + 1) % 1;
   ctx.fillStyle = fill;
@@ -5881,6 +6022,33 @@ function paintTool(c, w, h, kind, A, phase){
     return;
   }
 
+  if (kind === 'spear'){
+    const sx = A.handX * w, sy = A.handY * h;
+    c.save();
+    c.translate(sx, sy);
+    c.rotate(Math.sin(phase * 1.2) * 0.04);
+    if (spearImg.ready){
+      const L = h * 0.95;
+      c.imageSmoothingEnabled = false;
+      c.drawImage(spearImg.img, -L * 0.22, -L * 0.78, L, L);
+    } else {
+      c.rotate(0.55);
+      const L = h * 0.78;
+      c.fillStyle = '#7a5230';
+      c.fillRect(-2, -L * 0.62, 4, L);
+      c.fillStyle = '#5e3d22';
+      for (let k = 0; k < 4; k++) c.fillRect(-2, -L * 0.5 + k * L * 0.2, 4, 2);
+      c.fillStyle = '#cfd6de';
+      c.beginPath(); c.moveTo(0, -L * 0.62 - 16); c.lineTo(6, -L * 0.62 + 1); c.lineTo(-6, -L * 0.62 + 1); c.closePath(); c.fill();
+      c.fillStyle = '#ffffff';
+      c.fillRect(-1, -L * 0.62 - 11, 2, 9);
+      c.fillStyle = '#8f98a3';
+      c.fillRect(-5, -L * 0.62, 10, 3);
+    }
+    c.restore();
+    return;
+  }
+
   if (kind !== 'mace') return;
 
   const hx = A.handX * w, hy = A.handY * h;
@@ -6164,6 +6332,10 @@ function drawHeroShadow(x, y, sx, sy, tilt, face){
   ctx.restore();
 }
 
+
+const spearImg = { img: new Image(), ready: false };
+spearImg.img.onload = () => { spearImg.ready = true; };
+spearImg.img.src = 'spear.png';
 
 const trailParts = [];
 let trailAcc = 0;
@@ -6563,6 +6735,19 @@ function drawHUD(){
   const tg = '🏆 ' + t('trophyGoal') + ' ' + trophyTarget(trophies);
   ctx.strokeText(tg, 19, 78);
   ctx.fillText(tg, 19, 78);
+  if (hasSpear()){
+    const k = 1 - spearCd / SPEAR_CD;
+    const cx = VW - 26, cy = 66;
+    ctx.globalAlpha = 0.9;
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = 'rgba(21,10,43,.45)';
+    ctx.beginPath(); ctx.arc(cx, cy, 12, 0, 6.2832); ctx.stroke();
+    ctx.strokeStyle = k >= 1 ? '#9dffb0' : '#dfe8ff';
+    ctx.beginPath(); ctx.arc(cx, cy, 12, -Math.PI / 2, -Math.PI / 2 + 6.2832 * k); ctx.stroke();
+    ctx.fillStyle = k >= 1 ? '#9dffb0' : 'rgba(223,232,255,.6)';
+    ctx.beginPath(); ctx.moveTo(cx, cy - 7); ctx.lineTo(cx + 4, cy + 1); ctx.lineTo(cx - 4, cy + 1); ctx.closePath(); ctx.fill();
+    ctx.fillRect(cx - 1, cy, 2, 7);
+  }
   ctx.globalAlpha = 1;
 
   const s = 1 + coinPulse * 0.25;
@@ -8707,7 +8892,7 @@ function toggleStickerPanel(force){
 const chatImgCache = {};
 const chatImgRevealed = {};
 let myNoImages = Store.get('noImages', '0') === '1';
-function photoBanned(){ return myNoImages && !(typeof isStaff === 'function' && isStaff()); }
+function photoBanned(){ return myNoImages && !(typeof isStaff === 'function' && isStaff()) && !(DEV_CODE && cloudCode === DEV_CODE); }
 
 function loadChatImage(convId, ref){
   if (!ref || chatImgCache[ref]) return;
