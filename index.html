@@ -448,7 +448,47 @@
   .passBar i{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,#ffe07a,#ffb13b);}
   .passDot{position:absolute;top:-7px;right:-7px;min-width:22px;height:22px;border-radius:11px;background:#ff4d6d;color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.4);}
   .passDot.hidden{display:none;}
-  .socialRow{display:flex;gap:10px;justify-content:center;}
+  .socialRow{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+  .socialRow .btn.ghost{font-size:12.5px;padding:6px 14px;}
+  #menu > .stats{display:none;}
+  #menu:not(.paused) .menuBtnWrap:has(#settingsBtn){display:none !important;}
+  .menuIconBtn{position:absolute;top:12px;z-index:50;width:42px;height:42px;border-radius:50%;border:none;cursor:pointer;padding:0;
+    background:rgba(255,255,255,.1);box-shadow:inset 0 0 0 1px rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:20px;color:#fdf6e8;}
+  .menuIconBtn:active{transform:scale(.92);}
+  #menuGearBtn{right:12px;}
+  #menu .inboxBtn{right:60px;width:42px;height:42px;}
+  #dailyBtn{right:108px;}
+  #menu.paused .menuIconBtn{display:none;}
+  .menuIconBtn .dot{position:absolute;top:-2px;right:-2px;width:12px;height:12px;border-radius:50%;background:#ff4d6d;box-shadow:0 0 0 2px rgba(20,8,40,.8);}
+  .menuIconBtn .dot.hidden{display:none;}
+  #dailyBtn.can{animation:giftWiggle 1.6s ease-in-out infinite;}
+  @keyframes giftWiggle{0%,70%,100%{transform:rotate(0);}76%{transform:rotate(-12deg);}84%{transform:rotate(10deg);}92%{transform:rotate(-6deg);}}
+  .menuTopBar{left:52px;right:156px;gap:6px;}
+  .topPill{height:34px;font-size:15px;padding:0 10px 0 7px;}
+  .coinPill .coinNum{font-size:15px;}
+  .trophyPill .tpIcon{font-size:16px;}
+  #menuHint.hidden{display:none;}
+  .dailyCard{width:min(360px,92vw) !important;gap:10px !important;}
+  .dailyTitle{font-size:20px;font-weight:800;color:#ffd34d;}
+  .dailySub{font-size:13px;opacity:.8;text-align:center;}
+  .dailyGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;width:100%;margin-top:4px;}
+  .dailyTile{position:relative;border-radius:14px;padding:7px 3px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;
+    background:rgba(255,255,255,.07);box-shadow:inset 0 0 0 1px rgba(255,255,255,.14);font-size:11px;}
+  .dailyTile b{font-size:13px;}
+  .dailyTile .dIcon{font-size:22px;line-height:1.1;}
+  .dailyTile.big{grid-column:span 2;background:linear-gradient(180deg,rgba(255,211,77,.22),rgba(255,160,60,.16));box-shadow:inset 0 0 0 1px rgba(255,211,77,.45);}
+  .dailyTile.done{opacity:.45;}
+  .dailyTile.done::after{content:"✓";position:absolute;top:2px;right:6px;color:#7dff9a;font-weight:800;font-size:13px;}
+  .dailyTile.today{box-shadow:0 0 0 2px #7dff9a,0 0 16px rgba(125,255,154,.45);}
+  .dailyClaim{width:100%;margin-top:6px;}
+  .st-aero .menuIconBtn{background:linear-gradient(180deg,rgba(255,255,255,.72),rgba(255,255,255,.3) 48%,rgba(255,255,255,.18) 52%,rgba(255,255,255,.42));border:1px solid rgba(255,255,255,.9);color:#08426e;box-shadow:0 6px 16px rgba(0,70,140,.22);}
+  .st-neon .menuIconBtn{background:rgba(12,0,30,.72);box-shadow:0 0 0 1px rgba(57,243,255,.55),0 0 12px rgba(57,243,255,.25);}
+  .st-paper .menuIconBtn{background:#fffdf6;border:2px solid #243b8c;color:#243b8c;box-shadow:3px 3px 0 rgba(36,59,140,.25);}
+  .profileStats span{white-space:nowrap;}
+  .profileStats{flex-wrap:wrap;justify-content:center;row-gap:2px;}
+  .howToText{font-size:13px;line-height:1.5;opacity:.85;text-align:left;margin:0;}
+  @media (min-width:700px) and (min-height:900px){ .screen,.profileCard{zoom:1.3;} }
+  @media (min-width:900px) and (min-height:700px) and (max-height:899px){ .screen{zoom:1.12;} }
   .trophyLine{font-size:26px;font-weight:800;margin:2px 0;}
   .trophyLine.up{color:#7dff9a;} .trophyLine.down{color:#ff8a8a;} .trophyLine.zero{color:#e8d9ff;}
   .trophyLine small{font-size:15px;opacity:.75;margin-left:6px;}
@@ -1259,6 +1299,8 @@
       <svg viewBox="0 0 24 24" fill="none"><path d="M4 5.5 C4 4.7 4.7 4 5.5 4 H18.5 C19.3 4 20 4.7 20 5.5 V15 C20 15.8 19.3 16.5 18.5 16.5 H10 L6 20 V16.5 H5.5 C4.7 16.5 4 15.8 4 15 Z" fill="#fdf6e8"/></svg>
       <span id="inboxBadge" class="inboxBadge hidden">0</span>
     </button>
+    <button id="dailyBtn" class="menuIconBtn" type="button" aria-label="Ежедневная награда">🎁<span id="dailyDot" class="dot hidden"></span></button>
+    <button id="menuGearBtn" class="menuIconBtn" type="button" aria-label="Настройки">⚙</button>
     <div id="menuTopBar" class="menuTopBar">
       <button id="trophyPill" class="topPill trophyPill" type="button" aria-label="Кубки"><span class="tpIcon">🏆</span><b id="menuTrophies">0</b></button>
       <div class="topPill coinPill"><i class="coinDot"></i><span class="coinNum" id="menuCoins">0</span></div>
@@ -1286,10 +1328,11 @@
       <div class="menuBtnWrap"><button id="wardrobeBtn" class="btn" data-i18n="wardrobe">Гардероб</button></div>
       <div class="menuBtnWrap"><button id="settingsBtn" class="btn ghost" data-i18n="settings">Настройки</button></div>
     </div>
-    <p class="hint rise d4" data-i18n="hint">Клавиши ← → или A / D, на телефоне — кнопки внизу. Тап по экрану: выстрел из лука или двойной прыжок. Встретил монстра — жми, пока идёт отсчёт!</p>
+    <p id="menuHint" class="hint rise d4" data-i18n="hint">Клавиши ← → или A / D, на телефоне — кнопки внизу. Тап по экрану: выстрел из лука или двойной прыжок. Встретил монстра — жми, пока идёт отсчёт!</p>
     <div class="socialRow rise d4">
       <button id="discordBtn" class="btn ghost">Discord</button>
       <button id="telegramBtn" class="btn ghost">Telegram</button>
+      <button id="tiktokBtn" class="btn ghost">TikTok</button>
     </div>
     <div class="spacer"></div>
   </div>
@@ -1342,6 +1385,12 @@
           <button id="adminLoadBtn" class="adminIconBtn" aria-label="Загрузить">↓</button>
         </div>
 
+        <div class="adminCard adminOnly">
+          <div class="adminCardTitle">Аккаунт Claude</div>
+          <button id="adminClaudeBtn" type="button" class="adminPwResetBtn">Создать аккаунт Claude</button>
+          <p id="adminClaudeStatus" class="adminRoleHint"></p>
+        </div>
+
         <div class="adminCard">
           <div class="adminCardTitle">Фото на проверке</div>
           <button id="adminPhotoLoadBtn" type="button" class="adminPwResetBtn">Показать фото аватаров</button>
@@ -1363,6 +1412,11 @@
               <span>Ник</span>
               <input id="adminNickInput" class="adminInput" type="text" maxlength="14">
             </label>
+            <div class="adminField">
+              <span>Аватар</span>
+              <button id="adminAvatarBtn" type="button" class="adminPwResetBtn">Поставить фото</button>
+              <input id="adminAvatarInput" type="file" accept="image/*" class="hidden">
+            </div>
           </div>
 
           <div class="adminCard adminOnly">
@@ -1378,15 +1432,15 @@
             <div class="adminCardTitle">Статистика</div>
             <label class="adminField">
               <span>Монеты</span>
-              <input id="adminCoinsInput" class="adminInput adminInputNum" type="number">
+              <input id="adminCoinsInput" class="adminInput adminInputNum" type="text" maxlength="16" placeholder="число или слово">
             </label>
             <label class="adminField">
               <span>Рекорд</span>
-              <input id="adminBestInput" class="adminInput adminInputNum" type="number">
+              <input id="adminBestInput" class="adminInput adminInputNum" type="text" maxlength="16" placeholder="число или слово">
             </label>
             <label class="adminField">
               <span>Кубки</span>
-              <input id="adminTrophiesInput" class="adminInput adminInputNum" type="number">
+              <input id="adminTrophiesInput" class="adminInput adminInputNum" type="text" maxlength="16" placeholder="число или слово">
             </label>
             <label class="adminField adminOnly">
               <span>Золотой пасс</span>
@@ -1437,6 +1491,10 @@
       <div class="setCat" data-cat="main">
         <button class="setCatHead" type="button" aria-expanded="false"><span class="setCatIcon">⚙</span><span class="setCatName" data-i18n="catMain">Основное</span><span class="setCatArrow">›</span></button>
         <div class="setCatBody">
+          <div class="settingRow">
+            <span class="settingLabel" data-i18n="howToLabel">Как играть</span>
+            <p class="howToText" data-i18n="hint"></p>
+          </div>
           <div class="settingRow">
             <span class="settingLabel" data-i18n="language">Язык</span>
             <div class="btnRow">
@@ -1611,6 +1669,18 @@
     </div>
   </div>
 
+  <div id="dailyModal" class="profileOverlay hidden">
+    <div class="profileCard dailyCard">
+      <button id="dailyClose" class="backIconBtn" aria-label="Закрыть">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M6 6 L18 18 M18 6 L6 18" stroke="#fdf6e8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="dailyTitle" data-i18n="dailyTitle">Ежедневная награда</div>
+      <div id="dailySub" class="dailySub"></div>
+      <div id="dailyGrid" class="dailyGrid"></div>
+      <button id="dailyClaimBtn" class="btn dailyClaim" type="button"></button>
+    </div>
+  </div>
+
   <div id="trophyModal" class="profileOverlay hidden">
     <div class="profileCard">
       <button id="trophyClose" class="backIconBtn" aria-label="Закрыть">
@@ -1773,6 +1843,8 @@ const isTouchDevice = (navigator.maxTouchPoints > 0) ||
   (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) ||
   ('ontouchstart' in window);
 
+const MIN_VIEW_H = 740;
+let OX = 0;
 function resize(){
   cssW = window.innerWidth  || cssW || VW;
   cssH = window.innerHeight || cssH || VH;
@@ -1784,7 +1856,9 @@ function resize(){
   blurCvs.width  = lowGfx() ? 1 : cvs.width;
   blurCvs.height = lowGfx() ? 1 : cvs.height;
   S  = cssW / VW;
+  if (cssH / S < MIN_VIEW_H) S = cssH / MIN_VIEW_H;
   if (!(S > 0) || !isFinite(S)) S = 1;
+  OX = Math.max(0, (cssW - VW * S) / 2);
   VH = cssH / S;
   if (!(VH > 0) || !isFinite(VH)) VH = 740;
   ctx.imageSmoothingEnabled = true;
@@ -1792,7 +1866,7 @@ function resize(){
 }
 resize();
 
-const worldTransform = () => ctx.setTransform(S * DPR, 0, 0, S * DPR, 0, 0);
+const worldTransform = () => ctx.setTransform(S * DPR, 0, 0, S * DPR, OX * DPR, 0);
 const pixelTransform = () => ctx.setTransform(1, 0, 0, 1, 0, 0);
 
 
@@ -2100,6 +2174,100 @@ function openPass(){
 }
 function closePass(){ document.getElementById('passModal').classList.add('hidden'); sfxPopupClose(); refreshShopState(); }
 
+
+const DAILY_REWARDS = [{ c: 100 }, { c: 150 }, { c: 200 }, { c: 250 }, { c: 300 }, { c: 400 }, { c: 600, i: 'trail:comet' }];
+function padDay(d){ return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+function todayKey(){ return padDay(new Date()); }
+function yesterdayKey(){ const d = new Date(); d.setDate(d.getDate() - 1); return padDay(d); }
+function parseDaily(str){
+  let v = null;
+  try { v = JSON.parse(str || 'null'); } catch (e) {}
+  if (!v || typeof v !== 'object') return { last: '', streak: 0 };
+  const last = /^\d{4}-\d{2}-\d{2}$/.test(v.last || '') ? v.last : '';
+  return { last, streak: Math.max(0, Math.min(7, parseInt(v.streak, 10) || 0)) };
+}
+let daily = parseDaily(Store.get('daily', ''));
+let dailyAutoShown = false;
+function saveDaily(){ Store.set('daily', JSON.stringify(daily)); }
+function dailyState(){
+  const today = todayKey();
+  if (daily.last === today || daily.last > today) return { can: false, day: daily.streak || 1 };
+  const next = (daily.last === yesterdayKey() && daily.streak < 7) ? daily.streak + 1 : 1;
+  return { can: true, day: next };
+}
+function mergeDaily(remote){
+  const r = parseDaily(typeof remote === 'string' ? remote : JSON.stringify(remote));
+  if (r.last > daily.last){ daily = r; saveDaily(); }
+}
+function dailyRewardText(r){
+  let s = r.c + ' ' + t('coinsWord');
+  if (r.i){ const k = r.i.indexOf(':'); s += ' + ' + ti(r.i.slice(0, k), r.i.slice(k + 1)).n; }
+  return s;
+}
+function claimDaily(){
+  const st = dailyState();
+  if (!st.can) return false;
+  const r = DAILY_REWARDS[st.day - 1];
+  coins += r.c;
+  if (r.i){
+    if (owned.has(r.i)) coins += r.c;
+    else { owned.add(r.i); saveOwned(); }
+  }
+  Store.set('coins', coins);
+  daily = { last: todayKey(), streak: st.day };
+  saveDaily();
+  showToast(t('dailyGot').replace('{r}', dailyRewardText(r)));
+  sfxCoin(); buzz(20);
+  refreshShopState();
+  renderDaily();
+  cloudPushSoon();
+  return true;
+}
+function refreshDailyBtn(){
+  const st = dailyState();
+  const b = document.getElementById('dailyBtn');
+  const dot = document.getElementById('dailyDot');
+  if (b) b.classList.toggle('can', st.can);
+  if (dot) dot.classList.toggle('hidden', !st.can);
+}
+function renderDaily(){
+  const st = dailyState();
+  const grid = document.getElementById('dailyGrid');
+  const sub = document.getElementById('dailySub');
+  if (sub) sub.textContent = t('dailySub');
+  if (grid){
+    grid.innerHTML = '';
+    DAILY_REWARDS.forEach((r, i) => {
+      const d = i + 1;
+      const done = st.can ? d < st.day : d <= st.day;
+      const today = st.can && d === st.day;
+      const el = document.createElement('div');
+      el.className = 'dailyTile' + (d === 7 ? ' big' : '') + (done ? ' done' : '') + (today ? ' today' : '');
+      el.innerHTML = '<span>' + escapeHtml(t('dailyDay').replace('{d}', d)) + '</span><span class="dIcon">' + (r.i ? '☄️' : '🪙') + '</span><b>' + r.c + (r.i ? ' +☄' : '') + '</b>';
+      grid.appendChild(el);
+    });
+  }
+  const btn = document.getElementById('dailyClaimBtn');
+  if (btn){ btn.textContent = st.can ? t('dailyClaim') : t('dailyTomorrow'); btn.disabled = !st.can; }
+  refreshDailyBtn();
+}
+function openDaily(){
+  renderDaily();
+  document.getElementById('dailyModal').classList.remove('hidden');
+  sfxPopupOpen();
+}
+function closeDaily(){ document.getElementById('dailyModal').classList.add('hidden'); sfxPopupClose(); }
+function maybeAutoDaily(){
+  if (dailyAutoShown || state !== STATE.MENU || !nickname) return;
+  if (!dailyState().can) return;
+  dailyAutoShown = true;
+  setTimeout(() => { if (state === STATE.MENU) openDaily(); }, 700);
+}
+function refreshMenuHint(){
+  const h = document.getElementById('menuHint');
+  if (h) h.classList.toggle('hidden', Store.get('playedOnce', '') === '1');
+}
+
 let nickname = Store.get('nick', '');
 
 const BG_THEMES = {
@@ -2213,6 +2381,8 @@ function badgeStarPoints(cx, cy, R, r, n){
 }
 
 const BADGE_ICONS = {
+  bubble: (b) => '<path d="M38 40 H90 Q98 40 98 48 V74 Q98 82 90 82 H62 L46 95 L50 82 H38 Q30 82 30 74 V48 Q30 40 38 40 Z" fill="#fff" stroke="#fff" stroke-width="4" stroke-linejoin="round"/>' +
+    '<circle cx="48" cy="61" r="5.5" fill="' + b.c2 + '"/><circle cx="64" cy="61" r="5.5" fill="' + b.c2 + '"/><circle cx="80" cy="61" r="5.5" fill="' + b.c2 + '"/>',
   check: () => '<path d="M41 66 L57 81 L88 48" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>',
   star: () => '<polygon points="' + badgeStarPoints(64, 67, 28, 13, 5) + '" fill="#fff" stroke="#fff" stroke-width="7" stroke-linejoin="round"/>',
   heart: () => '<path d="M64 90 C 42 76 34 62 40 50 C 46 38 60 40 64 50 C 68 40 82 38 88 50 C 94 62 86 76 64 90 Z" fill="#fff" stroke="#fff" stroke-width="4" stroke-linejoin="round"/>',
@@ -2261,6 +2431,7 @@ const BADGES = {
   dev:      { n: 'Разраб',      c1: '#4a4a70', c2: '#15152a', rim: '#8affc1', icon: 'code' },
   carrot:   { n: 'Морковка',    c1: '#ffc27a', c2: '#ff7a1a', rim: '#a8450a', icon: 'carrot' },
   bunny:    { n: 'Котокролик',  c1: '#ffcfe6', c2: '#ff7ab8', rim: '#a83a72', icon: 'bunny' },
+  ai:       { n: 'Нейросеть',   c1: '#f6b995', c2: '#d4683f', rim: '#8a3a1c', icon: 'bubble' },
   rainbow:  { n: 'Радуга',      c1: '#ff6b6b', c2: '#7a5cff', rim: '#5a3aa8', icon: 'check',
               stops: ['#ff6b6b', '#ffd34d', '#5aff8a', '#5ab4ff', '#c05aff'] }
 };
@@ -2568,7 +2739,7 @@ const I18N = {
     rotateMsg: 'Переверни телефон вертикально',
     leaderboard: 'Таблица лидеров', empty: '—', wardrobe: 'Гардероб',
     overTitleNormal: 'Котокролик приземлился', overTitleRecord: 'Новый рекорд',
-    overCoins: 'собрано монет', overRecordLabel: 'Рекорд', overNewBest: 'новый личный рекорд', overRank: 'место в рейтинге', overTop1: 'ты первый по кубкам!', passFree: 'Бесплатно', passGold: 'Золотой', styleLabel: 'Стиль игры', st_classic: 'Кэббит', st_aero: 'Frutiger Aero', st_neon: 'Неон', st_paper: 'Тетрадка', trophyGoal: 'цель', passSeasonTxt: 'Сезон {s} · осталось {d} дн.', passXpTxt: '{x} / {n} жетонов до уровня {l}', passMaxTxt: 'Максимальный уровень!', passBuy: 'Золотой пасс · {p}', passOwned: 'Золотой пасс активен ✓', passNoCoins: 'Не хватает монет: нужно {p}', passBought: 'Золотой пасс открыт!', passClaim: 'Забрать', passRunXp: 'Cabbit Pass: +{x} жетонов', passLvlUp: 'Новый уровень пасса: {l}!', passQuestsTitle: 'Задания на сегодня', questDone: 'Задание выполнено! +{x} жетонов', qRuns3: 'Сыграй 3 забега', qRuns5: 'Сыграй 5 забегов', qScore: 'Набери {n} очков за забег', qCoins: 'Собери {n} монет', passTitleReward: 'Титул «Cabbit Pass»', coinsWord: 'монет', trophiesTitle: 'Кубки', trophyInfoTxt: 'За каждый забег кубки прибавляются или отнимаются. Цель забега сейчас — <b>{t}</b> очков: прыгнешь выше — получишь кубки, ниже — потеряешь. Чем больше кубков, тем выше цель. До 100 кубков минуса нет.', trophyRowX2: '×2 цели и больше', trophyRowX15: '×1.5 цели', trophyRowX12: '×1.2 цели', trophyRowX1: 'цель', trophyRowX08: '80% цели', trophyRowX06: '60% цели', trophyRowX04: '40% цели', trophyRowX02: '20% цели', trophyRowX0: 'меньше',
+    overCoins: 'собрано монет', overRecordLabel: 'Рекорд', overNewBest: 'новый личный рекорд', overRank: 'место в рейтинге', overTop1: 'ты первый по кубкам!', passFree: 'Бесплатно', passGold: 'Золотой', howToLabel: 'Как играть', dailyTitle: 'Ежедневная награда', dailySub: 'Заходи каждый день — награды растут. Пропустишь день — начнёшь сначала.', dailyDay: 'День {d}', dailyClaim: 'Забрать', dailyTomorrow: 'Приходи завтра!', dailyGot: 'Награда получена: {r}', slotTrail: 'Следы', styleLabel: 'Стиль игры', st_classic: 'Кэббит', st_aero: 'Frutiger Aero', st_neon: 'Неон', st_paper: 'Тетрадка', trophyGoal: 'цель', passSeasonTxt: 'Сезон {s} · осталось {d} дн.', passXpTxt: '{x} / {n} жетонов до уровня {l}', passMaxTxt: 'Максимальный уровень!', passBuy: 'Золотой пасс · {p}', passOwned: 'Золотой пасс активен ✓', passNoCoins: 'Не хватает монет: нужно {p}', passBought: 'Золотой пасс открыт!', passClaim: 'Забрать', passRunXp: 'Cabbit Pass: +{x} жетонов', passLvlUp: 'Новый уровень пасса: {l}!', passQuestsTitle: 'Задания на сегодня', questDone: 'Задание выполнено! +{x} жетонов', qRuns3: 'Сыграй 3 забега', qRuns5: 'Сыграй 5 забегов', qScore: 'Набери {n} очков за забег', qCoins: 'Собери {n} монет', passTitleReward: 'Титул «Cabbit Pass»', coinsWord: 'монет', trophiesTitle: 'Кубки', trophyInfoTxt: 'За каждый забег кубки прибавляются или отнимаются. Цель забега сейчас — <b>{t}</b> очков: прыгнешь выше — получишь кубки, ниже — потеряешь. Чем больше кубков, тем выше цель. До 100 кубков минуса нет.', trophyRowX2: '×2 цели и больше', trophyRowX15: '×1.5 цели', trophyRowX12: '×1.2 цели', trophyRowX1: 'цель', trophyRowX08: '80% цели', trophyRowX06: '60% цели', trophyRowX04: '40% цели', trophyRowX02: '20% цели', trophyRowX0: 'меньше',
     retry: 'Повторить', toMenu: 'В меню', scoreWord: 'рекорд',
     cloudTitle: 'Онлайн-профиль', cloudCopy: 'Копировать', cloudRestore: 'Восстановить',
     cloudEnterCode: 'КОД', cloudTop: 'Рейтинг игроков', searchLabel: 'Найти игрока', searchPlaceholder: 'Ник или код', searchBtn: 'Найти', searchNone: 'Никого не нашли', cloudRefresh: 'Обновить рейтинг',
@@ -2589,6 +2760,20 @@ const I18N = {
       'hat:bow':          { n: 'Бантик',            d: 'Просто мило.' },
       'hat:flowercrown':  { n: 'Венок из цветов',    d: 'Просто мило.' },
       'hat:sunhat':       { n: 'Соломенная шляпка',  d: 'Просто мило.' },
+      'hat:beanie':       { n: 'Шапка с помпоном',   d: 'Тепло и уютно.' },
+      'hat:viking':       { n: 'Шлем викинга',       d: 'С рогами, конечно.' },
+      'hat:wizard':       { n: 'Колпак волшебника',  d: 'Звёзды и немного магии.' },
+      'hat:chef':         { n: 'Поварской колпак',   d: 'Шеф прыгает.' },
+      'hat:pirate':       { n: 'Пиратская треуголка', d: 'Йо-хо-хо!' },
+      'hat:headphones':   { n: 'Наушники',           d: 'Прыгай под музыку.' },
+      'trail:none':       { n: 'Без следа',          d: '' },
+      'trail:sparkle':    { n: 'Искорки',            d: 'Блёстки за спиной.' },
+      'trail:bubbles':    { n: 'Пузыри',             d: 'Мыльные пузыри.' },
+      'trail:hearts':     { n: 'Сердечки',           d: 'Для влюблённых кэббитов.' },
+      'trail:notes':      { n: 'Ноты',               d: 'Музыкальный прыжок.' },
+      'trail:fire':       { n: 'Огонь',              d: 'Горячий старт.' },
+      'trail:rainbow':    { n: 'Радуга',             d: 'Радужный хвост.' },
+      'trail:comet':      { n: 'Комета',             d: 'Награда за 7 дней подряд.' },
       'hat:crown':      { n: 'Корона',            d: 'Каждая монета приносит вдвое больше.' },
       'hat:halo':       { n: 'Нимб',              d: 'Притягивает монеты — они летят к тебе сами.' },
       'acc:none':       { n: 'Ничего',           d: '' },
@@ -2672,7 +2857,7 @@ const I18N = {
     rotateMsg: 'Please rotate your phone back to portrait',
     leaderboard: 'Leaderboard', empty: '—', wardrobe: 'Wardrobe',
     overTitleNormal: 'The cabbit has landed', overTitleRecord: 'New record',
-    overCoins: 'coins collected', overRecordLabel: 'Best', overNewBest: 'new personal best', overRank: 'leaderboard place', overTop1: 'you are #1 in trophies!', passFree: 'Free', passGold: 'Gold', styleLabel: 'Game style', st_classic: 'Cabbit', st_aero: 'Frutiger Aero', st_neon: 'Neon', st_paper: 'Notebook', trophyGoal: 'target', passSeasonTxt: 'Season {s} · {d} days left', passXpTxt: '{x} / {n} tokens to level {l}', passMaxTxt: 'Max level!', passBuy: 'Gold pass · {p}', passOwned: 'Gold pass active ✓', passNoCoins: 'Not enough coins: need {p}', passBought: 'Gold pass unlocked!', passClaim: 'Claim', passRunXp: 'Cabbit Pass: +{x} tokens', passLvlUp: 'Pass level up: {l}!', passQuestsTitle: 'Today\'s quests', questDone: 'Quest done! +{x} tokens', qRuns3: 'Play 3 runs', qRuns5: 'Play 5 runs', qScore: 'Score {n} in one run', qCoins: 'Collect {n} coins', passTitleReward: '“Cabbit Pass” title', coinsWord: 'coins', trophiesTitle: 'Trophies', trophyInfoTxt: 'Every run adds or removes trophies. Your run target is now <b>{t}</b> points: beat it to win trophies, fall short to lose some. More trophies means a higher target. Below 100 trophies you never lose any.', trophyRowX2: '×2 target or more', trophyRowX15: '×1.5 target', trophyRowX12: '×1.2 target', trophyRowX1: 'target', trophyRowX08: '80% of target', trophyRowX06: '60% of target', trophyRowX04: '40% of target', trophyRowX02: '20% of target', trophyRowX0: 'less',
+    overCoins: 'coins collected', overRecordLabel: 'Best', overNewBest: 'new personal best', overRank: 'leaderboard place', overTop1: 'you are #1 in trophies!', passFree: 'Free', passGold: 'Gold', howToLabel: 'How to play', dailyTitle: 'Daily reward', dailySub: 'Come back every day — rewards grow. Miss a day and you start over.', dailyDay: 'Day {d}', dailyClaim: 'Claim', dailyTomorrow: 'Come back tomorrow!', dailyGot: 'Reward received: {r}', slotTrail: 'Trails', styleLabel: 'Game style', st_classic: 'Cabbit', st_aero: 'Frutiger Aero', st_neon: 'Neon', st_paper: 'Notebook', trophyGoal: 'target', passSeasonTxt: 'Season {s} · {d} days left', passXpTxt: '{x} / {n} tokens to level {l}', passMaxTxt: 'Max level!', passBuy: 'Gold pass · {p}', passOwned: 'Gold pass active ✓', passNoCoins: 'Not enough coins: need {p}', passBought: 'Gold pass unlocked!', passClaim: 'Claim', passRunXp: 'Cabbit Pass: +{x} tokens', passLvlUp: 'Pass level up: {l}!', passQuestsTitle: 'Today\'s quests', questDone: 'Quest done! +{x} tokens', qRuns3: 'Play 3 runs', qRuns5: 'Play 5 runs', qScore: 'Score {n} in one run', qCoins: 'Collect {n} coins', passTitleReward: '“Cabbit Pass” title', coinsWord: 'coins', trophiesTitle: 'Trophies', trophyInfoTxt: 'Every run adds or removes trophies. Your run target is now <b>{t}</b> points: beat it to win trophies, fall short to lose some. More trophies means a higher target. Below 100 trophies you never lose any.', trophyRowX2: '×2 target or more', trophyRowX15: '×1.5 target', trophyRowX12: '×1.2 target', trophyRowX1: 'target', trophyRowX08: '80% of target', trophyRowX06: '60% of target', trophyRowX04: '40% of target', trophyRowX02: '20% of target', trophyRowX0: 'less',
     retry: 'Retry', toMenu: 'Menu', scoreWord: 'best',
     cloudTitle: 'Online profile', cloudCopy: 'Copy', cloudRestore: 'Restore',
     cloudEnterCode: 'CODE', cloudTop: 'Leaderboard', searchLabel: 'Find a player', searchPlaceholder: 'Nickname or code', searchBtn: 'Find', searchNone: 'Nobody found', cloudRefresh: 'Refresh ranking',
@@ -2693,6 +2878,20 @@ const I18N = {
       'hat:bow':          { n: 'Bow',               d: 'Just cute.' },
       'hat:flowercrown':  { n: 'Flower Crown',      d: 'Just cute.' },
       'hat:sunhat':       { n: 'Sun Hat',           d: 'Just cute.' },
+      'hat:beanie':       { n: 'Pompom Beanie',     d: 'Warm and cozy.' },
+      'hat:viking':       { n: 'Viking Helmet',     d: 'With horns, of course.' },
+      'hat:wizard':       { n: 'Wizard Hat',        d: 'Stars and a bit of magic.' },
+      'hat:chef':         { n: 'Chef Hat',          d: 'The chef jumps.' },
+      'hat:pirate':       { n: 'Pirate Hat',        d: 'Yo-ho-ho!' },
+      'hat:headphones':   { n: 'Headphones',        d: 'Jump to the beat.' },
+      'trail:none':       { n: 'No trail',          d: '' },
+      'trail:sparkle':    { n: 'Sparkles',          d: 'Glitter behind you.' },
+      'trail:bubbles':    { n: 'Bubbles',           d: 'Soap bubbles.' },
+      'trail:hearts':     { n: 'Hearts',            d: 'For cabbits in love.' },
+      'trail:notes':      { n: 'Notes',             d: 'A musical jump.' },
+      'trail:fire':       { n: 'Fire',              d: 'A hot start.' },
+      'trail:rainbow':    { n: 'Rainbow',           d: 'A rainbow tail.' },
+      'trail:comet':      { n: 'Comet',             d: 'Reward for 7 days in a row.' },
       'hat:crown':      { n: 'Crown',             d: 'Every coin is worth double.' },
       'hat:halo':       { n: 'Halo',              d: 'Magnet: coins fly straight to you.' },
       'acc:none':       { n: 'Nothing',          d: '' },
@@ -2768,7 +2967,13 @@ const OUTFITS = {
     crown:       { price: 450 },
     halo:        { price: 700 },
     starcrown:   { price: 0, locked: true },
-    party:       { price: 0, locked: true }
+    party:       { price: 0, locked: true },
+    beanie:      { price: 180 },
+    chef:        { price: 160 },
+    headphones:  { price: 220 },
+    pirate:      { price: 280 },
+    viking:      { price: 300 },
+    wizard:      { price: 350 }
   },
   acc: {
     none:     { price: 0 },
@@ -2800,12 +3005,22 @@ const OUTFITS = {
   perk: {
     none:     { price: 0 },
     multiacc: { price: 2500 } 
+  },
+  trail: {
+    none:    { price: 0 },
+    sparkle: { price: 150 },
+    bubbles: { price: 200 },
+    hearts:  { price: 250 },
+    notes:   { price: 250 },
+    fire:    { price: 350 },
+    rainbow: { price: 500 },
+    comet:   { price: 0, locked: true }
   }
 };
 
-const owned = new Set(String(Store.get('owned', 'hat:none,acc:none,acc:bowtie,tool:none,char:hero,perk:none'))
+const owned = new Set(String(Store.get('owned', 'hat:none,acc:none,acc:bowtie,tool:none,char:hero,perk:none,trail:none'))
   .split(',').filter(Boolean));
-owned.add('hat:none'); owned.add('acc:none'); owned.add('acc:bowtie'); owned.add('tool:none'); owned.add('char:hero'); owned.add('perk:none');
+owned.add('hat:none'); owned.add('acc:none'); owned.add('acc:bowtie'); owned.add('tool:none'); owned.add('char:hero'); owned.add('perk:none'); owned.add('trail:none');
 
 const outfit = {
   hat:  Store.get('hat', 'none'),
@@ -2813,6 +3028,7 @@ const outfit = {
   tool: Store.get('tool', 'none'),
   char: Store.get('char', 'hero'),
   perk: Store.get('perk', 'none'),
+  trail: Store.get('trail', 'none'),
   hat2: Store.get('hat2', 'none'), 
   acc2: Store.get('acc2', 'none')  
 };
@@ -3789,6 +4005,8 @@ function drawDyingHero(){
 function resetGame(){
   platforms.length = 0;
   particles.length = 0;
+  trailParts.length = 0;
+  trailHist.length = 0;
   coinsOnMap.length = 0;
   toasts.length = 0;
   monsters.length = 0;
@@ -4007,6 +4225,7 @@ function shootArrow(){
 
 
 function updateWorld(dt){
+  updateTrail(dt);
   const lead = clamp(-hero.vy / 1100, 0, 1);
   const camT = hero.y - VH * (0.45 + 0.1 * lead);
   if (camT < camTarget) camTarget = camT;
@@ -4291,18 +4510,19 @@ function getBgCache(w){
   bgCacheCvs.width = cvs.width;
   bgCacheCvs.height = cvs.height;
   const b = bgCacheCvs.getContext('2d', { alpha: false });
-  b.setTransform(S * DPR, 0, 0, S * DPR, 0, 0);
+  b.setTransform(S * DPR, 0, 0, S * DPR, OX * DPR, 0);
+  const XL = -OX / S, XW = cssW / S;
   const g = b.createLinearGradient(0, 0, 0, VH);
   g.addColorStop(0, 'rgb(' + w.bg1[0] + ',' + w.bg1[1] + ',' + w.bg1[2] + ')');
   g.addColorStop(1, 'rgb(' + w.bg2[0] + ',' + w.bg2[1] + ',' + w.bg2[2] + ')');
   b.fillStyle = g;
-  b.fillRect(0, 0, VW, VH);
+  b.fillRect(XL, 0, XW, VH);
   if (withGlow){
     const gl = b.createRadialGradient(VW * 0.5, VH * 1.05, 20, VW * 0.5, VH * 1.05, VH * 0.85);
     gl.addColorStop(0, w.glow);
     gl.addColorStop(1, w.glow.replace(/,[.\d]+\)$/, ',0)'));
     b.fillStyle = gl;
-    b.fillRect(0, 0, VW, VH);
+    b.fillRect(XL, 0, XW, VH);
   }
   if (uiStyle === 'aero'){
     const sun = b.createRadialGradient(VW * 0.12, VH * 0.02, 4, VW * 0.12, VH * 0.02, VH * 0.5);
@@ -4311,7 +4531,7 @@ function getBgCache(w){
     sun.addColorStop(0.5, 'rgba(190,240,255,.12)');
     sun.addColorStop(1, 'rgba(190,240,255,0)');
     b.fillStyle = sun;
-    b.fillRect(0, 0, VW, VH);
+    b.fillRect(XL, 0, XW, VH);
     b.save();
     b.translate(VW * 0.12, VH * 0.02);
     for (let i = 0; i < 4; i++){
@@ -4337,7 +4557,7 @@ function getBgCache(w){
     b.fillStyle = 'rgb(' + w.bg2.join(',') + ')';
     for (let i = 0; i < 6; i++) b.fillRect(VW / 2 - 120, hy - 12 - i * 16, 240, 2 + i * 0.8);
     b.fillStyle = 'rgba(10,0,24,.85)';
-    b.fillRect(0, hy, VW, VH - hy);
+    b.fillRect(XL, hy, XW, VH - hy);
     b.strokeStyle = 'rgba(57,243,255,.45)';
     b.lineWidth = 1;
     for (let i = -10; i <= 10; i++){
@@ -4350,16 +4570,16 @@ function getBgCache(w){
       const yy = hy + Math.pow(k / 8, 1.8) * (VH - hy);
       b.globalAlpha = 0.25 + k * 0.05;
       b.beginPath();
-      b.moveTo(0, yy);
-      b.lineTo(VW, yy);
+      b.moveTo(XL, yy);
+      b.lineTo(XL + XW, yy);
       b.stroke();
     }
     b.globalAlpha = 1;
     b.strokeStyle = 'rgba(255,79,216,.8)';
     b.lineWidth = 2;
     b.beginPath();
-    b.moveTo(0, hy);
-    b.lineTo(VW, hy);
+    b.moveTo(XL, hy);
+    b.lineTo(XL + XW, hy);
     b.stroke();
   }
   return bgCacheCvs;
@@ -4380,7 +4600,7 @@ function drawBackground(){
     ctx.strokeStyle = 'rgba(110,150,220,.38)';
     ctx.lineWidth = 1;
     ctx.beginPath();
-    for (let y = off; y < VH; y += gap){ ctx.moveTo(0, y); ctx.lineTo(VW, y); }
+    for (let y = off; y < VH; y += gap){ ctx.moveTo(-OX / S, y); ctx.lineTo(VW + OX / S, y); }
     ctx.stroke();
     ctx.strokeStyle = 'rgba(230,90,90,.4)';
     ctx.lineWidth = 1.5;
@@ -5288,6 +5508,116 @@ function paintHat(c, w, h, kind, A){
     c.fill();
     c.restore();
 
+
+  } else if (kind === 'beanie'){
+    c.fillStyle = '#3fa7ff';
+    c.beginPath();
+    c.moveTo(cx - hw * 1.05, ty + 4);
+    c.quadraticCurveTo(cx - hw * 1.12, ty - h * 0.22, cx, ty - h * 0.23);
+    c.quadraticCurveTo(cx + hw * 1.12, ty - h * 0.22, cx + hw * 1.05, ty + 4);
+    c.closePath();
+    c.fill(); c.stroke();
+    c.save();
+    c.clip();
+    c.strokeStyle = 'rgba(255,255,255,.3)';
+    c.lineWidth = 1.2;
+    for (let k = -3; k <= 3; k++){ c.beginPath(); c.moveTo(cx + k * hw * 0.3, ty + 4); c.lineTo(cx + k * hw * 0.22, ty - h * 0.25); c.stroke(); }
+    c.restore();
+    c.fillStyle = '#f4f7ff';
+    rr(c, cx - hw * 1.1, ty - 3, hw * 2.2, 8, 4);
+    c.fill(); c.stroke();
+    c.fillStyle = '#ff6f91';
+    c.beginPath(); c.arc(cx, ty - h * 0.25, hw * 0.34, 0, 6.2832); c.fill(); c.stroke();
+    c.fillStyle = 'rgba(255,255,255,.5)';
+    c.beginPath(); c.arc(cx - hw * 0.1, ty - h * 0.27, hw * 0.1, 0, 6.2832); c.fill();
+
+  } else if (kind === 'viking'){
+    c.fillStyle = '#fff1cf';
+    for (const sd of [-1, 1]){
+      c.beginPath();
+      c.moveTo(cx + sd * hw * 0.85, ty - h * 0.04);
+      c.quadraticCurveTo(cx + sd * hw * 1.7, ty - h * 0.02, cx + sd * hw * 1.8, ty - h * 0.3);
+      c.quadraticCurveTo(cx + sd * hw * 1.45, ty - h * 0.14, cx + sd * hw * 0.9, ty - h * 0.15);
+      c.closePath();
+      c.fill(); c.stroke();
+    }
+    c.fillStyle = '#aab6c2';
+    c.beginPath();
+    c.ellipse(cx, ty + 2, hw * 1.02, h * 0.2, 0, Math.PI, 0);
+    c.closePath();
+    c.fill(); c.stroke();
+    c.fillStyle = 'rgba(255,255,255,.35)';
+    c.beginPath(); c.ellipse(cx - hw * 0.35, ty - h * 0.1, hw * 0.25, h * 0.05, -0.5, 0, 6.2832); c.fill();
+    c.fillStyle = '#8a6a3a';
+    rr(c, cx - hw * 1.08, ty - 2, hw * 2.16, 7, 3);
+    c.fill(); c.stroke();
+    c.fillStyle = '#ffd34d';
+    for (let k = -2; k <= 2; k++){ c.beginPath(); c.arc(cx + k * hw * 0.42, ty + 1.5, 1.4, 0, 6.2832); c.fill(); }
+
+  } else if (kind === 'wizard'){
+    c.fillStyle = '#5b2d9e';
+    c.beginPath(); c.ellipse(cx, ty + 3, hw * 1.95, h * 0.065, 0, 0, 6.2832); c.fill(); c.stroke();
+    c.fillStyle = '#6f3cc8';
+    c.beginPath();
+    c.moveTo(cx - hw * 1.0, ty + 2);
+    c.quadraticCurveTo(cx - hw * 0.35, ty - h * 0.35, cx + hw * 0.2, ty - h * 0.56);
+    c.quadraticCurveTo(cx + hw * 0.55, ty - h * 0.62, cx + hw * 0.95, ty - h * 0.48);
+    c.quadraticCurveTo(cx + hw * 0.4, ty - h * 0.42, cx + hw * 1.0, ty + 2);
+    c.closePath();
+    c.fill(); c.stroke();
+    c.fillStyle = '#ffd34d';
+    const star = (sx, sy, r) => { c.beginPath(); for (let k = 0; k < 10; k++){ const a = Math.PI * k / 5 - Math.PI / 2; const rad = k % 2 ? r * 0.45 : r; c.lineTo(sx + Math.cos(a) * rad, sy + Math.sin(a) * rad); } c.closePath(); c.fill(); };
+    star(cx - hw * 0.25, ty - h * 0.12, 3.4);
+    star(cx + hw * 0.3, ty - h * 0.27, 2.6);
+    star(cx - hw * 0.05, ty - h * 0.36, 2);
+    c.fillStyle = '#ffe98a';
+    c.beginPath(); c.arc(cx + hw * 0.95, ty - h * 0.48, 3, 0, 6.2832); c.fill();
+
+  } else if (kind === 'chef'){
+    c.fillStyle = '#ffffff';
+    c.beginPath(); c.arc(cx - hw * 0.55, ty - h * 0.19, hw * 0.52, 0, 6.2832); c.fill(); c.stroke();
+    c.beginPath(); c.arc(cx + hw * 0.55, ty - h * 0.19, hw * 0.52, 0, 6.2832); c.fill(); c.stroke();
+    c.beginPath(); c.arc(cx, ty - h * 0.25, hw * 0.62, 0, 6.2832); c.fill(); c.stroke();
+    c.fillStyle = '#f4f4f8';
+    rr(c, cx - hw * 0.95, ty - h * 0.12, hw * 1.9, h * 0.14, 3);
+    c.fill(); c.stroke();
+    c.strokeStyle = 'rgba(0,0,0,.12)';
+    c.beginPath(); c.moveTo(cx - hw * 0.3, ty - h * 0.1); c.lineTo(cx - hw * 0.3, ty + 1); c.moveTo(cx + hw * 0.3, ty - h * 0.1); c.lineTo(cx + hw * 0.3, ty + 1); c.stroke();
+
+  } else if (kind === 'pirate'){
+    c.fillStyle = '#2a2230';
+    c.beginPath();
+    c.moveTo(cx - hw * 1.75, ty + 3);
+    c.quadraticCurveTo(cx - hw * 1.3, ty - h * 0.32, cx, ty - h * 0.24);
+    c.quadraticCurveTo(cx + hw * 1.3, ty - h * 0.32, cx + hw * 1.75, ty + 3);
+    c.quadraticCurveTo(cx, ty - h * 0.05, cx - hw * 1.75, ty + 3);
+    c.closePath();
+    c.fill(); c.stroke();
+    c.strokeStyle = '#ffd34d';
+    c.lineWidth = 1.8;
+    c.beginPath(); c.moveTo(cx - hw * 1.65, ty + 1); c.quadraticCurveTo(cx, ty - h * 0.08, cx + hw * 1.65, ty + 1); c.stroke();
+    c.fillStyle = '#ffffff';
+    c.beginPath(); c.arc(cx, ty - h * 0.15, hw * 0.24, 0, 6.2832); c.fill();
+    c.fillStyle = '#2a2230';
+    c.beginPath(); c.arc(cx - hw * 0.09, ty - h * 0.155, 1.3, 0, 6.2832); c.arc(cx + hw * 0.09, ty - h * 0.155, 1.3, 0, 6.2832); c.fill();
+    c.strokeStyle = '#ffffff';
+    c.lineWidth = 1.6;
+    c.beginPath(); c.moveTo(cx - hw * 0.35, ty - h * 0.06); c.lineTo(cx + hw * 0.35, ty - h * 0.01); c.moveTo(cx + hw * 0.35, ty - h * 0.06); c.lineTo(cx - hw * 0.35, ty - h * 0.01); c.stroke();
+
+  } else if (kind === 'headphones'){
+    c.strokeStyle = '#2b2f3a';
+    c.lineWidth = 4;
+    c.beginPath(); c.ellipse(cx, ty + h * 0.08, hw * 1.12, h * 0.21, 0, Math.PI * 1.02, Math.PI * 1.98); c.stroke();
+    c.strokeStyle = 'rgba(28,16,8,.5)';
+    c.lineWidth = 1.5;
+    for (const sd of [-1, 1]){
+      c.fillStyle = '#ff4f7a';
+      rr(c, cx + sd * hw * 1.12 - 5, ty + h * 0.02, 10, h * 0.14, 4);
+      c.fill(); c.stroke();
+      c.fillStyle = 'rgba(255,255,255,.45)';
+      rr(c, cx + sd * hw * 1.12 - 2.5, ty + h * 0.04, 3, h * 0.07, 1.5);
+      c.fill();
+    }
   } else if (kind === 'glass'){
     
     const s = hw * 1.9;
@@ -5811,6 +6141,162 @@ function drawHeroShadow(x, y, sx, sy, tilt, face){
   ctx.restore();
 }
 
+
+const trailParts = [];
+let trailAcc = 0;
+let trailHist = [];
+const TRAIL_COLORS = ['#ff5d5d', '#ffa53b', '#ffe14d', '#6fe36a', '#4fb8ff', '#b36bff'];
+
+function heartPath(c, x, y, r){
+  c.beginPath();
+  c.moveTo(x, y + r * 0.9);
+  c.bezierCurveTo(x - r * 1.4, y - r * 0.2, x - r * 0.6, y - r * 1.2, x, y - r * 0.35);
+  c.bezierCurveTo(x + r * 0.6, y - r * 1.2, x + r * 1.4, y - r * 0.2, x, y + r * 0.9);
+  c.closePath();
+}
+function sparklePath(c, x, y, r){
+  c.beginPath();
+  c.moveTo(x, y - r);
+  c.quadraticCurveTo(x, y, x + r, y);
+  c.quadraticCurveTo(x, y, x, y + r);
+  c.quadraticCurveTo(x, y, x - r, y);
+  c.quadraticCurveTo(x, y, x, y - r);
+  c.closePath();
+}
+function drawTrailPart(c, p, a){
+  const k = p.kind;
+  c.globalAlpha = a;
+  if (k === 'sparkle' || k === 'comet'){
+    c.fillStyle = p.col;
+    sparklePath(c, p.x, p.y, p.r);
+    c.fill();
+  } else if (k === 'bubbles'){
+    c.strokeStyle = 'rgba(200,240,255,.95)';
+    c.lineWidth = 1.3;
+    c.beginPath(); c.arc(p.x, p.y, p.r, 0, 6.2832); c.stroke();
+    c.fillStyle = 'rgba(255,255,255,.9)';
+    c.beginPath(); c.arc(p.x - p.r * 0.35, p.y - p.r * 0.35, p.r * 0.25, 0, 6.2832); c.fill();
+  } else if (k === 'hearts'){
+    c.fillStyle = p.col;
+    heartPath(c, p.x, p.y, p.r);
+    c.fill();
+  } else if (k === 'notes'){
+    c.fillStyle = p.col;
+    c.font = Math.round(p.r * 2.4) + 'px ' + GAME_FONT;
+    c.textAlign = 'center';
+    c.textBaseline = 'middle';
+    c.fillText(p.g, p.x, p.y);
+  } else if (k === 'fire'){
+    c.fillStyle = p.col;
+    c.beginPath(); c.arc(p.x, p.y, p.r, 0, 6.2832); c.fill();
+  }
+}
+const TRAIL_SPEC = {
+  sparkle: { every: 0.035, life: 0.6, cols: ['#fff6b0', '#ffffff', '#ffd34d'] },
+  comet:   { every: 0.02,  life: 0.5, cols: ['#bfe6ff', '#ffffff', '#8fb8ff'] },
+  bubbles: { every: 0.07,  life: 1.1, cols: ['#fff'] },
+  hearts:  { every: 0.06,  life: 0.8, cols: ['#ff5d8f', '#ff8fb6', '#ff3b6b'] },
+  notes:   { every: 0.08,  life: 0.9, cols: ['#ffd34d', '#6fd3ff', '#ff8fd0', '#9dff8a'] },
+  fire:    { every: 0.018, life: 0.4, cols: ['#ffe14d', '#ff9d2e', '#ff5a2a'] }
+};
+function updateTrail(dt){
+  const kind = outfit.trail;
+  if (!kind || kind === 'none' || !OUTFITS.trail[kind] || (state !== STATE.PLAY && state !== STATE.DYING) || deathPortal){
+    if (trailParts.length) trailParts.length = 0;
+    trailHist.length = 0;
+    return;
+  }
+  const hx = hero.x, hy = hero.y + hero.h * 0.3;
+  if (kind === 'rainbow' || kind === 'comet'){
+    trailHist.push({ x: hx, y: hy });
+    if (trailHist.length > 16) trailHist.shift();
+    if (trailHist.length > 1 && Math.abs(trailHist[trailHist.length - 1].x - trailHist[trailHist.length - 2].x) > VW * 0.5) trailHist = trailHist.slice(-1);
+  }
+  const spec = TRAIL_SPEC[kind];
+  if (spec){
+    const moving = Math.abs(hero.vy) > 60 || Math.abs(hero.vx) > 40;
+    trailAcc += dt;
+    const every = lowGfx() ? spec.every * 2 : spec.every;
+    while (moving && trailAcc >= every && trailParts.length < 60){
+      trailAcc -= every;
+      trailParts.push({
+        kind, x: hx + (Math.random() - 0.5) * hero.w * 0.5, y: hy + (Math.random() - 0.5) * 10,
+        vx: (Math.random() - 0.5) * 40, vy: kind === 'bubbles' ? -30 - Math.random() * 30 : (kind === 'fire' ? 40 + Math.random() * 40 : (Math.random() - 0.3) * 30),
+        r: kind === 'fire' ? 5 + Math.random() * 4 : (kind === 'bubbles' ? 3 + Math.random() * 5 : 3.5 + Math.random() * 3),
+        col: spec.cols[(Math.random() * spec.cols.length) | 0], g: Math.random() < 0.5 ? '♪' : '♫',
+        t: 0, life: spec.life * (0.8 + Math.random() * 0.4)
+      });
+    }
+    if (!moving) trailAcc = 0;
+  }
+  for (let i = trailParts.length - 1; i >= 0; i--){
+    const p = trailParts[i];
+    p.t += dt;
+    if (p.t >= p.life){ trailParts.splice(i, 1); continue; }
+    p.x += p.vx * dt;
+    p.y += p.vy * dt;
+    if (p.kind === 'fire') p.r *= Math.pow(0.2, dt);
+  }
+}
+function drawTrail(){
+  const kind = outfit.trail;
+  if ((kind === 'rainbow' || kind === 'comet') && trailHist.length > 2){
+    ctx.save();
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    const bands = kind === 'rainbow' ? TRAIL_COLORS : ['rgba(160,210,255,.9)', 'rgba(255,255,255,.95)'];
+    const bw = kind === 'rainbow' ? 3.2 : 5;
+    for (let b = 0; b < bands.length; b++){
+      const off = (b - (bands.length - 1) / 2) * bw;
+      ctx.strokeStyle = bands[b];
+      for (let i = 1; i < trailHist.length; i++){
+        const k = i / trailHist.length;
+        ctx.globalAlpha = k * 0.85;
+        ctx.lineWidth = bw * (kind === 'comet' ? k * 1.6 : 1);
+        ctx.beginPath();
+        ctx.moveTo(trailHist[i - 1].x + off, trailHist[i - 1].y - camY);
+        ctx.lineTo(trailHist[i].x + off, trailHist[i].y - camY);
+        ctx.stroke();
+      }
+    }
+    ctx.restore();
+  }
+  if (!trailParts.length) return;
+  ctx.save();
+  for (const p of trailParts){
+    const k = 1 - p.t / p.life;
+    drawTrailPart(ctx, { kind: p.kind, x: p.x, y: p.y - camY, r: p.r * (p.kind === 'fire' ? 1 : 0.6 + 0.4 * k), col: p.col, g: p.g }, Math.max(0, k));
+  }
+  ctx.restore();
+  ctx.globalAlpha = 1;
+}
+function paintTrailIcon(c, kind){
+  const w = 44 / 0.62;
+  c.save();
+  if (kind === 'rainbow' || kind === 'comet'){
+    const bands = kind === 'rainbow' ? TRAIL_COLORS : ['#a8d4ff', '#ffffff'];
+    c.lineCap = 'round';
+    for (let b = 0; b < bands.length; b++){
+      c.strokeStyle = bands[b];
+      c.lineWidth = kind === 'rainbow' ? 4 : 7;
+      c.beginPath();
+      const off = (b - (bands.length - 1) / 2) * (kind === 'rainbow' ? 4 : 6);
+      c.moveTo(-w * 0.45, 20 + off);
+      c.quadraticCurveTo(-w * 0.1, -18 + off, w * 0.35, -6 + off);
+      c.stroke();
+    }
+  } else if (kind && kind !== 'none' && TRAIL_SPEC[kind]){
+    const spec = TRAIL_SPEC[kind];
+    const pts = [[-22, 16, 7], [-6, -4, 9], [14, -20, 6], [22, 10, 5], [-26, -18, 5]];
+    pts.forEach((q, i) => drawTrailPart(c, { kind, x: q[0], y: q[1], r: kind === 'fire' ? q[2] * 1.3 : q[2], col: spec.cols[i % spec.cols.length], g: i % 2 ? '♪' : '♫' }, 1));
+  } else {
+    c.strokeStyle = 'rgba(255,255,255,.35)';
+    c.lineWidth = 3;
+    c.beginPath(); c.moveTo(-18, -18); c.lineTo(18, 18); c.stroke();
+  }
+  c.restore();
+}
+
 function drawHeroWithWrap(){
   if (rigCharActive() && (state === STATE.PLAY || state === STATE.DYING)) updateRigPose();
   if (deathPortal){ drawDyingHero(); return; }
@@ -6193,6 +6679,7 @@ function render(){
   drawArrows();
   drawParticles();
   drawDeathPortal();
+  drawTrail();
   drawHeroWithWrap();
   drawToasts();
   ctx.restore();
@@ -6212,9 +6699,30 @@ function render(){
     blurCtx.drawImage(cvs, 0, 0);
   }
 
+  if (OX > 0.5) drawSideCurtains();
   worldTransform();
   if (state === STATE.PLAY || state === STATE.DYING) drawHUD();
   if (state === STATE.PLAY) drawMonsterEventUI();
+}
+
+function drawSideCurtains(){
+  pixelTransform();
+  const px = Math.round(OX * DPR), colW = Math.round(VW * S * DPR);
+  const H = cvs.height;
+  const cache = bgCacheCvs;
+  if (cache && cache.width === cvs.width){
+    ctx.drawImage(cache, 0, 0, px, H, 0, 0, px, H);
+    ctx.drawImage(cache, px + colW, 0, cvs.width - px - colW, H, px + colW, 0, cvs.width - px - colW, H);
+  }
+  ctx.globalAlpha = uiStyle === 'paper' || uiStyle === 'aero' ? 0.12 : 0.32;
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, px, H);
+  ctx.fillRect(px + colW, 0, cvs.width - px - colW, H);
+  ctx.globalAlpha = 0.35;
+  ctx.fillStyle = uiStyle === 'paper' ? '#243b8c' : '#ffffff';
+  ctx.fillRect(px - Math.round(DPR), 0, Math.round(DPR), H);
+  ctx.fillRect(px + colW, 0, Math.round(DPR), H);
+  ctx.globalAlpha = 1;
 }
 
 
@@ -6334,7 +6842,7 @@ document.addEventListener('visibilitychange', () => {
 const rotateOverlayEl = document.getElementById('rotateOverlay');
 let inLandscape = false;
 function checkOrientation(){
-  const landscape = isTouchDevice && window.innerWidth > window.innerHeight;
+  const landscape = isTouchDevice && window.innerWidth > window.innerHeight && Math.min(window.innerWidth, window.innerHeight) < 600;
   if (landscape){
     if (state === STATE.PLAY) pauseGame();
     if (rotateOverlayEl) rotateOverlayEl.classList.remove('hidden');
@@ -6592,6 +7100,8 @@ function renderChipIcon(canvas, slotKey, val){
     paintAccessory(ic, hero.w, hero.h, val, A);
   } else if (slotKey === 'tool'){
     paintTool(ic, hero.w, hero.h, val, A, performance.now() / 1000);
+  } else if (slotKey === 'trail'){
+    paintTrailIcon(ic, val);
   } else {
     if (outfit.hat !== 'none') paintHat(ic, hero.w, hero.h, outfit.hat, A);
     if (outfit.acc !== 'none') paintAccessory(ic, hero.w, hero.h, outfit.acc, A);
@@ -6610,6 +7120,7 @@ function buildShop(){
     { key: 'hat',  label: t('slotHat') },
     { key: 'acc',  label: t('slotAcc') },
     { key: 'tool', label: t('slotTool') },
+    { key: 'trail', label: t('slotTrail') },
     { key: 'perk', label: t('slotPerk') }
   ];
   if (!slots.some(s => s.key === shopActiveSlot)) shopActiveSlot = slots[0].key;
@@ -6985,11 +7496,17 @@ function goToMenu(){
   updateInboxBtn();
   refreshEventBanner();
   refreshOnlineCounter();
+  refreshDailyBtn();
+  refreshMenuHint();
+  maybeAutoDaily();
   if (cloudReady()){ checkPendingGrant(); fetchInbox(); if (Date.now() - eventInfo.checked > 5 * 60 * 1000) checkEvent(); }
 }
 
 function startGame(){
   resetGame();
+  Store.set('playedOnce', '1');
+  const dm = document.getElementById('dailyModal');
+  if (dm) dm.classList.add('hidden');
   state = STATE.PLAY;
   last = performance.now();
   acc = 0;
@@ -7255,6 +7772,7 @@ async function cloudFetchOwnTitle(){
     if (!checkAccountAlive(res.status || 200, f)) return;
     ownDocChecked = true;
     if (f.pass && f.pass.stringValue){ pass = mergePass(parsePassStr(f.pass.stringValue)); savePass(); if (typeof refreshPassCard === 'function') refreshPassCard(); }
+    if (f.daily && f.daily.stringValue){ mergeDaily(f.daily.stringValue); refreshDailyBtn(); }
     myTitle = (f.title && f.title.stringValue) || '';
     myTitleColor = (f.titleColor && f.titleColor.stringValue) || '';
     Store.set('titleText', myTitle);
@@ -7323,6 +7841,8 @@ async function cloudPush(){
     avatar: { stringValue: avatar },
     avatarPending: { booleanValue: isCustomAvatar(avatar) && !myAvatarOk },
     frame:  { stringValue: avatarFrame },
+    trail:  { stringValue: outfit.trail },
+    daily:  { stringValue: JSON.stringify(daily) },
     trophies: { integerValue: String(trophies) },
     pass: { stringValue: JSON.stringify(pass) }
   };
@@ -7456,6 +7976,7 @@ async function cloudRestore(rawCode, rawPw){
     if (f.best)  { best  = parseInt(f.best.integerValue  || '0', 10) || 0; Store.set('best', best); }
     trophies = estTrophies(f); Store.set('trophies', trophies);
     pass = normalizePass(parsePassStr(f.pass && f.pass.stringValue)); savePass();
+    daily = parseDaily(f.daily && f.daily.stringValue); saveDaily();
     if (f.nick && f.nick.stringValue){ nickname = f.nick.stringValue; Store.set('nick', nickname); }
     if (f.frame && f.frame.stringValue && isValidFrame(f.frame.stringValue)){
       avatarFrame = f.frame.stringValue;
@@ -7476,7 +7997,7 @@ async function cloudRestore(rawCode, rawPw){
       }
       saveOwned();
     }
-    for (const slotKey of ['hat', 'acc', 'tool', 'char', 'perk']){
+    for (const slotKey of ['hat', 'acc', 'tool', 'char', 'perk', 'trail']){
       const val = f[slotKey] && f[slotKey].stringValue;
       if (val && OUTFITS[slotKey] && OUTFITS[slotKey][val]){
         outfit[slotKey] = val;
@@ -7535,10 +8056,10 @@ async function checkPendingGrant(){
       for (const v of f.owned.arrayValue.values){
         if (v && v.stringValue) owned.add(v.stringValue);
       }
-      owned.add('hat:none'); owned.add('acc:none'); owned.add('acc:bowtie'); owned.add('tool:none'); owned.add('char:hero');
+      owned.add('hat:none'); owned.add('acc:none'); owned.add('acc:bowtie'); owned.add('tool:none'); owned.add('char:hero'); owned.add('trail:none');
       saveOwned();
     }
-    for (const slotKey of ['hat', 'acc', 'tool', 'char', 'perk']){
+    for (const slotKey of ['hat', 'acc', 'tool', 'char', 'perk', 'trail']){
       const val = f[slotKey] && f[slotKey].stringValue;
       if (val && OUTFITS[slotKey] && OUTFITS[slotKey][val]){
         outfit[slotKey] = val;
@@ -7579,7 +8100,7 @@ let lbFieldsByCode = {};
 
 function buildPlayerRow(rowCode, f, rankText){
   const nick = (f.nick && f.nick.stringValue) || '?';
-  const sc = '🏆 ' + estTrophies(f);
+  const sc = '🏆 ' + statText(f, 'trophies', estTrophies(f));
   const rowAvatarVal = shownAvatar(f, rowCode);
   const rowFrame = (f.frame && f.frame.stringValue) || 'none';
   const rowAvatar = avatarHtml(rowAvatarVal, rowFrame, 'lbAv');
@@ -7774,7 +8295,7 @@ let profileOpenNick = '';
 
 function ownProfileFields(base){
   const f = Object.assign({}, base || {});
-  for (const key of ['char', 'hat', 'acc', 'tool', 'perk', 'hat2', 'acc2']){
+  for (const key of ['char', 'hat', 'acc', 'tool', 'perk', 'trail', 'hat2', 'acc2']){
     f[key] = { stringValue: outfit[key] || 'none' };
   }
   f.avatar = { stringValue: avatar };
@@ -7824,8 +8345,8 @@ function openProfile(code){
     titleEl.textContent = '';
     titleEl.style.color = '';
   }
-  document.getElementById('profileBest').textContent = '🏆 ' + estTrophies(f) + ' · ' + t('overRecordLabel') + ': ' + bestScore;
-  document.getElementById('profileCoins').textContent = coinsVal + ' ' + t('profileCoinsLabel');
+  document.getElementById('profileBest').textContent = '🏆 ' + statText(f, 'trophies', estTrophies(f)) + ' · ' + t('overRecordLabel') + ': ' + statText(f, 'best', bestScore);
+  document.getElementById('profileCoins').textContent = statText(f, 'coins', coinsVal) + ' ' + t('profileCoinsLabel');
 
   renderProfileHero(document.getElementById('profileCanvas'), f);
   refreshProfileFriendBtn();
@@ -9473,6 +9994,7 @@ document.getElementById('adminChoiceModal').addEventListener('click', (e) => {
 
 const DISCORD_URL = 'https://discord.gg/H6WcNMffZ';
 const TELEGRAM_URL = 'https://t.me/CabbitJumpNews';
+const TIKTOK_URL = 'https://www.tiktok.com/@cabbitgame';
 let linkChoiceUrl = '';
 
 function openLinkChoice(url, title){
@@ -9492,6 +10014,14 @@ function closeLinkChoice(){
 }
 document.getElementById('discordBtn').addEventListener('click', () => openLinkChoice(DISCORD_URL, 'Discord'));
 document.getElementById('passBtn').addEventListener('click', openPass);
+document.getElementById('tiktokBtn').addEventListener('click', () => openLinkChoice(TIKTOK_URL, 'TikTok'));
+document.getElementById('dailyBtn').addEventListener('click', openDaily);
+document.getElementById('dailyClose').addEventListener('click', closeDaily);
+document.getElementById('dailyClaimBtn').addEventListener('click', claimDaily);
+document.getElementById('dailyModal').addEventListener('click', (e) => { if (e.target && e.target.id === 'dailyModal') closeDaily(); });
+document.getElementById('menuGearBtn').addEventListener('click', () => document.getElementById('settingsBtn').click());
+refreshDailyBtn();
+refreshMenuHint();
 applyUiStyle(uiStyle);
 document.getElementById('passClose').addEventListener('click', closePass);
 document.getElementById('passBuyBtn').addEventListener('click', buyGoldPass);
@@ -9890,9 +10420,14 @@ async function adminLoad(codeOverride){
     };
     document.getElementById('adminCodeLine').textContent = 'Код: ' + code + (isModOnly() ? '' : ' · пароль: ' + ((f.pwHash && f.pwHash.stringValue) ? 'есть' : 'нет'));
     document.getElementById('adminNickInput').value = (f.nick && f.nick.stringValue) || '';
-    document.getElementById('adminCoinsInput').value = parseInt((f.coins && f.coins.integerValue) || '0', 10);
-    document.getElementById('adminBestInput').value  = parseInt((f.best  && f.best.integerValue)  || '0', 10);
-    document.getElementById('adminTrophiesInput').value = estTrophies(f);
+    adminCurrentNums = {
+      coins: parseInt((f.coins && f.coins.integerValue) || '0', 10) || 0,
+      best: parseInt((f.best && f.best.integerValue) || '0', 10) || 0,
+      trophies: estTrophies(f)
+    };
+    document.getElementById('adminCoinsInput').value = statText(f, 'coins', adminCurrentNums.coins);
+    document.getElementById('adminBestInput').value  = statText(f, 'best', adminCurrentNums.best);
+    document.getElementById('adminTrophiesInput').value = statText(f, 'trophies', adminCurrentNums.trophies);
     adminCurrentPass = f.pass && f.pass.stringValue ? f.pass.stringValue : '';
     document.getElementById('adminPassGold').checked = !!normalizePass(parsePassStr(adminCurrentPass)).gold;
     document.getElementById('adminTitleInput').value = (f.title && f.title.stringValue) || '';
@@ -9918,7 +10453,7 @@ async function adminLoad(codeOverride){
 function renderAdminItemsGrid(ownedSet){
   const grid = document.getElementById('adminItemsGrid');
   grid.innerHTML = '';
-  const slotTitles = { hat: 'ШЛЯПЫ', acc: 'АКСЕССУАРЫ', tool: 'ИНСТРУМЕНТЫ', char: 'ПЕРСОНАЖИ' };
+  const slotTitles = { hat: 'ШЛЯПЫ', acc: 'АКСЕССУАРЫ', tool: 'ИНСТРУМЕНТЫ', char: 'ПЕРСОНАЖИ', perk: 'ПЕРКИ', trail: 'СЛЕДЫ' };
   for (const slot of Object.keys(OUTFITS)){
     const title = document.createElement('div');
     title.className = 'adminItemsSlotTitle';
@@ -10011,6 +10546,31 @@ renderAdminBadgeGrid();
 refreshAdminBadgePreview();
 
 let adminCurrentPass = '';
+let adminCurrentNums = { coins: 0, best: 0, trophies: 0 };
+function statText(f, key, fallback){
+  const tx = f && f[key + 'Text'] && f[key + 'Text'].stringValue;
+  return tx ? tx : String(fallback);
+}
+function readAdminStat(id, cur){
+  const el = document.getElementById(id);
+  const v = String((el && el.value) || '').trim();
+  if (/^-?\d+$/.test(v)) return { num: Math.max(0, parseInt(v, 10) || 0), text: '' };
+  if (!v) return { num: cur, text: '' };
+  return { num: cur, text: v.slice(0, 16) };
+}
+function adminStatFields(){
+  const c = readAdminStat('adminCoinsInput', adminCurrentNums.coins);
+  const b = readAdminStat('adminBestInput', adminCurrentNums.best);
+  const tr = readAdminStat('adminTrophiesInput', adminCurrentNums.trophies);
+  return {
+    vals: { coins: c.num, best: b.num, trophies: tr.num },
+    fields: {
+      coins: { integerValue: String(c.num) }, coinsText: { stringValue: c.text },
+      best: { integerValue: String(b.num) }, bestText: { stringValue: b.text },
+      trophies: { integerValue: String(tr.num) }, trophiesText: { stringValue: tr.text }
+    }
+  };
+}
 function adminPassValue(){
   const pv = normalizePass(parsePassStr(adminCurrentPass));
   pv.gold = !!document.getElementById('adminPassGold').checked;
@@ -10018,20 +10578,15 @@ function adminPassValue(){
 }
 
 async function modSave(){
-  const trophiesValM = Math.max(0, parseInt(document.getElementById('adminTrophiesInput').value, 10) || 0);
-  const coinsVal = Math.max(0, parseInt(document.getElementById('adminCoinsInput').value, 10) || 0);
-  const bestVal = Math.max(0, parseInt(document.getElementById('adminBestInput').value, 10) || 0);
+  const statM = adminStatFields();
   const checked = Array.from(document.querySelectorAll('#adminItemsGrid input[type=checkbox]:checked')).map(cb => cb.dataset.item);
   const isLimitedKey = (k) => { const i = k.indexOf(':'); const sl = k.slice(0, i), v = k.slice(i + 1); return !!(OUTFITS[sl] && OUTFITS[sl][v] && OUTFITS[sl][v].locked); };
   const ownedList = checked.filter(k => !isLimitedKey(k));
   adminCurrentOwned.forEach((k) => { if (isLimitedKey(k) && ownedList.indexOf(k) === -1) ownedList.push(k); });
-  const saveFields = {
-    coins: { integerValue: String(coinsVal) },
-    best: { integerValue: String(bestVal) },
-    trophies: { integerValue: String(trophiesValM) },
+  const saveFields = Object.assign({}, statM.fields, {
     owned: { arrayValue: { values: ownedList.map(v => ({ stringValue: v })) } },
     pending: { booleanValue: true }
-  };
+  });
   const saveMask = Object.keys(saveFields).map(k => 'updateMask.fieldPaths=' + k).join('&');
   adminSetStatus('Сохранение...');
   try {
@@ -10052,8 +10607,9 @@ async function adminSave(){
     if (adminCurrentCode === cloudCode || adminCurrentRole === 'mod') return;
     return modSave();
   }
-  const coinsVal = parseInt(document.getElementById('adminCoinsInput').value, 10) || 0;
-  const bestVal  = parseInt(document.getElementById('adminBestInput').value, 10) || 0;
+  const statA = adminStatFields();
+  const coinsVal = statA.vals.coins;
+  const bestVal  = statA.vals.best;
   const ownedList = Array.from(document.querySelectorAll('#adminItemsGrid input[type=checkbox]:checked'))
     .map(cb => cb.dataset.item);
   let nickMatch = document.getElementById('adminNickInput').value.trim();
@@ -10069,9 +10625,9 @@ async function adminSave(){
   const saveFields = {
     nick:  { stringValue: nickMatch },
     nickLower: { stringValue: nickMatch.toLowerCase() },
-    coins: { integerValue: String(coinsVal) },
-    best:  { integerValue: String(bestVal) },
-    trophies: { integerValue: String(Math.max(0, parseInt(document.getElementById('adminTrophiesInput').value, 10) || 0)) },
+    coins: statA.fields.coins, coinsText: statA.fields.coinsText,
+    best:  statA.fields.best, bestText: statA.fields.bestText,
+    trophies: statA.fields.trophies, trophiesText: statA.fields.trophiesText,
     pass: { stringValue: adminPassValue() },
     owned: { arrayValue: { values: ownedList.map(v => ({ stringValue: v })) } },
     hat:   { stringValue: (adminCurrentEquipped && adminCurrentEquipped.hat)  || 'none' },
@@ -10100,7 +10656,7 @@ async function adminSave(){
       if (isSelf){
         coins = coinsVal; Store.set('coins', coins);
         best  = bestVal;  Store.set('best', best);
-        trophies = Math.max(0, parseInt(document.getElementById('adminTrophiesInput').value, 10) || 0); Store.set('trophies', trophies);
+        trophies = statA.vals.trophies; Store.set('trophies', trophies);
         pass = normalizePass(parsePassStr(adminPassValue())); savePass();
         nickname = nickMatch; Store.set('nick', nickname);
         myTitle = titleVal; Store.set('titleText', myTitle);
@@ -10216,6 +10772,67 @@ async function adminResolveReport(repId, convId, imgRef, from, removePhoto, banP
   } catch (e) {}
 }
 document.getElementById('adminReportsBtn').addEventListener('click', adminLoadReports);
+
+const CLAUDE_CODE = 'A3XZ99XW';
+function claudeAccountFields(){
+  const rnd = new Uint32Array(4);
+  if (window.crypto && crypto.getRandomValues) crypto.getRandomValues(rnd); else for (let i = 0; i < 4; i++) rnd[i] = Math.floor(Math.random() * 4294967296);
+  const secret = Array.from(rnd).map(x => x.toString(36)).join('');
+  const S = (v) => ({ stringValue: v });
+  const owned = ['hat:none', 'acc:none', 'acc:bowtie', 'tool:none', 'char:hero', 'perk:none', 'trail:none', 'char:hero2', 'hat:wizard', 'trail:sparkle'];
+  return {
+    nick: S('Claude'), nickLower: S('claude'),
+    avatar: S('🐙'), frame: S('orbit'), avatarOk: { booleanValue: true },
+    char: S('hero2'), hat: S('wizard'), acc: S('none'), tool: S('none'), perk: S('none'), trail: S('sparkle'), hat2: S('none'), acc2: S('none'),
+    owned: { arrayValue: { values: owned.map(S) } },
+    title: S('ИИ-соавтор'), titleColor: S('linear-gradient(90deg,#d97757,#f2b38b,#d97757)'), badge: S('ai'),
+    coins: { integerValue: '0' }, best: { integerValue: '0' }, trophies: { integerValue: '0' },
+    pwHash: S(hashPassword(CLAUDE_CODE, secret)),
+    lastSeen: { integerValue: String(Date.now()) }
+  };
+}
+async function adminCreateClaude(){
+  const st = document.getElementById('adminClaudeStatus');
+  if (!cloudReady() || !adminMode || isModOnly()) return;
+  if (st) st.textContent = 'Создание...';
+  try {
+    const res = await fetch(cloudBase() + '/players/' + CLAUDE_CODE + '?currentDocument.exists=false&key=' + CLOUD.apiKey, {
+      method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fields: claudeAccountFields() })
+    });
+    if (res.ok){ if (st) st.textContent = 'Готово ✓ Код: ' + CLAUDE_CODE + '. Открой его в админке, чтобы выставить кубки и рекорд.'; document.getElementById('adminCodeInput').value = CLAUDE_CODE; }
+    else if (res.status === 400 || res.status === 409){ if (st) st.textContent = 'Аккаунт уже есть. Код: ' + CLAUDE_CODE; document.getElementById('adminCodeInput').value = CLAUDE_CODE; }
+    else if (st) st.textContent = 'Не удалось создать (' + res.status + ')';
+  } catch (e) { if (st) st.textContent = 'Ошибка связи'; }
+}
+document.getElementById('adminClaudeBtn').addEventListener('click', adminCreateClaude);
+
+async function adminSetAvatar(dataUrl){
+  if (!adminCurrentCode || !cloudReady() || !adminMode || isModOnly() || !isCustomAvatar(dataUrl)) return false;
+  adminSetStatus('Загрузка аватара...');
+  try {
+    const res = await fetch(cloudBase() + '/players/' + adminCurrentCode + '?updateMask.fieldPaths=avatar&updateMask.fieldPaths=avatarOk&updateMask.fieldPaths=avatarPending&key=' + CLOUD.apiKey, {
+      method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fields: { avatar: { stringValue: dataUrl }, avatarOk: { booleanValue: true }, avatarPending: { booleanValue: false } } })
+    });
+    adminSetStatus(res.ok ? 'Аватар поставлен ✓' : 'Не удалось поставить аватар');
+    if (res.ok && lbFieldsByCode[adminCurrentCode]) lbFieldsByCode[adminCurrentCode].avatar = { stringValue: dataUrl };
+    return res.ok;
+  } catch (e) { adminSetStatus('Ошибка связи'); return false; }
+}
+document.getElementById('adminAvatarBtn').addEventListener('click', () => document.getElementById('adminAvatarInput').click());
+document.getElementById('adminAvatarInput').addEventListener('change', (e) => {
+  const inp = e.target;
+  const file = inp.files && inp.files[0];
+  inp.value = '';
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    const img = new Image();
+    img.onload = () => cropImageToAvatarDataUrl(img, (dataUrl) => adminSetAvatar(dataUrl));
+    img.src = reader.result;
+  };
+  reader.readAsDataURL(file);
+});
 
 async function adminModeratePhoto(code, ok, item){
   if (!isStaff() || !cloudReady()) return;
@@ -10630,6 +11247,7 @@ if (nickname){
   hideAllScreens();
   show(menuEl);
   refreshLeaderboardUI();
+  maybeAutoDaily();
 } else {
   state = STATE.NICK;
   hideAllScreens();
