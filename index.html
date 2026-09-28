@@ -1090,6 +1090,13 @@
     text-shadow:0 2px 4px rgba(0,0,0,.5);
   }
   #hitBtn.hidden{display:none;}
+  #spearBtn{position:absolute;left:50%;bottom:6%;transform:translateX(-50%);z-index:7;width:72px;height:72px;border-radius:50%;border:none;cursor:pointer;padding:0;
+    background:radial-gradient(circle at 35% 30%,rgba(210,225,255,.55),rgba(60,80,140,.55));box-shadow:0 0 0 3px rgba(223,232,255,.7),0 8px 20px rgba(0,0,0,.35);
+    display:flex;align-items:center;justify-content:center;touch-action:none;transition:opacity .15s ease, transform .08s ease;}
+  #spearBtn svg{width:34px;height:34px;pointer-events:none;}
+  #spearBtn.hidden{display:none;}
+  #spearBtn.used{opacity:.35;}
+  #spearBtn:active{transform:translateX(-50%) scale(.9);}
   #hitBtn:active{transform:translateX(-50%) scale(.9);}
   @keyframes hitPulse{
     0%,100%{ box-shadow:0 0 0 6px rgba(178,104,255,.22), 0 10px 26px rgba(0,0,0,.45); }
@@ -1295,6 +1302,9 @@
   </button>
 
   <button id="hitBtn" class="hidden" data-i18n="tapPrompt">ЖМИ!</button>
+  <button id="spearBtn" class="hidden" type="button" aria-label="Копьё">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M5 19 L16 8" stroke="#fdf6e8" stroke-width="2.6" stroke-linecap="round"/><path d="M14 5 L20 4 L19 10 Z" fill="#fdf6e8" stroke="#fdf6e8" stroke-width="1.6" stroke-linejoin="round"/><path d="M4 16 L8 20" stroke="#fdf6e8" stroke-width="2.2" stroke-linecap="round"/></svg>
+  </button>
 
   <div id="nickname" class="screen">
     <div id="nickBox" class="pop">
@@ -1430,6 +1440,10 @@
               <span>Запрет на фото в чате</span>
               <input id="adminNoImages" type="checkbox">
             </label>
+            <label class="adminField">
+              <span>Своя музыка</span>
+              <input id="adminMusicInput" class="adminInput" type="text" maxlength="300" placeholder="файл.mp3 или ссылка">
+            </label>
             <div class="adminField">
               <span>Аватар</span>
               <button id="adminAvatarBtn" type="button" class="adminPwResetBtn">Поставить фото</button>
@@ -1442,6 +1456,7 @@
             <div id="adminRoleRow" class="adminRoleRow">
               <button type="button" class="adminRoleOpt" data-role="">Игрок</button>
               <button type="button" class="adminRoleOpt" data-role="mod">Помощник</button>
+              <button type="button" class="adminRoleOpt" data-role="admin">Админ</button>
             </div>
             <p class="adminRoleHint">Помощник может выдавать только обычные вещи, монеты и очки рекорда</p>
           </div>
@@ -1930,10 +1945,18 @@ const Store = {
   }
 };
 
+try {
+  window.addEventListener('storage', (e) => {
+    if (e && e.key && /^doodlecabbit\.(coins|owned|spent|pass|daily|trophies)$/.test(e.key)) location.reload();
+  });
+} catch (e) {}
 let best  = parseInt(Store.get('best', '0'), 10) || 0;
 let coins = parseInt(Store.get('coins', '0'), 10) || 0;
+let coinsSpent = parseInt(Store.get('spent', '0'), 10) || 0;
+function noteSpent(n){ coinsSpent += Math.max(0, n | 0); Store.set('spent', coinsSpent); }
+function remoteSpent(f){ return Math.max(0, parseInt((f && f.spent && f.spent.integerValue) || '0', 10) || 0); }
 
-const TROPHY_STEPS = [[2, 12, 'trophyRowX2'], [1.5, 10, 'trophyRowX15'], [1.2, 8, 'trophyRowX12'], [1, 6, 'trophyRowX1'], [0.8, 5, 'trophyRowX08'], [0.6, 4, 'trophyRowX06'], [0.4, 3, 'trophyRowX04'], [0.2, 2, 'trophyRowX02'], [0, 1, 'trophyRowX0']];
+const TROPHY_STEPS = [[2, 12, 'trophyRowX2'], [1.5, 10, 'trophyRowX15'], [1.2, 8, 'trophyRowX12'], [1, 6, 'trophyRowX1'], [0.8, 5, 'trophyRowX08'], [0.6, 4, 'trophyRowX06'], [0.4, 3, 'trophyRowX04'], [0.2, 2, 'trophyRowX02'], [0, 0, 'trophyRowX0']];
 let trophies = parseInt(Store.get('trophies', ''), 10);
 if (!isFinite(trophies) || trophies < 0){ trophies = Math.min(800, Math.floor(best / 12)); Store.set('trophies', trophies); }
 let lastTrophyDelta = 0;
@@ -1941,9 +1964,9 @@ let lastTrophyDelta = 0;
 function trophyTarget(tr){ return 400 + Math.max(0, tr) * 5; }
 function trophyDelta(sc, tr){
   const r = Math.max(0, sc) / trophyTarget(tr);
-  let d = 1;
+  let d = 0;
   for (const st of TROPHY_STEPS){ if (r >= st[0]){ d = st[1]; break; } }
-  return Math.max(1, d);
+  return Math.max(0, d);
 }
 function estTrophies(f){
   if (f && f.trophies && f.trophies.integerValue !== undefined) return parseInt(f.trophies.integerValue, 10) || 0;
@@ -1981,8 +2004,10 @@ const PASS_GOLD = [{ c: 500 }, { c: 500 }, { i: 'hat:crown' }, { c: 600 }, { i: 
 const SLOT_ICON = { hat: '🎩', acc: '🎀', tool: '🏹', char: '🐰', perk: '✨' };
 const ITEM_ICON = { 'hat:crown': '👑', 'hat:halo': '😇', 'hat:cowboy': '🤠', 'hat:flowercrown': '🌸', 'hat:sunhat': '👒', 'hat:propeller': '🚁', 'hat:bow': '🎀', 'hat:tophat': '🎩', 'acc:pearls': '📿', 'acc:scarf': '🧣', 'acc:hearteye': '😍', 'acc:backpack': '🎒', 'acc:tie': '👔', 'tool:mace': '🔨', 'tool:bow': '🏹', 'char:hero2': '🐰', 'perk:multiacc': '✨' };
 
-function passSeasonNow(){ return Math.max(1, Math.floor((Date.now() - PASS_EPOCH) / PASS_SEASON_MS) + 1); }
-function passDaysLeft(){ return Math.max(1, Math.ceil((PASS_EPOCH + passSeasonNow() * PASS_SEASON_MS - Date.now()) / 86400000)); }
+let serverOffset = null;
+function nowServer(){ return Date.now() + (serverOffset || 0); }
+function passSeasonNow(){ return Math.max(1, Math.floor((nowServer() - PASS_EPOCH) / PASS_SEASON_MS) + 1); }
+function passDaysLeft(){ return Math.max(1, Math.ceil((PASS_EPOCH + passSeasonNow() * PASS_SEASON_MS - nowServer()) / 86400000)); }
 function normalizePass(p){
   const s = passSeasonNow();
   if (!p || typeof p !== 'object' || p.s !== s) return { s, xp: 0, gold: false, cf: [], cg: [] };
@@ -2063,6 +2088,7 @@ function buyGoldPass(){
   if (pass.gold) return false;
   if (coins < PASS_GOLD_PRICE){ showToast(t('passNoCoins').replace('{p}', PASS_GOLD_PRICE)); return false; }
   coins -= PASS_GOLD_PRICE;
+  noteSpent(PASS_GOLD_PRICE);
   Store.set('coins', coins);
   pass.gold = true;
   savePass();
@@ -2074,7 +2100,7 @@ function buyGoldPass(){
   return true;
 }
 
-function questDayKey(){ const d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
+function questDayKey(){ const d = new Date(nowServer()); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
 function questsForDay(key){
   let h = 0;
   for (let i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) >>> 0;
@@ -2090,14 +2116,16 @@ function questsForDay(key){
 function loadQuestState(){
   let q = parsePassStr(Store.get('quests', ''));
   const key = questDayKey();
+  if (q && q.d !== key && serverOffset === null && cloudReady() && Array.isArray(q.done)) return q;
   if (!q || q.d !== key) q = { d: key, runs: 0, best: 0, coins: 0, done: [] };
   if (!Array.isArray(q.done)) q.done = [];
   return q;
 }
 function questProgress(q, id){ return id === 'runs' ? q.runs : (id === 'score' ? q.best : q.coins); }
+const MIN_RUN_SCORE = 150;
 function recordRunForPass(sc, runCoinsGot){
   const q = loadQuestState();
-  q.runs += 1;
+  if (sc >= MIN_RUN_SCORE) q.runs += 1;
   q.best = Math.max(q.best, sc);
   q.coins += Math.max(0, runCoinsGot);
   let questXp = 0;
@@ -2106,7 +2134,7 @@ function recordRunForPass(sc, runCoinsGot){
     if (q.done.indexOf(qu.id) === -1 && questProgress(q, qu.id) >= qu.n){ q.done.push(qu.id); questXp += qu.xp; done.push(qu); }
   }
   Store.set('quests', JSON.stringify(q));
-  const runXp = Math.min(60, 10 + Math.floor(Math.max(0, sc) / 100));
+  const runXp = sc >= MIN_RUN_SCORE ? Math.round(Math.min(60, Math.floor(Math.max(0, sc) / 60)) * (typeof hasPerk === 'function' && hasPerk('passboost') ? 1.5 : 1)) : 0;
   addPassXp(runXp + questXp);
   if (done.length) setTimeout(() => showToast(t('questDone').replace('{x}', done.reduce((a, b) => a + b.xp, 0))), 900);
   return { runXp, questXp };
@@ -2200,8 +2228,12 @@ function closePass(){ document.getElementById('passModal').classList.add('hidden
 
 const DAILY_REWARDS = [{ c: 100 }, { c: 150 }, { c: 200 }, { c: 250 }, { c: 300 }, { c: 400 }, { c: 600, i: 'trail:comet' }];
 function padDay(d){ return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
-function todayKey(){ return padDay(new Date()); }
-function yesterdayKey(){ const d = new Date(); d.setDate(d.getDate() - 1); return padDay(d); }
+function noteServerTime(doc){
+  const ut = doc && doc.updateTime ? Date.parse(doc.updateTime) : NaN;
+  if (isFinite(ut)) serverOffset = ut - Date.now();
+}
+function todayKey(){ return padDay(new Date(nowServer())); }
+function yesterdayKey(){ const d = new Date(nowServer()); d.setDate(d.getDate() - 1); return padDay(d); }
 function parseDaily(str){
   let v = null;
   try { v = JSON.parse(str || 'null'); } catch (e) {}
@@ -2227,7 +2259,18 @@ function dailyRewardText(r){
   if (r.i){ const k = r.i.indexOf(':'); s += ' + ' + ti(r.i.slice(0, k), r.i.slice(k + 1)).n; }
   return s;
 }
-function claimDaily(){
+let dailyBusy = false;
+async function claimDaily(){
+  if (dailyBusy) return false;
+  dailyBusy = true;
+  try { return await claimDailyNow(); } finally { dailyBusy = false; }
+}
+async function claimDailyNow(){
+  if (serverOffset === null && cloudReady() && ownDocChecked){
+    await updatePresence();
+    if (serverOffset !== null){ renderDaily(); }
+  }
+  if (serverOffset === null && cloudReady()){ showToast(t('dailyNeedNet')); return false; }
   const st = dailyState();
   if (!st.can) return false;
   const r = DAILY_REWARDS[st.day - 1];
@@ -2355,7 +2398,8 @@ const LINK_RE = /(https?:\/\/|www\.|t\.me|discord\.gg|[a-z0-9-]{2,}\.(ru|com|net
 function cleanText(str){
   return String(str || '').replace(/(.)\1{5,}/g, '$1$1$1$1');
 }
-const spamState = { times: [], last: '', repeat: 0 };
+function loadTimes(key){ try { const a = JSON.parse(Store.get(key, '[]')); return Array.isArray(a) ? a.filter(x => typeof x === 'number' && x <= Date.now() + 60000) : []; } catch (e) { return []; } }
+const spamState = { times: loadTimes('spamTimes'), last: '', repeat: 0 };
 function spamCheck(text){
   const now = Date.now();
   spamState.times = spamState.times.filter(x => now - x < 20000);
@@ -2367,7 +2411,7 @@ function spamCheck(text){
   else { spamState.last = norm; spamState.repeat = 0; }
   return '';
 }
-function spamCommit(){ spamState.times.push(Date.now()); }
+function spamCommit(){ spamState.times.push(Date.now()); spamState.times = spamState.times.slice(-10); Store.set('spamTimes', JSON.stringify(spamState.times)); }
 
 let blockedSet = new Set(String(Store.get('blocked', '')).split(',').filter(Boolean));
 function saveBlocked(){ Store.set('blocked', Array.from(blockedSet).join(',')); }
@@ -2697,7 +2741,37 @@ const ambientAudio = new Audio('ambient-music.mp3');
 ambientAudio.loop = true;
 ambientAudio.volume = musicVolume / 100;
 ambientAudio.preload = 'auto';
-ambientAudio.addEventListener('error', () => { ambientReady = false; });
+let customMusic = '';
+function cleanMusicSrc(v){
+  v = String(v || '').trim();
+  if (/^([\w\-]{1,40}\/)?[\w\-. ()]{1,120}\.(mp3|ogg|m4a|wav|aac)$/i.test(v) && v.indexOf('..') === -1) return v;
+  if (/^https:\/\/[^\s"'<>]{4,290}$/i.test(v)) return v;
+  return '';
+}
+function applyCustomMusic(v){
+  const src = cleanMusicSrc(v);
+  if (src === customMusic) return false;
+  customMusic = src;
+  Store.set('customMusic', src);
+  const wasPlaying = !ambientAudio.paused;
+  ambientAudio.pause();
+  ambientAudio.src = src || 'ambient-music.mp3';
+  ambientReady = true;
+  if (wasPlaying) startAmbient();
+  return true;
+}
+ambientAudio.addEventListener('error', () => {
+  if (customMusic){
+    customMusic = '';
+    const wasOn = musicOn;
+    ambientAudio.src = 'ambient-music.mp3';
+    ambientReady = true;
+    if (wasOn && typeof startAmbient === 'function') startAmbient();
+    return;
+  }
+  ambientReady = false;
+});
+applyCustomMusic(Store.get('customMusic', ''));
 function startAmbient(){
   if (!musicOn || !ambientReady) return;
   if (!ambientAudio.paused) return;
@@ -2767,7 +2841,7 @@ const I18N = {
     rotateMsg: 'Переверни телефон вертикально',
     leaderboard: 'Таблица лидеров', empty: '—', wardrobe: 'Гардероб',
     overTitleNormal: 'Котокролик приземлился', overTitleRecord: 'Новый рекорд',
-    overCoins: 'собрано монет', overRecordLabel: 'Рекорд', overNewBest: 'новый личный рекорд', overRank: 'место в рейтинге', overTop1: 'ты первый по кубкам!', passFree: 'Бесплатно', passGold: 'Золотой', howToLabel: 'Как играть', howToOk: 'Понятно!', dailyTitle: 'Ежедневная награда', dailySub: 'Заходи каждый день — награды растут. Пропустишь день — начнёшь сначала.', dailyDay: 'День {d}', dailyClaim: 'Забрать', dailyTomorrow: 'Приходи завтра!', dailyGot: 'Награда получена: {r}', slotTrail: 'Следы', styleLabel: 'Стиль игры', st_classic: 'Классика', st_aero: 'Frutiger Aero', st_neon: 'Неон', st_paper: 'Тетрадка', trophyGoal: 'цель', passSeasonTxt: 'Сезон {s} · осталось {d} дн.', passXpTxt: '{x} / {n} жетонов до уровня {l}', passMaxTxt: 'Максимальный уровень!', passBuy: 'Золотой пасс · {p}', passOwned: 'Золотой пасс активен ✓', passNoCoins: 'Не хватает монет: нужно {p}', passBought: 'Золотой пасс открыт!', passClaim: 'Забрать', passRunXp: 'Cabbit Pass: +{x} жетонов', passLvlUp: 'Новый уровень пасса: {l}!', passQuestsTitle: 'Задания на сегодня', questDone: 'Задание выполнено! +{x} жетонов', qRuns3: 'Сыграй 3 забега', qRuns5: 'Сыграй 5 забегов', qScore: 'Набери {n} очков за забег', qCoins: 'Собери {n} монет', passTitleReward: 'Титул «Cabbit Pass»', coinsWord: 'монет', trophiesTitle: 'Кубки', trophyInfoTxt: 'Каждый забег приносит кубки, отнять их нельзя. Цель забега сейчас — <b>{t}</b> очков: чем выше прыгнешь относительно цели, тем больше кубков. Чем больше кубков, тем выше цель.', trophyRowX2: '×2 цели и больше', trophyRowX15: '×1.5 цели', trophyRowX12: '×1.2 цели', trophyRowX1: 'цель', trophyRowX08: '80% цели', trophyRowX06: '60% цели', trophyRowX04: '40% цели', trophyRowX02: '20% цели', trophyRowX0: 'меньше',
+    overCoins: 'собрано монет', overRecordLabel: 'Рекорд', overNewBest: 'новый личный рекорд', overRank: 'место в рейтинге', overTop1: 'ты первый по кубкам!', passFree: 'Бесплатно', passGold: 'Золотой', howToLabel: 'Как играть', howToOk: 'Понятно!', dailyTitle: 'Ежедневная награда', dailySub: 'Заходи каждый день — награды растут. Пропустишь день — начнёшь сначала.', dailyDay: 'День {d}', dailyClaim: 'Забрать', dailyTomorrow: 'Приходи завтра!', dailyGot: 'Награда получена: {r}', slotTrail: 'Следы', styleLabel: 'Стиль игры', st_classic: 'Классика', st_aero: 'Frutiger Aero', st_neon: 'Неон', st_paper: 'Тетрадка', trophyGoal: 'цель', passSeasonTxt: 'Сезон {s} · осталось {d} дн.', passXpTxt: '{x} / {n} жетонов до уровня {l}', passMaxTxt: 'Максимальный уровень!', passBuy: 'Золотой пасс · {p}', passOwned: 'Золотой пасс активен ✓', passNoCoins: 'Не хватает монет: нужно {p}', passBought: 'Золотой пасс открыт!', passClaim: 'Забрать', passRunXp: 'Cabbit Pass: +{x} жетонов', passLvlUp: 'Новый уровень пасса: {l}!', passQuestsTitle: 'Задания на сегодня', questDone: 'Задание выполнено! +{x} жетонов', qRuns3: 'Сыграй 3 забега', qRuns5: 'Сыграй 5 забегов', qScore: 'Набери {n} очков за забег', qCoins: 'Собери {n} монет', passTitleReward: 'Титул «Cabbit Pass»', coinsWord: 'монет', trophiesTitle: 'Кубки', trophyInfoTxt: 'Забег от 20% цели приносит кубки, отнять их нельзя. Цель забега сейчас — <b>{t}</b> очков: чем выше прыгнешь относительно цели, тем больше кубков. Чем больше кубков, тем выше цель.', trophyRowX2: '×2 цели и больше', trophyRowX15: '×1.5 цели', trophyRowX12: '×1.2 цели', trophyRowX1: 'цель', trophyRowX08: '80% цели', trophyRowX06: '60% цели', trophyRowX04: '40% цели', trophyRowX02: '20% цели', trophyRowX0: 'меньше',
     retry: 'Повторить', toMenu: 'В меню', scoreWord: 'рекорд',
     cloudTitle: 'Онлайн-профиль', cloudCopy: 'Копировать', cloudRestore: 'Восстановить',
     cloudEnterCode: 'КОД', cloudTop: 'Рейтинг игроков', searchLabel: 'Найти игрока', searchPlaceholder: 'Ник или код', searchBtn: 'Найти', searchNone: 'Никого не нашли', cloudRefresh: 'Обновить рейтинг',
@@ -2778,7 +2852,7 @@ const I18N = {
     cloudNotFound: 'Код не найден', accountDeleted: 'Этот аккаунт удалён администрацией. Игра начнётся с нуля.', cloudErr: 'Нет связи с сервером', cloudLoading: 'Загрузка…',
     smashToast: 'СОКРУШИТЕЛЬНЫЙ УДАР!', kickToast: 'ПИНОК!', perfectToast: 'ИДЕАЛЬНО!',
     laserToast: 'ОСТОРОЖНО: ЛАЗЕРЫ!',
-    extraLifeToast: 'ВТОРАЯ ЖИЗНЬ!', glassToast: 'СТЕКЛО СПАСЛО ТЕБЯ!', tapPrompt: 'ЖМИ!',
+    perkRefund: 'Перки обновились — вернули {c} монет', dailyNeedNet: 'Нужен интернет, чтобы забрать награду', glassToast: 'СТЕКЛО СПАСЛО ТЕБЯ!', tapPrompt: 'ЖМИ!',
     items: {
       'hat:none':      { n: 'Без шляпы',        d: '' },
       'hat:tophat':     { n: 'Цилиндр',          d: 'Просто стильно.' },
@@ -2829,10 +2903,10 @@ const I18N = {
       'hat:starcrown':  { n: 'Звёздная корона',   d: 'Награда за 10 000 очков — не продаётся.' },
       'perk:multiacc':  { n: 'Второй предмет',    d: 'Можно надеть сразу два в шляпах и в аксессуарах. Работает всегда, если куплен.' },
       'perk:springs':   { n: 'Пружинки',          d: 'Пружины на платформах попадаются в два раза чаще.' },
-      'perk:magnet':    { n: 'Магнит',            d: 'Монеты сами летят к тебе.' },
-      'perk:lucky':     { n: 'Удача',             d: 'Каждая монета с шансом 30% считается за две.' },
-      'perk:extralife': { n: 'Вторая жизнь',      d: 'Один раз за забег спасает от падения.' },
-      'tool:spear':     { n: 'Копьё',             d: 'Тапни — рывок вверх. Перезарядка 4 секунды.' },
+      'perk:legs':      { n: 'Пружинистые лапы',  d: 'Обычные прыжки на 12% выше.' },
+      'perk:dodger':    { n: 'Ловкач',            d: 'Зона идеального удара по монстру в два раза шире.' },
+      'perk:passboost': { n: 'Ускоритель пасса',  d: '+50% жетонов Cabbit Pass за каждый забег.' },
+      'tool:spear':     { n: 'Копьё',             d: 'Кнопка копья — мощный рывок вверх. Один раз за прыжок, заряжается при приземлении.' },
       'hat:none': { n: 'Ничего', d: '' }, 'acc:none': { n: 'Ничего', d: '' },
       'tool:none': { n: 'Ничего', d: '' }, 'perk:none': { n: 'Ничего', d: '' }
     }
@@ -2890,7 +2964,7 @@ const I18N = {
     rotateMsg: 'Please rotate your phone back to portrait',
     leaderboard: 'Leaderboard', empty: '—', wardrobe: 'Wardrobe',
     overTitleNormal: 'The cabbit has landed', overTitleRecord: 'New record',
-    overCoins: 'coins collected', overRecordLabel: 'Best', overNewBest: 'new personal best', overRank: 'leaderboard place', overTop1: 'you are #1 in trophies!', passFree: 'Free', passGold: 'Gold', howToLabel: 'How to play', howToOk: 'Got it!', dailyTitle: 'Daily reward', dailySub: 'Come back every day — rewards grow. Miss a day and you start over.', dailyDay: 'Day {d}', dailyClaim: 'Claim', dailyTomorrow: 'Come back tomorrow!', dailyGot: 'Reward received: {r}', slotTrail: 'Trails', styleLabel: 'Game style', st_classic: 'Cabbit', st_aero: 'Frutiger Aero', st_neon: 'Neon', st_paper: 'Notebook', trophyGoal: 'target', passSeasonTxt: 'Season {s} · {d} days left', passXpTxt: '{x} / {n} tokens to level {l}', passMaxTxt: 'Max level!', passBuy: 'Gold pass · {p}', passOwned: 'Gold pass active ✓', passNoCoins: 'Not enough coins: need {p}', passBought: 'Gold pass unlocked!', passClaim: 'Claim', passRunXp: 'Cabbit Pass: +{x} tokens', passLvlUp: 'Pass level up: {l}!', passQuestsTitle: 'Today\'s quests', questDone: 'Quest done! +{x} tokens', qRuns3: 'Play 3 runs', qRuns5: 'Play 5 runs', qScore: 'Score {n} in one run', qCoins: 'Collect {n} coins', passTitleReward: '“Cabbit Pass” title', coinsWord: 'coins', trophiesTitle: 'Trophies', trophyInfoTxt: 'Every run gives you trophies, they can never be lost. Your run target is now <b>{t}</b> points: the higher you jump compared to it, the more trophies you get. More trophies means a higher target.', trophyRowX2: '×2 target or more', trophyRowX15: '×1.5 target', trophyRowX12: '×1.2 target', trophyRowX1: 'target', trophyRowX08: '80% of target', trophyRowX06: '60% of target', trophyRowX04: '40% of target', trophyRowX02: '20% of target', trophyRowX0: 'less',
+    overCoins: 'coins collected', overRecordLabel: 'Best', overNewBest: 'new personal best', overRank: 'leaderboard place', overTop1: 'you are #1 in trophies!', passFree: 'Free', passGold: 'Gold', howToLabel: 'How to play', howToOk: 'Got it!', dailyTitle: 'Daily reward', dailySub: 'Come back every day — rewards grow. Miss a day and you start over.', dailyDay: 'Day {d}', dailyClaim: 'Claim', dailyTomorrow: 'Come back tomorrow!', dailyGot: 'Reward received: {r}', slotTrail: 'Trails', styleLabel: 'Game style', st_classic: 'Cabbit', st_aero: 'Frutiger Aero', st_neon: 'Neon', st_paper: 'Notebook', trophyGoal: 'target', passSeasonTxt: 'Season {s} · {d} days left', passXpTxt: '{x} / {n} tokens to level {l}', passMaxTxt: 'Max level!', passBuy: 'Gold pass · {p}', passOwned: 'Gold pass active ✓', passNoCoins: 'Not enough coins: need {p}', passBought: 'Gold pass unlocked!', passClaim: 'Claim', passRunXp: 'Cabbit Pass: +{x} tokens', passLvlUp: 'Pass level up: {l}!', passQuestsTitle: 'Today\'s quests', questDone: 'Quest done! +{x} tokens', qRuns3: 'Play 3 runs', qRuns5: 'Play 5 runs', qScore: 'Score {n} in one run', qCoins: 'Collect {n} coins', passTitleReward: '“Cabbit Pass” title', coinsWord: 'coins', trophiesTitle: 'Trophies', trophyInfoTxt: 'A run of at least 20% of the target gives trophies, they can never be lost. Your run target is now <b>{t}</b> points: the higher you jump compared to it, the more trophies you get. More trophies means a higher target.', trophyRowX2: '×2 target or more', trophyRowX15: '×1.5 target', trophyRowX12: '×1.2 target', trophyRowX1: 'target', trophyRowX08: '80% of target', trophyRowX06: '60% of target', trophyRowX04: '40% of target', trophyRowX02: '20% of target', trophyRowX0: 'less',
     retry: 'Retry', toMenu: 'Menu', scoreWord: 'best',
     cloudTitle: 'Online profile', cloudCopy: 'Copy', cloudRestore: 'Restore',
     cloudEnterCode: 'CODE', cloudTop: 'Leaderboard', searchLabel: 'Find a player', searchPlaceholder: 'Nickname or code', searchBtn: 'Find', searchNone: 'Nobody found', cloudRefresh: 'Refresh ranking',
@@ -2901,7 +2975,7 @@ const I18N = {
     cloudNotFound: 'Code not found', accountDeleted: 'This account was deleted by the administration. The game will start from scratch.', cloudErr: 'Could not reach the server', cloudLoading: 'Loading…',
     smashToast: 'MACE SMASH!', kickToast: 'KICKED!', perfectToast: 'PERFECT!',
     laserToast: 'WATCH OUT: LASERS!',
-    extraLifeToast: 'SECOND LIFE!', glassToast: 'THE GLASS SAVED YOU!', tapPrompt: 'TAP!',
+    perkRefund: 'Perks changed — {c} coins refunded', dailyNeedNet: 'You need internet to claim the reward', glassToast: 'THE GLASS SAVED YOU!', tapPrompt: 'TAP!',
     items: {
       'hat:none':      { n: 'No hat',           d: '' },
       'hat:tophat':     { n: 'Top Hat',          d: 'Just stylish.' },
@@ -2952,10 +3026,10 @@ const I18N = {
       'hat:starcrown':  { n: 'Star Crown',        d: 'A reward for 10,000 points — not for sale.' },
       'perk:multiacc':  { n: 'Second Item',       d: 'Wear two hats and two accessories at once. Always works once bought.' },
       'perk:springs':   { n: 'Springs',           d: 'Springs appear on platforms twice as often.' },
-      'perk:magnet':    { n: 'Magnet',            d: 'Coins fly to you.' },
-      'perk:lucky':     { n: 'Luck',              d: 'Every coin has a 30% chance to count double.' },
-      'perk:extralife': { n: 'Second Life',       d: 'Saves you from one fall per run.' },
-      'tool:spear':     { n: 'Spear',             d: 'Tap to lunge upward. 4 second cooldown.' },
+      'perk:legs':      { n: 'Springy Paws',      d: 'Normal jumps are 12% higher.' },
+      'perk:dodger':    { n: 'Dodger',            d: 'The perfect-hit zone against monsters is twice as wide.' },
+      'perk:passboost': { n: 'Pass Booster',      d: '+50% Cabbit Pass tokens every run.' },
+      'tool:spear':     { n: 'Spear',             d: 'Spear button — a powerful upward lunge. Once per jump, recharges on landing.' },
       'hat:none': { n: 'None', d: '' }, 'acc:none': { n: 'None', d: '' },
       'tool:none': { n: 'None', d: '' }, 'perk:none': { n: 'None', d: '' }
     }
@@ -3045,9 +3119,9 @@ const OUTFITS = {
     none:     { price: 0 },
     multiacc: { price: 2500 },
     springs:  { price: 1200 },
-    magnet:   { price: 1800 },
-    lucky:    { price: 2200 },
-    extralife: { price: 3500 }
+    legs:     { price: 1600 },
+    dodger:   { price: 2000 },
+    passboost: { price: 2800 }
   },
   trail: {
     none:    { price: 0 },
@@ -3064,6 +3138,10 @@ const OUTFITS = {
 const owned = new Set(String(Store.get('owned', 'hat:none,acc:none,acc:bowtie,tool:none,char:hero,perk:none,trail:none'))
   .split(',').filter(Boolean));
 owned.add('hat:none'); owned.add('acc:none'); owned.add('acc:bowtie'); owned.add('tool:none'); owned.add('char:hero'); owned.add('perk:none'); owned.add('trail:none');
+let perkRefundCoins = 0;
+for (const k of ['magnet', 'lucky', 'extralife']){
+  if (owned.has('perk:' + k)) perkRefundCoins += ({ magnet: 1800, lucky: 2200, extralife: 3500 })[k];
+}
 
 const outfit = {
   hat:  Store.get('hat', 'none'),
@@ -3115,7 +3193,11 @@ function dropUnownedLockedOutfit(){
   return changed;
 }
 dropUnownedLockedOutfit();
-function saveOwned(){ Store.set('owned', Array.from(owned).join(',')); }
+const REMOVED_PERKS = { magnet: 1800, lucky: 2200, extralife: 3500 };
+function saveOwned(){
+  for (const k in REMOVED_PERKS) owned.delete('perk:' + k);
+  Store.set('owned', Array.from(owned).join(','));
+}
 
 const toastBanner = document.getElementById('toastBanner');
 let toastBannerTimer = null;
@@ -3377,10 +3459,10 @@ const hasMace       = () => outfit.tool === 'mace' && isOwned('tool', 'mace');
 const hasBow        = () => outfit.tool === 'bow'  && isOwned('tool', 'bow');
 const hasSpear      = () => outfit.tool === 'spear' && isOwned('tool', 'spear');
 const hasPerk       = (k) => outfit.perk === k && isOwned('perk', k);
-let spearCd = 0, extraLifeUsed = false;
-const SPEAR_CD = 4;
+let spearReady = true;
+const SPEAR_V = -1250;
 const coinMult      = () => (hasHat('crown') ? 2 : 1) * (eventActive() ? 2 : 1);
-const hasMagnet     = () => hasHat('halo') || hasPerk('magnet');
+const hasMagnet     = () => hasHat('halo');
 const hasDoubleJump = () => hasAcc('backpack');
 
 
@@ -3807,7 +3889,7 @@ function startMonsterEvent(m){
   monsterEvent = {
     monster: m, elapsed: 0,
     barPos: 0, barDir: 1, barSpeed: QTE_BAR_SPEED,
-    zoneStart: 0.5 - QTE_ZONE_HALF, zoneEnd: 0.5 + QTE_ZONE_HALF
+    zoneStart: 0.5 - QTE_ZONE_HALF * (hasPerk('dodger') ? 2 : 1), zoneEnd: 0.5 + QTE_ZONE_HALF * (hasPerk('dodger') ? 2 : 1)
   };
   hitBtn.classList.remove('hidden');
   hideTouchControls();
@@ -3831,8 +3913,7 @@ function resolveMonsterEvent(success){
 
 function heroDoomed(){
   if (airJumps > 0) return false;
-  if (hasPerk('extralife') && !extraLifeUsed) return false;
-  if (hasSpear() && spearCd <= 0) return false;
+  if (hasSpear() && spearReady) return false;
   const feet = hero.y + hero.h * 0.5;
   const floor = camY + VH;
   for (let i = 0; i < platforms.length; i++){
@@ -3852,17 +3933,6 @@ function handleFatalEvent(){
     hitBtn.classList.add('hidden');
   }
 
-  if (hasPerk('extralife') && !extraLifeUsed){
-    extraLifeUsed = true;
-    burstSpark(hero.x, hero.y, '#ff8fb6', 26, 1.4);
-    buzz(60);
-    addToast(t('extraLifeToast'), hero.x, hero.y - 30, '#ff8fb6');
-    shake = Math.max(shake, 10);
-    flash = 0.5; flashColor = '#ffd1e3';
-    hero.y = camY + VH * 0.32;
-    hero.vy = JUMP_V;
-    return;
-  }
   if (hasGlass()){
     burstGlassShards(hero.x, hero.y);
     sfxGlass();
@@ -4096,7 +4166,7 @@ function resetGame(){
   laserTimer = LASER_FIRST_DELAY;
   laserIntroShown = false;
   glassUsedThisRun = false;
-  spearCd = 0; extraLifeUsed = false;
+  spearReady = true;
   fallSoundPlayed = false;
   deathPortal = null;
   hitStop = 0; speedFx = 0;
@@ -4144,7 +4214,8 @@ window.addEventListener('keydown', e => {
   if (isTypingTarget(e.target) || isTypingTarget(document.activeElement)) return;
   if (e.code === 'ArrowLeft'  || e.code === 'KeyA'){ keys.left = true;  e.preventDefault(); }
   if (e.code === 'ArrowRight' || e.code === 'KeyD'){ keys.right = true; e.preventDefault(); }
-  if (e.code === 'Space'){ tapEvent = true; if (state === STATE.MENU || state === STATE.OVER) startGame(); e.preventDefault(); }
+  if ((e.code === 'ArrowUp' || e.code === 'KeyW') && state === STATE.PLAY){ spearLunge(); e.preventDefault(); }
+  if (e.code === 'Space'){ if (!e.repeat) tapEvent = true; if (state === STATE.MENU || state === STATE.OVER) startGame(); e.preventDefault(); }
   if (e.code === 'Escape'){
     if (state === STATE.PLAY) pauseGame();
     else if (state === STATE.PAUSED) resumeGame();
@@ -4233,6 +4304,7 @@ function stepPhysics(dt){
 
     hero.y = top - hero.h * 0.5;
     airJumps = hasDoubleJump() ? 1 : 0; 
+    if (!spearReady){ spearReady = true; refreshSpearBtn(); }
     p.wobble = 1;
     hero.sx = 1.35; hero.sy = 0.66;
 
@@ -4283,7 +4355,7 @@ function stepPhysics(dt){
       buzz(20);
       sfxSpring();
     } else {
-      hero.vy = JUMP_V;
+      hero.vy = JUMP_V * (hasPerk('legs') ? 1.12 : 1);
       burstLeaves(hero.x, top, 1);
       burstSpark(hero.x, top, '#dff9c9', 8, 0.7);
       landDust(hero.x, top);
@@ -4297,8 +4369,7 @@ function stepPhysics(dt){
 
 function handleTapAction(){
   if (state !== STATE.PLAY || monsterEvent) return;
-  if (hasSpear()){ spearLunge(); return; }
-  if (hasBow()){ shootArrow(); return; }
+  if (hasBow() && !(hasDoubleJump() && airJumps > 0 && hero.vy > 0)){ shootArrow(); return; }
   if (hasDoubleJump() && airJumps > 0 && hero.vy > -140){
     airJumps--;
     hero.vy = JUMP_V * 0.95;
@@ -4310,9 +4381,10 @@ function handleTapAction(){
 }
 
 function spearLunge(){
-  if (spearCd > 0) return false;
-  spearCd = SPEAR_CD;
-  hero.vy = Math.min(hero.vy, JUMP_V * 1.45);
+  if (state !== STATE.PLAY || monsterEvent || !hasSpear() || !spearReady) return false;
+  spearReady = false;
+  refreshSpearBtn();
+  hero.vy = Math.min(hero.vy, SPEAR_V);
   hero.sx = 0.72; hero.sy = 1.38;
   burstSpark(hero.x, hero.y + hero.h * 0.4, '#dfe8ff', 16, 1.1);
   burstSpark(hero.x, hero.y - hero.h * 0.3, '#ffffff', 8, 0.7);
@@ -4465,7 +4537,7 @@ function updateWorld(dt){
     if (dx * dx + dy * dy < 30 * 30){
       c.got = 0.01;
 
-      const gain = coinMult() * (hasPerk('lucky') && Math.random() < 0.3 ? 2 : 1);
+      const gain = coinMult();
       runCoins += gain; coins += gain;
       Store.set('coins', coins);
       coinPulse = 1;
@@ -4500,7 +4572,7 @@ function updateWorld(dt){
 
   
   shootCd = Math.max(0, shootCd - dt);
-  spearCd = Math.max(0, spearCd - dt);
+
   if (hasBow() && shootCd <= 0 && state === STATE.PLAY && !monsterEvent){
     for (const cr of crawlers){
       if (cr.y > hero.y - 12) continue;
@@ -5025,6 +5097,75 @@ function ultraSideStyle(dy, cTop, cUnder){
   return { color: mixHex(cUnder, cTop, s), overlay: 0.35 + (0.12 - 0.35) * s, blend: s };
 }
 
+const CLOUD_PUFFS = [[0.13, 0.62, 0.62], [0.33, 0.52, 0.95], [0.55, 0.48, 1.08], [0.76, 0.55, 0.85], [0.9, 0.66, 0.58]];
+function cloudShape(w, h, dx, dy, grow, t){
+  ctx.beginPath();
+  const bh = h * 0.95;
+  rr(ctx, dx - grow, dy + h * 0.3 - grow, w + grow * 2, bh + grow * 2 - h * 0.2, (bh - h * 0.2) / 2 + grow);
+  for (let i = 0; i < CLOUD_PUFFS.length; i++){
+    const pf = CLOUD_PUFFS[i];
+    const r = h * pf[2] * (1 + 0.04 * Math.sin(t * 1.7 + i * 1.9)) + grow;
+    ctx.moveTo(dx + w * pf[0] + r, dy + h * pf[1]);
+    ctx.arc(dx + w * pf[0], dy + h * pf[1], r, 0, Math.PI * 2);
+  }
+}
+function drawCloudBody(p, w, h){
+  const t = performance.now() / 1000 + p.x * 0.013;
+  const a = ctx.globalAlpha;
+  let fillTop = '#ffffff', fillBot = '#e3edf8', under = '#b9c9dd', line = null, lw = 0, glow = null, shine = 0.85;
+  if (uiStyle === 'aero'){ fillTop = '#ffffff'; fillBot = '#d6efff'; under = '#8cc6ea'; line = 'rgba(255,255,255,.95)'; lw = 1.2; shine = 1; }
+  else if (uiStyle === 'neon'){ fillTop = '#1d1640'; fillBot = '#120d2a'; under = null; line = '#e9f6ff'; lw = 2; glow = '#8fe6ff'; shine = 0; }
+  else if (uiStyle === 'paper'){ fillTop = '#ffffff'; fillBot = '#ffffff'; under = null; line = '#3a4a6a'; lw = 1.6; shine = 0; }
+  if (under){
+    ctx.globalAlpha = a * 0.55;
+    ctx.fillStyle = under;
+    cloudShape(w, h, 0, 4, 0, t);
+    ctx.fill();
+    ctx.globalAlpha = a;
+  }
+  if (line){
+    ctx.save();
+    if (glow && !lowGfx()){ ctx.shadowColor = glow; ctx.shadowBlur = 10; }
+    ctx.fillStyle = line;
+    cloudShape(w, h, 0, 0, lw, t);
+    ctx.fill();
+    ctx.restore();
+  }
+  const g = ctx.createLinearGradient(0, -h * 0.6, 0, h * 1.3);
+  g.addColorStop(0, fillTop);
+  g.addColorStop(1, fillBot);
+  ctx.fillStyle = g;
+  cloudShape(w, h, 0, 0, 0, t);
+  ctx.fill();
+  if (uiStyle === 'paper'){
+    ctx.save();
+    cloudShape(w, h, 0, 0, 0, t);
+    ctx.clip();
+    ctx.strokeStyle = 'rgba(58,74,106,.28)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (let x = -h; x < w + h; x += 6){ ctx.moveTo(x, h * 1.3); ctx.lineTo(x + h * 0.9, h * 0.35); }
+    ctx.stroke();
+    ctx.restore();
+  }
+  if (uiStyle === 'neon'){
+    ctx.fillStyle = 'rgba(143,230,255,.55)';
+    for (let i = 0; i < 3; i++){
+      const px = w * (0.25 + i * 0.25), py = h * 0.55;
+      ctx.beginPath(); ctx.arc(px, py, 1.4 + 0.6 * Math.sin(t * 3 + i), 0, Math.PI * 2); ctx.fill();
+    }
+  }
+  if (shine > 0){
+    ctx.globalAlpha = a * shine;
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.ellipse(w * 0.33, h * 0.12, h * 0.42, h * 0.2, -0.2, 0, Math.PI * 2);
+    ctx.ellipse(w * 0.56, h * 0.02, h * 0.3, h * 0.14, -0.1, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = a;
+  }
+}
+
 function drawPlatform(p){
   const y = p.y - camY;
   if (y < -70 || y > VH + 70) return;
@@ -5050,7 +5191,8 @@ function drawPlatform(p){
   if (p.broken) ctx.rotate(p.rot * clamp(p.fallV / 400, 0, 1));
   ctx.translate(-w / 2, -h / 2);
 
-  if (uiStyle !== 'classic') drawStyledPlatformBody(p, w, h);
+  if (p.type === 'cloud') drawCloudBody(p, w, h);
+  else if (uiStyle !== 'classic') drawStyledPlatformBody(p, w, h);
   else {
   if (ultraGfx()){
     const d = ultraDepthVector(p.x + w / 2, y + h / 2);
@@ -5103,10 +5245,6 @@ function drawPlatform(p){
   }
   }
 
-  if (p.type === 'cloud' && uiStyle === 'classic'){
-    ctx.fillStyle = '#ffffff';
-    for (const k of [0.2, 0.5, 0.8]){ ctx.beginPath(); ctx.arc(w * k, 1, h * 0.55, Math.PI, 0); ctx.fill(); }
-  }
   if (p.type === 'bouncy'){
     const sq = (p.springC || 0) * 3;
     ctx.strokeStyle = 'rgba(255,255,255,.75)';
@@ -6735,19 +6873,7 @@ function drawHUD(){
   const tg = '🏆 ' + t('trophyGoal') + ' ' + trophyTarget(trophies);
   ctx.strokeText(tg, 19, 78);
   ctx.fillText(tg, 19, 78);
-  if (hasSpear()){
-    const k = 1 - spearCd / SPEAR_CD;
-    const cx = VW - 26, cy = 66;
-    ctx.globalAlpha = 0.9;
-    ctx.lineWidth = 4;
-    ctx.strokeStyle = 'rgba(21,10,43,.45)';
-    ctx.beginPath(); ctx.arc(cx, cy, 12, 0, 6.2832); ctx.stroke();
-    ctx.strokeStyle = k >= 1 ? '#9dffb0' : '#dfe8ff';
-    ctx.beginPath(); ctx.arc(cx, cy, 12, -Math.PI / 2, -Math.PI / 2 + 6.2832 * k); ctx.stroke();
-    ctx.fillStyle = k >= 1 ? '#9dffb0' : 'rgba(223,232,255,.6)';
-    ctx.beginPath(); ctx.moveTo(cx, cy - 7); ctx.lineTo(cx + 4, cy + 1); ctx.lineTo(cx - 4, cy + 1); ctx.closePath(); ctx.fill();
-    ctx.fillRect(cx - 1, cy, 2, 7);
-  }
+
   ctx.globalAlpha = 1;
 
   const s = 1 + coinPulse * 0.25;
@@ -7050,7 +7176,9 @@ document.addEventListener('visibilitychange', () => {
 const rotateOverlayEl = document.getElementById('rotateOverlay');
 let inLandscape = false;
 function checkOrientation(){
-  const landscape = isTouchDevice && window.innerWidth > window.innerHeight && Math.min(window.innerWidth, window.innerHeight) < 600;
+  const scr = window.screen || {};
+  const shortSide = Math.min(scr.width || window.innerWidth, scr.height || window.innerHeight);
+  const landscape = isTouchDevice && window.innerWidth > window.innerHeight && shortSide < 520;
   if (landscape){
     if (state === STATE.PLAY) pauseGame();
     if (rotateOverlayEl) rotateOverlayEl.classList.remove('hidden');
@@ -7095,11 +7223,20 @@ function bindHoldButton(el, setter){
 bindHoldButton(leftBtn,  v => { keys.left = v; });
 bindHoldButton(rightBtn, v => { keys.right = v; });
 
+function refreshSpearBtn(){
+  const b = document.getElementById('spearBtn');
+  if (!b) return;
+  b.classList.toggle('hidden', !(hasSpear() && state === STATE.PLAY));
+  b.classList.toggle('used', !spearReady);
+}
 function showTouchControls(){
+  refreshSpearBtn();
   if (!isTouchDevice) return; 
   leftBtn.classList.remove('hidden'); rightBtn.classList.remove('hidden');
 }
 function hideTouchControls(){
+  const sb = document.getElementById('spearBtn');
+  if (sb) sb.classList.add('hidden');
   leftBtn.classList.add('hidden'); rightBtn.classList.add('hidden');
   keys.left = false; keys.right = false;
 }
@@ -7184,6 +7321,13 @@ function loadLeaderboard(){
     return Array.isArray(arr) ? arr : [];
   } catch (e) { return []; }
 }
+(function refundRemovedPerks(){
+  const refund = perkRefundCoins;
+  perkRefundCoins = 0;
+  for (const k in REMOVED_PERKS) owned.delete('perk:' + k);
+  if (outfit.perk && REMOVED_PERKS[outfit.perk] !== undefined){ outfit.perk = 'none'; Store.set('perk', 'none'); }
+  if (refund){ coins += refund; Store.set('coins', coins); saveOwned(); setTimeout(() => { if (typeof showToast === 'function') showToast(t('perkRefund').replace('{c}', refund)); if (typeof cloudPushSoon === 'function') cloudPushSoon(); }, 1500); }
+})();
 function saveLeaderboard(arr){ Store.set('leaderboard', JSON.stringify(arr)); }
 
 function addToLeaderboard(nick, sc){
@@ -7255,6 +7399,7 @@ function tryBuyAndEquip(slot, val, chipEl){
   if (coins < price){ denyChip(chipEl); return; }
 
   coins -= price;
+  noteSpent(price);
   Store.set('coins', coins);
   owned.add(slot + ':' + val);
   saveOwned();
@@ -7295,6 +7440,7 @@ document.getElementById('buyAllBtn').addEventListener('click', () => {
   if (coins < total){ denyChip(document.getElementById('buyAllBtn')); return; }
 
   coins -= total;
+  noteSpent(total);
   Store.set('coins', coins);
   for (const val of candidates){
     owned.add(shopActiveSlot + ':' + val);
@@ -7425,6 +7571,7 @@ function buyItem(slot, val, field){
   if (coins < price) return;
 
   coins -= price;
+  noteSpent(price);
   Store.set('coins', coins);
   owned.add(slot + ':' + val);
   saveOwned();
@@ -7586,7 +7733,7 @@ let eventInfo = { count: 0, start: 0, checked: 0 };
 try { eventInfo = Object.assign(eventInfo, JSON.parse(Store.get('event100', '{}')) || {}); } catch (e) {}
 
 function eventActive(now){
-  const tNow = now || Date.now();
+  const tNow = now || nowServer();
   return eventInfo.start > 0 && tNow >= eventInfo.start && tNow < eventInfo.start + EVENT_DAYS * 86400000;
 }
 
@@ -7629,8 +7776,8 @@ async function checkEvent(){
   const count = await fetchPlayerCount();
   let start = await fetchEventStart();
   if (!start && count >= EVENT_GOAL){
-    await createEventStart(Date.now());
-    start = (await fetchEventStart()) || Date.now();
+    await createEventStart(nowServer());
+    start = (await fetchEventStart()) || nowServer();
   }
   const realCount = count >= 0 ? Math.max(0, count - (start ? 1 : 0)) : eventInfo.count;
   eventInfo = { count: realCount, start: start || eventInfo.start || 0, checked: Date.now() };
@@ -7660,7 +7807,7 @@ function giveEventGift(){
 
 function expireEventGift(){
   if (!eventInfo.start || eventActive()) return false;
-  if (Date.now() < eventInfo.start) return false;
+  if (nowServer() < eventInfo.start) return false;
   const temp = eventTempList();
   if (!temp.length) return false;
   let changed = false;
@@ -7684,7 +7831,7 @@ function refreshEventBanner(){
   const el = document.getElementById('eventBanner');
   const conf = document.getElementById('confettiBox');
   if (!el) return;
-  const now = Date.now();
+  const now = nowServer();
   if (eventActive(now)){
     const daysLeft = Math.max(1, Math.ceil((eventInfo.start + EVENT_DAYS * 86400000 - now) / 86400000));
     el.className = 'eventBanner isLive';
@@ -7820,7 +7967,7 @@ function gameOver(){
   const isNewBest = score > best;
   if (isNewBest){ best = score; Store.set('best', best); }
   const trBefore = trophies;
-  lastTrophyDelta = trophyDelta(score, trophies);
+  lastTrophyDelta = score >= MIN_RUN_SCORE ? trophyDelta(score, trophies) : 0;
   trophies = Math.max(0, trophies + lastTrophyDelta);
   Store.set('trophies', trophies);
   const passGain = recordRunForPass(score, runCoins);
@@ -8001,6 +8148,18 @@ async function cloudFetchOwnTitle(){
     const f = (doc && doc.fields) || {};
     if (!checkAccountAlive(res.status || 200, f)) return;
     ownDocChecked = true;
+    const rSpent = remoteSpent(f);
+    if (rSpent > coinsSpent){
+      coins = Math.max(0, coins - (rSpent - coinsSpent));
+      coinsSpent = rSpent;
+      Store.set('coins', coins); Store.set('spent', coinsSpent);
+      if (f.owned && f.owned.arrayValue && Array.isArray(f.owned.arrayValue.values)){
+        for (const v of f.owned.arrayValue.values){ if (v && v.stringValue) owned.add(v.stringValue); }
+        saveOwned();
+      }
+      if (typeof refreshShopState === 'function') refreshShopState();
+      if (typeof cloudPushSoon === 'function') cloudPushSoon();
+    }
     if (f.pass && f.pass.stringValue){ pass = mergePass(parsePassStr(f.pass.stringValue)); savePass(); if (typeof refreshPassCard === 'function') refreshPassCard(); }
     if (f.daily && f.daily.stringValue){ mergeDaily(f.daily.stringValue); refreshDailyBtn(); }
     myTitle = (f.title && f.title.stringValue) || '';
@@ -8010,7 +8169,7 @@ async function cloudFetchOwnTitle(){
     applyOwnBadgeFromFields(f);
     setKeepFromFields(f);
     myNoImages = !!(f.noImages && f.noImages.booleanValue);
-    if (myNoImages && ((f.role && f.role.stringValue === 'mod') || adminMode || (DEV_CODE && cloudCode === DEV_CODE))){
+    if (myNoImages && ((f.role && (f.role.stringValue === 'mod' || f.role.stringValue === 'admin')) || adminMode || (DEV_CODE && cloudCode === DEV_CODE))){
       myNoImages = false;
       fetch(cloudBase() + '/players/' + cloudCode + '?updateMask.fieldPaths=noImages&key=' + CLOUD.apiKey, {
         method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fields: { noImages: { booleanValue: false } } })
@@ -8033,7 +8192,8 @@ async function cloudFetchOwnTitle(){
     myPwSet = !!(f.pwHash && f.pwHash.stringValue);
     Store.set('pwSet', myPwSet ? '1' : '0');
     if (typeof refreshPwState === 'function') refreshPwState();
-    myRole = (f.role && f.role.stringValue) === 'mod' ? 'mod' : '';
+    applyCustomMusic((f.music && f.music.stringValue) || '');
+    myRole = ['mod', 'admin'].indexOf((f.role && f.role.stringValue) || '') !== -1 ? f.role.stringValue : '';
     Store.set('role', myRole);
     if (typeof refreshStaffUI === 'function') refreshStaffUI();
   } catch (e) {}
@@ -8080,7 +8240,8 @@ async function cloudPush(){
     trail:  { stringValue: outfit.trail },
     daily:  { stringValue: JSON.stringify(daily) },
     trophies: { integerValue: String(trophies) },
-    pass: { stringValue: JSON.stringify(pass) }
+    pass: { stringValue: JSON.stringify(pass) },
+    spent: { integerValue: String(coinsSpent) }
   };
   const mask = Object.keys(fields).map(k => 'updateMask.fieldPaths=' + k).join('&');
   try {
@@ -8099,14 +8260,15 @@ function isOnline(f){
   return ls > 0 && (Date.now() - ls) < ONLINE_THRESHOLD_MS;
 }
 
-async function updatePresence(){
-  if (!cloudReady() || accountGone || !ownDocChecked) return;
+async function updatePresence(force){
+  if (!cloudReady() || accountGone || (!ownDocChecked && !force)) return;
   try {
-    await fetch(cloudBase() + '/players/' + cloudCode + '?updateMask.fieldPaths=lastSeen&key=' + CLOUD.apiKey, {
+    const res = await fetch(cloudBase() + '/players/' + cloudCode + '?updateMask.fieldPaths=lastSeen&key=' + CLOUD.apiKey, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ fields: { lastSeen: { integerValue: String(Date.now()) } } })
     });
+    if (res && res.ok && res.json){ const d = await res.json(); noteServerTime(d); }
   } catch (e) {}
 }
 
@@ -8191,6 +8353,7 @@ async function cloudRestore(rawCode, rawPw){
   if (Date.now() < restoreLockUntil){ setCloudStatus(t('pwWait')); return; }
   setCloudStatus(t('cloudLoading'));
   try {
+    if (code === cloudCode && ownDocChecked){ clearTimeout(cloudPushTimer); await cloudPush(); }
     const res = await fetch(cloudBase() + '/players/' + code + '?key=' + CLOUD.apiKey);
     if (!res.ok){ setCloudStatus(t('cloudNotFound')); return; }
     const doc = await res.json();
@@ -8208,6 +8371,7 @@ async function cloudRestore(rawCode, rawPw){
     }
     myPwSet = !!storedHash;
     Store.set('pwSet', myPwSet ? '1' : '0');
+    coinsSpent = remoteSpent(f); Store.set('spent', coinsSpent);
     if (f.coins) { coins = parseInt(f.coins.integerValue || '0', 10) || 0; Store.set('coins', coins); }
     if (f.best)  { best  = parseInt(f.best.integerValue  || '0', 10) || 0; Store.set('best', best); }
     trophies = estTrophies(f); Store.set('trophies', trophies);
@@ -8227,17 +8391,22 @@ async function cloudRestore(rawCode, rawPw){
 
 
     
+    owned.clear();
     if (f.owned && f.owned.arrayValue && Array.isArray(f.owned.arrayValue.values)){
       for (const v of f.owned.arrayValue.values){
         if (v && v.stringValue) owned.add(v.stringValue);
       }
-      saveOwned();
     }
+    owned.add('hat:none'); owned.add('acc:none'); owned.add('acc:bowtie'); owned.add('tool:none'); owned.add('char:hero'); owned.add('perk:none'); owned.add('trail:none');
+    saveOwned();
     for (const slotKey of ['hat', 'acc', 'tool', 'char', 'perk', 'trail']){
       const val = f[slotKey] && f[slotKey].stringValue;
-      if (val && OUTFITS[slotKey] && OUTFITS[slotKey][val]){
+      if (val && OUTFITS[slotKey] && OUTFITS[slotKey][val] && owned.has(slotKey + ':' + val)){
         outfit[slotKey] = val;
         Store.set(slotKey, val);
+      } else if (!owned.has(slotKey + ':' + outfit[slotKey])){
+        outfit[slotKey] = slotKey === 'char' ? 'hero' : 'none';
+        Store.set(slotKey, outfit[slotKey]);
       }
     }
     
@@ -8283,6 +8452,7 @@ async function checkPendingGrant(){
     if (!(f.pending && f.pending.booleanValue)) return;
 
     if (f.coins) { coins = parseInt(f.coins.integerValue || '0', 10) || 0; Store.set('coins', coins); }
+    coinsSpent = Math.max(coinsSpent, remoteSpent(f)); Store.set('spent', coinsSpent);
     if (f.best)  { best  = parseInt(f.best.integerValue  || '0', 10) || 0; Store.set('best', best); }
     if (f.trophies){ trophies = Math.max(0, parseInt(f.trophies.integerValue || '0', 10) || 0); Store.set('trophies', trophies); }
     if (f.pass && f.pass.stringValue){ const rp = normalizePass(parsePassStr(f.pass.stringValue)); pass = mergePass(rp); if (rp.s === pass.s && !rp.gold) pass.gold = false; savePass(); }
@@ -9639,7 +9809,7 @@ async function ensurePeers(codes, maxAgeMs){
 const FRIENDS_SINCE = Date.UTC(2026, 8, 28, 8, 25);
 const chatConvStatus = {};
 const friendMigrated = {};
-const friendReqTimes = [];
+const friendReqTimes = loadTimes('frReqTimes');
 
 function convStatusFromFields(f, other){
   const b = (k) => !!(f[k] && f[k].booleanValue);
@@ -9675,6 +9845,7 @@ async function setFriendFlag(otherCode, otherNick, mode){
     while (friendReqTimes.length && now - friendReqTimes[0] > 600000) friendReqTimes.shift();
     if (friendReqTimes.length >= 10){ showToast(t('friendReqLimit')); return false; }
     friendReqTimes.push(now);
+    Store.set('frReqTimes', JSON.stringify(friendReqTimes.slice(-12)));
   }
   const convId = chatConvId(cloudCode, otherCode);
   const on = mode === 'request' || mode === 'accept' || mode === 'legacy';
@@ -10253,6 +10424,7 @@ document.getElementById('discordBtn').addEventListener('click', () => openLinkCh
 document.getElementById('passBtn').addEventListener('click', openPass);
 document.getElementById('tiktokBtn').addEventListener('click', () => openLinkChoice(TIKTOK_URL, 'TikTok'));
 document.getElementById('dailyBtn').addEventListener('click', openDaily);
+document.getElementById('spearBtn').addEventListener('pointerdown', (e) => { e.preventDefault(); e.stopPropagation(); spearLunge(); });
 document.getElementById('howToOk').addEventListener('click', closeHowTo);
 document.getElementById('dailyClose').addEventListener('click', closeDaily);
 document.getElementById('dailyClaimBtn').addEventListener('click', claimDaily);
@@ -10443,7 +10615,8 @@ function refreshCloudUI(){
 
 document.getElementById('cloudCopyBtn').addEventListener('click', () => {
   try {
-    navigator.clipboard.writeText(cloudCode);
+    const pr = navigator.clipboard.writeText(cloudCode);
+    if (pr && pr.catch) pr.catch(() => {});
     setCloudStatus(t('cloudCopied'));
   } catch (e) {}
 });
@@ -10518,7 +10691,8 @@ document.getElementById('pauseMenuBtn').addEventListener('click', goToMenu);
 
 const ADMIN_PIN = '1337';
 
-let adminMode = localStorage.getItem('cabbitAdminMode') === '1';
+function adminAllowed(){ return (typeof cloudCode !== 'undefined' && cloudCode === DEV_CODE) || myRole === 'admin'; }
+let adminMode = localStorage.getItem('cabbitAdminMode') === '1' && adminAllowed();
 let adminCurrentCode = null;
 let adminCurrentEquipped = null;
 let adminCurrentOwned = new Set();
@@ -10568,6 +10742,7 @@ setInterval(refreshOnlineCounter, 30000);
 function refreshStaffUI(){
   const tool = document.getElementById('adminTool');
   if (!tool) return;
+  if (adminMode && !adminAllowed()){ adminMode = false; localStorage.removeItem('cabbitAdminMode'); }
   tool.classList.toggle('hidden', !isStaff());
   tool.classList.toggle('modMode', isModOnly());
   const title = document.getElementById('adminHeaderTitle');
@@ -10582,7 +10757,7 @@ function refreshStaffUI(){
 refreshStaffUI();
 
 function selectAdminRole(role){
-  adminRoleValue = role === 'mod' ? 'mod' : '';
+  adminRoleValue = role === 'mod' || role === 'admin' ? role : '';
   document.querySelectorAll('.adminRoleOpt').forEach((b) => {
     b.classList.toggle('active', (b.dataset.role || '') === adminRoleValue);
   });
@@ -10606,6 +10781,11 @@ document.getElementById('secretZone').addEventListener('click', () => {
 
 document.getElementById('adminPinBtn').addEventListener('click', () => {
   const input = document.getElementById('adminPinInput');
+  if (!adminAllowed()){
+    input.value = '';
+    input.placeholder = 'Только для аккаунта создателя';
+    return;
+  }
   if (input.value === ADMIN_PIN){
     adminMode = true;
     localStorage.setItem('cabbitAdminMode', '1');
@@ -10639,7 +10819,7 @@ async function adminLoad(codeOverride){
     const doc = await res.json();
     const f = doc.fields || {};
     const targetRole = (f.role && f.role.stringValue) || '';
-    if (isModOnly() && (code === cloudCode || targetRole === 'mod' || (DEV_CODE && code === DEV_CODE))){
+    if (isModOnly() && (code === cloudCode || targetRole === 'mod' || targetRole === 'admin' || (DEV_CODE && code === DEV_CODE))){
       adminSetStatus(code === cloudCode ? 'Помощник не может менять свой профиль' : 'Помощник не может менять профиль администрации');
       return;
     }
@@ -10669,6 +10849,7 @@ async function adminLoad(codeOverride){
     adminCurrentPass = f.pass && f.pass.stringValue ? f.pass.stringValue : '';
     document.getElementById('adminPassGold').checked = !!normalizePass(parsePassStr(adminCurrentPass)).gold;
     document.getElementById('adminNoImages').checked = !!(f.noImages && f.noImages.booleanValue);
+    document.getElementById('adminMusicInput').value = (f.music && f.music.stringValue) || '';
     document.getElementById('adminTitleInput').value = (f.title && f.title.stringValue) || '';
     document.getElementById('adminTitleColorInput').value = (f.titleColor && f.titleColor.stringValue) || '';
     const badgeNickEl = document.getElementById('adminBadgeNickPreview');
@@ -10843,7 +11024,7 @@ async function modSave(){
 async function adminSave(){
   if (!adminCurrentCode || !cloudReady() || !isStaff()) return;
   if (isModOnly()){
-    if (adminCurrentCode === cloudCode || adminCurrentRole === 'mod') return;
+    if (adminCurrentCode === cloudCode || adminCurrentRole === 'mod' || adminCurrentRole === 'admin') return;
     return modSave();
   }
   const statA = adminStatFields();
@@ -10869,6 +11050,7 @@ async function adminSave(){
     trophies: statA.fields.trophies, trophiesText: statA.fields.trophiesText,
     pass: { stringValue: adminPassValue() },
     noImages: { booleanValue: !!document.getElementById('adminNoImages').checked },
+    music: { stringValue: cleanMusicSrc(document.getElementById('adminMusicInput').value) },
     owned: { arrayValue: { values: ownedList.map(v => ({ stringValue: v })) } },
     hat:   { stringValue: (adminCurrentEquipped && adminCurrentEquipped.hat)  || 'none' },
     acc:   { stringValue: (adminCurrentEquipped && adminCurrentEquipped.acc)  || 'none' },
@@ -10899,6 +11081,7 @@ async function adminSave(){
         trophies = statA.vals.trophies; Store.set('trophies', trophies);
         pass = normalizePass(parsePassStr(adminPassValue())); savePass();
         myNoImages = !!document.getElementById('adminNoImages').checked; Store.set('noImages', myNoImages ? '1' : '0');
+        applyCustomMusic(document.getElementById('adminMusicInput').value);
         nickname = nickMatch; Store.set('nick', nickname);
         myTitle = titleVal; Store.set('titleText', myTitle);
         myTitleColor = titleColorVal; Store.set('titleColor', myTitleColor);
@@ -11009,7 +11192,7 @@ async function adminResolveReport(repId, convId, imgRef, from, removePhoto, banP
         const tr = await fetch(cloudBase() + '/players/' + from + '?key=' + CLOUD.apiKey);
         const td = tr.ok ? await tr.json() : null;
         const tf = (td && td.fields) || {};
-        if (tf.role && tf.role.stringValue === 'mod') canBan = false;
+        if (tf.role && (tf.role.stringValue === 'mod' || tf.role.stringValue === 'admin')) canBan = false;
       } catch (e) {}
     }
     if (canBan){
