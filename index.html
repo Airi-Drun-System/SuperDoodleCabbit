@@ -2676,6 +2676,7 @@ function playBufferSfx(key, volume, rate){
   } catch (e) { return false; }
 }
 loadBufferSfx('jump', ['sfx-jump.mp3', 'sfx-jump.ogg', 'sfx-jump.wav']);
+loadBufferSfx('spear', ['sfx-spear.mp3', 'sfx-spear.ogg', 'sfx-spear.wav']);
 function playCustomSfx(key, volume){
   const s = CUSTOM_SFX[key];
   if (!s || !s.ok) return false;
@@ -2722,6 +2723,42 @@ function sweep(f0, f1, dur, type, peak){
     osc.stop(t0 + dur + 0.05); lfo.stop(t0 + dur + 0.05);
   } catch (e) {}
 }
+function sfxSpearSynth(){
+  if (!actx) return;
+  try {
+    const t0 = actx.currentTime;
+    const len = Math.floor(actx.sampleRate * 0.34);
+    const nb = actx.createBuffer(1, len, actx.sampleRate);
+    const d = nb.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+    const ns = actx.createBufferSource();
+    ns.buffer = nb;
+    const bp = actx.createBiquadFilter();
+    bp.type = 'bandpass';
+    bp.Q.value = 1.4;
+    bp.frequency.setValueAtTime(500, t0);
+    bp.frequency.exponentialRampToValueAtTime(3600, t0 + 0.26);
+    const ng = actx.createGain();
+    ng.gain.setValueAtTime(0.0001, t0);
+    ng.gain.exponentialRampToValueAtTime(0.32, t0 + 0.05);
+    ng.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.32);
+    ns.connect(bp); bp.connect(ng); ng.connect(actx.destination);
+    ns.start(t0); ns.stop(t0 + 0.34);
+    for (const [f, v, dl] of [[1860, 0.07, 0.03], [2790, 0.045, 0.035], [4130, 0.025, 0.04]]){
+      const o = actx.createOscillator();
+      o.type = 'sine';
+      o.frequency.setValueAtTime(f, t0 + dl);
+      const g = actx.createGain();
+      g.gain.setValueAtTime(0.0001, t0 + dl);
+      g.gain.exponentialRampToValueAtTime(v, t0 + dl + 0.008);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + dl + 0.42);
+      o.connect(g); g.connect(actx.destination);
+      o.start(t0 + dl); o.stop(t0 + dl + 0.45);
+    }
+  } catch (e) {}
+  sweep(170, 620, 0.2, 'triangle', 0.09);
+}
+const sfxSpear = () => { if (playBufferSfx('spear', 0.9, 0.96 + Math.random() * 0.08)) return; sfxSpearSynth(); };
 const sfxPortalOpen  = () => { sweep(120, 560, 0.6, 'sine', 0.17); sweep(240, 1120, 0.55, 'triangle', 0.05); };
 const sfxPortalGulp  = () => { sweep(520, 180, 0.18, 'sine', 0.12); };
 const sfxPortalClose = () => { sweep(640, 90, 0.34, 'sine', 0.16); beep(1500, 0.06, 'triangle', 0.05); };
@@ -2899,6 +2936,14 @@ const I18N = {
       'char:hero9':     { n: 'Котокролик №9',     d: 'Лимитированный — выдаётся только администрацией.' },
       'char:hero10':    { n: 'Котокролик №10',    d: 'Лимитированный — выдаётся только администрацией.' },
       'char:hero11':    { n: 'Баксик',            d: 'Лимитированный, с анимацией — выдаётся только администрацией.' },
+      'char:freehero3': { n: 'Котокролик Free №3', d: 'Обычный котокролик — можно купить за монеты.' },
+      'char:freehero4': { n: 'Котокролик Free №4', d: 'Обычный котокролик — можно купить за монеты.' },
+      'char:freehero5': { n: 'Котокролик Free №5', d: 'Обычный котокролик — можно купить за монеты.' },
+      'char:freehero6': { n: 'Котокролик Free №6', d: 'Обычный котокролик — можно купить за монеты.' },
+      'char:freehero7': { n: 'Котокролик Free №7', d: 'Обычный котокролик — можно купить за монеты.' },
+      'char:freehero8': { n: 'Котокролик Free №8', d: 'Обычный котокролик — можно купить за монеты.' },
+      'char:freehero9': { n: 'Котокролик Free №9', d: 'Обычный котокролик — можно купить за монеты.' },
+      'char:freehero10': { n: 'Котокролик Free №10', d: 'Обычный котокролик — можно купить за монеты.' },
       'hat:party':      { n: 'Праздничный колпак', d: 'Подарок на праздник 100 игроков — не продаётся.' },
       'hat:starcrown':  { n: 'Звёздная корона',   d: 'Награда за 10 000 очков — не продаётся.' },
       'perk:multiacc':  { n: 'Второй предмет',    d: 'Можно надеть сразу два в шляпах и в аксессуарах. Работает всегда, если куплен.' },
@@ -3022,6 +3067,14 @@ const I18N = {
       'char:hero9':     { n: 'Cabbit #9',         d: 'Limited — granted by the admin only.' },
       'char:hero10':    { n: 'Cabbit #10',        d: 'Limited — granted by the admin only.' },
       'char:hero11':    { n: 'Baksik',            d: 'Limited, animated — granted by the admin only.' },
+      'char:freehero3': { n: 'Cabbit Free #3', d: 'A regular cabbit — buy it with coins.' },
+      'char:freehero4': { n: 'Cabbit Free #4', d: 'A regular cabbit — buy it with coins.' },
+      'char:freehero5': { n: 'Cabbit Free #5', d: 'A regular cabbit — buy it with coins.' },
+      'char:freehero6': { n: 'Cabbit Free #6', d: 'A regular cabbit — buy it with coins.' },
+      'char:freehero7': { n: 'Cabbit Free #7', d: 'A regular cabbit — buy it with coins.' },
+      'char:freehero8': { n: 'Cabbit Free #8', d: 'A regular cabbit — buy it with coins.' },
+      'char:freehero9': { n: 'Cabbit Free #9', d: 'A regular cabbit — buy it with coins.' },
+      'char:freehero10': { n: 'Cabbit Free #10', d: 'A regular cabbit — buy it with coins.' },
       'hat:party':      { n: 'Party Hat',         d: 'A gift for reaching 100 players — not for sale.' },
       'hat:starcrown':  { n: 'Star Crown',        d: 'A reward for 10,000 points — not for sale.' },
       'perk:multiacc':  { n: 'Second Item',       d: 'Wear two hats and two accessories at once. Always works once bought.' },
@@ -3113,7 +3166,15 @@ const OUTFITS = {
     hero8:  { price: 0, locked: true, secret: true },
     hero9:  { price: 0, locked: true, secret: true },
     hero10: { price: 0, locked: true, secret: true },
-    hero11: { price: 0, locked: true, secret: true }
+    hero11: { price: 0, locked: true, secret: true },
+    freehero3: { price: 3000, needImg: true },
+    freehero4: { price: 3000, needImg: true },
+    freehero5: { price: 3000, needImg: true },
+    freehero6: { price: 3000, needImg: true },
+    freehero7: { price: 3000, needImg: true },
+    freehero8: { price: 3000, needImg: true },
+    freehero9: { price: 3000, needImg: true },
+    freehero10: { price: 3000, needImg: true }
   },
   perk: {
     none:     { price: 0 },
@@ -4391,8 +4452,7 @@ function spearLunge(){
   shake = Math.max(shake, 4);
   buzz(18);
   ensureAudio();
-  if (typeof sweep === 'function') sweep(420, 980, 0.18, 'triangle', 0.06);
-  else beep(760, 0.08, 'triangle', 0.05);
+  sfxSpear();
   return true;
 }
 
@@ -7411,7 +7471,7 @@ function tryBuyAndEquip(slot, val, chipEl){
 function getBuyAllCandidates(slotKey){
   const list = OUTFITS[slotKey];
   if (!list) return [];
-  return Object.keys(list).filter(val => !list[val].locked && list[val].price > 0 && !isOwned(slotKey, val));
+  return Object.keys(list).filter(val => !list[val].locked && list[val].price > 0 && !isOwned(slotKey, val) && (!list[val].needImg || (charImgs[val] && charImgs[val].ready)));
 }
 
 function refreshBuyAllRow(){
@@ -8007,7 +8067,7 @@ const CHAR_LIST = Object.keys(OUTFITS.char);
 let previewChar = outfit.char;
 
 function visibleCharList(){
-  return CHAR_LIST.filter(id => !OUTFITS.char[id].secret || isOwned('char', id));
+  return CHAR_LIST.filter(id => (!OUTFITS.char[id].secret || isOwned('char', id)) && (!OUTFITS.char[id].needImg || (charImgs[id] && charImgs[id].ready) || outfit.char === id));
 }
 
 function charStep(delta){
