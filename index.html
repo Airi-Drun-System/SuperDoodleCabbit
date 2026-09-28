@@ -1095,7 +1095,9 @@
     display:flex;align-items:center;justify-content:center;touch-action:none;transition:opacity .15s ease, transform .08s ease;}
   #spearBtn svg{width:34px;height:34px;pointer-events:none;}
   #spearBtn.hidden{display:none;}
-  #spearBtn.used{opacity:.35;}
+  #spearBtn.used{background:radial-gradient(circle at 35% 30%,rgba(120,130,160,.55),rgba(30,30,60,.7));box-shadow:0 0 0 3px rgba(223,232,255,.35),0 8px 20px rgba(0,0,0,.35);}
+  #spearBtn.used svg{opacity:.18;}
+  #spearCd{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:"BIPs",sans-serif;font-size:30px;color:#fff;text-shadow:0 2px 0 #2b2238,0 0 8px rgba(0,0,0,.5);pointer-events:none;}
   #spearBtn:active{transform:translateX(-50%) scale(.9);}
   #hitBtn:active{transform:translateX(-50%) scale(.9);}
   @keyframes hitPulse{
@@ -1304,6 +1306,7 @@
   <button id="hitBtn" class="hidden" data-i18n="tapPrompt">ЖМИ!</button>
   <button id="spearBtn" class="hidden" type="button" aria-label="Копьё">
     <svg viewBox="0 0 24 24" fill="none"><path d="M5 19 L16 8" stroke="#fdf6e8" stroke-width="2.6" stroke-linecap="round"/><path d="M14 5 L20 4 L19 10 Z" fill="#fdf6e8" stroke="#fdf6e8" stroke-width="1.6" stroke-linejoin="round"/><path d="M4 16 L8 20" stroke="#fdf6e8" stroke-width="2.2" stroke-linecap="round"/></svg>
+    <span id="spearCd"></span>
   </button>
 
   <div id="nickname" class="screen">
@@ -2924,7 +2927,7 @@ const I18N = {
       'acc:backpack':   { n: 'Ранец-прыгун',      d: 'Двойной прыжок: тапни по экрану в воздухе.' },
       'tool:none':      { n: 'Пусто',            d: '' },
       'tool:mace':      { n: 'Зачарованная булава', d: 'Падая на монстра сверху — тапни экран: сокрушительный удар выносит в космос.' },
-      'tool:bow':       { n: 'Лук охотника',      d: 'На платформах заводятся монстрики. Тапай — стреляй: +3 монеты за каждого, но не наступай на них.' },
+      'tool:bow':       { n: 'Лук охотника',      d: 'На платформах заводятся монстрики. Тапай — стреляй (раз в секунду): +3 монеты за каждого, но не наступай на них.' },
       'char:hero':      { n: 'Котокролик',        d: 'Классический котокролик.' },
       'char:hero2':     { n: 'Котокролик №2',     d: 'Второй котокролик — просто для разнообразия.' },
       'char:hero3':     { n: 'Котокролик №3',     d: 'Лимитированный — выдаётся только администрацией.' },
@@ -2951,7 +2954,7 @@ const I18N = {
       'perk:legs':      { n: 'Пружинистые лапы',  d: 'Обычные прыжки на 12% выше.' },
       'perk:dodger':    { n: 'Ловкач',            d: 'Зона идеального удара по монстру в два раза шире.' },
       'perk:passboost': { n: 'Ускоритель пасса',  d: '+50% жетонов Cabbit Pass за каждый забег.' },
-      'tool:spear':     { n: 'Копьё',             d: 'Кнопка копья — мощный рывок вверх. Один раз за прыжок, заряжается при приземлении.' },
+      'tool:spear':     { n: 'Копьё',             d: 'Кнопка копья — мощный рывок вверх. Перезарядка 6 секунд.' },
       'hat:none': { n: 'Ничего', d: '' }, 'acc:none': { n: 'Ничего', d: '' },
       'tool:none': { n: 'Ничего', d: '' }, 'perk:none': { n: 'Ничего', d: '' }
     }
@@ -3055,7 +3058,7 @@ const I18N = {
       'acc:backpack':   { n: 'Jump Pack',         d: 'Double jump: tap the screen in mid-air.' },
       'tool:none':      { n: 'Empty',            d: '' },
       'tool:mace':      { n: 'Enchanted Mace',   d: 'Falling onto a monster — tap the screen for a smash that launches you into space.' },
-      'tool:bow':       { n: "Hunter's Bow",      d: 'Critters appear on platforms. Tap to shoot: +3 coins each — but never land on one.' },
+      'tool:bow':       { n: "Hunter's Bow",      d: 'Critters appear on platforms. Tap to shoot (once a second): +3 coins each — but never land on one.' },
       'char:hero':      { n: 'Cabbit',            d: 'The classic cat-rabbit.' },
       'char:hero2':     { n: 'Cabbit #2',         d: 'A second cat-rabbit — just for variety.' },
       'char:hero3':     { n: 'Cabbit #3',         d: 'Limited — granted by the admin only.' },
@@ -3082,7 +3085,7 @@ const I18N = {
       'perk:legs':      { n: 'Springy Paws',      d: 'Normal jumps are 12% higher.' },
       'perk:dodger':    { n: 'Dodger',            d: 'The perfect-hit zone against monsters is twice as wide.' },
       'perk:passboost': { n: 'Pass Booster',      d: '+50% Cabbit Pass tokens every run.' },
-      'tool:spear':     { n: 'Spear',             d: 'Spear button — a powerful upward lunge. Once per jump, recharges on landing.' },
+      'tool:spear':     { n: 'Spear',             d: 'Spear button — a powerful upward lunge. 6 second cooldown.' },
       'hat:none': { n: 'None', d: '' }, 'acc:none': { n: 'None', d: '' },
       'tool:none': { n: 'None', d: '' }, 'perk:none': { n: 'None', d: '' }
     }
@@ -3521,6 +3524,9 @@ const hasBow        = () => outfit.tool === 'bow'  && isOwned('tool', 'bow');
 const hasSpear      = () => outfit.tool === 'spear' && isOwned('tool', 'spear');
 const hasPerk       = (k) => outfit.perk === k && isOwned('perk', k);
 let spearReady = true;
+const SPEAR_CD = 6;
+let spearCdLeft = 0;
+let spearCdShown = -1;
 const SPEAR_V = -1250;
 const coinMult      = () => (hasHat('crown') ? 2 : 1) * (eventActive() ? 2 : 1);
 const hasMagnet     = () => hasHat('halo');
@@ -4228,6 +4234,7 @@ function resetGame(){
   laserIntroShown = false;
   glassUsedThisRun = false;
   spearReady = true;
+  spearCdLeft = 0;
   fallSoundPlayed = false;
   deathPortal = null;
   hitStop = 0; speedFx = 0;
@@ -4365,7 +4372,6 @@ function stepPhysics(dt){
 
     hero.y = top - hero.h * 0.5;
     airJumps = hasDoubleJump() ? 1 : 0; 
-    if (!spearReady){ spearReady = true; refreshSpearBtn(); }
     p.wobble = 1;
     hero.sx = 1.35; hero.sy = 0.66;
 
@@ -4444,6 +4450,7 @@ function handleTapAction(){
 function spearLunge(){
   if (state !== STATE.PLAY || monsterEvent || !hasSpear() || !spearReady) return false;
   spearReady = false;
+  spearCdLeft = SPEAR_CD;
   refreshSpearBtn();
   hero.vy = Math.min(hero.vy, SPEAR_V);
   hero.sx = 0.72; hero.sy = 1.38;
@@ -4458,7 +4465,7 @@ function spearLunge(){
 
 function shootArrow(){
   if (shootCd > 0) return;
-  shootCd = 0.34;
+  shootCd = 1.1;
 
   
   let tx = hero.x, ty = hero.y - 300, bestD = 1e9;
@@ -4466,7 +4473,7 @@ function shootArrow(){
     if (cr.y > hero.y - 12) continue;
     const dx = cr.x - hero.x, dy = cr.y - hero.y;
     const d = dx * dx + dy * dy;
-    if (d < bestD && d < 280 * 280){ bestD = d; tx = cr.x; ty = cr.y; }
+    if (d < bestD && d < 210 * 210){ bestD = d; tx = cr.x; ty = cr.y; }
   }
 
   const dx = tx - hero.x, dy = ty - hero.y;
@@ -4485,6 +4492,12 @@ function shootArrow(){
 
 function updateWorld(dt){
   updateTrail(dt);
+  if (spearCdLeft > 0){
+    spearCdLeft = Math.max(0, spearCdLeft - dt);
+    if (spearCdLeft === 0) spearReady = true;
+    const shown = Math.ceil(spearCdLeft);
+    if (shown !== spearCdShown){ spearCdShown = shown; refreshSpearBtn(); }
+  }
   const lead = clamp(-hero.vy / 1100, 0, 1);
   const camT = hero.y - VH * (0.45 + 0.1 * lead);
   if (camT < camTarget) camTarget = camT;
@@ -7288,6 +7301,8 @@ function refreshSpearBtn(){
   if (!b) return;
   b.classList.toggle('hidden', !(hasSpear() && state === STATE.PLAY));
   b.classList.toggle('used', !spearReady);
+  const cd = document.getElementById('spearCd');
+  if (cd) cd.textContent = spearReady ? '' : String(Math.max(1, Math.ceil(spearCdLeft)));
 }
 function showTouchControls(){
   refreshSpearBtn();
