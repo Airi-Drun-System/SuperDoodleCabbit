@@ -427,6 +427,78 @@
   .inboxBtn svg{width:24px;height:24px;}
   .inboxBtn:active{transform:scale(.92);}
   #menu.paused .inboxBtn{display:none;}
+  .menuTopBar{position:absolute;top:12px;left:58px;right:70px;z-index:40;display:flex;gap:8px;align-items:center;}
+  .topPill{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 12px 0 8px;border-radius:999px;border:none;font-family:inherit;
+    background:rgba(20,8,40,.55);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.16);color:#fdf6e8;font-size:17px;font-weight:800;white-space:nowrap;}
+  .topPill b{font-weight:800;}
+  .trophyPill{cursor:pointer;box-shadow:inset 0 0 0 1.5px rgba(255,211,77,.45);}
+  .trophyPill .tpIcon{font-size:19px;filter:drop-shadow(0 2px 0 rgba(0,0,0,.3));}
+  .trophyPill b{color:#ffd34d;}
+  .trophyPill:active{transform:scale(.95);}
+  .coinPill .coinNum{font-size:17px;}
+  #menu.paused .menuTopBar,#menu.paused .passCard{display:none;}
+  .passCard{position:relative;width:min(300px,88vw);box-sizing:border-box;border:none;cursor:pointer;font-family:inherit;text-align:left;color:#fdf6e8;
+    padding:9px 14px 11px;border-radius:18px;display:flex;flex-direction:column;gap:6px;
+    background:linear-gradient(135deg,#6a2fc0,#3a1a7a 55%,#8a4b12);box-shadow:0 5px 0 #24104d,0 10px 20px rgba(0,0,0,.35),inset 0 0 0 1.5px rgba(255,211,77,.5);}
+  .passCard:active{transform:translateY(3px);box-shadow:0 2px 0 #24104d,inset 0 0 0 1.5px rgba(255,211,77,.5);}
+  .passCardTop{display:flex;justify-content:space-between;align-items:baseline;}
+  .passLogo{font-size:16px;font-weight:800;letter-spacing:.04em;color:#ffd34d;text-shadow:0 2px 0 rgba(0,0,0,.35);}
+  .passCardLvl{font-size:14px;font-weight:800;}
+  .passBar{display:block;height:9px;border-radius:999px;background:rgba(0,0,0,.35);overflow:hidden;}
+  .passBar i{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,#ffe07a,#ffb13b);}
+  .passDot{position:absolute;top:-7px;right:-7px;min-width:22px;height:22px;border-radius:11px;background:#ff4d6d;color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.4);}
+  .passDot.hidden{display:none;}
+  .socialRow{display:flex;gap:10px;justify-content:center;}
+  .trophyLine{font-size:26px;font-weight:800;margin:2px 0;}
+  .trophyLine.up{color:#7dff9a;} .trophyLine.down{color:#ff8a8a;} .trophyLine.zero{color:#e8d9ff;}
+  .trophyLine small{font-size:15px;opacity:.75;margin-left:6px;}
+  .passLine{font-size:14px;color:#ffd34d;min-height:18px;}
+  .passOverlay{padding:0 !important;align-items:stretch !important;justify-content:stretch !important;background:#1a0d2b !important;}
+  .passFull{position:relative;width:100%;height:100vh;height:100dvh;overflow-y:auto;box-sizing:border-box;-webkit-overflow-scrolling:touch;
+    padding:calc(env(safe-area-inset-top,0px) + 14px) max(14px,calc((100vw - 560px) / 2)) calc(env(safe-area-inset-bottom,0px) + 24px);
+    background:linear-gradient(180deg,#43207a,#1a0d2b 420px);color:#fdf6e8;}
+  .passFull #passClose{position:absolute;top:calc(env(safe-area-inset-top,0px) + 10px);right:max(10px,calc((100vw - 560px) / 2 - 4px));}
+  .passTitle{font-size:30px;font-weight:800;color:#ffd34d;text-align:center;text-shadow:0 4px 0 rgba(0,0,0,.35);letter-spacing:.03em;}
+  .passSeason{text-align:center;font-size:13px;opacity:.8;margin-top:2px;}
+  .passLvlRow{display:flex;align-items:center;gap:12px;margin:14px 0 10px;}
+  .passLvlBadge{flex:0 0 auto;width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;color:#3a1f00;
+    background:linear-gradient(180deg,#ffe07a,#ffab35);box-shadow:0 4px 0 #b86d12;transform:rotate(-4deg);}
+  .passXpWrap{flex:1;min-width:0;}
+  .passXpBar{height:14px;border-radius:999px;background:rgba(0,0,0,.4);overflow:hidden;box-shadow:inset 0 0 0 1px rgba(255,255,255,.1);}
+  .passXpBar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#ffe07a,#ffb13b);border-radius:999px;}
+  .passXpText{font-size:12px;opacity:.8;margin-top:4px;}
+  .passBuyBtn{width:100%;font-size:16px;padding:11px 0;background:linear-gradient(180deg,#ffe07a,#ffab35);}
+  .passBuyBtn.owned{background:rgba(255,211,77,.18);color:#ffd34d;box-shadow:inset 0 0 0 2px rgba(255,211,77,.5);}
+  .passQuests{display:flex;flex-direction:column;gap:6px;margin:14px 0 8px;}
+  .passQTitle{font-size:12px;font-weight:800;opacity:.7;text-transform:uppercase;letter-spacing:.05em;}
+  .passQuest{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:12px;background:rgba(255,255,255,.07);font-size:13px;}
+  .passQuest.done{opacity:.55;}
+  .passQuest .qMain{flex:1;min-width:0;}
+  .passQuest .qBar{height:6px;border-radius:999px;background:rgba(0,0,0,.35);margin-top:4px;overflow:hidden;}
+  .passQuest .qBar i{display:block;height:100%;background:#7dff9a;}
+  .passQuest .qXp{font-weight:800;color:#ffd34d;white-space:nowrap;}
+  .passColsHead{display:grid;grid-template-columns:1fr 46px 1fr;gap:8px;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;opacity:.8;margin:12px 0 6px;text-align:center;}
+  .passColsHead span:last-child{color:#ffd34d;}
+  .passTrack{display:flex;flex-direction:column;gap:6px;}
+  .passRow{display:grid;grid-template-columns:1fr 46px 1fr;gap:8px;align-items:center;}
+  .passLvlNum{width:40px;height:40px;margin:0 auto;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;background:rgba(255,255,255,.1);}
+  .passRow.reached .passLvlNum{background:linear-gradient(180deg,#ffe07a,#ffab35);color:#3a1f00;}
+  .passCell{position:relative;min-height:58px;border:none;border-radius:14px;padding:6px 8px;font-family:inherit;color:#fdf6e8;display:flex;align-items:center;gap:8px;text-align:left;
+    background:rgba(255,255,255,.07);box-shadow:inset 0 0 0 1px rgba(255,255,255,.1);cursor:default;}
+  .passCell.gold{background:rgba(255,190,60,.12);box-shadow:inset 0 0 0 1px rgba(255,211,77,.35);}
+  .passCell .pcIcon{font-size:24px;flex:0 0 auto;width:30px;text-align:center;}
+  .passCell .pcText{font-size:12.5px;font-weight:700;line-height:1.15;min-width:0;}
+  .passCell .pcState{position:absolute;right:6px;top:4px;font-size:12px;}
+  .passCell.locked{opacity:.45;}
+  .passCell.claimable{cursor:pointer;box-shadow:inset 0 0 0 2px #7dff9a,0 0 14px rgba(125,255,154,.35);}
+  .passCell.claimable .pcState{color:#7dff9a;font-weight:800;}
+  .passCell.claimed{opacity:.55;}
+  .passCell.claimed .pcState{color:#7dff9a;}
+  .trophyInfo{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;}
+  .trophyInfo .tiBig{font-size:46px;font-weight:800;color:#ffd34d;}
+  .trophyInfo .tiText{font-size:13px;line-height:1.45;opacity:.9;}
+  .trophyTable{display:grid;grid-template-columns:1fr auto;gap:3px 14px;font-size:13px;text-align:left;margin-top:4px;}
+  .trophyTable b.up{color:#7dff9a;} .trophyTable b.down{color:#ff8a8a;}
   .inboxBadge{
     position:absolute;top:-3px;right:-3px;min-width:20px;height:20px;padding:0 5px;border-radius:999px;
     background:#ff4d6d;color:#fff;font-size:11px;font-weight:900;line-height:20px;text-align:center;
@@ -1074,15 +1146,22 @@
       <svg viewBox="0 0 24 24" fill="none"><path d="M4 5.5 C4 4.7 4.7 4 5.5 4 H18.5 C19.3 4 20 4.7 20 5.5 V15 C20 15.8 19.3 16.5 18.5 16.5 H10 L6 20 V16.5 H5.5 C4.7 16.5 4 15.8 4 15 Z" fill="#fdf6e8"/></svg>
       <span id="inboxBadge" class="inboxBadge hidden">0</span>
     </button>
+    <div id="menuTopBar" class="menuTopBar">
+      <button id="trophyPill" class="topPill trophyPill" type="button" aria-label="Кубки"><span class="tpIcon">🏆</span><b id="menuTrophies">0</b></button>
+      <div class="topPill coinPill"><i class="coinDot"></i><span class="coinNum" id="menuCoins">0</span></div>
+    </div>
     <div class="spacer"></div>
     <canvas id="menuPreview" class="heroBob" width="220" height="220"></canvas>
     <div class="titleSwing" id="titleSwing"><h1 class="title" id="titleSign">Cabbit Jump!</h1></div>
 
     <p class="stats rise d1">
       <span><span data-i18n="best">Лучший результат</span>: <b id="menuBest">0</b></span>
-      <span>·</span>
-      <span><i class="coinDot"></i><span class="coinNum" id="menuCoins">0</span></span>
     </p>
+    <button id="passBtn" class="passCard rise d2" type="button">
+      <span class="passCardTop"><span class="passLogo">CABBIT PASS</span><span id="passCardLvl" class="passCardLvl">0 / 30</span></span>
+      <span class="passBar"><i id="passCardFill"></i></span>
+      <span id="passCardDot" class="passDot hidden">!</span>
+    </button>
 
     <div id="eventBanner" class="eventBanner hidden"></div>
     <div id="confettiBox" class="confettiBox"></div>
@@ -1095,8 +1174,10 @@
       <div class="menuBtnWrap"><button id="settingsBtn" class="btn ghost" data-i18n="settings">Настройки</button></div>
     </div>
     <p class="hint rise d4" data-i18n="hint">Клавиши ← → или A / D, на телефоне — кнопки внизу. Тап по экрану: выстрел из лука или двойной прыжок. Встретил монстра — жми, пока идёт отсчёт!</p>
-    <button id="discordBtn" class="btn ghost rise d4">Discord</button>
-    <button id="telegramBtn" class="btn ghost rise d4">Telegram</button>
+    <div class="socialRow rise d4">
+      <button id="discordBtn" class="btn ghost">Discord</button>
+      <button id="telegramBtn" class="btn ghost">Telegram</button>
+    </div>
     <div class="spacer"></div>
   </div>
 
@@ -1189,6 +1270,14 @@
             <label class="adminField">
               <span>Рекорд</span>
               <input id="adminBestInput" class="adminInput adminInputNum" type="number">
+            </label>
+            <label class="adminField">
+              <span>Кубки</span>
+              <input id="adminTrophiesInput" class="adminInput adminInputNum" type="number">
+            </label>
+            <label class="adminField adminOnly">
+              <span>Золотой пасс</span>
+              <input id="adminPassGold" type="checkbox">
             </label>
           </div>
 
@@ -1376,12 +1465,41 @@
   <div id="over" class="screen hidden">
     <p id="overTitle">Котокролик приземлился</p>
     <div id="finalScore">0</div>
+    <p id="trophyLine" class="trophyLine"></p>
     <p id="coinLine"></p>
     <p id="bestLine">Рекорд: 0</p>
     <p id="rankLine"></p>
+    <p id="passLine" class="passLine"></p>
     <div class="btnRow">
       <button id="retryBtn" class="btn" data-i18n="retry">Повторить</button>
       <button id="menuBtn" class="btn ghost" data-i18n="toMenu">В меню</button>
+    </div>
+  </div>
+
+  <div id="passModal" class="profileOverlay passOverlay hidden">
+    <div class="passFull">
+      <button id="passClose" class="backIconBtn" aria-label="Закрыть">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M6 6 L18 18 M18 6 L6 18" stroke="#fdf6e8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="passTitle">CABBIT PASS</div>
+      <div id="passSeason" class="passSeason"></div>
+      <div class="passLvlRow">
+        <span id="passLvlBadge" class="passLvlBadge">0</span>
+        <div class="passXpWrap"><div class="passXpBar"><i id="passXpFill"></i></div><div id="passXpText" class="passXpText"></div></div>
+      </div>
+      <button id="passBuyBtn" class="btn passBuyBtn" type="button"></button>
+      <div id="passQuests" class="passQuests"></div>
+      <div class="passColsHead"><span data-i18n="passFree">Бесплатно</span><span></span><span data-i18n="passGold">Золотой</span></div>
+      <div id="passTrack" class="passTrack"></div>
+    </div>
+  </div>
+
+  <div id="trophyModal" class="profileOverlay hidden">
+    <div class="profileCard">
+      <button id="trophyClose" class="backIconBtn" aria-label="Закрыть">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M6 6 L18 18 M18 6 L6 18" stroke="#fdf6e8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div id="trophyInfo" class="trophyInfo"></div>
     </div>
   </div>
 
@@ -1599,6 +1717,272 @@ const Store = {
 
 let best  = parseInt(Store.get('best', '0'), 10) || 0;
 let coins = parseInt(Store.get('coins', '0'), 10) || 0;
+
+const TROPHY_STEPS = [[2, 12, 'trophyRowX2'], [1.5, 10, 'trophyRowX15'], [1.2, 8, 'trophyRowX12'], [1, 6, 'trophyRowX1'], [0.8, 3, 'trophyRowX08'], [0.6, 0, 'trophyRowX06'], [0.4, -3, 'trophyRowX04'], [0.2, -5, 'trophyRowX02'], [0, -8, 'trophyRowX0']];
+let trophies = parseInt(Store.get('trophies', ''), 10);
+if (!isFinite(trophies) || trophies < 0){ trophies = Math.min(800, Math.floor(best / 12)); Store.set('trophies', trophies); }
+let lastTrophyDelta = 0;
+
+function trophyTarget(tr){ return 400 + Math.max(0, tr) * 5; }
+function trophyDelta(sc, tr){
+  const r = Math.max(0, sc) / trophyTarget(tr);
+  let d = -8;
+  for (const st of TROPHY_STEPS){ if (r >= st[0]){ d = st[1]; break; } }
+  if (tr < 100) d = Math.max(1, d);
+  return Math.max(-tr, d);
+}
+function estTrophies(f){
+  if (f && f.trophies && f.trophies.integerValue !== undefined) return parseInt(f.trophies.integerValue, 10) || 0;
+  const b = parseInt((f && f.best && f.best.integerValue) || '0', 10) || 0;
+  return Math.min(800, Math.floor(b / 12));
+}
+
+function openTrophyInfo(){
+  const box = document.getElementById('trophyInfo');
+  if (!box) return;
+  const tgt = trophyTarget(trophies);
+  let rows = '';
+  for (const st of TROPHY_STEPS){
+    const d = trophies < 100 ? Math.max(1, st[1]) : st[1];
+    rows += '<span>' + escapeHtml(t(st[2])) + '</span><b class="' + (d > 0 ? 'up' : (d < 0 ? 'down' : '')) + '">' + (d > 0 ? '+' : (d < 0 ? '−' : '')) + Math.abs(d) + '</b>';
+  }
+  box.innerHTML = '<div style="font-size:18px;font-weight:800">' + escapeHtml(t('trophiesTitle')) + '</div><div class="tiBig">🏆 ' + trophies + '</div>' +
+    '<div class="tiText">' + t('trophyInfoTxt').replace('{t}', String(tgt)) + '</div><div class="trophyTable">' + rows + '</div>';
+  document.getElementById('trophyModal').classList.remove('hidden');
+  sfxPopupOpen();
+}
+function closeTrophyInfo(){ document.getElementById('trophyModal').classList.add('hidden'); sfxPopupClose(); }
+
+const PASS_EPOCH = Date.UTC(2026, 8, 28, 0, 0);
+const PASS_SEASON_MS = 30 * 86400000;
+const PASS_XP_PER_LVL = 250;
+const PASS_LEVELS = 30;
+const PASS_GOLD_PRICE = 15000;
+const PASS_FREE = [{ c: 100 }, { c: 150 }, { i: 'acc:tie' }, { c: 150 }, { c: 200 }, { i: 'acc:pearls' }, { c: 200 }, { c: 250 }, { i: 'acc:scarf' }, { c: 300 },
+  { c: 250 }, { i: 'acc:hearteye' }, { c: 300 }, { c: 300 }, { i: 'hat:cowboy' }, { c: 300 }, { c: 350 }, { i: 'hat:flowercrown' }, { c: 350 }, { c: 400 },
+  { c: 400 }, { i: 'hat:sunhat' }, { c: 400 }, { c: 450 }, { i: 'hat:propeller' }, { c: 450 }, { c: 500 }, { i: 'acc:backpack' }, { c: 500 }, { c: 1000 }];
+const PASS_GOLD = [{ c: 500 }, { c: 500 }, { i: 'hat:crown' }, { c: 600 }, { i: 'tool:mace' }, { c: 600 }, { c: 600 }, { i: 'hat:tophat' }, { c: 700 }, { i: 'hat:halo' },
+  { c: 700 }, { c: 700 }, { i: 'tool:bow' }, { c: 800 }, { c: 800 }, { i: 'hat:bow' }, { c: 800 }, { c: 900 }, { c: 900 }, { i: 'perk:multiacc' },
+  { c: 900 }, { c: 1000 }, { c: 1000 }, { i: 'hat:glass' }, { c: 1000 }, { i: 'char:hero2' }, { c: 1200 }, { c: 1200 }, { c: 1500 }, { t: 1 }];
+const SLOT_ICON = { hat: '🎩', acc: '🎀', tool: '🏹', char: '🐰', perk: '✨' };
+const ITEM_ICON = { 'hat:crown': '👑', 'hat:halo': '😇', 'hat:cowboy': '🤠', 'hat:flowercrown': '🌸', 'hat:sunhat': '👒', 'hat:propeller': '🚁', 'hat:bow': '🎀', 'hat:tophat': '🎩', 'acc:pearls': '📿', 'acc:scarf': '🧣', 'acc:hearteye': '😍', 'acc:backpack': '🎒', 'acc:tie': '👔', 'tool:mace': '🔨', 'tool:bow': '🏹', 'char:hero2': '🐰', 'perk:multiacc': '✨' };
+
+function passSeasonNow(){ return Math.max(1, Math.floor((Date.now() - PASS_EPOCH) / PASS_SEASON_MS) + 1); }
+function passDaysLeft(){ return Math.max(1, Math.ceil((PASS_EPOCH + passSeasonNow() * PASS_SEASON_MS - Date.now()) / 86400000)); }
+function normalizePass(p){
+  const s = passSeasonNow();
+  if (!p || typeof p !== 'object' || p.s !== s) return { s, xp: 0, gold: false, cf: [], cg: [] };
+  const lv = (a) => Array.isArray(a) ? a.map(x => parseInt(x, 10)).filter(x => x >= 1 && x <= PASS_LEVELS).filter((x, i, arr) => arr.indexOf(x) === i) : [];
+  return { s, xp: Math.max(0, Math.min(PASS_LEVELS * PASS_XP_PER_LVL, parseInt(p.xp, 10) || 0)), gold: !!p.gold, cf: lv(p.cf), cg: lv(p.cg) };
+}
+function parsePassStr(str){ try { return JSON.parse(str || 'null'); } catch (e) { return null; } }
+let pass = normalizePass(parsePassStr(Store.get('pass', '')));
+function savePass(){ Store.set('pass', JSON.stringify(pass)); }
+function passLevel(){ pass = normalizePass(pass); return Math.min(PASS_LEVELS, Math.floor(pass.xp / PASS_XP_PER_LVL)); }
+function mergePass(remote){
+  const r = normalizePass(remote);
+  const l = normalizePass(pass);
+  if (r.s !== l.s) return l;
+  const uni = (a, b) => a.concat(b.filter(x => a.indexOf(x) === -1));
+  return { s: l.s, xp: Math.max(l.xp, r.xp), gold: l.gold || r.gold, cf: uni(l.cf, r.cf), cg: uni(l.cg, r.cg) };
+}
+function passClaimableCount(){
+  const lvl = passLevel();
+  let n = 0;
+  for (let L = 1; L <= lvl; L++){
+    if (pass.cf.indexOf(L) === -1) n++;
+    if (pass.gold && pass.cg.indexOf(L) === -1) n++;
+  }
+  return n;
+}
+function addPassXp(x){
+  const before = passLevel();
+  pass.xp = Math.min(PASS_LEVELS * PASS_XP_PER_LVL, pass.xp + Math.max(0, Math.floor(x)));
+  savePass();
+  const after = passLevel();
+  if (after > before) showToast(t('passLvlUp').replace('{l}', after));
+  refreshPassCard();
+  return after > before;
+}
+function rewardLabel(r){
+  if (r.t) return { icon: '👑', text: t('passTitleReward') };
+  if (r.c) return { icon: '🪙', text: r.c + ' ' + t('coinsWord') };
+  const k = r.i.indexOf(':');
+  const slot = r.i.slice(0, k), val = r.i.slice(k + 1);
+  return { icon: ITEM_ICON[r.i] || SLOT_ICON[slot] || '🎁', text: ti(slot, val).n };
+}
+function grantReward(r){
+  if (r.t){
+    if (!myTitle){ myTitle = 'Cabbit Pass'; myTitleColor = 'linear-gradient(90deg,#ffe07a,#ff9f45,#ffe07a)'; Store.set('titleText', myTitle); Store.set('titleColor', myTitleColor); }
+    else { coins += 3000; Store.set('coins', coins); }
+    return;
+  }
+  if (r.c){ coins += r.c; Store.set('coins', coins); return; }
+  if (owned.has(r.i)){
+    const k = r.i.indexOf(':');
+    const info = OUTFITS[r.i.slice(0, k)] && OUTFITS[r.i.slice(0, k)][r.i.slice(k + 1)];
+    coins += Math.max(100, (info && info.price) || 0);
+    Store.set('coins', coins);
+    return;
+  }
+  owned.add(r.i);
+  saveOwned();
+}
+function claimPassReward(line, L){
+  pass = normalizePass(pass);
+  if (L < 1 || L > passLevel()) return false;
+  const arr = line === 'gold' ? pass.cg : pass.cf;
+  if (line === 'gold' && !pass.gold) return false;
+  if (arr.indexOf(L) !== -1) return false;
+  const r = (line === 'gold' ? PASS_GOLD : PASS_FREE)[L - 1];
+  grantReward(r);
+  arr.push(L);
+  savePass();
+  sfxCoin(); buzz(15);
+  refreshShopState();
+  renderPass();
+  cloudPushSoon();
+  return true;
+}
+function buyGoldPass(){
+  pass = normalizePass(pass);
+  if (pass.gold) return false;
+  if (coins < PASS_GOLD_PRICE){ showToast(t('passNoCoins').replace('{p}', PASS_GOLD_PRICE)); return false; }
+  coins -= PASS_GOLD_PRICE;
+  Store.set('coins', coins);
+  pass.gold = true;
+  savePass();
+  showToast(t('passBought'));
+  sfxSpring(); buzz(25);
+  refreshShopState();
+  renderPass();
+  cloudPushSoon();
+  return true;
+}
+
+function questDayKey(){ const d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
+function questsForDay(key){
+  let h = 0;
+  for (let i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) >>> 0;
+  const runs = h % 2 ? 5 : 3;
+  const sc = [1500, 2500, 3500][h % 3];
+  const cn = (h >> 3) % 2 ? 80 : 40;
+  return [
+    { id: 'runs', n: runs, xp: runs === 5 ? 90 : 60, text: t(runs === 5 ? 'qRuns5' : 'qRuns3') },
+    { id: 'score', n: sc, xp: sc >= 3500 ? 120 : (sc >= 2500 ? 90 : 70), text: t('qScore').replace('{n}', sc) },
+    { id: 'coins', n: cn, xp: cn >= 80 ? 90 : 60, text: t('qCoins').replace('{n}', cn) }
+  ];
+}
+function loadQuestState(){
+  let q = parsePassStr(Store.get('quests', ''));
+  const key = questDayKey();
+  if (!q || q.d !== key) q = { d: key, runs: 0, best: 0, coins: 0, done: [] };
+  if (!Array.isArray(q.done)) q.done = [];
+  return q;
+}
+function questProgress(q, id){ return id === 'runs' ? q.runs : (id === 'score' ? q.best : q.coins); }
+function recordRunForPass(sc, runCoinsGot){
+  const q = loadQuestState();
+  q.runs += 1;
+  q.best = Math.max(q.best, sc);
+  q.coins += Math.max(0, runCoinsGot);
+  let questXp = 0;
+  const done = [];
+  for (const qu of questsForDay(q.d)){
+    if (q.done.indexOf(qu.id) === -1 && questProgress(q, qu.id) >= qu.n){ q.done.push(qu.id); questXp += qu.xp; done.push(qu); }
+  }
+  Store.set('quests', JSON.stringify(q));
+  const runXp = Math.min(60, 10 + Math.floor(Math.max(0, sc) / 100));
+  addPassXp(runXp + questXp);
+  if (done.length) setTimeout(() => showToast(t('questDone').replace('{x}', done.reduce((a, b) => a + b.xp, 0))), 900);
+  return { runXp, questXp };
+}
+
+function refreshPassCard(){
+  const lvl = passLevel();
+  const lv = document.getElementById('passCardLvl');
+  if (lv) lv.textContent = lvl + ' / ' + PASS_LEVELS;
+  const fill = document.getElementById('passCardFill');
+  if (fill) fill.style.width = (lvl >= PASS_LEVELS ? 100 : Math.round((pass.xp % PASS_XP_PER_LVL) / PASS_XP_PER_LVL * 100)) + '%';
+  const dot = document.getElementById('passCardDot');
+  const n = passClaimableCount();
+  if (dot){ dot.textContent = n > 9 ? '9+' : String(n); dot.classList.toggle('hidden', n === 0); }
+  const tr = document.getElementById('menuTrophies');
+  if (tr) tr.textContent = trophies;
+}
+
+function renderPass(){
+  pass = normalizePass(pass);
+  const lvl = passLevel();
+  const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  set('passSeason', t('passSeasonTxt').replace('{s}', pass.s).replace('{d}', passDaysLeft()));
+  set('passLvlBadge', String(lvl));
+  const fill = document.getElementById('passXpFill');
+  if (fill) fill.style.width = (lvl >= PASS_LEVELS ? 100 : Math.round((pass.xp % PASS_XP_PER_LVL) / PASS_XP_PER_LVL * 100)) + '%';
+  set('passXpText', lvl >= PASS_LEVELS ? t('passMaxTxt') : t('passXpTxt').replace('{x}', pass.xp % PASS_XP_PER_LVL).replace('{n}', PASS_XP_PER_LVL).replace('{l}', lvl + 1));
+  const buy = document.getElementById('passBuyBtn');
+  if (buy){ buy.textContent = pass.gold ? t('passOwned') : t('passBuy').replace('{p}', PASS_GOLD_PRICE); buy.classList.toggle('owned', pass.gold); }
+  const qBox = document.getElementById('passQuests');
+  if (qBox){
+    const q = loadQuestState();
+    let h = '<div class="passQTitle">' + escapeHtml(t('passQuestsTitle')) + '</div>';
+    for (const qu of questsForDay(q.d)){
+      const pr = Math.min(qu.n, questProgress(q, qu.id));
+      const done = q.done.indexOf(qu.id) !== -1;
+      h += '<div class="passQuest' + (done ? ' done' : '') + '"><span>' + (done ? '✅' : '🎯') + '</span><div class="qMain">' + escapeHtml(qu.text) + ' · ' + pr + '/' + qu.n +
+        '<div class="qBar"><i style="width:' + Math.round(pr / qu.n * 100) + '%"></i></div></div><span class="qXp">+' + qu.xp + '</span></div>';
+    }
+    qBox.innerHTML = h;
+  }
+  const track = document.getElementById('passTrack');
+  if (!track) return;
+  track.innerHTML = '';
+  let firstClaim = null;
+  for (let L = 1; L <= PASS_LEVELS; L++){
+    const row = document.createElement('div');
+    row.className = 'passRow' + (L <= lvl ? ' reached' : '');
+    row.dataset.lvl = String(L);
+    const cell = (line) => {
+      const r = (line === 'gold' ? PASS_GOLD : PASS_FREE)[L - 1];
+      const lab = rewardLabel(r);
+      const claimed = (line === 'gold' ? pass.cg : pass.cf).indexOf(L) !== -1;
+      const canLine = line === 'free' || pass.gold;
+      const claimable = !claimed && canLine && L <= lvl;
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'passCell ' + line + (claimed ? ' claimed' : (claimable ? ' claimable' : (L > lvl || !canLine ? ' locked' : '')));
+      b.dataset.line = line;
+      b.innerHTML = '<span class="pcIcon">' + lab.icon + '</span><span class="pcText">' + escapeHtml(lab.text) + '</span><span class="pcState">' +
+        (claimed ? '✓' : (claimable ? escapeHtml(t('passClaim')) : (!canLine ? '🔒' : ''))) + '</span>';
+      if (claimable){ b.addEventListener('click', () => claimPassReward(line, L)); if (!firstClaim) firstClaim = row; }
+      return b;
+    };
+    row.appendChild(cell('free'));
+    const num = document.createElement('div');
+    num.className = 'passLvlNum';
+    num.textContent = String(L);
+    row.appendChild(num);
+    row.appendChild(cell('gold'));
+    track.appendChild(row);
+  }
+  refreshPassCard();
+  return firstClaim;
+}
+function openPass(){
+  const m = document.getElementById('passModal');
+  if (!m) return;
+  m.classList.remove('hidden');
+  sfxPopupOpen();
+  const first = renderPass();
+  const full = m.querySelector ? m.querySelector('.passFull') : null;
+  if (full) full.scrollTop = 0;
+  if (first && full && parseInt(first.dataset.lvl, 10) > 4 && first.getBoundingClientRect) setTimeout(() => {
+    const fr = full.getBoundingClientRect(), rr = first.getBoundingClientRect();
+    full.scrollTop = Math.max(0, full.scrollTop + rr.top - fr.top - fr.height * 0.4);
+  }, 30);
+}
+function closePass(){ document.getElementById('passModal').classList.add('hidden'); sfxPopupClose(); refreshShopState(); }
+
 let nickname = Store.get('nick', '');
 
 const BG_THEMES = {
@@ -2039,7 +2423,7 @@ const I18N = {
     rotateMsg: 'Переверни телефон вертикально',
     leaderboard: 'Таблица лидеров', empty: '—', wardrobe: 'Гардероб',
     overTitleNormal: 'Котокролик приземлился', overTitleRecord: 'Новый рекорд',
-    overCoins: 'собрано монет', overRecordLabel: 'Рекорд', overNewBest: 'новый личный рекорд', overRank: 'место в рейтинге', overTop1: 'выше не прыгал никто',
+    overCoins: 'собрано монет', overRecordLabel: 'Рекорд', overNewBest: 'новый личный рекорд', overRank: 'место в рейтинге', overTop1: 'ты первый по кубкам!', passFree: 'Бесплатно', passGold: 'Золотой', passSeasonTxt: 'Сезон {s} · осталось {d} дн.', passXpTxt: '{x} / {n} жетонов до уровня {l}', passMaxTxt: 'Максимальный уровень!', passBuy: 'Золотой пасс · {p}', passOwned: 'Золотой пасс активен ✓', passNoCoins: 'Не хватает монет: нужно {p}', passBought: 'Золотой пасс открыт!', passClaim: 'Забрать', passRunXp: 'Cabbit Pass: +{x} жетонов', passLvlUp: 'Новый уровень пасса: {l}!', passQuestsTitle: 'Задания на сегодня', questDone: 'Задание выполнено! +{x} жетонов', qRuns3: 'Сыграй 3 забега', qRuns5: 'Сыграй 5 забегов', qScore: 'Набери {n} очков за забег', qCoins: 'Собери {n} монет', passTitleReward: 'Титул «Cabbit Pass»', coinsWord: 'монет', trophiesTitle: 'Кубки', trophyInfoTxt: 'За каждый забег кубки прибавляются или отнимаются. Цель забега сейчас — <b>{t}</b> очков: прыгнешь выше — получишь кубки, ниже — потеряешь. Чем больше кубков, тем выше цель. До 100 кубков минуса нет.', trophyRowX2: '×2 цели и больше', trophyRowX15: '×1.5 цели', trophyRowX12: '×1.2 цели', trophyRowX1: 'цель', trophyRowX08: '80% цели', trophyRowX06: '60% цели', trophyRowX04: '40% цели', trophyRowX02: '20% цели', trophyRowX0: 'меньше',
     retry: 'Повторить', toMenu: 'В меню', scoreWord: 'рекорд',
     cloudTitle: 'Онлайн-профиль', cloudCopy: 'Копировать', cloudRestore: 'Восстановить',
     cloudEnterCode: 'КОД', cloudTop: 'Рейтинг игроков', searchLabel: 'Найти игрока', searchPlaceholder: 'Ник или код', searchBtn: 'Найти', searchNone: 'Никого не нашли', cloudRefresh: 'Обновить рейтинг',
@@ -2143,7 +2527,7 @@ const I18N = {
     rotateMsg: 'Please rotate your phone back to portrait',
     leaderboard: 'Leaderboard', empty: '—', wardrobe: 'Wardrobe',
     overTitleNormal: 'The cabbit has landed', overTitleRecord: 'New record',
-    overCoins: 'coins collected', overRecordLabel: 'Best', overNewBest: 'new personal best', overRank: 'leaderboard place', overTop1: 'nobody jumped higher',
+    overCoins: 'coins collected', overRecordLabel: 'Best', overNewBest: 'new personal best', overRank: 'leaderboard place', overTop1: 'you are #1 in trophies!', passFree: 'Free', passGold: 'Gold', passSeasonTxt: 'Season {s} · {d} days left', passXpTxt: '{x} / {n} tokens to level {l}', passMaxTxt: 'Max level!', passBuy: 'Gold pass · {p}', passOwned: 'Gold pass active ✓', passNoCoins: 'Not enough coins: need {p}', passBought: 'Gold pass unlocked!', passClaim: 'Claim', passRunXp: 'Cabbit Pass: +{x} tokens', passLvlUp: 'Pass level up: {l}!', passQuestsTitle: 'Today\'s quests', questDone: 'Quest done! +{x} tokens', qRuns3: 'Play 3 runs', qRuns5: 'Play 5 runs', qScore: 'Score {n} in one run', qCoins: 'Collect {n} coins', passTitleReward: '“Cabbit Pass” title', coinsWord: 'coins', trophiesTitle: 'Trophies', trophyInfoTxt: 'Every run adds or removes trophies. Your run target is now <b>{t}</b> points: beat it to win trophies, fall short to lose some. More trophies means a higher target. Below 100 trophies you never lose any.', trophyRowX2: '×2 target or more', trophyRowX15: '×1.5 target', trophyRowX12: '×1.2 target', trophyRowX1: 'target', trophyRowX08: '80% of target', trophyRowX06: '60% of target', trophyRowX04: '40% of target', trophyRowX02: '20% of target', trophyRowX0: 'less',
     retry: 'Retry', toMenu: 'Menu', scoreWord: 'best',
     cloudTitle: 'Online profile', cloudCopy: 'Copy', cloudRestore: 'Restore',
     cloudEnterCode: 'CODE', cloudTop: 'Leaderboard', searchLabel: 'Find a player', searchPlaceholder: 'Nickname or code', searchBtn: 'Find', searchNone: 'Nobody found', cloudRefresh: 'Refresh ranking',
@@ -5949,6 +6333,7 @@ function buyItem(slot, val, field){
 function refreshShopState(){
   menuBest.textContent  = best;
   menuCoins.textContent = coins;
+  if (typeof refreshPassCard === 'function') refreshPassCard();
 
   shopEl.querySelectorAll('.chip').forEach(chip => {
     const slot = chip.dataset.slot, val = chip.dataset.val;
@@ -6269,8 +6654,9 @@ function resumeGame(){
 
 let rankReqId = 0;
 
+
 async function fetchRankFor(sc){
-  if (!cloudReady() || !(sc > 0)) return 0;
+  if (!cloudReady() || !(sc >= 0)) return 0;
   try {
     const res = await fetch(cloudBase() + ':runAggregationQuery?key=' + CLOUD.apiKey, {
       method: 'POST',
@@ -6279,7 +6665,7 @@ async function fetchRankFor(sc){
         structuredAggregationQuery: {
           structuredQuery: {
             from: [{ collectionId: 'players' }],
-            where: { fieldFilter: { field: { fieldPath: 'best' }, op: 'GREATER_THAN', value: { integerValue: String(Math.floor(sc)) } } }
+            where: { fieldFilter: { field: { fieldPath: 'trophies' }, op: 'GREATER_THAN', value: { integerValue: String(Math.floor(sc)) } } }
           },
           aggregations: [{ alias: 'n', count: {} }]
         }
@@ -6298,9 +6684,9 @@ function showRankLine(isNewBest){
   const id = ++rankReqId;
   if (!rankLine) return;
   rankLine.innerHTML = '';
-  fetchRankFor(best).then((rank) => {
+  fetchRankFor(trophies).then((rank) => {
     if (id !== rankReqId || state !== STATE.OVER || !rank) return;
-    if (isNewBest && rank === 1) rankLine.innerHTML = '<span class="newbest">' + t('overTop1') + '</span>';
+    if (rank === 1 && trophies > 0) rankLine.innerHTML = '<span class="newbest">' + t('overTop1') + '</span>';
     else rankLine.textContent = t('overRank') + ': #' + rank;
   });
 }
@@ -6317,8 +6703,21 @@ function gameOver(){
 
   const isNewBest = score > best;
   if (isNewBest){ best = score; Store.set('best', best); }
+  const trBefore = trophies;
+  lastTrophyDelta = trophyDelta(score, trophies);
+  trophies = Math.max(0, trophies + lastTrophyDelta);
+  Store.set('trophies', trophies);
+  const passGain = recordRunForPass(score, runCoins);
   addToLeaderboard(nickname, score);
   cloudPushSoon();
+  const trLine = document.getElementById('trophyLine');
+  if (trLine){
+    const d = lastTrophyDelta;
+    trLine.className = 'trophyLine ' + (d > 0 ? 'up' : (d < 0 ? 'down' : 'zero'));
+    trLine.innerHTML = '🏆 ' + (d > 0 ? '+' : (d < 0 ? '−' : '±')) + Math.abs(d) + '<small>' + trBefore + ' → ' + trophies + '</small>';
+  }
+  const pLine = document.getElementById('passLine');
+  if (pLine) pLine.textContent = t('passRunXp').replace('{x}', passGain.runXp + passGain.questXp);
 
   finalEl.textContent = '0';
   overTitle.textContent = isNewBest ? t('overTitleRecord') : t('overTitleNormal');
@@ -6486,6 +6885,7 @@ async function cloudFetchOwnTitle(){
     const f = (doc && doc.fields) || {};
     if (!checkAccountAlive(res.status || 200, f)) return;
     ownDocChecked = true;
+    if (f.pass && f.pass.stringValue){ pass = mergePass(parsePassStr(f.pass.stringValue)); savePass(); if (typeof refreshPassCard === 'function') refreshPassCard(); }
     myTitle = (f.title && f.title.stringValue) || '';
     myTitleColor = (f.titleColor && f.titleColor.stringValue) || '';
     Store.set('titleText', myTitle);
@@ -6553,7 +6953,9 @@ async function cloudPush(){
     titleColor: { stringValue: myTitleColor || '' },
     avatar: { stringValue: avatar },
     avatarPending: { booleanValue: isCustomAvatar(avatar) && !myAvatarOk },
-    frame:  { stringValue: avatarFrame }
+    frame:  { stringValue: avatarFrame },
+    trophies: { integerValue: String(trophies) },
+    pass: { stringValue: JSON.stringify(pass) }
   };
   const mask = Object.keys(fields).map(k => 'updateMask.fieldPaths=' + k).join('&');
   try {
@@ -6683,6 +7085,8 @@ async function cloudRestore(rawCode, rawPw){
     Store.set('pwSet', myPwSet ? '1' : '0');
     if (f.coins) { coins = parseInt(f.coins.integerValue || '0', 10) || 0; Store.set('coins', coins); }
     if (f.best)  { best  = parseInt(f.best.integerValue  || '0', 10) || 0; Store.set('best', best); }
+    trophies = estTrophies(f); Store.set('trophies', trophies);
+    pass = normalizePass(parsePassStr(f.pass && f.pass.stringValue)); savePass();
     if (f.nick && f.nick.stringValue){ nickname = f.nick.stringValue; Store.set('nick', nickname); }
     if (f.frame && f.frame.stringValue && isValidFrame(f.frame.stringValue)){
       avatarFrame = f.frame.stringValue;
@@ -6754,6 +7158,8 @@ async function checkPendingGrant(){
 
     if (f.coins) { coins = parseInt(f.coins.integerValue || '0', 10) || 0; Store.set('coins', coins); }
     if (f.best)  { best  = parseInt(f.best.integerValue  || '0', 10) || 0; Store.set('best', best); }
+    if (f.trophies){ trophies = Math.max(0, parseInt(f.trophies.integerValue || '0', 10) || 0); Store.set('trophies', trophies); }
+    if (f.pass && f.pass.stringValue){ const rp = normalizePass(parsePassStr(f.pass.stringValue)); pass = mergePass(rp); if (rp.s === pass.s && !rp.gold) pass.gold = false; savePass(); }
     if (f.nick && f.nick.stringValue){ nickname = f.nick.stringValue; Store.set('nick', nickname); }
     if (f.owned && f.owned.arrayValue && Array.isArray(f.owned.arrayValue.values)){
       owned.clear();
@@ -6804,7 +7210,7 @@ let lbFieldsByCode = {};
 
 function buildPlayerRow(rowCode, f, rankText){
   const nick = (f.nick && f.nick.stringValue) || '?';
-  const sc = (f.best && f.best.integerValue) || '0';
+  const sc = '🏆 ' + estTrophies(f);
   const rowAvatarVal = shownAvatar(f, rowCode);
   const rowFrame = (f.frame && f.frame.stringValue) || 'none';
   const rowAvatar = avatarHtml(rowAvatarVal, rowFrame, 'lbAv');
@@ -6912,31 +7318,39 @@ async function cloudFetchLeaderboard(){
   if (!rows || !cloudReady()) return;
   rows.innerHTML = '<div class="lbRow"><span>' + t('cloudLoading') + '</span></div>';
   try {
-    const res = await fetch(cloudBase() + ':runQuery?key=' + CLOUD.apiKey, {
+    const lbQ = (field) => fetch(cloudBase() + ':runQuery?key=' + CLOUD.apiKey, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         structuredQuery: {
           from: [{ collectionId: 'players' }],
-          orderBy: [{ field: { fieldPath: 'best' }, direction: 'DESCENDING' }],
+          orderBy: [{ field: { fieldPath: field }, direction: 'DESCENDING' }],
           limit: 100
         }
       })
     });
-    if (!res.ok){
+    const [resT, resB] = await Promise.all([lbQ('trophies'), lbQ('best')]);
+    if (!resT.ok && !resB.ok){
       rows.innerHTML = '<div class="lbRow"><span>' + t('cloudErr') + '</span></div>';
       return;
     }
-    const data = await res.json();
-    rows.innerHTML = '';
-    lbFieldsByCode = {};
-    let i = 0;
-    for (const row of (Array.isArray(data) ? data : [])){
-      if (!row.document) continue;
+    const dataT = resT.ok ? await resT.json() : [];
+    const dataB = resB.ok ? await resB.json() : [];
+    const merged = new Map();
+    for (const row of [].concat(Array.isArray(dataT) ? dataT : [], Array.isArray(dataB) ? dataB : [])){
+      if (!row || !row.document) continue;
       const f = row.document.fields || {};
       if (f.deleted && f.deleted.booleanValue) continue;
       const path = row.document.name || '';
       const rowCode = path.substring(path.lastIndexOf('/') + 1);
+      if (!rowCode || rowCode.charAt(0) === '_' || merged.has(rowCode)) continue;
+      merged.set(rowCode, f);
+    }
+    const sorted = Array.from(merged.entries()).sort((a, b) => estTrophies(b[1]) - estTrophies(a[1]) || ((parseInt((b[1].best && b[1].best.integerValue) || '0', 10) || 0) - (parseInt((a[1].best && a[1].best.integerValue) || '0', 10) || 0))).slice(0, 100);
+    rows.innerHTML = '';
+    lbFieldsByCode = {};
+    let i = 0;
+    for (const [rowCode, f] of sorted){
       lbFieldsByCode[rowCode] = f;
       i++;
       const div = buildPlayerRow(rowCode, f, i + '.');
@@ -6998,6 +7412,7 @@ function ownProfileFields(base){
   f.frame = { stringValue: avatarFrame };
   if (nickname) f.nick = { stringValue: nickname };
   f.best = { integerValue: String(best) };
+  f.trophies = { integerValue: String(trophies) };
   f.coins = { integerValue: String(coins) };
   f.lastSeen = { integerValue: String(Date.now()) };
   f.title = { stringValue: myTitle || '' };
@@ -7040,7 +7455,7 @@ function openProfile(code){
     titleEl.textContent = '';
     titleEl.style.color = '';
   }
-  document.getElementById('profileBest').textContent = t('overRecordLabel') + ': ' + bestScore;
+  document.getElementById('profileBest').textContent = '🏆 ' + estTrophies(f) + ' · ' + t('overRecordLabel') + ': ' + bestScore;
   document.getElementById('profileCoins').textContent = coinsVal + ' ' + t('profileCoinsLabel');
 
   renderProfileHero(document.getElementById('profileCanvas'), f);
@@ -8707,6 +9122,12 @@ function closeLinkChoice(){
   linkChoiceUrl = '';
 }
 document.getElementById('discordBtn').addEventListener('click', () => openLinkChoice(DISCORD_URL, 'Discord'));
+document.getElementById('passBtn').addEventListener('click', openPass);
+document.getElementById('passClose').addEventListener('click', closePass);
+document.getElementById('passBuyBtn').addEventListener('click', buyGoldPass);
+document.getElementById('trophyPill').addEventListener('click', openTrophyInfo);
+document.getElementById('trophyClose').addEventListener('click', closeTrophyInfo);
+document.getElementById('trophyModal').addEventListener('click', (e) => { if (e.target && e.target.id === 'trophyModal') closeTrophyInfo(); });
 document.getElementById('telegramBtn').addEventListener('click', () => openLinkChoice(TELEGRAM_URL, 'Telegram'));
 document.getElementById('linkChoiceOpenBtn').addEventListener('click', () => {
   const url = linkChoiceUrl;
@@ -9101,6 +9522,9 @@ async function adminLoad(codeOverride){
     document.getElementById('adminNickInput').value = (f.nick && f.nick.stringValue) || '';
     document.getElementById('adminCoinsInput').value = parseInt((f.coins && f.coins.integerValue) || '0', 10);
     document.getElementById('adminBestInput').value  = parseInt((f.best  && f.best.integerValue)  || '0', 10);
+    document.getElementById('adminTrophiesInput').value = estTrophies(f);
+    adminCurrentPass = f.pass && f.pass.stringValue ? f.pass.stringValue : '';
+    document.getElementById('adminPassGold').checked = !!normalizePass(parsePassStr(adminCurrentPass)).gold;
     document.getElementById('adminTitleInput').value = (f.title && f.title.stringValue) || '';
     document.getElementById('adminTitleColorInput').value = (f.titleColor && f.titleColor.stringValue) || '';
     const badgeNickEl = document.getElementById('adminBadgeNickPreview');
@@ -9216,7 +9640,15 @@ function refreshAdminBadgePreview(){
 renderAdminBadgeGrid();
 refreshAdminBadgePreview();
 
+let adminCurrentPass = '';
+function adminPassValue(){
+  const pv = normalizePass(parsePassStr(adminCurrentPass));
+  pv.gold = !!document.getElementById('adminPassGold').checked;
+  return JSON.stringify(pv);
+}
+
 async function modSave(){
+  const trophiesValM = Math.max(0, parseInt(document.getElementById('adminTrophiesInput').value, 10) || 0);
   const coinsVal = Math.max(0, parseInt(document.getElementById('adminCoinsInput').value, 10) || 0);
   const bestVal = Math.max(0, parseInt(document.getElementById('adminBestInput').value, 10) || 0);
   const checked = Array.from(document.querySelectorAll('#adminItemsGrid input[type=checkbox]:checked')).map(cb => cb.dataset.item);
@@ -9226,6 +9658,7 @@ async function modSave(){
   const saveFields = {
     coins: { integerValue: String(coinsVal) },
     best: { integerValue: String(bestVal) },
+    trophies: { integerValue: String(trophiesValM) },
     owned: { arrayValue: { values: ownedList.map(v => ({ stringValue: v })) } },
     pending: { booleanValue: true }
   };
@@ -9268,6 +9701,8 @@ async function adminSave(){
     nickLower: { stringValue: nickMatch.toLowerCase() },
     coins: { integerValue: String(coinsVal) },
     best:  { integerValue: String(bestVal) },
+    trophies: { integerValue: String(Math.max(0, parseInt(document.getElementById('adminTrophiesInput').value, 10) || 0)) },
+    pass: { stringValue: adminPassValue() },
     owned: { arrayValue: { values: ownedList.map(v => ({ stringValue: v })) } },
     hat:   { stringValue: (adminCurrentEquipped && adminCurrentEquipped.hat)  || 'none' },
     acc:   { stringValue: (adminCurrentEquipped && adminCurrentEquipped.acc)  || 'none' },
@@ -9295,6 +9730,8 @@ async function adminSave(){
       if (isSelf){
         coins = coinsVal; Store.set('coins', coins);
         best  = bestVal;  Store.set('best', best);
+        trophies = Math.max(0, parseInt(document.getElementById('adminTrophiesInput').value, 10) || 0); Store.set('trophies', trophies);
+        pass = normalizePass(parsePassStr(adminPassValue())); savePass();
         nickname = nickMatch; Store.set('nick', nickname);
         myTitle = titleVal; Store.set('titleText', myTitle);
         myTitleColor = titleColorVal; Store.set('titleColor', myTitleColor);
