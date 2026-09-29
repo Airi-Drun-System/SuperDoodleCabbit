@@ -477,6 +477,207 @@
   .coinPill .coinNum{font-size:15px;}
   .trophyPill .tpIcon{font-size:16px;}
   #menuHint.hidden{display:none;}
+  .closedAdmin{display:flex;gap:8px;margin-top:14px;}
+  .closedAdmin[hidden]{display:none;}
+  .closedAdmin .adminInput{flex:1;min-width:0;}
+  .adminFab{position:fixed;left:10px;bottom:calc(env(safe-area-inset-bottom,0px) + 10px);z-index:60;font-family:inherit;font-size:13px;font-weight:800;color:#2b1a00;
+    background:linear-gradient(180deg,#ffe07a,#ffab35);border:0;border-radius:999px;padding:8px 14px;box-shadow:0 4px 0 #b86a14,0 8px 16px rgba(0,0,0,.4);cursor:pointer;}
+  .adminFab[hidden]{display:none;}
+  .adminQuick{position:fixed;left:0;right:0;bottom:0;z-index:70;box-sizing:border-box;max-height:62vh;overflow-y:auto;
+    padding:12px 12px calc(env(safe-area-inset-bottom,0px) + 14px);border-radius:22px 22px 0 0;color:#fdf6e8;
+    background:linear-gradient(180deg,#3a1a6e,#1d0b3e);box-shadow:0 -10px 30px rgba(0,0,0,.5),inset 0 1.5px 0 rgba(255,211,77,.5);display:flex;flex-direction:column;gap:8px;}
+  .adminQuick[hidden]{display:none;}
+  .aqHead{display:flex;align-items:center;justify-content:space-between;}
+  .aqTitle{font-size:18px;font-weight:800;color:#ffd34d;}
+  .aqClose{width:36px;height:36px;border:0;border-radius:50%;font-size:22px;line-height:1;color:#fdf6e8;background:rgba(255,255,255,.1);cursor:pointer;font-family:inherit;}
+  .aqLbl{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;opacity:.6;}
+  .aqRow{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
+  .aqKey{display:flex;align-items:center;justify-content:center;gap:5px;min-height:46px;padding:6px 4px;border:0;border-radius:10px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;color:#fdf6e8;
+    background:linear-gradient(180deg,rgba(255,255,255,.14),rgba(255,255,255,.06));box-shadow:inset 0 -3px 0 rgba(0,0,0,.3),inset 0 0 0 1.5px color-mix(in srgb, var(--kc,#ffffff) 45%, transparent);}
+  .aqKey:active{transform:translateY(2px);box-shadow:inset 0 -1px 0 rgba(0,0,0,.3);}
+  .aqKey[aria-pressed="true"]{background:#ffd34d;color:#2b1a00;}
+  .aqKey canvas{flex:none;}
+  .aqWide{width:100%;}
+  .adminFruitGrid{display:flex;flex-direction:column;gap:6px;}
+  .adminFruitRow{display:flex;align-items:center;gap:8px;}
+  .adminFruitRow .afName{flex:1;min-width:0;font-size:13px;}
+  .adminFruitRow .afCount{width:52px;text-align:center;}
+  .adminFruitRow input[type=radio]{width:20px;height:20px;accent-color:#ffd34d;}
+
+  .seasonCard{position:relative;width:min(320px,90vw);box-sizing:border-box;border:none;cursor:pointer;font-family:inherit;text-align:left;color:#fdf6e8;
+    padding:9px 14px 10px;border-radius:18px;display:flex;flex-direction:column;gap:5px;
+    background:linear-gradient(135deg,#17506e,#1b2a5c 55%,#3b1f6e);box-shadow:0 5px 0 #0c1a38,0 10px 20px rgba(0,0,0,.35),inset 0 0 0 1.5px rgba(127,212,255,.45);}
+  .seasonCard:active{transform:translateY(3px);box-shadow:0 2px 0 #0c1a38,inset 0 0 0 1.5px rgba(127,212,255,.45);}
+  #menu.paused .seasonCard{display:none;}
+  .seasonTop,.seasonBottom{display:flex;justify-content:space-between;align-items:baseline;gap:8px;}
+  .seasonLogo{font-size:16px;font-weight:800;letter-spacing:.04em;color:#8fe3ff;text-transform:uppercase;text-shadow:0 2px 0 rgba(0,0,0,.35);}
+  .seasonDays{font-size:12.5px;opacity:.75;}
+  .seasonEv{font-size:12.5px;color:#ffd34d;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .seasonBestWrap{font-size:12.5px;opacity:.9;white-space:nowrap;}
+  .seasonBestWrap b{color:#fdf6e8;font-size:15px;}
+  .seasonHead{text-align:center;margin:2px 0 10px;}
+  .seasonHeadTitle{font-size:26px;font-weight:800;color:#8fe3ff;text-shadow:0 3px 0 rgba(0,0,0,.35);}
+  .seasonHeadSub{font-size:13.5px;color:#ffd34d;margin-top:2px;}
+  .seasonHeadHint{font-size:12.5px;opacity:.7;margin-top:3px;}
+  .seasonTabs{display:flex;gap:4px;padding:5px;border-radius:16px;background:rgba(10,4,24,.55);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.08);margin-bottom:10px;}
+  .seasonTabs button{flex:1;border:none;cursor:pointer;font-family:inherit;font-weight:700;font-size:13px;color:#e8d9ff;background:transparent;padding:9px 6px;border-radius:12px;}
+  .seasonTabs button.active{background:linear-gradient(180deg,#ffd08a,#ff9f45);color:#3a1f00;box-shadow:0 3px 0 #c26a1d;}
+  .seasonBody{display:flex;flex-direction:column;gap:10px;}
+  .seasonEmpty{text-align:center;opacity:.75;font-size:14px;padding:24px 8px;line-height:1.45;}
+  .seasonList{display:flex;flex-direction:column;gap:4px;}
+  .seasonList .lbRow{padding:7px 10px;border-radius:12px;background:rgba(255,255,255,.04);}
+  .seasonList .lbRow.me,.clanRow.me{box-shadow:inset 0 0 0 2px #ffd34d;border-radius:12px;}
+  .seasonList .lbRow.top1 .lbRank{color:#ffd34d;} .seasonList .lbRow.top2 .lbRank{color:#dfe6f2;} .seasonList .lbRow.top3 .lbRank{color:#f0a868;}
+  .seasonList .lbRow.leader .lbRank::after{content:'';display:inline-block;width:12px;height:10px;margin-left:3px;background:#ffd34d;clip-path:polygon(0 100%,0 20%,25% 55%,50% 0,75% 55%,100% 20%,100% 100%);}
+  .seasonBadges,.seasonRewards{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12.5px;}
+  .sbLbl{width:100%;font-size:12px;letter-spacing:.06em;text-transform:uppercase;opacity:.65;text-align:left;}
+  .sBadge,.sReward{padding:4px 10px;border-radius:999px;background:rgba(10,4,24,.5);box-shadow:inset 0 0 0 1.5px rgba(127,212,255,.35);}
+  .sReward b{color:#ffd34d;}
+  .clanRow{display:flex;align-items:center;gap:10px;width:100%;border:none;cursor:pointer;font-family:inherit;color:#fdf6e8;text-align:left;padding:8px 10px;border-radius:12px;background:rgba(255,255,255,.05);}
+  .clanRow b{margin-left:auto;color:#ffd34d;font-size:15px;}
+  .clanRowName{display:flex;flex-direction:column;font-weight:800;font-size:14px;min-width:0;}
+  .clanRowName small{font-weight:600;font-size:11.5px;opacity:.65;}
+  .clanBadge{flex:none;width:26px;height:30px;background:var(--cc,#ffd34d);clip-path:polygon(50% 0,100% 18%,100% 62%,50% 100%,0 62%,0 18%);box-shadow:inset 0 -6px 0 rgba(0,0,0,.2);}
+  .clanBadge.big{width:52px;height:60px;}
+  .clanCard{display:flex;align-items:center;gap:14px;padding:14px;border-radius:18px;background:linear-gradient(180deg,rgba(40,18,78,.92),rgba(24,10,48,.92));box-shadow:inset 0 0 0 2px var(--cc,#ffd34d);text-align:left;}
+  .clanCardBody{flex:1;min-width:0;}
+  .clanName{font-size:20px;font-weight:800;color:var(--cc,#ffd34d);}
+  .clanMeta{font-size:12.5px;opacity:.8;margin-top:2px;}
+  .clanCodeRow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:8px;font-size:12.5px;}
+  .clanCodeRow code{font-family:inherit;font-size:15px;letter-spacing:.08em;color:#fdf6e8;background:rgba(0,0,0,.35);padding:3px 8px;border-radius:8px;user-select:all;-webkit-user-select:all;}
+  .clanCopy{border:none;cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;color:#3a1f00;background:#ffd34d;border-radius:8px;padding:4px 10px;}
+  .clanForm{display:flex;flex-direction:column;gap:8px;padding:12px;border-radius:16px;background:rgba(10,4,24,.45);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.08);}
+  .clanInput{width:100%;box-sizing:border-box;}
+  .clanSwatches{display:flex;gap:8px;justify-content:center;}
+  .clanSw{width:32px;height:36px;border:none;cursor:pointer;background:var(--cc);clip-path:polygon(50% 0,100% 18%,100% 62%,50% 100%,0 62%,0 18%);opacity:.55;}
+  .clanSw.on{opacity:1;transform:scale(1.12);}
+  .clanJoinRow{display:flex;gap:8px;}
+  .clanJoinRow .clanInput{flex:1;min-width:0;text-transform:uppercase;}
+  .clanJoinBtn,.clanCreateBtn{font-size:15px;padding:10px 18px;}
+  .clanErr{margin:0;min-height:16px;font-size:12.5px;color:#ff8a8a;}
+  .clanHint{margin:0;font-size:12px;opacity:.65;line-height:1.4;}
+  .clanLeave{align-self:center;}
+
+  button.menuChip{border:none;font-family:inherit;cursor:pointer;}
+  button.menuChip:active{transform:scale(.95);}
+  button.menuChip:focus-visible{outline:2px solid #ffd34d;outline-offset:2px;}
+  .chipBoss::after{content:'›';margin-left:2px;color:#ffd34d;font-size:16px;line-height:1;}
+  .bestiarySub{margin:4px 0 12px;font-size:13.5px;color:#e8d9ff;opacity:.85;text-align:center;}
+  .bestiaryList{display:flex;flex-direction:column;gap:10px;}
+  .bossCard{display:flex;align-items:center;gap:12px;padding:10px 12px 10px 8px;border-radius:18px;
+    background:linear-gradient(180deg,rgba(40,18,78,.92),rgba(24,10,48,.92));box-shadow:inset 0 0 0 1.5px color-mix(in srgb, var(--bc,#fff) 45%, transparent),0 0 18px color-mix(in srgb, var(--bc,#fff) 16%, transparent);}
+  .bossCard.unknown{box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.08);}
+  .bossPortrait{width:72px;height:72px;flex:none;}
+  .bossCardBody{flex:1;min-width:0;text-align:left;}
+  .bossName{font-size:17px;font-weight:800;color:#fdf6e8;}
+  .bossCard:not(.unknown) .bossName{color:var(--bc,#fdf6e8);}
+  .bossWorld{font-size:12px;opacity:.7;margin-top:1px;}
+  .bossMeta{font-size:13px;margin-top:5px;color:#ffd34d;}
+  .bossCard.unknown .bossMeta{color:#c9c9d4;opacity:.8;}
+
+  #wardrobe{background:radial-gradient(90% 45% at 50% 16%, rgba(140,80,220,.4), rgba(21,10,43,0) 70%),linear-gradient(180deg, rgba(21,10,43,.55), rgba(12,5,26,.97) 45%);}
+  #wardrobe .charSwitcher{position:relative;padding-bottom:18px;gap:22px;}
+  #wardrobe .charSwitcher::before{content:'';position:absolute;left:50%;top:44%;width:220px;height:220px;margin:-110px 0 0 -110px;border-radius:50%;pointer-events:none;
+    background:radial-gradient(circle, rgba(255,214,140,.35), rgba(200,120,255,.14) 45%, rgba(200,120,255,0) 70%);}
+  #wardrobe .charSwitcher::after{content:'';position:absolute;left:50%;bottom:4px;width:130px;height:24px;margin-left:-65px;border-radius:12px 12px 34px 34px/12px 12px 22px 22px;
+    background:linear-gradient(180deg,#c4f59a 0,#56b83a 9px,#8a5a36 9px,#4a2c18);box-shadow:0 14px 20px rgba(0,0,0,.45);z-index:0;}
+  #wardrobe #preview2{position:relative;z-index:1;width:124px;height:124px;margin-bottom:6px;}
+  #wardrobe .charArrow{position:relative;z-index:1;width:42px;height:42px;background:rgba(20,8,40,.7);box-shadow:inset 0 0 0 2px rgba(255,211,77,.55),0 4px 10px rgba(0,0,0,.35);color:#ffd34d;}
+  #wardrobe .shopTabs{background:rgba(10,4,24,.55);padding:5px;border-radius:18px;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.08);gap:4px;box-sizing:border-box;}
+  #wardrobe .shopTab{background:transparent;box-shadow:none;padding:9px 14px;border-radius:13px;}
+  #wardrobe .shopTab.active{background:linear-gradient(180deg,#ffd08a,#ff9f45);color:#3a1f00;box-shadow:0 3px 0 #c26a1d;}
+  #wardrobe #shop::before{display:none;}
+  #wardrobe #shop{background:rgba(10,4,24,.5);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.08);}
+  #wardrobe .chip{color:#e8d9ff;background:linear-gradient(180deg,rgba(52,24,98,.95),rgba(30,12,60,.95));box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.1),0 3px 0 rgba(0,0,0,.25);padding:10px 10px 9px;}
+  #wardrobe .chip.unowned{opacity:1;filter:none;}
+  #wardrobe .chip.unowned .chipIcon{filter:saturate(.75);}
+  #wardrobe .chip .chipIcon{width:52px;height:52px;border-radius:14px;background:radial-gradient(circle at 50% 40%, rgba(255,214,140,.22), rgba(0,0,0,.25) 70%);}
+  #wardrobe .chip .price{display:inline-flex;align-items:center;gap:4px;align-self:flex-start;margin:0 0 4px;padding:2px 8px 2px 6px;border-radius:999px;background:rgba(0,0,0,.35);color:#ffd34d;font-size:12.5px;}
+  #wardrobe .chip .iname{font-size:13px;font-weight:800;color:#fdf6e8;}
+  #wardrobe .chip .idesc{color:#cbb8ee;}
+  #wardrobe .chip[aria-pressed="true"]{background:linear-gradient(180deg,rgba(120,70,20,.95),rgba(70,34,10,.95));box-shadow:inset 0 0 0 2px #ffd34d,0 0 16px rgba(255,211,77,.3),0 3px 0 rgba(0,0,0,.25);color:#fff3c4;}
+  #wardrobe .chip[aria-pressed="true"] .price{color:#ffd34d;}
+  #wardrobe .chip[aria-pressed="true"] .idesc{color:#f3dcae;opacity:.85;}
+  #wardrobe .ownedTag{color:#9fe89f;}
+
+  .fruitCard{gap:12px;padding:12px;border-radius:16px;background:linear-gradient(180deg,rgba(40,18,78,.9),rgba(24,10,48,.9));box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.08);}
+  .fruitCard > canvas{flex:none;border-radius:14px;background:radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--rc,#fff) 38%, transparent), rgba(0,0,0,0) 70%);}
+  .fruitCard.eaten{box-shadow:inset 0 0 0 2px #ffd34d,0 0 18px rgba(255,211,77,.25);}
+  .fruitCard.empty{opacity:.62;}
+  .fruitCard.empty > canvas{filter:grayscale(.7) brightness(.8);}
+  .fruitTag{display:inline-block;margin-left:4px;padding:1px 8px;border-radius:999px;font-size:11px;vertical-align:2px;color:#2b1a00;background:#ffd34d;}
+  .fruitWhere{margin-top:3px;font-size:11.5px;opacity:.7;}
+
+  .srOnly{position:absolute !important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+  #over{justify-content:center;gap:18px;}
+  .overCard{position:relative;width:min(330px,90vw);box-sizing:border-box;padding:20px 16px 16px;border-radius:24px;display:flex;flex-direction:column;align-items:center;gap:8px;
+    background:linear-gradient(180deg,rgba(74,34,133,.92),rgba(34,14,70,.94));box-shadow:inset 0 0 0 2px rgba(255,211,77,.4),0 20px 50px rgba(0,0,0,.5);
+    animation:overPop .5s cubic-bezier(.2,1.4,.4,1) both;}
+  @keyframes overPop{from{transform:scale(.82) translateY(24px);opacity:0;}to{transform:none;opacity:1;}}
+  .overBurst{position:absolute;left:50%;top:92px;width:0;height:0;pointer-events:none;}
+  .overBurst i{position:absolute;left:0;top:0;width:8px;height:12px;border-radius:2px;opacity:0;animation:confetti 1.4s cubic-bezier(.2,.7,.4,1) forwards;}
+  @keyframes confetti{0%{opacity:1;transform:translate(0,0) rotate(0);}100%{opacity:0;transform:translate(var(--dx),var(--dy)) rotate(var(--rot));}}
+  #overTitle{font-size:20px;font-weight:700;opacity:.9;margin:0;}
+  .overScoreWrap{display:flex;flex-direction:column;align-items:center;line-height:1;}
+  #finalScore{font-size:clamp(60px,19vw,92px);font-variant-numeric:tabular-nums;color:transparent;
+    background:linear-gradient(180deg,#fff6d0,#ffd34d 55%,#ff9f45);-webkit-background-clip:text;background-clip:text;
+    filter:drop-shadow(0 4px 0 #7a3a0a) drop-shadow(0 0 24px rgba(255,170,80,.35));text-shadow:none;}
+  .overScoreLbl{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:#e8d9ff;opacity:.7;margin-top:2px;}
+  #bestLine{margin:0;font-size:15px;opacity:.8;}
+  .overStats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;margin-top:6px;}
+  .overStat{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 4px 9px;border-radius:14px;background:rgba(10,4,24,.45);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.1);
+    min-width:0;animation:overRise .45s ease-out both;}
+  .overStat.os1{animation-delay:.25s;} .overStat.os2{animation-delay:.35s;} .overStat.os3{animation-delay:.45s;}
+  @keyframes overRise{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+  .osLbl{font-size:11px;letter-spacing:.08em;text-transform:uppercase;opacity:.65;}
+  .overStat b{font-size:18px;color:#ffd34d;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-variant-numeric:tabular-nums;}
+  #overWorldVal{font-size:14px;}
+  #over .passLine{margin:2px 0 0;}
+  #over .overBtns{flex-direction:column;align-items:stretch;width:min(300px,86vw);gap:14px;}
+  #over #retryBtn{font-size:22px;padding:16px 30px;}
+  @media (prefers-reduced-motion:reduce){ .overCard,.overStat,.overBurst i{animation:none;} }
+
+  #menu:not(.paused){background:radial-gradient(90% 55% at 50% 22%, rgba(140,80,220,.38), rgba(21,10,43,0) 70%),linear-gradient(180deg, rgba(21,10,43,.25), rgba(21,10,43,.82) 62%, rgba(12,5,26,.95));}
+  .heroStage{position:relative;width:230px;height:190px;display:flex;align-items:flex-end;justify-content:center;flex:none;margin-top:6px;}
+  .stageRays{position:absolute;left:50%;top:44%;width:340px;height:340px;margin:-170px 0 0 -170px;border-radius:50%;pointer-events:none;
+    background:repeating-conic-gradient(from 0deg, rgba(255,226,140,.16) 0deg 9deg, rgba(255,226,140,0) 9deg 24deg);
+    -webkit-mask:radial-gradient(circle, #000 18%, rgba(0,0,0,0) 68%);mask:radial-gradient(circle, #000 18%, rgba(0,0,0,0) 68%);
+    animation:raysSpin 26s linear infinite;}
+  .stageHalo{position:absolute;left:50%;top:46%;width:210px;height:210px;margin:-105px 0 0 -105px;border-radius:50%;pointer-events:none;
+    background:radial-gradient(circle, rgba(255,214,140,.45), rgba(200,120,255,.18) 45%, rgba(200,120,255,0) 70%);animation:haloPulse 3.4s ease-in-out infinite;}
+  .heroStage #menuPreview{position:relative;z-index:2;width:140px;height:140px;margin-bottom:22px;}
+  .stageIsland{position:absolute;left:50%;bottom:6px;width:150px;height:30px;margin-left:-75px;z-index:1;border-radius:14px 14px 40px 40px/14px 14px 26px 26px;
+    background:linear-gradient(180deg,#8a5a36,#4a2c18);box-shadow:0 16px 24px rgba(0,0,0,.45);}
+  .stageIsland::before{content:'';position:absolute;left:-4px;right:-4px;top:-5px;height:14px;border-radius:10px;background:linear-gradient(180deg,#c4f59a,#56b83a);box-shadow:inset 0 -3px 0 rgba(0,0,0,.12);}
+  .stageIsland i{position:absolute;top:-9px;width:6px;height:6px;border-radius:50%;background:#ffd1e8;box-shadow:0 0 0 2px rgba(255,255,255,.35);}
+  .stageIsland i:nth-child(1){left:18px;} .stageIsland i:nth-child(2){left:70px;background:#fff3a0;} .stageIsland i:nth-child(3){right:20px;background:#fff;}
+  @keyframes raysSpin{to{transform:rotate(360deg);}}
+  @keyframes haloPulse{0%,100%{opacity:.75;transform:scale(.96);}50%{opacity:1;transform:scale(1.04);}}
+  #menu:not(.paused) #titleSign{font-size:clamp(40px,12vw,60px);color:transparent;
+    background:linear-gradient(100deg,#fff3c4 0%,#ffd34d 30%,#ff9f45 48%,#fff8dc 52%,#ffd34d 58%,#ff9f45 100%);background-size:250% 100%;
+    -webkit-background-clip:text;background-clip:text;animation:logoShine 5s ease-in-out infinite;
+    filter:drop-shadow(0 3px 0 #7a3a0a) drop-shadow(0 6px 0 rgba(21,10,43,.55)) drop-shadow(0 0 22px rgba(255,170,80,.35));text-shadow:none;letter-spacing:.01em;}
+  @keyframes logoShine{0%,55%{background-position:100% 0;}85%,100%{background-position:0 0;}}
+  .menuChips{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:-4px;}
+  #menu.paused .menuChips{display:none;}
+  .menuChip{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 12px;border-radius:999px;font-size:13.5px;color:#e8d9ff;
+    background:rgba(20,8,40,.55);box-shadow:inset 0 0 0 1.5px rgba(255,211,77,.35);}
+  .menuChip b{color:#ffd34d;font-size:15px;}
+  .menuChip::before{content:'';width:15px;height:15px;background:center/contain no-repeat;}
+  .chipBest::before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7 3h10v3h3v3a5 5 0 0 1-5 5 5 5 0 0 1-2 1.7V18h3v3H8v-3h3v-2.3A5 5 0 0 1 9 14a5 5 0 0 1-5-5V6h3z' fill='%23ffd34d'/%3E%3C/svg%3E");}
+  .chipBoss::before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z' fill='%23ff8a8a'/%3E%3C/svg%3E");}
+  #menu:not(.paused) .btnRow{flex-direction:row;flex-wrap:wrap;justify-content:center;gap:14px 12px;width:min(320px,90vw);}
+  #menu:not(.paused) .menuBtnWrap{width:calc(50% - 6px);}
+  #menu:not(.paused) .menuBtnWrap:has(#playBtn){width:100%;}
+  #menu:not(.paused) #playBtn{font-size:24px;padding:16px 34px;display:inline-flex;align-items:center;justify-content:center;gap:10px;}
+  #menu:not(.paused) #playBtn::before{content:'';width:0;height:0;border-left:16px solid #3a1f00;border-top:10px solid transparent;border-bottom:10px solid transparent;}
+  #menu:not(.paused) #wardrobeBtn,#menu:not(.paused) #fruitsBtn{font-size:16px;padding:12px 8px;display:inline-flex;align-items:center;justify-content:center;gap:7px;}
+  #menu.paused .menuBtnWrap:has(#fruitsBtn){display:none !important;}
+  #menu.paused .heroStage{display:none;}
+  .passCard{width:min(320px,90vw);}
+  @media (prefers-reduced-motion:reduce){ .stageRays,.stageHalo,#menu:not(.paused) #titleSign,#menu:not(.paused) #playBtn{animation:none;} }
+  @media (max-height:700px){ .heroStage{height:150px;} .heroStage #menuPreview{width:110px;height:110px;} .stageRays{transform:scale(.8);} }
+
   .dailyCard{width:min(360px,92vw) !important;gap:10px !important;}
   .dailyTitle{font-size:19px;font-weight:800;color:#f5e9d6;}
   .dailySub{font-size:13px;opacity:.8;text-align:center;}
@@ -525,7 +726,10 @@
   .closedIcon{font-size:52px;line-height:1;margin-bottom:10px;}
   .closedTitle{font-size:26px;font-weight:800;color:#ffd34d;margin:0 0 12px;}
   .closedText{font-size:15.5px;line-height:1.5;margin:0 0 14px;opacity:.95;}
-  .closedBye{font-size:15px;font-weight:800;color:#ffd34d;}
+  .closedBye{font-size:14px;font-weight:700;color:#ffd34d;opacity:.9;}
+  .closedTimerLbl{font-size:12px;letter-spacing:.14em;text-transform:uppercase;opacity:.7;margin-bottom:4px;}
+  .closedTimer{font-size:40px;font-weight:800;line-height:1.1;margin-bottom:10px;font-variant-numeric:tabular-nums;color:transparent;
+    background:linear-gradient(180deg,#fff6d0,#ffd34d 55%,#ff9f45);-webkit-background-clip:text;background-clip:text;filter:drop-shadow(0 3px 0 #7a3a0a);}
   .wheelMulti{display:flex;gap:8px;margin-top:8px;}
   .wheelMulti .btn{flex:1;font-size:14px;padding:9px 0;background:rgba(255,211,77,.16);color:#ffd34d;box-shadow:inset 0 0 0 2px rgba(255,211,77,.45);}
   .wheelMulti .btn.cant{opacity:.5;}
@@ -1080,18 +1284,18 @@
   }
   .cloudBtn:active{transform:scale(.95);}
   .cloudStatus{font-size:12px;opacity:.75;min-height:14px;}
-  #onlineLbRows .lbRow, #playerSearchRows .lbRow{
+  #onlineLbRows .lbRow, #playerSearchRows .lbRow, .seasonList .lbRow{
     font-size:13px;display:flex;align-items:center;justify-content:space-between;
     gap:12px;padding:5px 2px;
   }
-  #onlineLbRows .lbRow span, #playerSearchRows .lbRow span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
-  #onlineLbRows .lbRow b, #playerSearchRows .lbRow b{color:var(--gold);flex:0 0 auto;}
+  #onlineLbRows .lbRow span, #playerSearchRows .lbRow span, .seasonList .lbRow span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
+  #onlineLbRows .lbRow b, #playerSearchRows .lbRow b, .seasonList .lbRow b{color:var(--gold);flex:0 0 auto;}
   #onlineLbRows .lbRow, #playerSearchRows .lbRow{padding-top:9px;padding-bottom:4px;}
   .lbLeft{display:flex;align-items:center;gap:7px;min-width:0;}
   .lbRank{flex:0 0 auto;}
   .lbAv{--av:22px;}
-  #onlineLbRows .lbRow span.avFrame, #playerSearchRows .lbRow span.avFrame{overflow:visible;}
-  #onlineLbRows .lbRow span.avInner, #playerSearchRows .lbRow span.avInner{overflow:hidden;}
+  #onlineLbRows .lbRow span.avFrame, #playerSearchRows .lbRow span.avFrame, .seasonList .lbRow span.avFrame{overflow:visible;}
+  #onlineLbRows .lbRow span.avInner, #playerSearchRows .lbRow span.avInner, .seasonList .lbRow span.avInner{overflow:hidden;}
   .devNick{
     background:linear-gradient(90deg,#c084fc,#8a2be2,#ff6f91,#8a2be2,#c084fc);
     background-size:200% auto;
@@ -1393,8 +1597,17 @@
       <div class="topPill coinPill"><i class="coinDot"></i><span class="coinNum" id="menuCoins">0</span></div>
     </div>
     <div class="spacer"></div>
-    <canvas id="menuPreview" class="heroBob" width="220" height="220"></canvas>
+    <div class="heroStage" id="heroStage">
+      <div class="stageRays"></div>
+      <div class="stageHalo"></div>
+      <canvas id="menuPreview" class="heroBob" width="220" height="220"></canvas>
+      <div class="stageIsland"><i></i><i></i><i></i></div>
+    </div>
     <div class="titleSwing" id="titleSwing"><h1 class="title" id="titleSign">Cabbit Jump!</h1></div>
+    <div class="menuChips" id="menuChips">
+      <span class="menuChip chipBest"><span data-i18n="bestChip">Рекорд</span> <b id="menuBestChip">0</b></span>
+      <button type="button" id="bossChipBtn" class="menuChip chipBoss"><span data-i18n="bossesChip">Боссы</span> <b id="menuBossChip">0</b></button>
+    </div>
 
     <p class="stats rise d1">
       <span><span data-i18n="best">Лучший результат</span>: <b id="menuBest">0</b></span>
@@ -1403,6 +1616,11 @@
       <span class="passCardTop"><span class="passLogo">CABBIT PASS</span><span id="passCardLvl" class="passCardLvl">0 / 30</span></span>
       <span class="passBar"><i id="passCardFill"></i></span>
       <span id="passCardDot" class="passDot hidden">!</span>
+    </button>
+
+    <button id="seasonCard" class="seasonCard rise d2" type="button">
+      <span class="seasonTop"><span id="seasonCardTitle" class="seasonLogo">Сезон 1</span><span id="seasonCardDays" class="seasonDays"></span></span>
+      <span class="seasonBottom"><span id="seasonCardEvent" class="seasonEv"></span><span class="seasonBestWrap"><span data-i18n="seasonBestShort">рекорд</span> <b id="seasonCardBest">0</b></span></span>
     </button>
 
     <div class="btnRow rise d3">
@@ -1567,6 +1785,20 @@
             <div id="adminItemsGrid" class="adminItemsGrid"></div>
           </div>
 
+          <div class="adminCard adminOnly">
+            <div class="adminCardTitle">Фрукты</div>
+            <div id="adminFruitGrid" class="adminFruitGrid"></div>
+            <p class="adminRoleHint">Число — сколько фруктов лежит у игрока. Кружок справа — какой фрукт сейчас съеден.</p>
+          </div>
+
+          <div class="adminCard adminOnly">
+            <div class="adminCardTitle">Сезон</div>
+            <label class="adminField">
+              <span>Рекорд сезона</span>
+              <input id="adminSeasonInput" class="adminInput adminInputNum" type="text" inputmode="numeric" maxlength="9">
+            </label>
+          </div>
+
           <button id="adminSaveBtn" class="adminSaveBtn" type="button">✓ Сохранить изменения</button>
 
           <button id="adminPwResetBtn" type="button" class="adminPwResetBtn adminOnly">Сбросить пароль игрока</button>
@@ -1718,15 +1950,50 @@
   </div>
 
   <div id="over" class="screen hidden">
-    <p id="overTitle">Котокролик приземлился</p>
-    <div id="finalScore">0</div>
-    <p id="coinLine"></p>
-    <p id="bestLine">Рекорд: 0</p>
-    <p id="rankLine"></p>
-    <p id="passLine" class="passLine"></p>
-    <div class="btnRow">
+    <div class="overCard" id="overCard">
+      <div class="overBurst" id="overBurst"></div>
+      <p id="overTitle">Котокролик приземлился</p>
+      <div class="overScoreWrap"><div id="finalScore">0</div><div class="overScoreLbl" data-i18n="overPoints">очков</div></div>
+      <p id="bestLine">Рекорд: 0</p>
+      <p id="rankLine"></p>
+      <div class="overStats">
+        <div class="overStat os1"><span class="osLbl" data-i18n="overCoinsTile">Монеты</span><b id="overCoinsVal">0</b></div>
+        <div class="overStat os2"><span class="osLbl" data-i18n="overWorld">Мир</span><b id="overWorldVal">—</b></div>
+        <div class="overStat os3"><span class="osLbl" data-i18n="bossesChip">Боссы</span><b id="overBossVal">0</b></div>
+      </div>
+      <p id="coinLine" class="srOnly"></p>
+      <p id="passLine" class="passLine"></p>
+    </div>
+    <div class="btnRow overBtns">
       <button id="retryBtn" class="btn" data-i18n="retry">Повторить</button>
       <button id="menuBtn" class="btn ghost" data-i18n="toMenu">В меню</button>
+    </div>
+  </div>
+
+  <div id="seasonModal" class="profileOverlay passOverlay hidden">
+    <div class="passFull seasonFull">
+      <button id="seasonClose" class="backIconBtn" aria-label="Закрыть">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M6 6 L18 18 M18 6 L6 18" stroke="#fdf6e8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div id="seasonHead" class="seasonHead"></div>
+      <div id="seasonTabs" class="seasonTabs">
+        <button type="button" data-tab="players" data-i18n="tabPlayers">Игроки</button>
+        <button type="button" data-tab="clans" data-i18n="tabClans">Кланы</button>
+        <button type="button" data-tab="mine" data-i18n="tabMyClan">Мой клан</button>
+      </div>
+      <div id="seasonBody" class="seasonBody"></div>
+    </div>
+  </div>
+
+  <div id="bestiaryModal" class="profileOverlay passOverlay hidden">
+    <div class="passFull bestiaryFull">
+      <button id="bestiaryClose" class="backIconBtn" aria-label="Закрыть">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M6 6 L18 18 M18 6 L6 18" stroke="#fdf6e8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="passTitle" data-i18n="bestiaryTitle">Бестиарий</div>
+      <p id="bestiarySub" class="bestiarySub"></p>
+      <div id="bestiaryList" class="bestiaryList"></div>
+      <p class="fruitHint" data-i18n="bestiaryHint">Босс прилетает в конце каждого мира. Лови золотые звёзды — они бьют босса, и уворачивайся от его снарядов. За победу — монеты и фрукт.</p>
     </div>
   </div>
 
@@ -1737,6 +2004,8 @@
       </button>
       <div class="passTitle" data-i18n="fruitsTitle">Фрукты</div>
       <div id="fruitEaten" class="fruitEaten"></div>
+      <div class="passQTitle" data-i18n="fruitInvTitle">Фрукты и способности</div>
+      <div id="fruitInv" class="fruitInv"></div>
       <div class="passQTitle" data-i18n="wheelTitle">Рулетка</div>
       <div class="wheelWrap"><canvas id="wheelCanvas" width="560" height="560"></canvas><div class="wheelPin"></div></div>
       <button id="wheelBtn" class="btn passBuyBtn" type="button"></button>
@@ -1744,8 +2013,6 @@
       <button id="wheelSkipBtn" class="wheelSkip" type="button" aria-pressed="false"></button>
       <div id="wheelResult" class="wheelResult"></div>
       <div id="wheelOdds" class="wheelOdds"></div>
-      <div class="passQTitle" data-i18n="fruitInvTitle">Фрукты и способности</div>
-      <div id="fruitInv" class="fruitInv"></div>
       <p class="fruitHint" data-i18n="fruitHint">Фрукты можно поймать в забеге или выбить в рулетке. Съешь фрукт — получишь его способность. Съешь другой — старый пропадёт. Меняться фруктами можно с друзьями: кнопка ⇄ в чате.</p>
     </div>
   </div>
@@ -1937,22 +2204,65 @@
   </div>
 </div>
 
+<button id="adminFab" class="adminFab" type="button" hidden>Админ панель</button>
+<div id="adminQuick" class="adminQuick" hidden>
+  <div class="aqHead"><span class="aqTitle">Админ панель</span><button id="aqClose" class="aqClose" type="button" aria-label="Закрыть">×</button></div>
+  <div class="aqLbl">Прыгнуть в мир</div>
+  <div class="aqRow" id="aqWorlds"></div>
+  <div class="aqLbl">Забег и себе</div>
+  <div class="aqRow">
+    <button id="aqBoss" class="aqKey" type="button">Босс сейчас</button>
+    <button id="aqGod" class="aqKey" type="button" aria-pressed="false">Бессмертие</button>
+    <button id="aqCoins" class="aqKey" type="button">+5000 монет</button>
+  </div>
+  <div class="aqLbl">Выдать себе фрукт</div>
+  <div class="aqRow" id="aqFruits"></div>
+  <button id="aqSettings" class="aqKey aqWide" type="button">Выдать игроку (админка в настройках)</button>
+</div>
+
 <div id="closedScreen" role="dialog" aria-modal="true" aria-labelledby="closedTitle">
   <div class="closedCard">
-    <div class="closedIcon">🐰</div>
-    <h2 id="closedTitle" class="closedTitle" data-i18n="closedTitle">Игра закрыта</h2>
-    <p class="closedText" data-i18n="closedText">Cabbit Jump! закрывается на неопределённый срок. Спасибо всем, кто был с нами это недолгое время! Все ваши рекорды, монеты и покупки сохранятся.</p>
-    <div class="closedBye" data-i18n="closedBye">До встречи! 🐰</div>
+    <h2 id="closedTitle" class="closedTitle" data-i18n="closedTitle">Скоро открытие!</h2>
+    <p class="closedText" data-i18n="closedText">Cabbit Jump! возвращается с самым большим обновлением: боссы, новая графика, сезоны и кланы. Все ваши рекорды, монеты и покупки на месте.</p>
+    <div class="closedTimerLbl" data-i18n="closedTimerLbl">До открытия</div>
+    <div class="closedTimer" id="closedTimer">--:--:--</div>
+    <div class="closedBye" data-i18n="closedBye">2 октября, 20:00 по Москве</div>
+    <div id="closedAdmin" class="closedAdmin" hidden>
+      <input id="closedPin" class="adminInput" type="password" inputmode="numeric" placeholder="PIN" autocomplete="off">
+      <button id="closedPinBtn" class="btn small" type="button">Войти</button>
+    </div>
   </div>
 </div>
 
 <script>
 "use strict";
-const GAME_CLOSED = true;
-(function blockClosedInput(){
-  if (!GAME_CLOSED) return;
-  const stop = (e) => { if (e && e.stopImmediatePropagation) e.stopImmediatePropagation(); if (e && e.cancelable && e.preventDefault) e.preventDefault(); };
+const OPEN_AT = Date.UTC(2026, 9, 2, 17, 0, 0);
+let GAME_CLOSED = Date.now() < OPEN_AT;
+const closedEn = (() => { try { return window.localStorage.getItem('doodlecabbit.lang') === 'en'; } catch (e) { return false; } })();
+function closedLeftText(ms){
+  const s = Math.max(0, Math.floor(ms / 1000));
+  const d = Math.floor(s / 86400), h = Math.floor(s % 86400 / 3600), m = Math.floor(s % 3600 / 60), x = s % 60;
+  const p2 = (n) => String(n).padStart(2, '0');
+  return (d > 0 ? d + (closedEn ? 'd ' : ' д ') : '') + p2(h) + ':' + p2(m) + ':' + p2(x);
+}
+(function closedGate(){
+  const scr = document.getElementById('closedScreen');
+  if (!GAME_CLOSED){ if (scr) scr.hidden = true; return; }
+  const stop = (e) => { if (!GAME_CLOSED) return; if (e && e.target && e.target.id === 'closedPin') return; if (e && e.stopImmediatePropagation) e.stopImmediatePropagation(); if (e && e.cancelable && e.preventDefault) e.preventDefault(); };
   ['keydown', 'keyup', 'keypress'].forEach((ev) => window.addEventListener(ev, stop, true));
+  const tEl = document.getElementById('closedTimer');
+  const tick = () => {
+    const left = OPEN_AT - Date.now();
+    if (left <= 0){
+      GAME_CLOSED = false;
+      if (scr) scr.hidden = true;
+      clearInterval(iv);
+      return;
+    }
+    if (tEl) tEl.textContent = closedLeftText(left);
+  };
+  const iv = setInterval(tick, 1000);
+  tick();
 })();
 
 
@@ -2235,7 +2545,7 @@ function recordRunForPass(sc, runCoinsGot){
     if (q.done.indexOf(qu.id) === -1 && questProgress(q, qu.id) >= qu.n){ q.done.push(qu.id); questXp += qu.xp; done.push(qu); }
   }
   Store.set('quests', JSON.stringify(q));
-  const runXp = sc >= MIN_RUN_SCORE ? Math.round(Math.min(60, Math.floor(Math.max(0, sc) / 60)) * (typeof hasFruit === 'function' && hasFruit('star') ? 1.5 : 1)) : 0;
+  const runXp = sc >= MIN_RUN_SCORE ? Math.round(Math.min(60, Math.floor(Math.max(0, sc) / 60)) * (typeof hasFruit === 'function' && hasFruit('star') ? 1.5 : 1) * (weekEvent() === 'pass' ? 1.5 : 1)) : 0;
   addPassXp(runXp + questXp);
   if (done.length) setTimeout(() => showToast(t('questDone').replace('{x}', done.reduce((a, b) => a + b.xp, 0))), 900);
   return { runXp, questXp };
@@ -2932,7 +3242,7 @@ const I18N = {
     gfxLabel: 'Графика', gfx_auto: 'Авто', gfx_high: 'Красиво', gfx_low: 'Быстро', gfx_ultra: 'Ультра',
     expBadge: 'эксперимент',
     gfxUltraNote: '⚗ Экспериментальная функция: объёмные платформы и тени. На слабых телефонах может тормозить.',
-    catMain: 'Основное', catGfx: 'Графика', catProfile: 'Профиль', catSound: 'Звук', catOnline: 'Онлайн', catCommunity: 'Сообщество', fruitsBtn: 'Фрукты', fruitsTitle: 'Фрукты', wheelTitle: 'Рулетка', fruitInvTitle: 'Фрукты и способности', fruitHint: 'Фрукты можно поймать в забеге или выбить в рулетке. Съешь фрукт — получишь его способность. Съешь другой — старый пропадёт. Меняться фруктами можно с друзьями: кнопка ⇄ в чате.', fr_spring: 'Пружинный фрукт', fr_flame: 'Огненный фрукт', fr_ice: 'Ледяной фрукт', fr_storm: 'Грозовой фрукт', fr_portal: 'Портальный фрукт', fr_star: 'Звёздный фрукт', frd_spring: 'Пружины на платформах попадаются в 3 раза чаще.', frd_flame: 'Монстры сгорают от касания — без отсчёта, с подкидом и монетами.', frd_ice: 'Движущиеся платформы замерзают, мигающие больше не исчезают.', frd_storm: 'Каждые 6 секунд молния бьёт ближайшего монстра: +монеты.', frd_portal: 'Телепорты попадаются часто и уносят на самую высокую платформу.', frd_star: 'Каждые 1000 очков — звездопад монет. +50% жетонов Cabbit Pass.', rar1: 'Обычный', rar2: 'Редкий', rar3: 'Эпический', rar4: 'Легендарный', fruitEatenNow: 'Сейчас съеден', fruitNone: 'Ты ещё не съел ни одного фрукта. Поймай его в забеге или выбей в рулетке!', fruitEat: 'Съесть', fruitReplace: 'Съесть {new}? Способность «{old}» пропадёт.', fruitAte: 'Ты съел: {f}!', fruitGot: 'Новый фрукт: {f}!', wheelSpin: 'Крутить · {p}', wheelWon: 'Выпало:', wheelOdds: 'Шансы:', tradeTitle: 'Обмен фруктами', tradeGiveLabel: 'Ты отдаёшь', tradeWantLabel: 'Ты хочешь', tradeSend: 'Предложить', tradeNoFruits: 'У тебя пока нет фруктов для обмена.', tradeSame: 'Нельзя менять фрукт на такой же.', tradeYouGive: 'ты отдаёшь', tradeYouGet: 'ты получишь', tradeTheyGive: 'даёт тебе', tradeTheyWant: 'хочет взамен', tradeAccept: 'Принять', tradeDecline: 'Отказать', tradeCancel: 'Отменить', tradeWaiting: 'Ждём ответа друга…', tradeStDone: 'Обмен состоялся ✓', tradeStNo: 'Отказано', tradeStCancel: 'Отменено', tradeNeedFruit: 'Для обмена нужен {f}', tradeClosed: 'Этот обмен уже закрыт', tradeCancelled: 'Обмен отменён, фрукт вернулся', tradeDoneYou: 'Обмен! Ты получил: {f}', tradeDoneThem: 'Друг принял обмен! Ты получил: {f}', tradeDeclined: 'Обмен не состоялся, {f} вернулся', msgTrade: '⇄ Обмен фруктами',
+    catMain: 'Основное', catGfx: 'Графика', catProfile: 'Профиль', catSound: 'Звук', catOnline: 'Онлайн', catCommunity: 'Сообщество', fruitsBtn: 'Фрукты', fruitsTitle: 'Фрукты', wheelTitle: 'Рулетка', fruitInvTitle: 'Фрукты и способности', fruitHint: 'Фрукты можно поймать в забеге или выбить в рулетке. Съешь фрукт — получишь его способность. Съешь другой — старый пропадёт. Меняться фруктами можно с друзьями: кнопка ⇄ в чате.', fr_spring: 'Пружинный фрукт', fr_flame: 'Огненный фрукт', fr_ice: 'Ледяной фрукт', fr_storm: 'Грозовой фрукт', fr_portal: 'Портальный фрукт', fr_star: 'Звёздный фрукт', fr_cloud: 'Облачный фрукт', fr_magnet: 'Магнитный фрукт', frd_cloud: 'Падаешь плавно, как пёрышко: легче допрыгнуть до дальней платформы.', frd_magnet: 'Монеты сами летят к тебе, как с нимбом.', fruitEatenTag: 'Съеден', fruitWhere: 'Выпадает в рулетке и в забеге', frd_spring: 'Пружины на платформах попадаются в 3 раза чаще.', frd_flame: 'Монстры сгорают от касания — без отсчёта, с подкидом и монетами.', frd_ice: 'Движущиеся платформы замерзают, мигающие больше не исчезают.', frd_storm: 'Каждые 6 секунд молния бьёт ближайшего монстра: +монеты.', frd_portal: 'Телепорты попадаются часто и уносят на самую высокую платформу.', frd_star: 'Каждые 1000 очков — звездопад монет. +50% жетонов Cabbit Pass.', rar1: 'Обычный', rar2: 'Редкий', rar3: 'Эпический', rar4: 'Легендарный', fruitEatenNow: 'Сейчас съеден', fruitNone: 'Ты ещё не съел ни одного фрукта. Поймай его в забеге или выбей в рулетке!', fruitEat: 'Съесть', fruitReplace: 'Съесть {new}? Способность «{old}» пропадёт.', fruitAte: 'Ты съел: {f}!', fruitGot: 'Новый фрукт: {f}!', wheelSpin: 'Крутить · {p}', wheelWon: 'Выпало:', wheelOdds: 'Шансы:', tradeTitle: 'Обмен фруктами', tradeGiveLabel: 'Ты отдаёшь', tradeWantLabel: 'Ты хочешь', tradeSend: 'Предложить', tradeNoFruits: 'У тебя пока нет фруктов для обмена.', tradeSame: 'Нельзя менять фрукт на такой же.', tradeYouGive: 'ты отдаёшь', tradeYouGet: 'ты получишь', tradeTheyGive: 'даёт тебе', tradeTheyWant: 'хочет взамен', tradeAccept: 'Принять', tradeDecline: 'Отказать', tradeCancel: 'Отменить', tradeWaiting: 'Ждём ответа друга…', tradeStDone: 'Обмен состоялся ✓', tradeStNo: 'Отказано', tradeStCancel: 'Отменено', tradeNeedFruit: 'Для обмена нужен {f}', tradeClosed: 'Этот обмен уже закрыт', tradeCancelled: 'Обмен отменён, фрукт вернулся', tradeDoneYou: 'Обмен! Ты получил: {f}', tradeDoneThem: 'Друг принял обмен! Ты получил: {f}', tradeDeclined: 'Обмен не состоялся, {f} вернулся', msgTrade: '⇄ Обмен фруктами',
     settingsSave: '✓ Сохранить', settingsSaved: 'Сохранено ✓',
     gfxAutoLowNote: '(лагало — включён быстрый режим)',
     pauseMenu: 'Меню',
@@ -2990,7 +3300,7 @@ const I18N = {
     cloudNotFound: 'Код не найден', accountDeleted: 'Этот аккаунт удалён администрацией. Игра начнётся с нуля.', cloudErr: 'Нет связи с сервером', cloudLoading: 'Загрузка…',
     smashToast: 'СОКРУШИТЕЛЬНЫЙ УДАР!', kickToast: 'ПИНОК!', perfectToast: 'ИДЕАЛЬНО!',
     laserToast: 'ОСТОРОЖНО: ЛАЗЕРЫ!',
-    perkRefund: 'Перки обновились — вернули {c} монет', fruitRefund: 'Огненный и Грозовой фрукты убраны — вернули {c} монет', wheelSpinN: '×{n} · {p}', wheelSkipOff: 'Анимация: вкл', wheelSkipOn: 'Анимация: пропуск', wheelSkipNow: 'Пропустить', closedTitle: 'Игра закрыта', closedText: 'Cabbit Jump! закрывается на неопределённый срок. Спасибо всем, кто был с нами это недолгое время! Все ваши рекорды, монеты и покупки сохранятся.', closedBye: 'До встречи! 🐰', dailyNeedNet: 'Нужен интернет, чтобы забрать награду', glassToast: 'СТЕКЛО СПАСЛО ТЕБЯ!', tapPrompt: 'ЖМИ!',
+    perkRefund: 'Перки обновились — вернули {c} монет', fruitRefund: 'Огненный и Грозовой фрукты убраны — вернули {c} монет', boss0: 'Король Сумерек', boss1: 'Ледяной Колосс', boss2: 'Магмовый Лорд', boss3: 'Токсичный Слизень', boss4: 'Звёздный Пожиратель', bossWarn: 'Приближается босс!', bossesChip: 'Боссы', seasonTitle: 'Сезон {n}', seasonDaysLeft: 'осталось {d} дн.', seasonBestShort: 'рекорд', ev_boss: 'Неделя боссов', ev_pass: 'Неделя пропуска', ev_fruit: 'Фруктовая неделя', evd_boss: 'За победу над боссом вдвое больше монет.', evd_pass: 'Жетонов Cabbit Pass за забег в полтора раза больше.', evd_fruit: 'В забеге может выпасть два фрукта, а боссы дарят по два фрукта.', tabPlayers: 'Игроки', tabClans: 'Кланы', tabMyClan: 'Мой клан', seasonMyBadges: 'Твои прошлые сезоны', seasonShort: 'Сезон {n}', seasonNoPlayers: 'В этом сезоне ещё никто не сыграл. Стань первым!', seasonRewardsTitle: 'Монеты в конце сезона', seasonTopN: 'Топ-{n}', seasonRewardToast: 'Сезон {s} закончен! Твоё место: {r}. Награда: {c} монет', seasonNoRank: 'вне топ-100', clanNoneYet: 'Кланов пока нет. Создай первый во вкладке «Мой клан»!', clanMembersN: 'участников: {n}', clanPoints: 'очков сезона: {n}', clanCodeLbl: 'Код клана:', clanCopy: 'Копировать', clanCopied: 'Скопировано', clanDisband: 'Распустить клан', clanLeave: 'Выйти из клана', clanLeaveSure: 'Точно? Нажми ещё раз', clanJoin: 'Вступить', clanCreateTitle: 'Создать свой клан', clanNamePh: 'Название клана', clanCreateBtn: 'Создать · {p}', clanJoinTitle: 'Вступить по коду', clanCodePh: 'Код клана', clanJoinHint: 'Код клана — это код игрока, который его создал. Спроси его у лидера или найди клан во вкладке «Кланы».', clanErrName: 'Название — от 3 до 16 символов', clanErrAlready: 'Ты уже в клане', clanErrCoins: 'Нужно {p} монет', clanErrCode: 'Введи код клана', clanErrNotFound: 'Клан с таким кодом не найден', clanErrFull: 'В клане уже {n} игроков, мест нет', clanErrNet: 'Нет связи, попробуй ещё раз', clanDisbanded: 'Лидер распустил твой клан. Можно вступить в другой или создать свой.', bestiaryTitle: 'Бестиарий', bestiarySub: 'Побеждено {a} из {b} · всего побед: {n}', bossWins: 'Побед: {n}', bossUnknown: 'Ещё не встречен · прилетает на {s} очков', bestiaryHint: 'Босс прилетает в конце каждого мира. Лови золотые звёзды — они бьют босса, и уворачивайся от его снарядов. За победу — монеты и фрукт.', bestChip: 'Рекорд', overPoints: 'очков', overWorld: 'Мир', overCoinsTile: 'Монеты', worldLabel: 'МИР {n}', bossIncoming: 'БОСС: {b}!', bossDown: 'БОСС ПОВЕРЖЕН!', bossFled: 'Босс улетел…', bossTime: 'Босс улетит через {s}', bossHint: 'Лови золотые звёзды — они бьют босса. Уворачивайся от его снарядов!', wheelSpinN: '×{n} · {p}', wheelSkipOff: 'Анимация: вкл', wheelSkipOn: 'Анимация: пропуск', wheelSkipNow: 'Пропустить', closedTitle: 'Скоро открытие!', closedText: 'Cabbit Jump! возвращается с самым большим обновлением: боссы, новая графика, сезоны и кланы. Все ваши рекорды, монеты и покупки на месте.', closedTimerLbl: 'До открытия', closedBye: '2 октября, 20:00 по Москве', dailyNeedNet: 'Нужен интернет, чтобы забрать награду', glassToast: 'СТЕКЛО СПАСЛО ТЕБЯ!', tapPrompt: 'ЖМИ!',
     items: {
       'hat:none':      { n: 'Без шляпы',        d: '' },
       'hat:tophat':     { n: 'Цилиндр',          d: 'Просто стильно.' },
@@ -3063,7 +3373,7 @@ const I18N = {
     gfxLabel: 'Graphics', gfx_auto: 'Auto', gfx_high: 'Pretty', gfx_low: 'Fast', gfx_ultra: 'Ultra',
     expBadge: 'experimental',
     gfxUltraNote: '⚗ Experimental feature: 3D-looking platforms and shadows. May lag on weak phones.',
-    catMain: 'General', catGfx: 'Graphics', catProfile: 'Profile', catSound: 'Sound', catOnline: 'Online', catCommunity: 'Community', fruitsBtn: 'Fruits', fruitsTitle: 'Fruits', wheelTitle: 'Wheel', fruitInvTitle: 'Fruits & powers', fruitHint: 'Catch fruits during a run or win them on the wheel. Eat a fruit to get its power. Eating another one replaces it. Trade fruits with friends: the ⇄ button in chat.', fr_spring: 'Spring Fruit', fr_flame: 'Flame Fruit', fr_ice: 'Ice Fruit', fr_storm: 'Storm Fruit', fr_portal: 'Portal Fruit', fr_star: 'Star Fruit', frd_spring: 'Springs on platforms appear 3 times more often.', frd_flame: 'Monsters burn on touch — no countdown, you still bounce and get coins.', frd_ice: 'Moving platforms freeze, blinking ones never vanish.', frd_storm: 'Every 6 seconds lightning hits the nearest monster: +coins.', frd_portal: 'Teleports are common and take you to the highest platform.', frd_star: 'A shower of coins every 1000 points. +50% Cabbit Pass tokens.', rar1: 'Common', rar2: 'Rare', rar3: 'Epic', rar4: 'Legendary', fruitEatenNow: 'Eaten now', fruitNone: 'You have not eaten a fruit yet. Catch one in a run or win one on the wheel!', fruitEat: 'Eat', fruitReplace: 'Eat {new}? The "{old}" power will be lost.', fruitAte: 'You ate: {f}!', fruitGot: 'New fruit: {f}!', wheelSpin: 'Spin · {p}', wheelWon: 'You got:', wheelOdds: 'Odds:', tradeTitle: 'Fruit trade', tradeGiveLabel: 'You give', tradeWantLabel: 'You want', tradeSend: 'Offer', tradeNoFruits: 'You have no fruits to trade yet.', tradeSame: 'You cannot trade a fruit for the same one.', tradeYouGive: 'you give', tradeYouGet: 'you get', tradeTheyGive: 'gives you', tradeTheyWant: 'wants back', tradeAccept: 'Accept', tradeDecline: 'Decline', tradeCancel: 'Cancel', tradeWaiting: 'Waiting for your friend…', tradeStDone: 'Trade done ✓', tradeStNo: 'Declined', tradeStCancel: 'Cancelled', tradeNeedFruit: 'You need {f} for this trade', tradeClosed: 'This trade is already closed', tradeCancelled: 'Trade cancelled, fruit returned', tradeDoneYou: 'Trade! You got: {f}', tradeDoneThem: 'Your friend accepted! You got: {f}', tradeDeclined: 'Trade did not happen, {f} returned', msgTrade: '⇄ Fruit trade',
+    catMain: 'General', catGfx: 'Graphics', catProfile: 'Profile', catSound: 'Sound', catOnline: 'Online', catCommunity: 'Community', fruitsBtn: 'Fruits', fruitsTitle: 'Fruits', wheelTitle: 'Wheel', fruitInvTitle: 'Fruits & powers', fruitHint: 'Catch fruits during a run or win them on the wheel. Eat a fruit to get its power. Eating another one replaces it. Trade fruits with friends: the ⇄ button in chat.', fr_spring: 'Spring Fruit', fr_flame: 'Flame Fruit', fr_ice: 'Ice Fruit', fr_storm: 'Storm Fruit', fr_portal: 'Portal Fruit', fr_star: 'Star Fruit', fr_cloud: 'Cloud Fruit', fr_magnet: 'Magnet Fruit', frd_cloud: 'You fall softly like a feather: far platforms are easier to reach.', frd_magnet: 'Coins fly to you on their own, like with the halo.', fruitEatenTag: 'Eaten', fruitWhere: 'Drops from the wheel and during runs', frd_spring: 'Springs on platforms appear 3 times more often.', frd_flame: 'Monsters burn on touch — no countdown, you still bounce and get coins.', frd_ice: 'Moving platforms freeze, blinking ones never vanish.', frd_storm: 'Every 6 seconds lightning hits the nearest monster: +coins.', frd_portal: 'Teleports are common and take you to the highest platform.', frd_star: 'A shower of coins every 1000 points. +50% Cabbit Pass tokens.', rar1: 'Common', rar2: 'Rare', rar3: 'Epic', rar4: 'Legendary', fruitEatenNow: 'Eaten now', fruitNone: 'You have not eaten a fruit yet. Catch one in a run or win one on the wheel!', fruitEat: 'Eat', fruitReplace: 'Eat {new}? The "{old}" power will be lost.', fruitAte: 'You ate: {f}!', fruitGot: 'New fruit: {f}!', wheelSpin: 'Spin · {p}', wheelWon: 'You got:', wheelOdds: 'Odds:', tradeTitle: 'Fruit trade', tradeGiveLabel: 'You give', tradeWantLabel: 'You want', tradeSend: 'Offer', tradeNoFruits: 'You have no fruits to trade yet.', tradeSame: 'You cannot trade a fruit for the same one.', tradeYouGive: 'you give', tradeYouGet: 'you get', tradeTheyGive: 'gives you', tradeTheyWant: 'wants back', tradeAccept: 'Accept', tradeDecline: 'Decline', tradeCancel: 'Cancel', tradeWaiting: 'Waiting for your friend…', tradeStDone: 'Trade done ✓', tradeStNo: 'Declined', tradeStCancel: 'Cancelled', tradeNeedFruit: 'You need {f} for this trade', tradeClosed: 'This trade is already closed', tradeCancelled: 'Trade cancelled, fruit returned', tradeDoneYou: 'Trade! You got: {f}', tradeDoneThem: 'Your friend accepted! You got: {f}', tradeDeclined: 'Trade did not happen, {f} returned', msgTrade: '⇄ Fruit trade',
     settingsSave: '✓ Save', settingsSaved: 'Saved ✓',
     gfxAutoLowNote: '(lag detected — fast mode on)',
     pauseMenu: 'Menu',
@@ -3121,7 +3431,7 @@ const I18N = {
     cloudNotFound: 'Code not found', accountDeleted: 'This account was deleted by the administration. The game will start from scratch.', cloudErr: 'Could not reach the server', cloudLoading: 'Loading…',
     smashToast: 'MACE SMASH!', kickToast: 'KICKED!', perfectToast: 'PERFECT!',
     laserToast: 'WATCH OUT: LASERS!',
-    perkRefund: 'Perks changed — {c} coins refunded', fruitRefund: 'Flame and Storm fruits were removed — {c} coins refunded', wheelSpinN: '×{n} · {p}', wheelSkipOff: 'Animation: on', wheelSkipOn: 'Animation: skip', wheelSkipNow: 'Skip', closedTitle: 'The game is closed', closedText: 'Cabbit Jump! is closed for an indefinite time. Thank you to everyone who was with us for this short while! All your records, coins and purchases will be kept.', closedBye: 'See you! 🐰', dailyNeedNet: 'You need internet to claim the reward', glassToast: 'THE GLASS SAVED YOU!', tapPrompt: 'TAP!',
+    perkRefund: 'Perks changed — {c} coins refunded', fruitRefund: 'Flame and Storm fruits were removed — {c} coins refunded', boss0: 'Twilight King', boss1: 'Frost Colossus', boss2: 'Magma Lord', boss3: 'Toxic Slime', boss4: 'Star Devourer', bossWarn: 'A boss is coming!', bossesChip: 'Bosses', seasonTitle: 'Season {n}', seasonDaysLeft: '{d} days left', seasonBestShort: 'best', ev_boss: 'Boss week', ev_pass: 'Pass week', ev_fruit: 'Fruit week', evd_boss: 'Beating a boss gives double coins.', evd_pass: '1.5x Cabbit Pass tokens per run.', evd_fruit: 'Up to two fruits per run, and bosses give two fruits.', tabPlayers: 'Players', tabClans: 'Clans', tabMyClan: 'My clan', seasonMyBadges: 'Your past seasons', seasonShort: 'Season {n}', seasonNoPlayers: 'Nobody has played this season yet. Be the first!', seasonRewardsTitle: 'Coins at the end of the season', seasonTopN: 'Top {n}', seasonRewardToast: 'Season {s} is over! Your place: {r}. Reward: {c} coins', seasonNoRank: 'outside top 100', clanNoneYet: 'No clans yet. Create the first one in the My clan tab!', clanMembersN: 'members: {n}', clanPoints: 'season points: {n}', clanCodeLbl: 'Clan code:', clanCopy: 'Copy', clanCopied: 'Copied', clanDisband: 'Disband clan', clanLeave: 'Leave clan', clanLeaveSure: 'Sure? Tap again', clanJoin: 'Join', clanCreateTitle: 'Create your clan', clanNamePh: 'Clan name', clanCreateBtn: 'Create · {p}', clanJoinTitle: 'Join by code', clanCodePh: 'Clan code', clanJoinHint: 'The clan code is the player code of its creator. Ask the leader or find a clan in the Clans tab.', clanErrName: 'Name must be 3 to 16 characters', clanErrAlready: 'You are already in a clan', clanErrCoins: 'You need {p} coins', clanErrCode: 'Enter a clan code', clanErrNotFound: 'No clan with this code', clanErrFull: 'The clan already has {n} players', clanErrNet: 'No connection, try again', clanDisbanded: 'The leader disbanded your clan. Join another or create your own.', bestiaryTitle: 'Bestiary', bestiarySub: 'Beaten {a} of {b} · total wins: {n}', bossWins: 'Wins: {n}', bossUnknown: 'Not met yet · arrives at {s} points', bestiaryHint: 'A boss arrives at the end of every world. Catch the golden stars to hit it and dodge its shots. Beat it for coins and a fruit.', bestChip: 'Best', overPoints: 'points', overWorld: 'World', overCoinsTile: 'Coins', worldLabel: 'WORLD {n}', bossIncoming: 'BOSS: {b}!', bossDown: 'BOSS DEFEATED!', bossFled: 'The boss flew away…', bossTime: 'The boss leaves in {s}', bossHint: 'Catch the golden stars — they hit the boss. Dodge its shots!', wheelSpinN: '×{n} · {p}', wheelSkipOff: 'Animation: on', wheelSkipOn: 'Animation: skip', wheelSkipNow: 'Skip', closedTitle: 'Opening soon!', closedText: 'Cabbit Jump! is coming back with its biggest update: bosses, new graphics, seasons and clans. All your records, coins and purchases are safe.', closedTimerLbl: 'Opens in', closedBye: 'October 2, 17:00 UTC', dailyNeedNet: 'You need internet to claim the reward', glassToast: 'THE GLASS SAVED YOU!', tapPrompt: 'TAP!',
     items: {
       'hat:none':      { n: 'No hat',           d: '' },
       'hat:tophat':     { n: 'Top Hat',          d: 'Just stylish.' },
@@ -3604,7 +3914,7 @@ const multiOn = () => isOwned('perk', 'multiacc');
 const hasHat  = (v) => (outfit.hat === v || (multiOn() && outfit.hat2 === v)) && isOwned('hat', v);
 const hasAcc  = (v) => (outfit.acc === v || (multiOn() && outfit.acc2 === v)) && isOwned('acc', v);
 const hasGlass = () => hasHat('glass') && !glassUsedThisRun;
-const gravityMult   = () => hasHat('propeller') ? 0.55 : 1;
+const gravityMult   = () => (hasHat('propeller') ? 0.55 : 1) * (typeof hasFruit === 'function' && hasFruit('cloud') && hero && hero.vy > 0 ? 0.72 : 1);
 const scoreMult      = () => hasAcc('tie') ? 1.25 : 1;
 const hasMace       = () => outfit.tool === 'mace' && isOwned('tool', 'mace');
 const hasBow        = () => outfit.tool === 'bow'  && isOwned('tool', 'bow');
@@ -3616,7 +3926,7 @@ let spearCdLeft = 0;
 let spearCdShown = -1;
 const SPEAR_V = -1250;
 const coinMult      = () => (hasHat('crown') ? 2 : 1) * (eventActive() ? 2 : 1);
-const hasMagnet     = () => hasHat('halo');
+const hasMagnet     = () => hasHat('halo') || (typeof hasFruit === 'function' && hasFruit('magnet'));
 const hasDoubleJump = () => hasAcc('backpack');
 
 
@@ -3795,7 +4105,8 @@ function makePlatform(y, type, spring){
     vx: type === 'moving' ? rand(55, 112) * (Math.random() < 0.5 ? -1 : 1) : 0,
     spring: !!spring,
     springC: 0, springV: 0,
-    broken: false, fallV: 0, rot: 0, alpha: 1, wobble: 0
+    broken: false, fallV: 0, rot: 0, alpha: 1, wobble: 0,
+    skin: worldIndex()
   };
 }
 
@@ -3885,9 +4196,31 @@ function burstLeaves(x, y, power){
       vx: Math.cos(a) * sp * 0.9, vy: Math.abs(Math.sin(a)) * sp * 0.35 + rand(-40, 60),
       life: 1, decay: rand(1.1, 1.9),
       r: rand(3.5, 7.5), rot: rand(0, 6.28), spin: rand(-8, 8),
-      color: pick(['#7fe06b', '#58c24a', '#a6f08f', '#3f9a37'])
+      color: pick(landColors())
     });
   }
+}
+const LAND_COLORS = [
+  ['#7fe06b', '#58c24a', '#a6f08f', '#3f9a37'],
+  ['#ffffff', '#dff4ff', '#bfe9ff', '#9fd8f5'],
+  ['#ffb35c', '#ff7a2a', '#ffd08a', '#ff5a1f'],
+  ['#b4f07a', '#8fe06a', '#d8ff9a', '#62b83a'],
+  ['#9ff6ff', '#c9a8ff', '#ffffff', '#ffd9f0']
+];
+function landColors(){
+  if (typeof sceneryEnabled === 'function' && sceneryEnabled()) return LAND_COLORS[worldFx.cur % LAND_COLORS.length];
+  return LAND_COLORS[0];
+}
+function drawHeroGlow(x, y){
+  if (lowGfx() || uiStyle !== 'classic') return;
+  const th = WORLD_THEMES[worldFx.cur % WORLD_THEMES.length];
+  const pulse = 0.85 + Math.sin(performance.now() / 420) * 0.15;
+  const r = 62 * pulse;
+  const g = ctx.createRadialGradient(x, y, 6, x, y, r);
+  g.addColorStop(0, th.glow.replace(/,[.\d]+\)$/, ',.55)'));
+  g.addColorStop(1, th.glow.replace(/,[.\d]+\)$/, ',0)'));
+  ctx.fillStyle = g;
+  ctx.fillRect(x - r, y - r, r * 2, r * 2);
 }
 
 function burstSpark(x, y, color, n, spread){
@@ -4302,7 +4635,9 @@ function drawDyingHero(){
 
 const FRUITS = {
   spring: { rar: 1, c1: '#c4f79c', c2: '#2f9a3c', sw: '#f0ffe0' },
+  cloud:  { rar: 1, c1: '#ffffff', c2: '#8fb4ff', sw: '#ffffff' },
   ice:    { rar: 2, c1: '#e2fbff', c2: '#3b8fdc', sw: '#ffffff' },
+  magnet: { rar: 2, c1: '#ffc0c0', c2: '#d8323a', sw: '#fff0f0' },
   portal: { rar: 3, c1: '#f0d0ff', c2: '#6a2cc6', sw: '#f9eeff' },
   star:   { rar: 4, c1: '#fff6c0', c2: '#ff7a2f', sw: '#ffffff' }
 };
@@ -4467,21 +4802,21 @@ function fruitIconCanvas(id, size){
 
 const fruitPickups = [];
 const bolts = [];
-let fruitSpawnedRun = false;
+let fruitSpawnedRun = 0;
 let stormT = 0;
 let starNext = 1000;
 const STORM_EVERY = 6;
 function maybeSpawnFruit(p){
-  if (fruitSpawnedRun || score < 400 || p.type !== 'normal' || p.spring) return;
+  if (fruitSpawnedRun >= (weekEvent() === 'fruit' ? 2 : 1) || score < 400 || p.type !== 'normal' || p.spring) return;
   if (Math.random() < 0.0016){
-    fruitSpawnedRun = true;
+    fruitSpawnedRun += 1;
     fruitPickups.push({ plat: p, x: p.x + p.w / 2, y: p.y - 36, id: rollFruit(), bob: 0, got: 0 });
   }
 }
 function resetFruitRun(){
   fruitPickups.length = 0;
   bolts.length = 0;
-  fruitSpawnedRun = false;
+  fruitSpawnedRun = 0;
   stormT = 0;
   starNext = 1000;
 }
@@ -4822,12 +5157,13 @@ function renderFruitsScreen(keepWheel){
       const f = FRUITS[id];
       const n = fruitCount(id);
       const card = document.createElement('div');
-      card.className = 'fruitCard' + (n ? '' : ' empty') + (fruitState.eat === id ? ' eaten' : '');
+      card.className = 'fruitCard' + (n || fruitState.eat === id ? '' : ' empty') + (fruitState.eat === id ? ' eaten' : '');
       card.style.setProperty('--rc', RARITY_COL[f.rar]);
       card.appendChild(fruitIconCanvas(id, 46));
       const body = document.createElement('div');
       body.className = 'fruitCardBody';
-      body.innerHTML = '<div class="fruitName">' + escapeHtml(fruitName(id)) + (n ? ' <span class="fruitCnt">×' + n + '</span>' : '') + '</div><div class="fruitRar">' + escapeHtml(rarityName(f.rar)) + '</div><div class="fruitDesc">' + escapeHtml(fruitDesc(id)) + '</div>';
+      const eatenNow = fruitState.eat === id;
+      body.innerHTML = '<div class="fruitName">' + escapeHtml(fruitName(id)) + (n ? ' <span class="fruitCnt">×' + n + '</span>' : '') + (eatenNow ? ' <span class="fruitTag">' + escapeHtml(t('fruitEatenTag')) + '</span>' : '') + '</div><div class="fruitRar">' + escapeHtml(rarityName(f.rar)) + '</div><div class="fruitDesc">' + escapeHtml(fruitDesc(id)) + '</div>' + (!n && !eatenNow ? '<div class="fruitWhere">' + escapeHtml(t('fruitWhere')) + '</div>' : '');
       card.appendChild(body);
       if (n){
         const b = document.createElement('button');
@@ -4850,10 +5186,6 @@ function renderFruitsScreen(keepWheel){
 }
 function askEatFruit(id){
   if (fruitCount(id) <= 0) return;
-  if (fruitState.eat && fruitState.eat !== id){
-    const ok = typeof window.confirm === 'function' ? window.confirm(t('fruitReplace').replace('{old}', fruitName(fruitState.eat)).replace('{new}', fruitName(id))) : true;
-    if (!ok) return;
-  }
   if (eatFruit(id)){
     showToast(t('fruitAte').replace('{f}', fruitName(id)));
     sfxCoin();
@@ -5095,8 +5427,915 @@ function makeTradeCard(m, isOwn){
   return box;
 }
 
+const BOSS_FIRST = 2400;
+const BOSS_EVERY = 3000;
+const BOSS_LIFE = 45;
+let boss = null;
+let bossShots = [];
+let bossOrbs = [];
+let bossZaps = [];
+let bossNext = BOSS_FIRST;
+let bossWarn = 0;
+let bossKillsTotal = parseInt(Store.get('bossKills', '0'), 10) || 0;
+let runBossKills = 0;
+let bossKillsById = (() => { try { const v = JSON.parse(Store.get('bossKillsBy', '{}')); return v && typeof v === 'object' ? v : {}; } catch (e) { return {}; } })();
+
+const bossName = (w) => t('boss' + (w % WORLD_THEMES.length));
+const bossTier = () => Math.floor(Math.max(0, score) / BOSS_EVERY);
+function bossMaxHp(tier){ return Math.min(8, 4 + tier); }
+
+function resetBoss(){
+  boss = null;
+  runBossKills = 0;
+  bossShots.length = 0;
+  bossOrbs.length = 0;
+  bossZaps.length = 0;
+  bossNext = BOSS_FIRST;
+  bossWarn = 0;
+}
+
+function spawnBoss(){
+  const tier = bossTier();
+  const w = worldIndex();
+  boss = {
+    w, tier, x: VW / 2, vx: 70 + tier * 12, sf: -0.35, tsf: 0.27,
+    r: 46, hp: bossMaxHp(tier), max: bossMaxHp(tier), t: 0,
+    atkT: 1.6, orbT: 2.4, hurt: 0, st: 'in', dieT: 0, life: BOSS_LIFE
+  };
+  bossWarn = 0;
+  addToast(t('bossIncoming').replace('{b}', bossName(w)), VW / 2, camY + VH * 0.34, '#ff6b6b');
+  flash = 0.5; flashColor = '#ff3b3b';
+  shake = Math.max(shake, 10);
+  sweep(160, 90, 0.5, 'sawtooth', 0.12);
+  buzz(60);
+}
+
+function bossAttackEvery(){ return Math.max(0.75, 1.7 - boss.tier * 0.12 - (1 - boss.hp / boss.max) * 0.5); }
+
+function bossShoot(){
+  const b = boss;
+  const by = camY + VH * b.sf;
+  const n = b.hp <= b.max / 2 ? 2 : 1;
+  for (let i = 0; i < n; i++){
+    const aim = clamp((hero.x - b.x) * 0.35, -90, 90);
+    bossShots.push({ x: b.x + (n > 1 ? (i ? 18 : -18) : 0), y: by + b.r * 0.6, vx: aim + (n > 1 ? (i ? 40 : -40) : 0), vy: 170 + b.tier * 18, r: 11, t: 0 });
+  }
+  beep(260, 0.08, 'square', 0.06);
+}
+
+function bossDropOrb(){
+  const b = boss;
+  bossOrbs.push({ x: clamp(b.x + rand(-60, 60), 30, VW - 30), y: camY + VH * b.sf + b.r, vy: 95, t: 0, r: 16 });
+}
+
+function damageBoss(n, fx, fy){
+  const b = boss;
+  if (!b || b.st !== 'fight') return;
+  b.hp = Math.max(0, b.hp - n);
+  b.hurt = 1;
+  const by = camY + VH * b.sf;
+  bossZaps.push({ x1: fx, y1: fy, x2: b.x, y2: by, life: 1 });
+  burstSpark(b.x, by, '#fff3b0', 16, 1.2);
+  burstPixels(b.x, by, WORLD_THEMES[b.w].monster.burst);
+  shake = Math.max(shake, 12);
+  hitStop = 0.07;
+  flash = 0.35; flashColor = '#ffe37a';
+  sfxSmash();
+  buzz(40);
+  if (b.hp <= 0){
+    b.st = 'die'; b.dieT = 0;
+    bossShots.length = 0; bossOrbs.length = 0;
+    sweep(900, 120, 0.9, 'sawtooth', 0.12);
+  }
+}
+
+function bossReward(){
+  const b = boss;
+  const gain = Math.round((40 + 20 * b.tier) * coinMult() * (weekEvent() === 'boss' ? 2 : 1));
+  runCoins += gain; coins += gain;
+  Store.set('coins', coins);
+  coinPulse = 1;
+  const by = camY + VH * b.sf;
+  addToast(t('bossDown'), VW / 2, by + 40, '#ffe37a');
+  addToast('+' + gain, VW / 2, by + 70, '#ffd34d');
+  for (let k = 0; k < (weekEvent() === 'fruit' ? 2 : 1); k++){
+    const f = rollFruit([40, 38, 17, 5]);
+    if (f && addFruit(f)) addToast(t('fruitGot').replace('{f}', fruitName(f)), VW / 2, by + 100 + k * 26, RARITY_COL[FRUITS[f].rar]);
+  }
+  bossKillsTotal += 1;
+  runBossKills += 1;
+  bossKillsById[b.w] = (bossKillsById[b.w] || 0) + 1;
+  Store.set('bossKills', String(bossKillsTotal));
+  Store.set('bossKillsBy', JSON.stringify(bossKillsById));
+  if (typeof cloudPushSoon === 'function') cloudPushSoon();
+  sfxCoin();
+}
+
+function endBoss(){
+  boss = null;
+  bossShots.length = 0;
+  bossOrbs.length = 0;
+  bossNext = (Math.floor(Math.max(0, score) / BOSS_EVERY) + 1) * BOSS_EVERY + BOSS_FIRST;
+}
+
+function updateBoss(dt){
+  for (let i = bossZaps.length - 1; i >= 0; i--){ bossZaps[i].life -= dt * 3; if (bossZaps[i].life <= 0) bossZaps.splice(i, 1); }
+  if (!boss){
+    if (state !== STATE.PLAY) return;
+    if (score >= bossNext - 250 && !bossWarn){ bossWarn = 1; addToast(t('bossWarn'), VW / 2, camY + VH * 0.3, '#ff8a8a'); beep(300, 0.2, 'square', 0.08); }
+    if (score >= bossNext && !monsterEvent) spawnBoss();
+    return;
+  }
+  const b = boss;
+  b.t += dt;
+  b.hurt = Math.max(0, b.hurt - dt * 3);
+  monsterTimer = Math.max(monsterTimer, 1.5);
+  laserTimer = Math.max(laserTimer, 2);
+
+  if (b.st === 'die'){
+    b.dieT += dt;
+    const by = camY + VH * b.sf;
+    if (Math.random() < dt * 14) burstSpark(b.x + rand(-b.r, b.r), by + rand(-b.r, b.r), pick(WORLD_THEMES[b.w].monster.burst), 10, 1);
+    shake = Math.max(shake, 8);
+    if (b.dieT > 1.2){
+      burstPixels(b.x, by, WORLD_THEMES[b.w].monster.burst);
+      burstSpark(b.x, by, '#ffe37a', 40, 2);
+      addParticle({ kind: 'ring', x: b.x, y: by, vx: 0, vy: 0, life: 1, decay: 1.2, r: 20, color: '#ffe37a' });
+      flash = 0.8; flashColor = '#ffffff';
+      bossReward();
+      endBoss();
+    }
+    return;
+  }
+
+  if (b.st === 'in'){ b.sf = approach(b.sf, b.tsf, 2.5, dt); if (Math.abs(b.sf - b.tsf) < 0.01){ b.st = 'fight'; } }
+  else if (b.st === 'flee'){ b.sf -= dt * 0.8; if (b.sf < -0.5){ addToast(t('bossFled'), VW / 2, camY + VH * 0.3, '#c9c9d4'); endBoss(); return; } }
+  else {
+    b.life -= dt;
+    if (b.life <= 0){ b.st = 'flee'; bossShots.length = 0; bossOrbs.length = 0; return; }
+    b.atkT -= dt;
+    if (b.atkT <= 0){ bossShoot(); b.atkT = bossAttackEvery(); }
+    b.orbT -= dt;
+    if (b.orbT <= 0 && bossOrbs.length < 2){ bossDropOrb(); b.orbT = 3.2; }
+  }
+  b.x += b.vx * dt * (b.st === 'fight' ? 1 : 0.4);
+  if (b.x < b.r + 6){ b.x = b.r + 6; b.vx = Math.abs(b.vx); }
+  if (b.x > VW - b.r - 6){ b.x = VW - b.r - 6; b.vx = -Math.abs(b.vx); }
+
+  const hitR = hero.w * 0.3;
+  for (let i = bossShots.length - 1; i >= 0; i--){
+    const s = bossShots[i];
+    s.t += dt; s.x += s.vx * dt; s.y += s.vy * dt;
+    if (s.y - camY > VH + 40){ bossShots.splice(i, 1); continue; }
+    const dx = s.x - hero.x, dy = s.y - hero.y;
+    if (state === STATE.PLAY && dx * dx + dy * dy < (s.r + hitR) * (s.r + hitR)){
+      bossShots.splice(i, 1);
+      burstSpark(s.x, s.y, WORLD_THEMES[b.w].monster.light, 14, 1);
+      handleFatalEvent();
+      return;
+    }
+  }
+  for (let i = bossOrbs.length - 1; i >= 0; i--){
+    const o = bossOrbs[i];
+    o.t += dt; o.y += o.vy * dt;
+    if (o.y - camY > VH + 40){ bossOrbs.splice(i, 1); continue; }
+    const dx = o.x - hero.x, dy = o.y - hero.y;
+    if (dx * dx + dy * dy < (o.r + hero.w * 0.45) * (o.r + hero.w * 0.45)){
+      bossOrbs.splice(i, 1);
+      hero.vy = Math.min(hero.vy, JUMP_V * 0.95);
+      airJumps = hasDoubleJump() ? 1 : 0;
+      damageBoss(1, o.x, o.y);
+      if (!boss || boss.st !== 'fight') return;
+    }
+  }
+  if (b.st === 'fight' && typeof arrows !== 'undefined'){
+    const by = camY + VH * b.sf;
+    for (let i = arrows.length - 1; i >= 0; i--){
+      const a = arrows[i];
+      const dx = a.x - b.x, dy = a.y - by;
+      if (dx * dx + dy * dy < b.r * b.r){ arrows.splice(i, 1); damageBoss(0.34, a.x, a.y); if (!boss || boss.st !== 'fight') break; }
+    }
+  }
+}
+
+function drawBoss(){
+  for (const z of bossZaps){
+    ctx.save();
+    ctx.globalAlpha = clamp(z.life, 0, 1);
+    ctx.strokeStyle = '#fff7b0';
+    ctx.lineWidth = 4;
+    ctx.shadowColor = '#ffe37a';
+    ctx.shadowBlur = lowGfx() ? 0 : 16;
+    ctx.beginPath();
+    const n = 6;
+    for (let i = 0; i <= n; i++){
+      const k = i / n;
+      const x = z.x1 + (z.x2 - z.x1) * k + (i && i < n ? Math.sin(i * 7.3 + z.life * 20) * 10 : 0);
+      const y = z.y1 + (z.y2 - z.y1) * k - camY;
+      if (i) ctx.lineTo(x, y); else ctx.moveTo(x, y);
+    }
+    ctx.stroke();
+    ctx.restore();
+  }
+  const now = performance.now() / 1000;
+  for (const o of bossOrbs){
+    const y = o.y - camY;
+    const p = 1 + Math.sin(now * 8 + o.t) * 0.12;
+    ctx.save();
+    ctx.translate(o.x, y);
+    if (!lowGfx()){
+      const gl = ctx.createRadialGradient(0, 0, 2, 0, 0, o.r * 2.4);
+      gl.addColorStop(0, 'rgba(255,230,120,.7)');
+      gl.addColorStop(1, 'rgba(255,230,120,0)');
+      ctx.fillStyle = gl;
+      ctx.beginPath(); ctx.arc(0, 0, o.r * 2.4, 0, 6.2832); ctx.fill();
+    }
+    ctx.rotate(now * 2);
+    ctx.scale(p, p);
+    ctx.fillStyle = '#ffe37a';
+    ctx.strokeStyle = '#b8860b';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    for (let i = 0; i < 10; i++){
+      const a = i / 10 * 6.2832 - 1.5708;
+      const rr = i % 2 ? o.r * 0.45 : o.r;
+      ctx.lineTo(Math.cos(a) * rr, Math.sin(a) * rr);
+    }
+    ctx.closePath();
+    ctx.fill(); ctx.stroke();
+    ctx.restore();
+  }
+  const b = boss;
+  const wm = b ? WORLD_THEMES[b.w].monster : currentWorld().monster;
+  for (const s of bossShots){
+    const y = s.y - camY;
+    ctx.save();
+    ctx.translate(s.x, y);
+    if (!lowGfx()){
+      const gl = ctx.createRadialGradient(0, 0, 1, 0, 0, s.r * 2.2);
+      gl.addColorStop(0, wm.light);
+      gl.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.globalAlpha = 0.6;
+      ctx.fillStyle = gl;
+      ctx.beginPath(); ctx.arc(0, 0, s.r * 2.2, 0, 6.2832); ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+    ctx.fillStyle = wm.light;
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.arc(0, 0, s.r, 0, 6.2832); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = wm.dark;
+    ctx.beginPath(); ctx.arc(0, 0, s.r * 0.45, 0, 6.2832); ctx.fill();
+    ctx.restore();
+  }
+  if (!b) return;
+  const y = VH * b.sf;
+  const bob = Math.sin(b.t * 2.4) * 5;
+  const die = b.st === 'die' ? clamp(b.dieT / 1.2, 0, 1) : 0;
+  ctx.save();
+  ctx.translate(b.x + (die ? rand(-4, 4) : 0), y + bob);
+  const sc = 1 + b.hurt * 0.12 + die * 0.25;
+  ctx.scale(sc, sc * (1 - b.hurt * 0.08));
+  ctx.globalAlpha = 1 - die * 0.6;
+  if (!lowGfx()){
+    const gl = ctx.createRadialGradient(0, 0, b.r * 0.5, 0, 0, b.r * 2.1);
+    gl.addColorStop(0, WORLD_THEMES[b.w].glow);
+    gl.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = gl;
+    ctx.beginPath(); ctx.arc(0, 0, b.r * 2.1, 0, 6.2832); ctx.fill();
+  }
+  ctx.fillStyle = wm.spike;
+  for (let i = 0; i < 12; i++){
+    const a = (i / 12) * 6.2832 + b.t * 0.4;
+    ctx.save();
+    ctx.rotate(a);
+    ctx.beginPath();
+    ctx.moveTo(-8, -b.r * 0.8);
+    ctx.lineTo(0, -b.r * 1.32);
+    ctx.lineTo(8, -b.r * 0.8);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+  const g = ctx.createRadialGradient(-b.r * 0.3, -b.r * 0.3, 4, 0, 0, b.r);
+  g.addColorStop(0, b.hurt > 0.5 ? '#ffffff' : wm.light);
+  g.addColorStop(1, wm.dark);
+  ctx.fillStyle = g;
+  ctx.strokeStyle = wm.stroke;
+  ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.arc(0, 0, b.r, 0, 6.2832); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = '#ffd34d';
+  ctx.strokeStyle = '#8a5f00';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(-24, -b.r * 0.72);
+  ctx.lineTo(-24, -b.r * 1.12); ctx.lineTo(-12, -b.r * 0.9); ctx.lineTo(0, -b.r * 1.22); ctx.lineTo(12, -b.r * 0.9); ctx.lineTo(24, -b.r * 1.12); ctx.lineTo(24, -b.r * 0.72);
+  ctx.closePath(); ctx.fill(); ctx.stroke();
+  const look = clamp((hero.x - b.x) / 120, -1, 1) * 3;
+  ctx.fillStyle = '#fff';
+  ctx.beginPath();
+  ctx.ellipse(-15, -4, 10, 12, -0.25, 0, 6.2832);
+  ctx.ellipse(15, -4, 10, 12, 0.25, 0, 6.2832);
+  ctx.fill();
+  ctx.fillStyle = '#e21b3c';
+  ctx.beginPath();
+  ctx.arc(-14 + look, 0, 5, 0, 6.2832);
+  ctx.arc(16 + look, 0, 5, 0, 6.2832);
+  ctx.fill();
+  ctx.strokeStyle = '#20081f';
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(-26, -18); ctx.lineTo(-6, -10);
+  ctx.moveTo(26, -18); ctx.lineTo(6, -10);
+  ctx.stroke();
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(-18, 18);
+  for (let i = 1; i <= 6; i++) ctx.lineTo(-18 + i * 6, 18 + (i % 2 ? 7 : 0));
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawBossHud(){
+  const b = boss;
+  if (!b || b.st === 'die' && b.dieT > 1) return;
+  const x = 60, w = VW - 120, y = 92;
+  ctx.save();
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'bottom';
+  ctx.font = '15px ' + GAME_FONT;
+  ctx.lineWidth = 4;
+  ctx.strokeStyle = 'rgba(21,10,43,.7)';
+  ctx.fillStyle = '#ff8a8a';
+  const nm = bossName(b.w);
+  ctx.strokeText(nm, VW / 2, y - 3);
+  ctx.fillText(nm, VW / 2, y - 3);
+  ctx.fillStyle = 'rgba(21,10,43,.7)';
+  ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x - 3, y - 1, w + 6, 14, 7) : ctx.rect(x - 3, y - 1, w + 6, 14); ctx.fill();
+  const k = clamp(b.hp / b.max, 0, 1);
+  const g = ctx.createLinearGradient(x, 0, x + w, 0);
+  g.addColorStop(0, '#ff5a5a');
+  g.addColorStop(1, '#ffb35c');
+  ctx.fillStyle = g;
+  ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x, y + 2, w * k, 8, 4) : ctx.rect(x, y + 2, w * k, 8); ctx.fill();
+  if (b.st === 'fight' && b.life < 10){
+    ctx.textBaseline = 'top';
+    ctx.font = '13px ' + GAME_FONT;
+    ctx.fillStyle = '#fdf6e8';
+    ctx.globalAlpha = 0.8;
+    ctx.fillText(t('bossTime').replace('{s}', Math.ceil(b.life)), VW / 2, y + 16);
+  }
+  ctx.restore();
+}
+
+const WB_IN = 0.45, WB_HOLD = 1.6, WB_OUT = 0.5;
+let worldBanner = null;
+function showWorldBanner(w){
+  worldBanner = { w, t: 0 };
+  const wm = WORLD_THEMES[w].monster;
+  if (typeof hero !== 'undefined' && hero){
+    for (let i = 0; i < 3; i++) burstSpark(hero.x, hero.y, wm.burst[i], 14, 1.3);
+    addParticle({ kind: 'ring', x: hero.x, y: hero.y, vx: 0, vy: 0, life: 1, decay: 1.1, r: 12, color: wm.light });
+  }
+  sweep(330, 990, 0.45, 'triangle', 0.07);
+}
+function updateWorldBanner(dt){
+  if (!worldBanner) return;
+  worldBanner.t += dt;
+  if (worldBanner.t > WB_IN + WB_HOLD + WB_OUT) worldBanner = null;
+}
+function drawWorldBanner(){
+  const b = worldBanner;
+  if (!b) return;
+  const th = WORLD_THEMES[b.w];
+  const tin = clamp(b.t / WB_IN, 0, 1);
+  const tout = clamp((b.t - WB_IN - WB_HOLD) / WB_OUT, 0, 1);
+  const ein = 1 - Math.pow(1 - tin, 3);
+  const a = ein * (1 - tout);
+  if (a <= 0.001) return;
+  const cy = VH * 0.3 - tout * 30;
+  const bandH = 104 * (0.3 + 0.7 * ein);
+  ctx.save();
+  ctx.globalAlpha = a;
+  const g = ctx.createLinearGradient(0, cy - bandH / 2, 0, cy + bandH / 2);
+  g.addColorStop(0, 'rgba(10,4,24,0)');
+  g.addColorStop(0.25, 'rgba(10,4,24,.62)');
+  g.addColorStop(0.75, 'rgba(10,4,24,.62)');
+  g.addColorStop(1, 'rgba(10,4,24,0)');
+  ctx.fillStyle = g;
+  ctx.fillRect(-OX / S, cy - bandH / 2, cssW / S, bandH);
+  const lw = VW * 0.42 * ein;
+  const lg = ctx.createLinearGradient(VW / 2 - lw, 0, VW / 2 + lw, 0);
+  lg.addColorStop(0, 'rgba(255,211,77,0)');
+  lg.addColorStop(0.5, 'rgba(255,211,77,.95)');
+  lg.addColorStop(1, 'rgba(255,211,77,0)');
+  ctx.fillStyle = lg;
+  ctx.fillRect(VW / 2 - lw, cy - 38, lw * 2, 1.6);
+  ctx.fillRect(VW / 2 - lw, cy + 38, lw * 2, 1.6);
+  const sweepX = -80 + (VW + 160) * clamp((b.t - 0.2) / 0.9, 0, 1);
+  if (b.t > 0.2 && b.t < 1.1){
+    const sg = ctx.createLinearGradient(sweepX - 40, 0, sweepX + 40, 0);
+    sg.addColorStop(0, 'rgba(255,255,255,0)');
+    sg.addColorStop(0.5, 'rgba(255,255,255,.22)');
+    sg.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = sg;
+    ctx.fillRect(sweepX - 40, cy - 36, 80, 72);
+  }
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.font = '14px ' + GAME_FONT;
+  ctx.fillStyle = th.monster.light;
+  ctx.fillText(t('worldLabel').replace('{n}', b.w + 1), VW / 2, cy - 22);
+  const sc = 1.25 - 0.25 * ein;
+  ctx.translate(VW / 2, cy + 8);
+  ctx.scale(sc, sc);
+  ctx.font = '34px ' + GAME_FONT;
+  ctx.lineJoin = 'round';
+  ctx.lineWidth = 7;
+  ctx.strokeStyle = 'rgba(21,10,43,.85)';
+  if (!lowGfx()){ ctx.shadowColor = th.monster.light; ctx.shadowBlur = 18; }
+  ctx.strokeText(th.name, 0, 0);
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = '#fdf6e8';
+  ctx.fillText(th.name, 0, 0);
+  ctx.restore();
+}
+
+function paintBossPortrait(g, w, size, sil){
+  const wm = WORLD_THEMES[w % WORLD_THEMES.length].monster;
+  const r = size * 0.3;
+  g.save();
+  g.clearRect(0, 0, size, size);
+  g.translate(size / 2, size / 2 + r * 0.12);
+  if (!sil){
+    const gl = g.createRadialGradient(0, 0, r * 0.4, 0, 0, r * 1.7);
+    gl.addColorStop(0, WORLD_THEMES[w % WORLD_THEMES.length].glow);
+    gl.addColorStop(1, 'rgba(0,0,0,0)');
+    g.fillStyle = gl;
+    g.beginPath(); g.arc(0, 0, r * 1.7, 0, 6.2832); g.fill();
+  }
+  g.fillStyle = sil ? '#140828' : wm.spike;
+  for (let i = 0; i < 12; i++){
+    g.save();
+    g.rotate(i / 12 * 6.2832);
+    g.beginPath(); g.moveTo(-r * 0.17, -r * 0.8); g.lineTo(0, -r * 1.3); g.lineTo(r * 0.17, -r * 0.8); g.closePath(); g.fill();
+    g.restore();
+  }
+  if (sil){ g.fillStyle = '#140828'; }
+  else {
+    const bg = g.createRadialGradient(-r * 0.3, -r * 0.3, 2, 0, 0, r);
+    bg.addColorStop(0, wm.light); bg.addColorStop(1, wm.dark);
+    g.fillStyle = bg;
+  }
+  g.strokeStyle = sil ? 'rgba(255,255,255,.18)' : wm.stroke;
+  g.lineWidth = Math.max(1.5, r * 0.06);
+  g.beginPath(); g.arc(0, 0, r, 0, 6.2832); g.fill(); g.stroke();
+  g.fillStyle = sil ? '#140828' : '#ffd34d';
+  g.strokeStyle = sil ? 'rgba(255,255,255,.18)' : '#8a5f00';
+  g.lineWidth = Math.max(1, r * 0.04);
+  const c = r / 46;
+  g.beginPath();
+  g.moveTo(-24 * c, -r * 0.72); g.lineTo(-24 * c, -r * 1.12); g.lineTo(-12 * c, -r * 0.9); g.lineTo(0, -r * 1.22); g.lineTo(12 * c, -r * 0.9); g.lineTo(24 * c, -r * 1.12); g.lineTo(24 * c, -r * 0.72);
+  g.closePath(); g.fill(); g.stroke();
+  if (sil){
+    g.fillStyle = 'rgba(255,255,255,.5)';
+    g.font = 'bold ' + Math.round(r * 0.9) + 'px ' + GAME_FONT;
+    g.textAlign = 'center'; g.textBaseline = 'middle';
+    g.fillText('?', 0, r * 0.05);
+  } else {
+    g.fillStyle = '#fff';
+    g.beginPath(); g.ellipse(-15 * c, -4 * c, 10 * c, 12 * c, -0.25, 0, 6.2832); g.ellipse(15 * c, -4 * c, 10 * c, 12 * c, 0.25, 0, 6.2832); g.fill();
+    g.fillStyle = '#e21b3c';
+    g.beginPath(); g.arc(-14 * c, 0, 5 * c, 0, 6.2832); g.arc(16 * c, 0, 5 * c, 0, 6.2832); g.fill();
+    g.strokeStyle = '#20081f';
+    g.lineWidth = 4 * c;
+    g.beginPath(); g.moveTo(-26 * c, -18 * c); g.lineTo(-6 * c, -10 * c); g.moveTo(26 * c, -18 * c); g.lineTo(6 * c, -10 * c); g.stroke();
+    g.lineWidth = 3 * c;
+    g.beginPath(); g.moveTo(-18 * c, 18 * c);
+    for (let i = 1; i <= 6; i++) g.lineTo(-18 * c + i * 6 * c, 18 * c + (i % 2 ? 7 * c : 0));
+    g.stroke();
+  }
+  g.restore();
+}
+
+function renderBestiary(){
+  const list = document.getElementById('bestiaryList');
+  if (!list) return;
+  list.innerHTML = '';
+  let seen = 0;
+  for (let w = 0; w < WORLD_THEMES.length; w++){
+    const kills = bossKillsById[w] || 0;
+    if (kills) seen++;
+    const card = document.createElement('div');
+    card.className = 'bossCard' + (kills ? '' : ' unknown');
+    card.style.setProperty('--bc', WORLD_THEMES[w].monster.light);
+    const cv = document.createElement('canvas');
+    const px = 144;
+    cv.width = px; cv.height = px;
+    cv.className = 'bossPortrait';
+    const g = cv.getContext && cv.getContext('2d');
+    if (g) paintBossPortrait(g, w, px, !kills);
+    card.appendChild(cv);
+    const body = document.createElement('div');
+    body.className = 'bossCardBody';
+    const worldLine = t('worldLabel').replace('{n}', w + 1) + ' · ' + WORLD_THEMES[w].name;
+    body.innerHTML = '<div class="bossName">' + escapeHtml(kills ? bossName(w) : '???') + '</div>'
+      + '<div class="bossWorld">' + escapeHtml(worldLine) + '</div>'
+      + '<div class="bossMeta">' + (kills
+        ? escapeHtml(t('bossWins').replace('{n}', kills))
+        : escapeHtml(t('bossUnknown').replace('{s}', (w * BOSS_EVERY + BOSS_FIRST)))) + '</div>';
+    card.appendChild(body);
+    list.appendChild(card);
+  }
+  const sub = document.getElementById('bestiarySub');
+  if (sub) sub.textContent = t('bestiarySub').replace('{a}', seen).replace('{b}', WORLD_THEMES.length).replace('{n}', bossKillsTotal);
+}
+function openBestiary(){
+  const m = document.getElementById('bestiaryModal');
+  if (!m) return;
+  m.classList.remove('hidden');
+  if (typeof sfxPopupOpen === 'function') sfxPopupOpen();
+  renderBestiary();
+}
+function closeBestiary(){
+  const m = document.getElementById('bestiaryModal');
+  if (m) m.classList.add('hidden');
+  if (typeof sfxPopupClose === 'function') sfxPopupClose();
+}
+
+const SEASON_START_Y = 2026, SEASON_START_M = 10;
+const CLAN_PRICE = 1000;
+const CLAN_MAX = 20;
+const CLAN_COLORS = ['#ffd34d', '#ff6b8a', '#7fe06b', '#5fc9e8', '#c9a8ff', '#ff9a5c'];
+const WEEK_EVENTS = ['boss', 'pass', 'fruit'];
+const SEASON_REWARDS = [[1, 5000], [3, 3000], [10, 1500], [50, 700], [100, 400]];
+
+function seasonKeyOf(d){ return 'sb_' + d.getUTCFullYear() + '_' + String(d.getUTCMonth() + 1).padStart(2, '0'); }
+function seasonKey(){ return seasonKeyOf(new Date()); }
+function prevSeasonKey(){ const d = new Date(); d.setUTCDate(1); d.setUTCMonth(d.getUTCMonth() - 1); return seasonKeyOf(d); }
+function seasonNumberOf(key){
+  const m = /^sb_(\d{4})_(\d{2})$/.exec(key || '');
+  if (!m) return 1;
+  return Math.max(1, (parseInt(m[1], 10) - SEASON_START_Y) * 12 + parseInt(m[2], 10) - SEASON_START_M + 1);
+}
+function seasonDaysLeft(){
+  const d = new Date();
+  const end = Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 1);
+  return Math.max(1, Math.ceil((end - d.getTime()) / 86400000));
+}
+let weekEventOverride = '';
+function weekEvent(now){
+  if (weekEventOverride) return weekEventOverride;
+  const t0 = Date.UTC(2026, 8, 28);
+  const w = Math.floor(((now || Date.now()) - t0) / (7 * 86400000));
+  return WEEK_EVENTS[((w % WEEK_EVENTS.length) + WEEK_EVENTS.length) % WEEK_EVENTS.length];
+}
+function weekDaysLeft(now){
+  const t0 = Date.UTC(2026, 8, 28);
+  const ms = (now || Date.now()) - t0;
+  const into = ((ms % (7 * 86400000)) + 7 * 86400000) % (7 * 86400000);
+  return Math.max(1, Math.ceil((7 * 86400000 - into) / 86400000));
+}
+
+function loadSeasonBest(){
+  try { const v = JSON.parse(Store.get('seasonBest', 'null')); if (v && v.k === seasonKey()) return Math.max(0, parseInt(v.v, 10) || 0); } catch (e) {}
+  return 0;
+}
+function saveSeasonBest(v){ Store.set('seasonBest', JSON.stringify({ k: seasonKey(), v: Math.max(0, Math.floor(v)) })); }
+function noteSeasonScore(sc){
+  if (sc > loadSeasonBest()){ saveSeasonBest(sc); return true; }
+  return false;
+}
+
+let myClan = Store.get('clan', '');
+let myClanOwn = (() => { try { const v = JSON.parse(Store.get('clanOwn', 'null')); return v && v.name ? v : null; } catch (e) { return null; } })();
+function saveClan(){
+  Store.set('clan', myClan || '');
+  Store.set('clanOwn', myClanOwn ? JSON.stringify(myClanOwn) : '');
+}
+function cleanClanName(s){ return String(s || '').replace(/[<>"'`]/g, '').replace(/\s+/g, ' ').trim().slice(0, 16); }
+
+function seasonCloudFields(){
+  const f = {
+    clan: { stringValue: myClan || '' },
+    clanOwnName: { stringValue: myClanOwn ? myClanOwn.name : '' },
+    clanOwnColor: { stringValue: myClanOwn ? myClanOwn.color : '' }
+  };
+  const sb = loadSeasonBest();
+  if (sb > 0) f[seasonKey()] = { integerValue: String(sb) };
+  return f;
+}
+function mergeSeasonFromCloud(f){
+  if (!f) return;
+  const k = seasonKey();
+  const r = parseInt((f[k] && f[k].integerValue) || '0', 10) || 0;
+  if (r > loadSeasonBest()) saveSeasonBest(r);
+  if (!myClan && f.clan && f.clan.stringValue){
+    myClan = f.clan.stringValue;
+    if (f.clanOwnName && f.clanOwnName.stringValue) myClanOwn = { name: f.clanOwnName.stringValue, color: (f.clanOwnColor && f.clanOwnColor.stringValue) || CLAN_COLORS[0] };
+    saveClan();
+  }
+}
+
+function fsInt(f, k){ return parseInt((f && f[k] && f[k].integerValue) || '0', 10) || 0; }
+function fsStr(f, k){ return (f && f[k] && f[k].stringValue) || ''; }
+function docCode(doc){ const p = (doc && doc.name) || ''; return p.substring(p.lastIndexOf('/') + 1); }
+async function fsQuery(q){
+  const res = await fetch(cloudBase() + ':runQuery?key=' + CLOUD.apiKey, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ structuredQuery: Object.assign({ from: [{ collectionId: 'players' }] }, q) }) });
+  if (!res.ok) throw new Error('q ' + res.status);
+  const data = await res.json();
+  return (Array.isArray(data) ? data : []).filter(r => r && r.document && !(r.document.fields && r.document.fields.deleted && r.document.fields.deleted.booleanValue)).map(r => ({ code: docCode(r.document), f: r.document.fields || {} })).filter(r => r.code && r.code.charAt(0) !== '_');
+}
+async function fetchSeasonTop(key, limit){
+  return fsQuery({ orderBy: [{ field: { fieldPath: key }, direction: 'DESCENDING' }], limit: limit || 100 });
+}
+async function fetchClanMembers(code){
+  return fsQuery({ where: { fieldFilter: { field: { fieldPath: 'clan' }, op: 'EQUAL', value: { stringValue: code } } }, limit: 60 });
+}
+function groupClans(rows, key){
+  const map = new Map();
+  for (const r of rows){
+    const c = fsStr(r.f, 'clan');
+    if (!c) continue;
+    if (!map.has(c)) map.set(c, { code: c, name: '', color: '', total: 0, members: 0 });
+    const g = map.get(c);
+    g.members++;
+    g.total += fsInt(r.f, key);
+    if (r.code === c){ g.name = fsStr(r.f, 'clanOwnName'); g.color = fsStr(r.f, 'clanOwnColor'); }
+  }
+  return Array.from(map.values()).filter(g => g.name).sort((a, b) => b.total - a.total);
+}
+async function fetchClanTop(){
+  const rows = await fsQuery({ where: { fieldFilter: { field: { fieldPath: 'clan' }, op: 'GREATER_THAN', value: { stringValue: '' } } }, orderBy: [{ field: { fieldPath: 'clan' }, direction: 'ASCENDING' }], limit: 600 });
+  return groupClans(rows, seasonKey());
+}
+async function fetchPlayerDoc(code){
+  const res = await fetch(cloudBase() + '/players/' + encodeURIComponent(code) + '?key=' + CLOUD.apiKey);
+  if (!res.ok) return null;
+  const d = await res.json();
+  return (d && d.fields) || null;
+}
+
+async function createClan(name, color){
+  name = cleanClanName(name);
+  if (name.length < 3) return { ok: false, err: 'clanErrName' };
+  if (myClan) return { ok: false, err: 'clanErrAlready' };
+  if (coins < CLAN_PRICE) return { ok: false, err: 'clanErrCoins' };
+  coins -= CLAN_PRICE; noteSpent(CLAN_PRICE); Store.set('coins', coins);
+  myClan = cloudCode;
+  myClanOwn = { name, color: CLAN_COLORS.indexOf(color) !== -1 ? color : CLAN_COLORS[0] };
+  saveClan();
+  cloudPushSoon();
+  if (typeof refreshShopState === 'function') refreshShopState();
+  return { ok: true };
+}
+async function joinClan(code){
+  code = String(code || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+  if (!code) return { ok: false, err: 'clanErrCode' };
+  if (myClan) return { ok: false, err: 'clanErrAlready' };
+  let f = null;
+  try { f = await fetchPlayerDoc(code); } catch (e) { return { ok: false, err: 'clanErrNet' }; }
+  if (!f || !fsStr(f, 'clanOwnName') || fsStr(f, 'clan') !== code) return { ok: false, err: 'clanErrNotFound' };
+  let members = [];
+  try { members = await fetchClanMembers(code); } catch (e) { return { ok: false, err: 'clanErrNet' }; }
+  if (members.length >= CLAN_MAX) return { ok: false, err: 'clanErrFull' };
+  myClan = code;
+  myClanOwn = null;
+  saveClan();
+  cloudPushSoon();
+  return { ok: true };
+}
+function leaveClan(){
+  myClan = '';
+  myClanOwn = null;
+  saveClan();
+  cloudPushSoon();
+}
+
+function seasonRewardFor(rank){
+  if (!rank) return 100;
+  for (const [top, c] of SEASON_REWARDS) if (rank <= top) return c;
+  return 100;
+}
+function loadSeasonBadges(){ try { const v = JSON.parse(Store.get('seasonBadges', '[]')); return Array.isArray(v) ? v : []; } catch (e) { return []; } }
+async function checkSeasonRewards(){
+  const cur = seasonKey();
+  const last = Store.get('seasonLastKey', '');
+  if (last === cur) return;
+  const prevBest = (() => { try { const v = JSON.parse(Store.get('seasonBest', 'null')); return v && v.k === last ? (parseInt(v.v, 10) || 0) : 0; } catch (e) { return 0; } })();
+  if (!last || prevBest <= 0 || !cloudReady()){ Store.set('seasonLastKey', cur); return; }
+  let rank = 0;
+  try {
+    const top = await fetchSeasonTop(last, 100);
+    const i = top.findIndex(r => r.code === cloudCode);
+    rank = i >= 0 ? i + 1 : 0;
+  } catch (e) { return; }
+  const gain = seasonRewardFor(rank);
+  coins += gain; Store.set('coins', coins);
+  const badges = loadSeasonBadges();
+  badges.push({ s: seasonNumberOf(last), r: rank, b: prevBest });
+  Store.set('seasonBadges', JSON.stringify(badges.slice(-24)));
+  Store.set('seasonLastKey', cur);
+  if (typeof showToast === 'function') showToast(t('seasonRewardToast').replace('{s}', seasonNumberOf(last)).replace('{r}', rank ? '#' + rank : t('seasonNoRank')).replace('{c}', gain));
+  cloudPushSoon();
+  if (typeof refreshShopState === 'function') refreshShopState();
+}
+
+function refreshSeasonCard(){
+  const n = document.getElementById('seasonCardTitle');
+  if (n) n.textContent = t('seasonTitle').replace('{n}', seasonNumberOf(seasonKey()));
+  const d = document.getElementById('seasonCardDays');
+  if (d) d.textContent = t('seasonDaysLeft').replace('{d}', seasonDaysLeft());
+  const b = document.getElementById('seasonCardBest');
+  if (b) b.textContent = compactNum(loadSeasonBest());
+  const e = document.getElementById('seasonCardEvent');
+  if (e) e.textContent = t('ev_' + weekEvent()) + ' · ' + t('seasonDaysLeft').replace('{d}', weekDaysLeft());
+}
+
+let seasonTab = 'players';
+function openSeason(tab){
+  const m = document.getElementById('seasonModal');
+  if (!m) return;
+  m.classList.remove('hidden');
+  if (typeof sfxPopupOpen === 'function') sfxPopupOpen();
+  setSeasonTab(tab || seasonTab);
+}
+function closeSeason(){
+  const m = document.getElementById('seasonModal');
+  if (m) m.classList.add('hidden');
+  if (typeof sfxPopupClose === 'function') sfxPopupClose();
+  refreshSeasonCard();
+}
+function setSeasonTab(tab){
+  seasonTab = tab;
+  document.querySelectorAll('#seasonTabs [data-tab]').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  const head = document.getElementById('seasonHead');
+  if (head) head.innerHTML = '<div class="seasonHeadTitle">' + escapeHtml(t('seasonTitle').replace('{n}', seasonNumberOf(seasonKey()))) + '</div><div class="seasonHeadSub">' + escapeHtml(t('seasonDaysLeft').replace('{d}', seasonDaysLeft())) + ' · ' + escapeHtml(t('ev_' + weekEvent())) + '</div><div class="seasonHeadHint">' + escapeHtml(t('evd_' + weekEvent())) + '</div>';
+  if (tab === 'players') renderSeasonPlayers();
+  else if (tab === 'clans') renderSeasonClans();
+  else renderMyClan();
+}
+function seasonBox(){ return document.getElementById('seasonBody'); }
+function seasonMsg(key){ const b = seasonBox(); if (b) b.innerHTML = '<div class="seasonEmpty">' + escapeHtml(t(key)) + '</div>'; }
+
+async function renderSeasonPlayers(){
+  const box = seasonBox();
+  if (!box) return;
+  seasonMsg('cloudLoading');
+  const key = seasonKey();
+  let rows;
+  try { rows = await fetchSeasonTop(key, 100); } catch (e) { if (seasonTab === 'players') seasonMsg('cloudErr'); return; }
+  if (seasonTab !== 'players') return;
+  box.innerHTML = '';
+  const badges = loadSeasonBadges();
+  if (badges.length){
+    const bw = document.createElement('div');
+    bw.className = 'seasonBadges';
+    bw.innerHTML = '<span class="sbLbl">' + escapeHtml(t('seasonMyBadges')) + '</span>' + badges.slice(-6).map(x => '<span class="sBadge">' + escapeHtml(t('seasonShort').replace('{n}', x.s)) + ' · ' + escapeHtml(x.r ? '#' + x.r : '—') + '</span>').join('');
+    box.appendChild(bw);
+  }
+  if (!rows.length){ const e = document.createElement('div'); e.className = 'seasonEmpty'; e.textContent = t('seasonNoPlayers'); box.appendChild(e); return; }
+  const list = document.createElement('div');
+  list.className = 'seasonList';
+  rows.forEach((r, i) => {
+    const row = buildPlayerRow(r.code, r.f, (i + 1) + '.');
+    const bEl = row.querySelector('b');
+    if (bEl) bEl.textContent = String(fsInt(r.f, key));
+    if (r.code === cloudCode) row.classList.add('me');
+    if (i < 3) row.classList.add('top' + (i + 1));
+    list.appendChild(row);
+  });
+  box.appendChild(list);
+  const rw = document.createElement('div');
+  rw.className = 'seasonRewards';
+  rw.innerHTML = '<div class="sbLbl">' + escapeHtml(t('seasonRewardsTitle')) + '</div>' + SEASON_REWARDS.map(([top, c]) => '<span class="sReward">' + escapeHtml(t('seasonTopN').replace('{n}', top)) + ' <b>' + c + '</b></span>').join('');
+  box.appendChild(rw);
+}
+
+async function renderSeasonClans(){
+  const box = seasonBox();
+  if (!box) return;
+  seasonMsg('cloudLoading');
+  let clans;
+  try { clans = await fetchClanTop(); } catch (e) { if (seasonTab === 'clans') seasonMsg('cloudErr'); return; }
+  if (seasonTab !== 'clans') return;
+  box.innerHTML = '';
+  if (!clans.length){ seasonMsg('clanNoneYet'); return; }
+  const list = document.createElement('div');
+  list.className = 'seasonList';
+  clans.slice(0, 50).forEach((c, i) => {
+    const row = document.createElement('button');
+    row.type = 'button';
+    row.className = 'clanRow' + (c.code === myClan ? ' me' : '');
+    row.style.setProperty('--cc', c.color || CLAN_COLORS[0]);
+    row.innerHTML = '<span class="lbRank">' + (i + 1) + '.</span><span class="clanBadge"></span><span class="clanRowName">' + escapeHtml(c.name) + '<small>' + escapeHtml(t('clanMembersN').replace('{n}', c.members)) + '</small></span><b>' + c.total + '</b>';
+    row.addEventListener('click', () => renderClanView(c.code));
+    list.appendChild(row);
+  });
+  box.appendChild(list);
+}
+
+async function renderClanView(code){
+  const box = seasonBox();
+  if (!box) return;
+  seasonMsg('cloudLoading');
+  let members;
+  try { members = await fetchClanMembers(code); } catch (e) { seasonMsg('cloudErr'); return; }
+  const key = seasonKey();
+  const lead = members.find(r => r.code === code);
+  if (!lead || !fsStr(lead.f, 'clanOwnName')){
+    if (code === myClan && !myClanOwn){ leaveClan(); seasonMsg('clanDisbanded'); return; }
+    seasonMsg('clanErrNotFound');
+    return;
+  }
+  members.sort((a, b) => fsInt(b.f, key) - fsInt(a.f, key));
+  const total = members.reduce((a, r) => a + fsInt(r.f, key), 0);
+  const color = fsStr(lead.f, 'clanOwnColor') || CLAN_COLORS[0];
+  box.innerHTML = '';
+  const card = document.createElement('div');
+  card.className = 'clanCard';
+  card.style.setProperty('--cc', color);
+  card.innerHTML = '<span class="clanBadge big"></span><div class="clanCardBody"><div class="clanName">' + escapeHtml(fsStr(lead.f, 'clanOwnName')) + '</div><div class="clanMeta">' + escapeHtml(t('clanMembersN').replace('{n}', members.length + ' / ' + CLAN_MAX)) + ' · ' + escapeHtml(t('clanPoints').replace('{n}', total)) + '</div>'
+    + (code === myClan ? '<div class="clanCodeRow"><span>' + escapeHtml(t('clanCodeLbl')) + '</span><code id="clanCodeVal">' + escapeHtml(code) + '</code><button type="button" class="clanCopy" id="clanCopyBtn">' + escapeHtml(t('clanCopy')) + '</button></div>' : '') + '</div>';
+  box.appendChild(card);
+  const list = document.createElement('div');
+  list.className = 'seasonList';
+  members.forEach((r, i) => {
+    const row = buildPlayerRow(r.code, r.f, (i + 1) + '.');
+    const bEl = row.querySelector('b');
+    if (bEl) bEl.textContent = String(fsInt(r.f, key));
+    if (r.code === code) row.classList.add('leader');
+    if (r.code === cloudCode) row.classList.add('me');
+    list.appendChild(row);
+  });
+  box.appendChild(list);
+  const cp = document.getElementById('clanCopyBtn');
+  if (cp) cp.addEventListener('click', () => {
+    const done = () => { cp.textContent = t('clanCopied'); };
+    try { navigator.clipboard.writeText(code).then(done, () => {}); } catch (e) {}
+  });
+  if (code === myClan){
+    const lv = document.createElement('button');
+    lv.type = 'button';
+    lv.className = 'btn ghost clanLeave';
+    lv.textContent = myClanOwn ? t('clanDisband') : t('clanLeave');
+    let armed = false;
+    lv.addEventListener('click', () => {
+      if (!armed){ armed = true; lv.textContent = t('clanLeaveSure'); return; }
+      leaveClan();
+      renderMyClan();
+    });
+    box.appendChild(lv);
+  } else if (!myClan){
+    const jn = document.createElement('button');
+    jn.type = 'button';
+    jn.className = 'btn clanJoinBtn';
+    jn.textContent = t('clanJoin');
+    jn.addEventListener('click', async () => { jn.disabled = true; const r = await joinClan(code); if (r.ok) renderClanView(code); else { jn.disabled = false; jn.textContent = t(r.err); } });
+    box.appendChild(jn);
+  }
+}
+
+function renderMyClan(){
+  const box = seasonBox();
+  if (!box) return;
+  if (myClan){ renderClanView(myClan); return; }
+  box.innerHTML = '';
+  const make = document.createElement('div');
+  make.className = 'clanForm';
+  make.innerHTML = '<div class="sbLbl">' + escapeHtml(t('clanCreateTitle')) + '</div>'
+    + '<input id="clanNameInput" class="adminInput clanInput" maxlength="16" autocomplete="off" placeholder="' + escapeHtml(t('clanNamePh')) + '">'
+    + '<div class="clanSwatches" id="clanSwatches">' + CLAN_COLORS.map((c, i) => '<button type="button" class="clanSw' + (i === 0 ? ' on' : '') + '" data-c="' + c + '" style="--cc:' + c + '" aria-label="' + c + '"></button>').join('') + '</div>'
+    + '<button type="button" class="btn clanCreateBtn" id="clanCreateBtn">' + escapeHtml(t('clanCreateBtn').replace('{p}', CLAN_PRICE)) + '</button>'
+    + '<p class="clanErr" id="clanCreateErr"></p>';
+  box.appendChild(make);
+  const join = document.createElement('div');
+  join.className = 'clanForm';
+  join.innerHTML = '<div class="sbLbl">' + escapeHtml(t('clanJoinTitle')) + '</div>'
+    + '<div class="clanJoinRow"><input id="clanCodeInput" class="adminInput clanInput" maxlength="10" autocomplete="off" autocapitalize="characters" placeholder="' + escapeHtml(t('clanCodePh')) + '"><button type="button" class="btn clanJoinBtn" id="clanJoinBtn">' + escapeHtml(t('clanJoin')) + '</button></div>'
+    + '<p class="clanErr" id="clanJoinErr"></p><p class="clanHint">' + escapeHtml(t('clanJoinHint')) + '</p>';
+  box.appendChild(join);
+  let color = CLAN_COLORS[0];
+  document.querySelectorAll('#clanSwatches .clanSw').forEach(b => b.addEventListener('click', () => {
+    color = b.dataset.c;
+    document.querySelectorAll('#clanSwatches .clanSw').forEach(x => x.classList.toggle('on', x === b));
+  }));
+  document.getElementById('clanCreateBtn').addEventListener('click', async () => {
+    const r = await createClan(document.getElementById('clanNameInput').value, color);
+    if (r.ok) renderMyClan(); else document.getElementById('clanCreateErr').textContent = t(r.err).replace('{p}', CLAN_PRICE);
+  });
+  document.getElementById('clanJoinBtn').addEventListener('click', async (e) => {
+    e.currentTarget.disabled = true;
+    const r = await joinClan(document.getElementById('clanCodeInput').value);
+    e.currentTarget.disabled = false;
+    if (r.ok) renderMyClan(); else document.getElementById('clanJoinErr').textContent = t(r.err).replace('{n}', CLAN_MAX);
+  });
+}
+
 function resetGame(){
   resetFruitRun();
+  worldBanner = null;
+  resetBoss();
   platforms.length = 0;
   particles.length = 0;
   trailParts.length = 0;
@@ -5346,7 +6585,8 @@ function stepPhysics(dt){
     } else {
       hero.vy = JUMP_V;
       burstLeaves(hero.x, top, 1);
-      burstSpark(hero.x, top, '#dff9c9', 8, 0.7);
+      burstSpark(hero.x, top, landColors()[2], 8, 0.7);
+      if (!lowGfx()) addParticle({ kind: 'ring', x: hero.x, y: top, vx: 0, vy: 0, life: 1, decay: 3.4, r: 4, color: landColors()[0] });
       landDust(hero.x, top);
       shake = Math.max(shake, 3);
       sfxLand();
@@ -5413,6 +6653,8 @@ function shootArrow(){
 
 
 function updateWorld(dt){
+  updateWorldFx(dt);
+  updateWorldBanner(dt);
   updateTrail(dt);
   if (spearCdLeft > 0){
     spearCdLeft = Math.max(0, spearCdLeft - dt);
@@ -5434,8 +6676,8 @@ function updateWorld(dt){
   const wIdx = worldIndex();
   if (wIdx !== lastWorldIdx){
     lastWorldIdx = wIdx;
-    if (score > 100){ 
-      addToast('✦ ' + WORLD_THEMES[wIdx].name + '!', hero.x, hero.y - 70, '#ffd34d');
+    if (score > 100){
+      showWorldBanner(wIdx);
       flash = 0.4; flashColor = '#ffffff';
     }
   }
@@ -5610,7 +6852,7 @@ function updateWorld(dt){
 
 
   if (monsters.length === 0 && !monsterEvent) monsterTimer -= dt;
-  if (monsterTimer <= 0 && monsters.length < maxMonsters() && !monsterEvent){
+  if (monsterTimer <= 0 && monsters.length < maxMonsters() && !monsterEvent && !boss){
     spawnMonster();
     monsterTimer = MONSTER_INTERVAL;
   }
@@ -5642,8 +6884,7 @@ function updateWorld(dt){
         const dx = m.x - hero.x, dy = m.y - hero.y;
         const hitDist = m.r + hero.w * 0.32;
         if (dx * dx + dy * dy < hitDist * hitDist && hero.vy > 0){
-          if (hasFruit('flame')){ burstSpark(m.x, m.y, '#ff8a3d', 24, 1.4); burstSpark(m.x, m.y, '#ffe37a', 12, 0.9); killMonster(m, true, false); }
-          else startMonsterEvent(m);
+          startMonsterEvent(m);
         }
       }
 
@@ -5652,7 +6893,7 @@ function updateWorld(dt){
     }
   }
 
-  
+  updateBoss(dt);
   for (let i = particles.length - 1; i >= 0; i--){
     const q = particles[i];
     q.life -= q.decay * dt;
@@ -5800,6 +7041,11 @@ function drawBackground(){
   ctx.save();
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.drawImage(cache, 0, 0);
+  if (!styleBg && !themed && worldFx.prev >= 0 && worldFx.k < 1){
+    ctx.globalAlpha = 1 - worldFx.k;
+    ctx.drawImage(worldGrad(worldFx.prev), 0, 0);
+    ctx.globalAlpha = 1;
+  }
   ctx.restore();
   if (uiStyle === 'paper'){
     const gap = 26;
@@ -5861,7 +7107,7 @@ function drawBackground(){
           ctx.ellipse(it.x + it.r * 0.55, y + it.r * 0.06, it.r * 0.55, it.r * 0.3, 0, 0, 6.2832);
           ctx.fill();
         } else {
-          if (uiStyle === 'neon') continue;
+          if (uiStyle === 'neon' || (sceneryEnabled() && worldFx.cur % 5 !== 0)) continue;
           ctx.globalAlpha = it.a;
           ctx.save();
           ctx.translate(it.x, y);
@@ -5876,6 +7122,417 @@ function drawBackground(){
     }
   }
   ctx.globalAlpha = 1;
+  drawScenery();
+}
+
+const SCN_T = 900;
+const scnCache = {};
+const platSkinCache = {};
+const worldFx = { cur: 0, prev: -1, k: 1 };
+
+function scnRes(){ return Math.min(2, Math.max(1, S * DPR)); }
+function mixRgb(a, b, k, m){ return 'rgb(' + [0, 1, 2].map(i => Math.round((a[i] + (b[i] - a[i]) * k) * (m || 1))).join(',') + ')'; }
+function scnPeriodic(y, seed, amps){
+  let v = 0;
+  for (let i = 0; i < amps.length; i++) v += amps[i][0] * Math.sin(6.2832 * amps[i][1] * y / SCN_T + seed * (i + 1) * 1.7);
+  return v;
+}
+function scnWallPath(g, side, base, amps, seed, step){
+  g.beginPath();
+  const edge = side < 0 ? -40 : VW + 40;
+  g.moveTo(edge, -4);
+  for (let y = -4; y <= SCN_T + 4; y += step || 6){
+    let d = base + scnPeriodic(y, seed, amps);
+    const x = side < 0 ? d : VW - d;
+    g.lineTo(x, y);
+  }
+  g.lineTo(edge, SCN_T + 4);
+  g.closePath();
+}
+function scnEach(n, seed, fn){
+  for (let i = 0; i < n; i++){
+    const y = hash01(i, seed) * SCN_T;
+    for (const off of [-SCN_T, 0, SCN_T]) fn(i, y + off, hash01(i, seed + 1), hash01(i, seed + 2));
+  }
+}
+
+function buildSceneryTile(w, depth){
+  const R = scnRes();
+  const c = document.createElement('canvas');
+  c.width = Math.ceil(VW * R);
+  c.height = Math.ceil(SCN_T * R);
+  const g = c.getContext('2d');
+  g.scale(R, R);
+  const th = WORLD_THEMES[w];
+  const near = depth === 1;
+  const body = near ? mixRgb(th.bg1, [0, 0, 0], 0.35) : mixRgb(th.bg1, th.bg2, 0.32);
+  g.globalAlpha = near ? 0.96 : 0.55;
+  const wi = w % 5;
+  if (wi === 4){
+    g.globalAlpha = 1;
+    if (!near){
+      const neb = [['rgba(170,90,255,', 150], ['rgba(80,140,255,', 130], ['rgba(255,90,190,', 110]];
+      scnEach(5, 91, (i, y, a, b) => {
+        const n = neb[i % 3];
+        const x = a * VW;
+        const gr = g.createRadialGradient(x, y, 4, x, y, n[1]);
+        gr.addColorStop(0, n[0] + '.22)');
+        gr.addColorStop(1, n[0] + '0)');
+        g.fillStyle = gr;
+        g.fillRect(x - n[1], y - n[1], n[1] * 2, n[1] * 2);
+      });
+      scnEach(3, 71, (i, y, a, b) => {
+        const x = 30 + a * (VW - 60), r = 8 + b * 16;
+        const gr = g.createRadialGradient(x - r * 0.4, y - r * 0.4, 1, x, y, r);
+        gr.addColorStop(0, ['#b8c8ff', '#ffc9a8', '#c8ffd8'][i % 3]);
+        gr.addColorStop(1, ['#3a3a7a', '#7a3a2a', '#2a6a4a'][i % 3]);
+        g.globalAlpha = 0.55;
+        g.fillStyle = gr;
+        g.beginPath(); g.arc(x, y, r, 0, 6.2832); g.fill();
+      });
+    } else {
+      scnEach(2, 83, (i, y, a, b) => {
+        const x = i ? VW - 20 - b * 30 : 20 + b * 30, r = 34 + a * 22;
+        const cols = i ? ['#ffd9a8', '#b0552a'] : ['#c9b8ff', '#4a3a9a'];
+        g.globalAlpha = 0.85;
+        const gr = g.createRadialGradient(x - r * 0.45, y - r * 0.45, 2, x, y, r);
+        gr.addColorStop(0, cols[0]);
+        gr.addColorStop(1, cols[1]);
+        g.fillStyle = gr;
+        g.beginPath(); g.arc(x, y, r, 0, 6.2832); g.fill();
+        g.strokeStyle = 'rgba(255,255,255,.45)';
+        g.lineWidth = 3;
+        g.beginPath(); g.ellipse(x, y, r * 1.7, r * 0.38, -0.3, 0.25, 6.03); g.stroke();
+      });
+      scnEach(9, 87, (i, y, a, b) => {
+        const x = a < 0.5 ? a * 70 : VW - (a - 0.5) * 70, r = 3 + b * 6;
+        g.globalAlpha = 0.7;
+        g.fillStyle = '#4a4466';
+        g.beginPath(); g.ellipse(x, y, r * 1.3, r, a * 6, 0, 6.2832); g.fill();
+      });
+    }
+    return c;
+  }
+  const P = {
+    0: { base: near ? 34 : 70, amps: [[16, 3], [9, 7], [5, 13]], step: 6 },
+    1: { base: near ? 30 : 64, amps: [[14, 2], [10, 9], [6, 17]], step: 18 },
+    2: { base: near ? 36 : 72, amps: [[12, 2], [8, 5]], step: 22 },
+    3: { base: near ? 30 : 62, amps: [[18, 2], [7, 6], [4, 11]], step: 8 }
+  }[wi];
+  for (const side of [-1, 1]){
+    g.fillStyle = body;
+    scnWallPath(g, side, P.base, P.amps, side * 3 + depth + w, P.step);
+    g.fill();
+    const edgeX = (y) => { const d = P.base + scnPeriodic(y, side * 3 + depth + w, P.amps); return side < 0 ? d : VW - d; };
+    if (wi === 0){
+      scnEach(near ? 7 : 5, 11 + side + depth * 5, (i, y, a, b) => {
+        const x = edgeX(y) + side * -6, r = 18 + a * (near ? 26 : 20);
+        g.fillStyle = body;
+        g.beginPath(); g.arc(x, y, r, 0, 6.2832); g.arc(x - side * r * 0.7, y + r * 0.3, r * 0.7, 0, 6.2832); g.fill();
+        if (near && b < 0.7){
+          g.strokeStyle = body; g.lineWidth = 2;
+          const len = 40 + b * 70;
+          g.beginPath(); g.moveTo(x - side * r * 0.9, y); g.quadraticCurveTo(x - side * (r + 10), y + len * 0.5, x - side * (r + 2), y + len); g.stroke();
+          g.fillStyle = mixRgb(th.bg1, [120, 200, 110], 0.35);
+          for (let k = 1; k < 5; k++){ g.beginPath(); g.ellipse(x - side * (r + 6), y + len * k / 5, 4, 2.2, side * 0.6, 0, 6.2832); g.fill(); g.fillStyle = body; }
+        }
+      });
+    } else if (wi === 1){
+      scnEach(near ? 8 : 6, 21 + side + depth * 5, (i, y, a, b) => {
+        const x = edgeX(y), L = 16 + a * (near ? 34 : 24), wd = 7 + b * 7;
+        g.fillStyle = near ? mixRgb(th.bg2, [220, 250, 255], 0.35) : body;
+        g.beginPath(); g.moveTo(x, y - wd); g.lineTo(x - side * L, y + (b - 0.5) * 10); g.lineTo(x, y + wd); g.closePath(); g.fill();
+        if (near){ g.strokeStyle = 'rgba(230,250,255,.6)'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(x, y - wd); g.lineTo(x - side * L, y + (b - 0.5) * 10); g.stroke(); }
+      });
+      if (near){
+        g.globalAlpha = 0.5;
+        g.strokeStyle = 'rgba(210,245,255,.9)';
+        g.lineWidth = 1.5;
+        scnWallPath(g, side, P.base, P.amps, side * 3 + depth + w, P.step);
+        g.stroke();
+        g.globalAlpha = 0.96;
+      }
+    } else if (wi === 2){
+      if (near){
+        g.save();
+        scnWallPath(g, side, P.base, P.amps, side * 3 + depth + w, P.step);
+        g.clip();
+        g.shadowColor = '#ff7a2a';
+        g.shadowBlur = 8;
+        g.strokeStyle = '#ff9a3c';
+        g.lineWidth = 1.8;
+        scnEach(9, 31 + side, (i, y, a, b) => {
+          const x0 = side < 0 ? 2 + a * 20 : VW - 2 - a * 20;
+          g.beginPath(); g.moveTo(x0, y);
+          let x = x0, yy = y;
+          for (let k = 0; k < 4; k++){ x += side * -(4 + hash01(i * 7 + k, 5) * 8); yy += 8 + hash01(i * 5 + k, 6) * 14; g.lineTo(x, yy); }
+          g.stroke();
+        });
+        g.restore();
+        g.globalAlpha = 0.96;
+      }
+      scnEach(near ? 5 : 4, 41 + side, (i, y, a, b) => {
+        const x = edgeX(y), r = 8 + a * 10;
+        g.fillStyle = body;
+        g.beginPath();
+        for (let k = 0; k < 6; k++){ const an = k / 6 * 6.2832; g.lineTo(x + Math.cos(an) * r, y + Math.sin(an) * r); }
+        g.closePath(); g.fill();
+      });
+    } else {
+      scnEach(near ? 5 : 4, 51 + side + depth * 3, (i, y, a, b) => {
+        const x = edgeX(y) - side * 6, r = 22 + a * (near ? 26 : 18);
+        g.fillStyle = body;
+        g.fillRect(side < 0 ? x - 30 : x + 20, y, 10, 60);
+        g.fillStyle = near ? mixRgb(th.bg2, [170, 255, 120], 0.35) : body;
+        g.beginPath(); g.ellipse(x - side * r * 0.3, y, r, r * 0.5, 0, 3.1416, 6.2832); g.closePath(); g.fill();
+        if (near){
+          g.fillStyle = 'rgba(235,255,210,.55)';
+          for (let k = 0; k < 3; k++){ g.beginPath(); g.arc(x - side * r * 0.3 + (k - 1) * r * 0.45, y - r * 0.22 - (k % 2) * 5, 2.5 + b * 2, 0, 6.2832); g.fill(); }
+          g.fillStyle = mixRgb(th.bg2, [170, 255, 120], 0.35);
+          g.beginPath(); g.ellipse(x - side * r * 0.3 + (a - 0.5) * r, y + 8 + b * 10, 2.4, 4, 0, 0, 6.2832); g.fill();
+        }
+      });
+    }
+  }
+  return c;
+}
+
+function sceneryTile(w, depth){
+  const key = w + '|' + depth + '|' + scnRes() + '|' + VW;
+  if (!scnCache[key]) scnCache[key] = buildSceneryTile(w, depth);
+  return scnCache[key];
+}
+
+function sceneryEnabled(){ return !lowGfx() && uiStyle === 'classic' && bgTheme === 'auto'; }
+
+function updateWorldFx(dt){
+  const w = worldIndex();
+  if (w !== worldFx.cur){ worldFx.prev = worldFx.cur; worldFx.cur = w; worldFx.k = 0; }
+  if (worldFx.k < 1){ worldFx.k = Math.min(1, worldFx.k + dt / 1.6); if (worldFx.k >= 1) worldFx.prev = -1; }
+}
+
+function drawSceneryFor(w, alpha, time){
+  const wi = w % 5;
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  if (wi === 0){
+    const mx = VW * 0.72, my = VH * 0.2 + (-camY * 0.02 % 40);
+    const gl = ctx.createRadialGradient(mx, my, 10, mx, my, 120);
+    gl.addColorStop(0, 'rgba(255,230,190,.35)');
+    gl.addColorStop(1, 'rgba(255,230,190,0)');
+    ctx.fillStyle = gl; ctx.fillRect(mx - 120, my - 120, 240, 240);
+    ctx.fillStyle = '#ffeccc';
+    ctx.beginPath(); ctx.arc(mx, my, 34, 0, 6.2832); ctx.fill();
+    ctx.fillStyle = 'rgba(200,170,150,.35)';
+    ctx.beginPath(); ctx.arc(mx - 10, my - 6, 7, 0, 6.2832); ctx.arc(mx + 12, my + 9, 5, 0, 6.2832); ctx.fill();
+  } else if (wi === 1){
+    ctx.globalCompositeOperation = 'lighter';
+    for (let k = 0; k < 2; k++){
+      const base = VH * (0.18 + k * 0.16);
+      const gr = ctx.createLinearGradient(0, base - 60, 0, base + 60);
+      const col = k ? '120,255,200' : '120,200,255';
+      gr.addColorStop(0, 'rgba(' + col + ',0)');
+      gr.addColorStop(0.5, 'rgba(' + col + ',.22)');
+      gr.addColorStop(1, 'rgba(' + col + ',0)');
+      ctx.fillStyle = gr;
+      ctx.beginPath();
+      for (let x = -10; x <= VW + 10; x += 20){
+        const y = base + Math.sin(x * 0.012 + time * (0.4 + k * 0.2) + k * 2) * 26 + Math.sin(x * 0.03 - time * 0.7) * 8;
+        if (x === -10) ctx.moveTo(x, y - 50); else ctx.lineTo(x, y - 50);
+      }
+      for (let x = VW + 10; x >= -10; x -= 20){
+        const y = base + Math.sin(x * 0.012 + time * (0.4 + k * 0.2) + k * 2) * 26 + Math.sin(x * 0.03 - time * 0.7) * 8;
+        ctx.lineTo(x, y + 40);
+      }
+      ctx.closePath(); ctx.fill();
+    }
+    ctx.globalCompositeOperation = 'source-over';
+  } else if (wi === 2){
+    const p = 0.75 + Math.sin(time * 1.6) * 0.25;
+    const gl = ctx.createLinearGradient(0, VH * 0.6, 0, VH);
+    gl.addColorStop(0, 'rgba(255,90,20,0)');
+    gl.addColorStop(1, 'rgba(255,110,30,' + (0.35 * p) + ')');
+    ctx.fillStyle = gl; ctx.fillRect(-OX / S, VH * 0.6, cssW / S, VH * 0.4);
+  }
+  for (const depth of [0, 1]){
+    const tile = sceneryTile(w, depth);
+    const f = depth ? 0.34 : 0.14;
+    const off = ((-camY * f) % SCN_T + SCN_T) % SCN_T;
+    for (let y = off - SCN_T; y < VH; y += SCN_T) ctx.drawImage(tile, 0, y, VW, SCN_T);
+  }
+  if (wi === 0){
+    for (let i = 0; i < 14; i++){
+      const r1 = hash01(i, 61), r2 = hash01(i, 62), r3 = hash01(i, 63);
+      const x = (r1 * VW + Math.sin(time * (0.5 + r2) + i) * 30 + VW) % VW;
+      const y = ((r3 * VH + Math.cos(time * (0.4 + r1) + i) * 24 - camY * 0.4) % VH + VH) % VH;
+      const a = 0.4 + 0.6 * Math.max(0, Math.sin(time * (1.5 + r2 * 2) + i * 3));
+      ctx.globalAlpha = alpha * a;
+      ctx.fillStyle = 'rgba(255,240,140,.35)';
+      ctx.beginPath(); ctx.arc(x, y, 6, 0, 6.2832); ctx.fill();
+      ctx.fillStyle = '#fff6b0';
+      ctx.beginPath(); ctx.arc(x, y, 1.8, 0, 6.2832); ctx.fill();
+    }
+  } else if (wi === 3){
+    for (let i = 0; i < 12; i++){
+      const r1 = hash01(i, 71), r2 = hash01(i, 72), r3 = hash01(i, 73);
+      const H = VH + 40;
+      const y = H - ((r1 * H + time * (20 + r2 * 30) - camY * 0.3) % H + H) % H - 20;
+      const x = r3 * VW + Math.sin(time + i) * 10, r = 3 + r2 * 6;
+      ctx.globalAlpha = alpha * 0.55;
+      ctx.strokeStyle = 'rgba(200,255,160,.8)';
+      ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.arc(x, y, r, 0, 6.2832); ctx.stroke();
+      ctx.fillStyle = 'rgba(255,255,255,.7)';
+      ctx.beginPath(); ctx.arc(x - r * 0.35, y - r * 0.35, r * 0.25, 0, 6.2832); ctx.fill();
+    }
+  } else if (wi === 4){
+    const cyc = time % 7;
+    if (cyc < 0.9){
+      const k = cyc / 0.9, sx = VW * (0.9 - k * 0.8), sy = VH * (0.1 + k * 0.25);
+      const gr = ctx.createLinearGradient(sx, sy, sx + 70, sy - 22);
+      gr.addColorStop(0, 'rgba(255,255,255,' + (0.9 * (1 - k)) + ')');
+      gr.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.strokeStyle = gr; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(sx + 70, sy - 22); ctx.stroke();
+    }
+  }
+  ctx.restore();
+}
+
+function drawScenery(){
+  if (!sceneryEnabled()) return;
+  const time = performance.now() / 1000;
+  if (worldFx.prev >= 0 && worldFx.k < 1) drawSceneryFor(worldFx.prev, 1 - worldFx.k, time);
+  drawSceneryFor(worldFx.cur, worldFx.prev >= 0 ? worldFx.k : 1, time);
+}
+
+const worldGradCache = {};
+function worldGrad(w){
+  const key = w + '|' + cvs.width + 'x' + cvs.height;
+  if (worldGradCache[key]) return worldGradCache[key];
+  for (const k in worldGradCache) if (k.indexOf('|' + cvs.width + 'x' + cvs.height) === -1) delete worldGradCache[k];
+  const c = document.createElement('canvas');
+  c.width = cvs.width; c.height = cvs.height;
+  const b = c.getContext('2d', { alpha: false });
+  b.setTransform(S * DPR, 0, 0, S * DPR, OX * DPR, 0);
+  const th = WORLD_THEMES[w];
+  const g = b.createLinearGradient(0, 0, 0, VH);
+  g.addColorStop(0, 'rgb(' + th.bg1.join(',') + ')');
+  g.addColorStop(1, 'rgb(' + th.bg2.join(',') + ')');
+  b.fillStyle = g;
+  b.fillRect(-OX / S, 0, cssW / S, VH);
+  worldGradCache[key] = c;
+  return c;
+}
+
+const PLAT_SKINS = [
+  { top: ['#b8f28a', '#5cbf3e'], body: ['#8a5a36', '#5a3820'], deco: 'grass' },
+  { top: ['#ffffff', '#dff4ff'], body: ['#a8e4ff', '#4a9ccc'], deco: 'ice' },
+  { top: ['#5a4048', '#3a262c'], body: ['#2c1c22', '#170c10'], deco: 'lava' },
+  { top: ['#b4f07a', '#62b83a'], body: ['#5c6e48', '#34422a'], deco: 'moss' },
+  { top: ['#e8eeff', '#a8b4d8'], body: ['#6a7496', '#3a4262'], deco: 'metal' }
+];
+function platSkin(w){
+  const R = scnRes();
+  const key = w + '|' + R;
+  if (platSkinCache[key]) return platSkinCache[key];
+  const sk = PLAT_SKINS[w % PLAT_SKINS.length];
+  const W = PW, H = PH, PADX = 6, PADT = 10, PADB = 22;
+  const c = document.createElement('canvas');
+  c.width = Math.ceil((W + PADX * 2) * R);
+  c.height = Math.ceil((H + PADT + PADB) * R);
+  const g = c.getContext('2d');
+  g.scale(R, R);
+  g.translate(PADX, PADT);
+  g.fillStyle = 'rgba(0,0,0,.25)';
+  rr(g, 2, 5, W - 4, H, 8); g.fill();
+  const bg = g.createLinearGradient(0, 0, 0, H);
+  bg.addColorStop(0, sk.body[0]); bg.addColorStop(1, sk.body[1]);
+  g.fillStyle = bg;
+  rr(g, 0, 0, W, H, 8); g.fill();
+  const tg = g.createLinearGradient(0, 0, 0, 7);
+  tg.addColorStop(0, sk.top[0]); tg.addColorStop(1, sk.top[1]);
+  g.fillStyle = tg;
+  if (sk.deco === 'grass' || sk.deco === 'moss'){
+    g.beginPath();
+    g.moveTo(0, 7);
+    for (let x = 0; x <= W; x += 4) g.lineTo(x, (x / 4) % 2 ? 9 : 6);
+    g.lineTo(W, 3); g.quadraticCurveTo(W, -1, W - 6, -1); g.lineTo(6, -1); g.quadraticCurveTo(0, -1, 0, 3);
+    g.closePath(); g.fill();
+    for (let i = 0; i < 7; i++){
+      const x = 5 + i * (W - 10) / 6;
+      g.strokeStyle = sk.top[1]; g.lineWidth = 1.6;
+      g.beginPath(); g.moveTo(x, 0); g.lineTo(x + (i % 2 ? 2 : -2), -4 - (i % 3)); g.stroke();
+    }
+    if (sk.deco === 'grass'){
+      for (const [x, col] of [[14, '#ffd1e8'], [W - 18, '#fff3a0'], [W * 0.55, '#ffffff']]){
+        g.fillStyle = col; g.beginPath(); g.arc(x, -2, 2.2, 0, 6.2832); g.fill();
+      }
+    } else {
+      g.fillStyle = '#9be36b';
+      for (const x of [16, W * 0.5, W - 14]){ g.beginPath(); g.ellipse(x, H + 3, 2, 3.5, 0, 0, 6.2832); g.fill(); }
+    }
+  } else if (sk.deco === 'ice'){
+    g.beginPath();
+    g.moveTo(-2, 5);
+    for (let x = 0; x <= W; x += 8) g.quadraticCurveTo(x + 4, 9, x + 8, 5);
+    g.lineTo(W + 2, 2); g.quadraticCurveTo(W, -4, W - 8, -4); g.lineTo(8, -4); g.quadraticCurveTo(-2, -4, -2, 2);
+    g.closePath(); g.fill();
+    g.fillStyle = 'rgba(220,245,255,.9)';
+    for (let i = 0; i < 5; i++){
+      const x = 8 + i * (W - 16) / 4, L = 5 + (i % 3) * 4;
+      g.beginPath(); g.moveTo(x - 3, H - 1); g.lineTo(x, H + L); g.lineTo(x + 3, H - 1); g.closePath(); g.fill();
+    }
+    g.fillStyle = 'rgba(255,255,255,.6)';
+    rr(g, 8, 8, W * 0.35, 2, 1); g.fill();
+  } else if (sk.deco === 'lava'){
+    rr(g, 0, 0, W, 5, 4); g.fill();
+    g.shadowColor = '#ff6a1a'; g.shadowBlur = 6;
+    g.strokeStyle = '#ffa040'; g.lineWidth = 1.6;
+    g.beginPath();
+    g.moveTo(10, 4); g.lineTo(18, 9); g.lineTo(26, 6); g.lineTo(32, 12);
+    g.moveTo(W - 12, 5); g.lineTo(W - 22, 10); g.lineTo(W - 30, 8);
+    g.stroke();
+    g.shadowBlur = 0;
+    g.fillStyle = '#ff8a2a';
+    rr(g, 3, 0, W - 6, 1.6, 1); g.fill();
+  } else {
+    rr(g, 0, 0, W, 6, 5); g.fill();
+    g.fillStyle = '#5ff4ff';
+    g.shadowColor = '#5ff4ff'; g.shadowBlur = 6;
+    rr(g, 8, H - 5, W - 16, 2, 1); g.fill();
+    g.shadowBlur = 0;
+    g.fillStyle = '#2a3050';
+    for (const x of [6, W - 6]){ g.beginPath(); g.arc(x, 9, 1.6, 0, 6.2832); g.fill(); }
+    g.fillStyle = '#ffec7a';
+    g.beginPath(); g.arc(W / 2, 9, 1.8, 0, 6.2832); g.fill();
+  }
+  const skin = { c, ox: -PADX, oy: -PADT, w: W + PADX * 2, h: H + PADT + PADB };
+  platSkinCache[key] = skin;
+  return skin;
+}
+function skinnedPlatform(p){ return p.type === 'normal' && platformTheme === 'auto' && uiStyle === 'classic'; }
+
+let vignetteCvs = null, vignetteKey = '';
+function drawVignette(){
+  if (lowGfx()) return;
+  const key = cvs.width + 'x' + cvs.height;
+  if (key !== vignetteKey){
+    vignetteKey = key;
+    vignetteCvs = document.createElement('canvas');
+    vignetteCvs.width = Math.max(1, Math.round(cvs.width / 4));
+    vignetteCvs.height = Math.max(1, Math.round(cvs.height / 4));
+    const v = vignetteCvs.getContext('2d');
+    const W = vignetteCvs.width, H = vignetteCvs.height;
+    const g = v.createRadialGradient(W / 2, H * 0.45, Math.min(W, H) * 0.35, W / 2, H * 0.5, Math.max(W, H) * 0.75);
+    g.addColorStop(0, 'rgba(0,0,0,0)');
+    g.addColorStop(1, 'rgba(8,0,20,.42)');
+    v.fillStyle = g;
+    v.fillRect(0, 0, W, H);
+  }
+  pixelTransform();
+  ctx.drawImage(vignetteCvs, 0, 0, cvs.width, cvs.height);
+  worldTransform();
 }
 
 const WEATHER = ['petals', 'snow', 'embers', 'spores', 'stars'];
@@ -5911,6 +7568,7 @@ function drawWeather(){
     return;
   }
   const kind = WEATHER[worldIndex() % WEATHER.length];
+  if (kind === 'petals') return;
   const time = performance.now() / 1000;
   const n = ultraGfx() ? WEATHER_N + 10 : WEATHER_N;
   const H = VH + 60;
@@ -6190,6 +7848,32 @@ function drawPlatform(p){
   ctx.translate(-w / 2, -h / 2);
 
   if (p.type === 'cloud') drawCloudBody(p, w, h);
+  else if (skinnedPlatform(p)){
+    const skw = p.skin !== undefined ? p.skin : worldIndex();
+    if (ultraGfx()){
+      const d = ultraDepthVector(p.x + w / 2, y + h / 2);
+      const a0 = ctx.globalAlpha;
+      const shadowK = (1 - ultraSideBlend(d.dy)) * clamp(d.dy / ULTRA_DEPTH_Y, 0, 1);
+      if (shadowK > 0.01){
+        ctx.globalAlpha = a0 * 0.16 * shadowK;
+        ctx.fillStyle = '#000';
+        rr(ctx, d.dx * 1.8, d.dy * 2.2, w, h, 8);
+        ctx.fill();
+        ctx.globalAlpha = a0;
+      }
+      const pal = PLAT_SKINS[skw % PLAT_SKINS.length].body;
+      const side = ultraSideStyle(d.dy, pal[0], pal[1]);
+      ctx.fillStyle = side.color;
+      for (let s = 4; s >= 1; s--){ rr(ctx, d.dx * s / 4, d.dy * s / 4, w, h, 8); ctx.fill(); }
+      ctx.globalAlpha = a0 * side.overlay;
+      ctx.fillStyle = '#000';
+      rr(ctx, d.dx, d.dy, w, h, 8);
+      ctx.fill();
+      ctx.globalAlpha = a0;
+    }
+    const sk = platSkin(skw);
+    ctx.drawImage(sk.c, sk.ox, sk.oy, sk.w + (w - PW), sk.h);
+  }
   else if (uiStyle !== 'classic') drawStyledPlatformBody(p, w, h);
   else {
   if (ultraGfx()){
@@ -7633,6 +9317,7 @@ function drawHeroWithWrap(){
   if (deathPortal){ drawDyingHero(); return; }
   const y = hero.y - camY;
   const phase = performance.now() / 1000;
+  drawHeroGlow(hero.x, y);
 
   if (ultraGfx()){
     const tilt0 = hero.tilt + hero.spin;
@@ -8005,6 +9690,7 @@ function render(){
   for (const c of coinsOnMap) drawCoin(c);
   drawFruitPickups();
   for (const m of monsters) drawMonster(m);
+  drawBoss();
   for (const cr of crawlers) drawCrawler(cr);
   drawLasers();
   drawArrows();
@@ -8033,7 +9719,8 @@ function render(){
 
   if (OX > 0.5) drawSideCurtains();
   worldTransform();
-  if (state === STATE.PLAY || state === STATE.DYING) drawHUD();
+  drawVignette();
+  if (state === STATE.PLAY || state === STATE.DYING){ drawWorldBanner(); drawHUD(); drawBossHud(); }
   if (state === STATE.PLAY) drawMonsterEventUI();
 }
 
@@ -8593,8 +10280,11 @@ function compactNum(n){
 }
 function refreshShopState(){
   menuBest.textContent  = best;
+  const mbc = document.getElementById('menuBestChip'); if (mbc) mbc.textContent = compactNum(best);
+  const mbo = document.getElementById('menuBossChip'); if (mbo) mbo.textContent = typeof bossKillsTotal === 'number' ? bossKillsTotal : 0;
   menuCoins.textContent = compactNum(coins);
   if (typeof refreshPassCard === 'function') refreshPassCard();
+  if (typeof refreshSeasonCard === 'function') refreshSeasonCard();
 
   shopEl.querySelectorAll('.chip').forEach(chip => {
     const slot = chip.dataset.slot, val = chip.dataset.val;
@@ -8890,6 +10580,7 @@ function startGame(){
   const dm = document.getElementById('dailyModal');
   if (dm) dm.classList.add('hidden');
   state = STATE.PLAY;
+  showWorldBanner(0);
   last = performance.now();
   acc = 0;
   hideAllScreens();
@@ -8960,6 +10651,33 @@ function showRankLine(isNewBest){
   });
 }
 
+function fillOverStats(isNewBest){
+  const cv = document.getElementById('overCoinsVal'), wv = document.getElementById('overWorldVal'), bv = document.getElementById('overBossVal');
+  const wIdx = worldIndex() % WORLD_THEMES.length;
+  if (wv){ wv.textContent = WORLD_THEMES[wIdx].name.replace(/ мир$/, ''); wv.style.color = WORLD_THEMES[wIdx].monster.light; }
+  if (bv) bv.textContent = String(runBossKills);
+  if (cv){
+    const target = runCoins, t0 = performance.now();
+    (function tick(){ const k = clamp((performance.now() - t0) / 700, 0, 1); cv.textContent = '+' + Math.round(target * k); if (k < 1 && state === STATE.OVER) requestAnimationFrame(tick); })();
+  }
+  const burst = document.getElementById('overBurst');
+  if (burst){
+    burst.textContent = '';
+    if (isNewBest && !lowGfx()){
+      const cols = ['#ffd34d', '#ff9f45', '#ff6b8a', '#7fe06b', '#8fd2f5', '#c9a8ff'];
+      for (let i = 0; i < 36; i++){
+        const c = document.createElement('i');
+        const a = Math.random() * Math.PI * 2, d = 90 + Math.random() * 110;
+        c.style.background = cols[i % cols.length];
+        c.style.setProperty('--dx', Math.round(Math.cos(a) * d) + 'px');
+        c.style.setProperty('--dy', Math.round(Math.sin(a) * d * 0.8 + 60) + 'px');
+        c.style.setProperty('--rot', Math.round((Math.random() - 0.5) * 720) + 'deg');
+        c.style.animationDelay = (0.2 + Math.random() * 0.25).toFixed(2) + 's';
+        burst.appendChild(c);
+      }
+    }
+  }
+}
 function gameOver(){
   if (state !== STATE.PLAY && state !== STATE.DYING) return;
   state = STATE.OVER;
@@ -8972,6 +10690,7 @@ function gameOver(){
 
   const isNewBest = score > best;
   if (isNewBest){ best = score; Store.set('best', best); }
+  noteSeasonScore(score);
   const passGain = recordRunForPass(score, runCoins);
   addToLeaderboard(nickname, score);
   cloudPushSoon();
@@ -8981,6 +10700,7 @@ function gameOver(){
   finalEl.textContent = '0';
   overTitle.textContent = isNewBest ? t('overTitleRecord') : t('overTitleNormal');
   coinLine.textContent = runCoins > 0 ? (t('overCoins') + ': ' + runCoins) : '';
+  fillOverStats(isNewBest);
   bestLine.innerHTML = isNewBest
     ? '<span class="newbest">' + t('overNewBest') + '</span>'
     : t('overRecordLabel') + ': ' + best;
@@ -9158,6 +10878,7 @@ async function cloudFetchOwnTitle(){
     }
     if (f.pass && f.pass.stringValue){ pass = mergePass(parsePassStr(f.pass.stringValue)); savePass(); if (typeof refreshPassCard === 'function') refreshPassCard(); }
     if (f.fruits && f.fruits.stringValue) mergeFruitsFrom(f.fruits.stringValue);
+    mergeSeasonFromCloud(f);
     if (f.daily && f.daily.stringValue){ mergeDaily(f.daily.stringValue); refreshDailyBtn(); }
     myTitle = (f.title && f.title.stringValue) || '';
     myTitleColor = (f.titleColor && f.titleColor.stringValue) || '';
@@ -9248,8 +10969,19 @@ async function cloudPush(){
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ fields })
     });
-    if (pr && pr.ok) Store.set('cloudSeen', cloudCode);
+    if (pr && pr.ok){ Store.set('cloudSeen', cloudCode); pushSeasonFields(); }
   } catch (e) {  }
+}
+async function pushSeasonFields(){
+  try {
+    const sf = seasonCloudFields();
+    const sm = Object.keys(sf).map(k => 'updateMask.fieldPaths=' + k).join('&');
+    await fetch(cloudBase() + '/players/' + cloudCode + '?' + sm + '&key=' + CLOUD.apiKey, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fields: sf })
+    });
+  } catch (e) {}
 }
 
 const ONLINE_THRESHOLD_MS = 90000;
@@ -11696,6 +13428,12 @@ document.getElementById('settingsBtn').addEventListener('click', openSettings);
 document.getElementById('wardrobeBtn').addEventListener('click', openWardrobe);
 document.getElementById('fruitsBtn').addEventListener('click', openFruits);
 document.getElementById('fruitClose').addEventListener('click', closeFruits);
+document.getElementById('bossChipBtn').addEventListener('click', openBestiary);
+document.getElementById('seasonCard').addEventListener('click', () => openSeason('players'));
+document.getElementById('seasonClose').addEventListener('click', closeSeason);
+document.querySelectorAll('#seasonTabs [data-tab]').forEach(b => b.addEventListener('click', () => setSeasonTab(b.dataset.tab)));
+setTimeout(() => { checkSeasonRewards(); }, 6000);
+document.getElementById('bestiaryClose').addEventListener('click', closeBestiary);
 document.getElementById('wheelBtn').addEventListener('click', () => spinWheel(1));
 document.getElementById('wheelBtn5').addEventListener('click', () => spinWheel(5));
 document.getElementById('wheelBtn10').addEventListener('click', () => spinWheel(10));
@@ -11885,6 +13623,9 @@ async function adminLoad(codeOverride){
     }
     adminCurrentOwned = new Set(ownedSet);
     renderAdminItemsGrid(ownedSet);
+    renderAdminFruits(f.fruits && f.fruits.stringValue);
+    const asi = document.getElementById('adminSeasonInput');
+    if (asi) asi.value = String(parseInt((f[seasonKey()] && f[seasonKey()].integerValue) || '0', 10) || 0);
 
     document.getElementById('adminPlayerBox').classList.remove('hidden');
     adminSetStatus('');
@@ -12089,6 +13830,10 @@ async function adminSave(){
     keep:       { arrayValue: { values: ownedList.filter(k => EVENT_TEMP_ITEMS.indexOf(k) !== -1).map(v => ({ stringValue: v })) } },
     pending:    { booleanValue: !isSelf }
   };
+  const adminFr = adminCollectFruits();
+  saveFields.fruits = { stringValue: JSON.stringify(adminFr) };
+  const adminSeason = Math.max(0, parseInt((document.getElementById('adminSeasonInput') || {}).value, 10) || 0);
+  saveFields[seasonKey()] = { integerValue: String(adminSeason) };
   const saveMask = Object.keys(saveFields).map(k => 'updateMask.fieldPaths=' + k).join('&');
   try {
     const res = await fetch(cloudBase() + '/players/' + adminCurrentCode + '?' + saveMask + '&key=' + CLOUD.apiKey, {
@@ -12109,6 +13854,8 @@ async function adminSave(){
         myTitle = titleVal; Store.set('titleText', myTitle);
         myTitleColor = titleColorVal; Store.set('titleColor', myTitleColor);
         myBadge = badgeVal; Store.set('badge', myBadge);
+        fruitState = parseFruitState(JSON.stringify(adminFr)); fruitState.rev = adminFr.rev; Store.set('fruits', fruitStr());
+        saveSeasonBest(adminSeason);
         keepSet = new Set(ownedList.filter(k => EVENT_TEMP_ITEMS.indexOf(k) !== -1));
         Store.set('keep', Array.from(keepSet).join(','));
         owned.clear();
@@ -12390,6 +14137,162 @@ async function adminDeleteAccount(){
 
 document.getElementById('adminLoadBtn').addEventListener('click', () => adminLoad());
 document.getElementById('adminSaveBtn').addEventListener('click', adminSave);
+function adminOpenGame(){
+  if (!GAME_CLOSED) return;
+  GAME_CLOSED = false;
+  const s = document.getElementById('closedScreen');
+  if (s) s.hidden = true;
+}
+if (adminMode) adminOpenGame();
+
+let closedTaps = 0, closedTapT = null;
+(function closedAdminEntry(){
+  const timer = document.getElementById('closedTimer');
+  const box = document.getElementById('closedAdmin');
+  const pin = document.getElementById('closedPin');
+  const btn = document.getElementById('closedPinBtn');
+  if (!timer || !box || !pin || !btn) return;
+  timer.addEventListener('click', () => {
+    closedTaps++;
+    clearTimeout(closedTapT);
+    closedTapT = setTimeout(() => { closedTaps = 0; }, 2000);
+    if (closedTaps >= 5){ closedTaps = 0; box.hidden = false; pin.focus(); }
+  });
+  const tryPin = () => {
+    if (!adminAllowed()){ pin.value = ''; pin.placeholder = 'Только для аккаунта создателя'; return; }
+    if (pin.value !== ADMIN_PIN){ pin.value = ''; pin.placeholder = 'Неверный PIN'; return; }
+    adminMode = true;
+    try { localStorage.setItem('cabbitAdminMode', '1'); } catch (e) {}
+    refreshStaffUI();
+    adminOpenGame();
+    refreshAdminQuick();
+  };
+  btn.addEventListener('click', tryPin);
+  pin.addEventListener('keydown', (e) => { if (e.key === 'Enter') tryPin(); });
+})();
+
+let adminGod = false;
+const adminRealFatal = handleFatalEvent;
+handleFatalEvent = function(){
+  if (adminGod && adminMode && state === STATE.PLAY){ hero.y = camY + VH * 0.4; hero.vy = JUMP_V * 1.05; return; }
+  return adminRealFatal.apply(this, arguments);
+};
+function adminEnsurePlay(){
+  if (state === STATE.PAUSED) resumeGame();
+  else if (state !== STATE.PLAY) startGame();
+}
+function refreshAdminQuick(){
+  const fab = document.getElementById('adminFab');
+  const panel = document.getElementById('adminQuick');
+  if (!fab || !panel) return;
+  const setEl = document.getElementById('settings'), wEl = document.getElementById('wardrobe');
+  const busy = (setEl && !setEl.classList.contains('hidden')) || (wEl && !wEl.classList.contains('hidden'));
+  const show = adminMode && !GAME_CLOSED && !busy && state !== STATE.PLAY && state !== STATE.DYING;
+  fab.hidden = !show;
+  if (!adminMode || state === STATE.PLAY) panel.hidden = true;
+}
+function closeAdminQuick(){ const p = document.getElementById('adminQuick'); if (p) p.hidden = true; }
+function adminQuickToast(txt){ if (typeof showToast === 'function') showToast(txt); }
+(function adminQuickSetup(){
+  const fab = document.getElementById('adminFab');
+  const panel = document.getElementById('adminQuick');
+  if (!fab || !panel) return;
+  fab.addEventListener('click', () => { panel.hidden = !panel.hidden; });
+  document.getElementById('aqClose').addEventListener('click', closeAdminQuick);
+  const worlds = document.getElementById('aqWorlds');
+  WORLD_THEMES.forEach((w, i) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'aqKey';
+    b.style.setProperty('--kc', w.monster.light);
+    b.textContent = (i + 1) + '. ' + w.name.replace(/ мир$/, '');
+    b.addEventListener('click', () => {
+      adminEnsurePlay();
+      startY = minY + 10 * (i * BOSS_EVERY + 60) / scoreMult();
+      bossNext = i * BOSS_EVERY + BOSS_FIRST;
+      closeAdminQuick();
+    });
+    worlds.appendChild(b);
+  });
+  const fruits = document.getElementById('aqFruits');
+  FRUIT_IDS.forEach((id) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'aqKey aqFruit';
+    b.style.setProperty('--kc', RARITY_COL[FRUITS[id].rar]);
+    b.appendChild(fruitIconCanvas(id, 22));
+    const sp = document.createElement('span');
+    sp.textContent = fruitName(id).replace(/ фрукт$/i, '').replace(/ Fruit$/, '');
+    b.appendChild(sp);
+    b.addEventListener('click', () => { addFruit(id); cloudPushSoon(); adminQuickToast(t('fruitGot').replace('{f}', fruitName(id))); });
+    fruits.appendChild(b);
+  });
+  document.getElementById('aqBoss').addEventListener('click', () => { adminEnsurePlay(); if (!boss) spawnBoss(); closeAdminQuick(); });
+  document.getElementById('aqCoins').addEventListener('click', () => {
+    coins += 5000; Store.set('coins', coins); cloudPushSoon();
+    if (typeof refreshShopState === 'function') refreshShopState();
+    adminQuickToast('+5000');
+  });
+  const god = document.getElementById('aqGod');
+  god.addEventListener('click', () => { adminGod = !adminGod; god.setAttribute('aria-pressed', String(adminGod)); });
+  document.getElementById('aqSettings').addEventListener('click', () => { closeAdminQuick(); openSettings(); });
+  const vv = window.visualViewport;
+  const lift = () => {
+    if (!vv) return;
+    const kb = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+    panel.style.bottom = kb + 'px';
+  };
+  if (vv){ vv.addEventListener('resize', lift); vv.addEventListener('scroll', lift); }
+  setInterval(refreshAdminQuick, 500);
+  refreshAdminQuick();
+})();
+
+function renderAdminFruits(str){
+  const grid = document.getElementById('adminFruitGrid');
+  if (!grid) return;
+  const st = parseFruitState(str || '');
+  let rawRev = 0;
+  try { const v = JSON.parse(str || 'null'); rawRev = v && v.rev > 0 ? Math.floor(v.rev) : 0; } catch (e) {}
+  grid.dataset.rev = String(rawRev);
+  grid.innerHTML = '';
+  const mk = (id, label, count, isEat) => {
+    const row = document.createElement('label');
+    row.className = 'adminFruitRow';
+    if (id) row.appendChild(fruitIconCanvas(id, 26));
+    const nm = document.createElement('span');
+    nm.className = 'afName';
+    nm.textContent = label;
+    row.appendChild(nm);
+    if (id){
+      const inp = document.createElement('input');
+      inp.type = 'text'; inp.inputMode = 'numeric'; inp.maxLength = 2;
+      inp.className = 'adminInput afCount';
+      inp.dataset.fruit = id;
+      inp.value = String(count || 0);
+      row.appendChild(inp);
+    }
+    const r = document.createElement('input');
+    r.type = 'radio'; r.name = 'adminFruitEat'; r.value = id; r.checked = isEat;
+    r.title = 'Съеден';
+    row.appendChild(r);
+    grid.appendChild(row);
+  };
+  for (const id of FRUIT_IDS) mk(id, fruitName(id), st.inv[id] || 0, st.eat === id);
+  mk('', 'Ничего не съедено', 0, !st.eat);
+}
+function adminCollectFruits(){
+  const grid = document.getElementById('adminFruitGrid');
+  const inv = {};
+  document.querySelectorAll('#adminFruitGrid .afCount').forEach((inp) => {
+    const n = Math.max(0, Math.min(99, parseInt(inp.value, 10) || 0));
+    if (n) inv[inp.dataset.fruit] = n;
+  });
+  const sel = document.querySelector('#adminFruitGrid input[name="adminFruitEat"]:checked');
+  const eat = sel && FRUITS[sel.value] ? sel.value : '';
+  const rev = (parseInt(grid && grid.dataset.rev, 10) || 0) + 1000;
+  return { inv, eat, rev };
+}
+
 if (adminDeleteBtnEl) adminDeleteBtnEl.addEventListener('click', adminDeleteAccount);
 
 document.getElementById('wardrobeBack').addEventListener('click', closeWardrobe);
