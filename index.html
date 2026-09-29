@@ -518,6 +518,19 @@
   #wheelBtn.cant{opacity:.6;}
   .wheelResult{display:flex;align-items:center;justify-content:center;gap:8px;min-height:30px;margin-top:8px;font-size:15px;text-align:center;}
   .wheelResult b{color:#ffd34d;}
+  .wheelResult{flex-wrap:wrap;}
+  #closedScreen{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;padding:24px 16px;background:rgba(20,10,40,.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
+  #closedScreen[hidden]{display:none;}
+  .closedCard{width:min(360px,100%);text-align:center;color:#fdf6e8;background:linear-gradient(180deg,#5b2d9e,#3a1870);border-radius:22px;padding:26px 20px 22px;box-shadow:0 18px 50px rgba(0,0,0,.5),inset 0 0 0 2px rgba(255,211,77,.45);}
+  .closedIcon{font-size:52px;line-height:1;margin-bottom:10px;}
+  .closedTitle{font-size:26px;font-weight:800;color:#ffd34d;margin:0 0 12px;}
+  .closedText{font-size:15.5px;line-height:1.5;margin:0 0 14px;opacity:.95;}
+  .closedBye{font-size:15px;font-weight:800;color:#ffd34d;}
+  .wheelMulti{display:flex;gap:8px;margin-top:8px;}
+  .wheelMulti .btn{flex:1;font-size:14px;padding:9px 0;background:rgba(255,211,77,.16);color:#ffd34d;box-shadow:inset 0 0 0 2px rgba(255,211,77,.45);}
+  .wheelMulti .btn.cant{opacity:.5;}
+  .wheelSkip{display:block;margin:8px auto 0;font:inherit;font-size:13px;color:#fdf6e8;opacity:.75;background:rgba(255,255,255,.08);border:0;border-radius:999px;padding:6px 14px;cursor:pointer;}
+  .wheelSkip[aria-pressed="true"]{opacity:1;background:rgba(255,211,77,.22);color:#ffd34d;}
   .wheelOdds{font-size:10.5px;opacity:.55;text-align:center;margin:2px 0 6px;line-height:1.35;}
   .fruitInv{display:flex;flex-direction:column;gap:8px;margin:10px 0;}
   .fruitCard{display:flex;align-items:center;gap:10px;padding:10px;border-radius:14px;background:rgba(255,255,255,.07);box-shadow:inset 3px 0 0 var(--rc,#fff);}
@@ -1516,7 +1529,7 @@
               <span>Рекорд</span>
               <input id="adminBestInput" class="adminInput adminInputNum" type="text" maxlength="16" placeholder="число или слово">
             </label>
-            <label class="adminField">
+            <label class="adminField hidden">
               <span>Кубки</span>
               <input id="adminTrophiesInput" class="adminInput adminInputNum" type="text" maxlength="16" placeholder="число или слово">
             </label>
@@ -1570,29 +1583,15 @@
         <button class="setCatHead" type="button" aria-expanded="false"><span class="setCatIcon">⚙</span><span class="setCatName" data-i18n="catMain">Основное</span><span class="setCatArrow">›</span></button>
         <div class="setCatBody">
           <div class="settingRow">
-            <span class="settingLabel" data-i18n="howToLabel">Как играть</span>
-            <p class="howToText" data-i18n="hint"></p>
-          </div>
-          <div class="settingRow">
             <span class="settingLabel" data-i18n="language">Язык</span>
             <div class="btnRow">
               <button class="chip" data-lang="ru">Русский</button>
               <button class="chip" data-lang="en">English</button>
             </div>
           </div>
-
           <div class="settingRow">
-            <span class="settingLabel" data-i18n="nickLabel">Ник</span>
-            <div class="btnRow">
-              <button id="changeNickBtn" class="chip" data-i18n="changeNickBtn">Изменить</button>
-            </div>
-          </div>
-          <div class="settingRow">
-            <span class="settingLabel" data-i18n="notifyLabel">Уведомления о сообщениях</span>
-            <div class="btnRow">
-              <button id="notifyToggle" class="chip" type="button"></button>
-            </div>
-            <p id="notifyNote" class="notifyNote"></p>
+            <span class="settingLabel" data-i18n="howToLabel">Как играть</span>
+            <p class="howToText" data-i18n="hint"></p>
           </div>
         </div>
       </div>
@@ -1610,16 +1609,6 @@
             <p id="gfxUltraNote" class="gfxUltraNote hidden" data-i18n="gfxUltraNote">Экспериментальная функция: объёмные платформы и тени. На слабых телефонах может тормозить.</p>
           </div>
 
-          <div class="settingRow">
-            <span class="settingLabel" data-i18n="motionBlur">Motion blur</span>
-            <div class="btnRow">
-              <button id="blurToggle" class="chip"></button>
-            </div>
-          </div>
-          <div class="settingRow">
-            <span class="settingLabel" data-i18n="styleLabel">Стиль игры</span>
-            <div id="styleRow" class="styleRow"></div>
-          </div>
           <div class="settingRow" id="bgColorSetting">
             <span class="settingLabel" data-i18n="bgColorLabel">Цвет фона</span>
             <div id="bgColorRow" class="swatchRow"></div>
@@ -1633,6 +1622,12 @@
       <div class="setCat" data-cat="profile">
         <button class="setCatHead" type="button" aria-expanded="false"><span class="setCatIcon">☺</span><span class="setCatName" data-i18n="catProfile">Профиль</span><span class="setCatArrow">›</span></button>
         <div class="setCatBody">
+          <div class="settingRow">
+            <span class="settingLabel" data-i18n="nickLabel">Ник</span>
+            <div class="btnRow">
+              <button id="changeNickBtn" class="chip" data-i18n="changeNickBtn">Изменить</button>
+            </div>
+          </div>
           <div class="settingRow">
             <span class="settingLabel" data-i18n="avatarLabel">Аватар</span>
             <div class="avatarPickerRow">
@@ -1663,12 +1658,6 @@
             <span class="settingLabel" data-i18n="musicVolumeLabel">Громкость музыки</span>
             <div class="btnRow">
               <input id="musicVolumeSlider" type="range" min="0" max="100" value="28" style="width:150px;accent-color:#ff9f45;">
-            </div>
-          </div>
-          <div class="settingRow">
-            <span class="settingLabel" data-i18n="vibroLabel">Вибрация</span>
-            <div class="btnRow">
-              <button id="vibroToggle" class="chip"></button>
             </div>
           </div>
         </div>
@@ -1751,6 +1740,8 @@
       <div class="passQTitle" data-i18n="wheelTitle">Рулетка</div>
       <div class="wheelWrap"><canvas id="wheelCanvas" width="560" height="560"></canvas><div class="wheelPin"></div></div>
       <button id="wheelBtn" class="btn passBuyBtn" type="button"></button>
+      <div class="wheelMulti"><button id="wheelBtn5" class="btn" type="button"></button><button id="wheelBtn10" class="btn" type="button"></button></div>
+      <button id="wheelSkipBtn" class="wheelSkip" type="button" aria-pressed="false"></button>
       <div id="wheelResult" class="wheelResult"></div>
       <div id="wheelOdds" class="wheelOdds"></div>
       <div class="passQTitle" data-i18n="fruitInvTitle">Фрукты и способности</div>
@@ -1946,8 +1937,23 @@
   </div>
 </div>
 
+<div id="closedScreen" role="dialog" aria-modal="true" aria-labelledby="closedTitle">
+  <div class="closedCard">
+    <div class="closedIcon">🐰</div>
+    <h2 id="closedTitle" class="closedTitle" data-i18n="closedTitle">Игра закрыта</h2>
+    <p class="closedText" data-i18n="closedText">Cabbit Jump! закрывается на неопределённый срок. Спасибо всем, кто был с нами это недолгое время! Все ваши рекорды, монеты и покупки сохранятся.</p>
+    <div class="closedBye" data-i18n="closedBye">До встречи! 🐰</div>
+  </div>
+</div>
+
 <script>
 "use strict";
+const GAME_CLOSED = true;
+(function blockClosedInput(){
+  if (!GAME_CLOSED) return;
+  const stop = (e) => { if (e && e.stopImmediatePropagation) e.stopImmediatePropagation(); if (e && e.cancelable && e.preventDefault) e.preventDefault(); };
+  ['keydown', 'keyup', 'keypress'].forEach((ev) => window.addEventListener(ev, stop, true));
+})();
 
 
 
@@ -2459,10 +2465,10 @@ const STYLE_BG = {
   neon:  { bg1: [10, 2, 26],    bg2: [62, 8, 90],     glow: 'rgba(255,60,200,.32)' },
   paper: { bg1: [252, 250, 242], bg2: [247, 244, 232], glow: 'rgba(255,255,255,0)' }
 };
-let uiStyle = Store.get('uiStyle', 'classic');
-if (UI_STYLES.indexOf(uiStyle) === -1) uiStyle = 'classic';
+let uiStyle = 'classic';
+Store.set('uiStyle', 'classic');
 function applyUiStyle(id){
-  if (UI_STYLES.indexOf(id) === -1) id = 'classic';
+  id = 'classic';
   uiStyle = id;
   Store.set('uiStyle', id);
   const cl = document.body && document.body.classList;
@@ -2861,7 +2867,7 @@ const sfxPopupOpen  = () => { ensureAudio(); beep(680, 0.05, 'sine', 0.10); beep
 const sfxPopupClose = () => { ensureAudio(); beep(560, 0.06, 'sine', 0.08); beep(360, 0.08, 'sine', 0.06); };
 
 let musicOn = Store.get('music', '1') === '1';
-let vibroOn = Store.get('vibro', '1') === '1';
+const vibroOn = false;
 function buzz(ms){
   if (!vibroOn) return;
   try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {}
@@ -2926,7 +2932,7 @@ const I18N = {
     gfxLabel: 'Графика', gfx_auto: 'Авто', gfx_high: 'Красиво', gfx_low: 'Быстро', gfx_ultra: 'Ультра',
     expBadge: 'эксперимент',
     gfxUltraNote: '⚗ Экспериментальная функция: объёмные платформы и тени. На слабых телефонах может тормозить.',
-    catMain: 'Основное', catGfx: 'Графика и вид', catProfile: 'Профиль', catSound: 'Звук', catOnline: 'Онлайн', catCommunity: 'Сообщество', fruitsBtn: 'Фрукты', fruitsTitle: 'Фрукты', wheelTitle: 'Рулетка', fruitInvTitle: 'Фрукты и способности', fruitHint: 'Фрукты можно поймать в забеге или выбить в рулетке. Съешь фрукт — получишь его способность. Съешь другой — старый пропадёт. Меняться фруктами можно с друзьями: кнопка ⇄ в чате.', fr_spring: 'Пружинный фрукт', fr_flame: 'Огненный фрукт', fr_ice: 'Ледяной фрукт', fr_storm: 'Грозовой фрукт', fr_portal: 'Портальный фрукт', fr_star: 'Звёздный фрукт', frd_spring: 'Пружины на платформах попадаются в 3 раза чаще.', frd_flame: 'Монстры сгорают от касания — без отсчёта, с подкидом и монетами.', frd_ice: 'Движущиеся платформы замерзают, мигающие больше не исчезают.', frd_storm: 'Каждые 6 секунд молния бьёт ближайшего монстра: +монеты.', frd_portal: 'Телепорты попадаются часто и уносят на самую высокую платформу.', frd_star: 'Каждые 1000 очков — звездопад монет. +50% жетонов Cabbit Pass.', rar1: 'Обычный', rar2: 'Редкий', rar3: 'Эпический', rar4: 'Легендарный', fruitEatenNow: 'Сейчас съеден', fruitNone: 'Ты ещё не съел ни одного фрукта. Поймай его в забеге или выбей в рулетке!', fruitEat: 'Съесть', fruitReplace: 'Съесть {new}? Способность «{old}» пропадёт.', fruitAte: 'Ты съел: {f}!', fruitGot: 'Новый фрукт: {f}!', wheelSpin: 'Крутить · {p}', wheelWon: 'Выпало:', wheelOdds: 'Шансы:', tradeTitle: 'Обмен фруктами', tradeGiveLabel: 'Ты отдаёшь', tradeWantLabel: 'Ты хочешь', tradeSend: 'Предложить', tradeNoFruits: 'У тебя пока нет фруктов для обмена.', tradeSame: 'Нельзя менять фрукт на такой же.', tradeYouGive: 'ты отдаёшь', tradeYouGet: 'ты получишь', tradeTheyGive: 'даёт тебе', tradeTheyWant: 'хочет взамен', tradeAccept: 'Принять', tradeDecline: 'Отказать', tradeCancel: 'Отменить', tradeWaiting: 'Ждём ответа друга…', tradeStDone: 'Обмен состоялся ✓', tradeStNo: 'Отказано', tradeStCancel: 'Отменено', tradeNeedFruit: 'Для обмена нужен {f}', tradeClosed: 'Этот обмен уже закрыт', tradeCancelled: 'Обмен отменён, фрукт вернулся', tradeDoneYou: 'Обмен! Ты получил: {f}', tradeDoneThem: 'Друг принял обмен! Ты получил: {f}', tradeDeclined: 'Обмен не состоялся, {f} вернулся', msgTrade: '⇄ Обмен фруктами',
+    catMain: 'Основное', catGfx: 'Графика', catProfile: 'Профиль', catSound: 'Звук', catOnline: 'Онлайн', catCommunity: 'Сообщество', fruitsBtn: 'Фрукты', fruitsTitle: 'Фрукты', wheelTitle: 'Рулетка', fruitInvTitle: 'Фрукты и способности', fruitHint: 'Фрукты можно поймать в забеге или выбить в рулетке. Съешь фрукт — получишь его способность. Съешь другой — старый пропадёт. Меняться фруктами можно с друзьями: кнопка ⇄ в чате.', fr_spring: 'Пружинный фрукт', fr_flame: 'Огненный фрукт', fr_ice: 'Ледяной фрукт', fr_storm: 'Грозовой фрукт', fr_portal: 'Портальный фрукт', fr_star: 'Звёздный фрукт', frd_spring: 'Пружины на платформах попадаются в 3 раза чаще.', frd_flame: 'Монстры сгорают от касания — без отсчёта, с подкидом и монетами.', frd_ice: 'Движущиеся платформы замерзают, мигающие больше не исчезают.', frd_storm: 'Каждые 6 секунд молния бьёт ближайшего монстра: +монеты.', frd_portal: 'Телепорты попадаются часто и уносят на самую высокую платформу.', frd_star: 'Каждые 1000 очков — звездопад монет. +50% жетонов Cabbit Pass.', rar1: 'Обычный', rar2: 'Редкий', rar3: 'Эпический', rar4: 'Легендарный', fruitEatenNow: 'Сейчас съеден', fruitNone: 'Ты ещё не съел ни одного фрукта. Поймай его в забеге или выбей в рулетке!', fruitEat: 'Съесть', fruitReplace: 'Съесть {new}? Способность «{old}» пропадёт.', fruitAte: 'Ты съел: {f}!', fruitGot: 'Новый фрукт: {f}!', wheelSpin: 'Крутить · {p}', wheelWon: 'Выпало:', wheelOdds: 'Шансы:', tradeTitle: 'Обмен фруктами', tradeGiveLabel: 'Ты отдаёшь', tradeWantLabel: 'Ты хочешь', tradeSend: 'Предложить', tradeNoFruits: 'У тебя пока нет фруктов для обмена.', tradeSame: 'Нельзя менять фрукт на такой же.', tradeYouGive: 'ты отдаёшь', tradeYouGet: 'ты получишь', tradeTheyGive: 'даёт тебе', tradeTheyWant: 'хочет взамен', tradeAccept: 'Принять', tradeDecline: 'Отказать', tradeCancel: 'Отменить', tradeWaiting: 'Ждём ответа друга…', tradeStDone: 'Обмен состоялся ✓', tradeStNo: 'Отказано', tradeStCancel: 'Отменено', tradeNeedFruit: 'Для обмена нужен {f}', tradeClosed: 'Этот обмен уже закрыт', tradeCancelled: 'Обмен отменён, фрукт вернулся', tradeDoneYou: 'Обмен! Ты получил: {f}', tradeDoneThem: 'Друг принял обмен! Ты получил: {f}', tradeDeclined: 'Обмен не состоялся, {f} вернулся', msgTrade: '⇄ Обмен фруктами',
     settingsSave: '✓ Сохранить', settingsSaved: 'Сохранено ✓',
     gfxAutoLowNote: '(лагало — включён быстрый режим)',
     pauseMenu: 'Меню',
@@ -2984,7 +2990,7 @@ const I18N = {
     cloudNotFound: 'Код не найден', accountDeleted: 'Этот аккаунт удалён администрацией. Игра начнётся с нуля.', cloudErr: 'Нет связи с сервером', cloudLoading: 'Загрузка…',
     smashToast: 'СОКРУШИТЕЛЬНЫЙ УДАР!', kickToast: 'ПИНОК!', perfectToast: 'ИДЕАЛЬНО!',
     laserToast: 'ОСТОРОЖНО: ЛАЗЕРЫ!',
-    perkRefund: 'Перки обновились — вернули {c} монет', dailyNeedNet: 'Нужен интернет, чтобы забрать награду', glassToast: 'СТЕКЛО СПАСЛО ТЕБЯ!', tapPrompt: 'ЖМИ!',
+    perkRefund: 'Перки обновились — вернули {c} монет', fruitRefund: 'Огненный и Грозовой фрукты убраны — вернули {c} монет', wheelSpinN: '×{n} · {p}', wheelSkipOff: 'Анимация: вкл', wheelSkipOn: 'Анимация: пропуск', wheelSkipNow: 'Пропустить', closedTitle: 'Игра закрыта', closedText: 'Cabbit Jump! закрывается на неопределённый срок. Спасибо всем, кто был с нами это недолгое время! Все ваши рекорды, монеты и покупки сохранятся.', closedBye: 'До встречи! 🐰', dailyNeedNet: 'Нужен интернет, чтобы забрать награду', glassToast: 'СТЕКЛО СПАСЛО ТЕБЯ!', tapPrompt: 'ЖМИ!',
     items: {
       'hat:none':      { n: 'Без шляпы',        d: '' },
       'hat:tophat':     { n: 'Цилиндр',          d: 'Просто стильно.' },
@@ -3057,7 +3063,7 @@ const I18N = {
     gfxLabel: 'Graphics', gfx_auto: 'Auto', gfx_high: 'Pretty', gfx_low: 'Fast', gfx_ultra: 'Ultra',
     expBadge: 'experimental',
     gfxUltraNote: '⚗ Experimental feature: 3D-looking platforms and shadows. May lag on weak phones.',
-    catMain: 'General', catGfx: 'Graphics & look', catProfile: 'Profile', catSound: 'Sound', catOnline: 'Online', catCommunity: 'Community', fruitsBtn: 'Fruits', fruitsTitle: 'Fruits', wheelTitle: 'Wheel', fruitInvTitle: 'Fruits & powers', fruitHint: 'Catch fruits during a run or win them on the wheel. Eat a fruit to get its power. Eating another one replaces it. Trade fruits with friends: the ⇄ button in chat.', fr_spring: 'Spring Fruit', fr_flame: 'Flame Fruit', fr_ice: 'Ice Fruit', fr_storm: 'Storm Fruit', fr_portal: 'Portal Fruit', fr_star: 'Star Fruit', frd_spring: 'Springs on platforms appear 3 times more often.', frd_flame: 'Monsters burn on touch — no countdown, you still bounce and get coins.', frd_ice: 'Moving platforms freeze, blinking ones never vanish.', frd_storm: 'Every 6 seconds lightning hits the nearest monster: +coins.', frd_portal: 'Teleports are common and take you to the highest platform.', frd_star: 'A shower of coins every 1000 points. +50% Cabbit Pass tokens.', rar1: 'Common', rar2: 'Rare', rar3: 'Epic', rar4: 'Legendary', fruitEatenNow: 'Eaten now', fruitNone: 'You have not eaten a fruit yet. Catch one in a run or win one on the wheel!', fruitEat: 'Eat', fruitReplace: 'Eat {new}? The "{old}" power will be lost.', fruitAte: 'You ate: {f}!', fruitGot: 'New fruit: {f}!', wheelSpin: 'Spin · {p}', wheelWon: 'You got:', wheelOdds: 'Odds:', tradeTitle: 'Fruit trade', tradeGiveLabel: 'You give', tradeWantLabel: 'You want', tradeSend: 'Offer', tradeNoFruits: 'You have no fruits to trade yet.', tradeSame: 'You cannot trade a fruit for the same one.', tradeYouGive: 'you give', tradeYouGet: 'you get', tradeTheyGive: 'gives you', tradeTheyWant: 'wants back', tradeAccept: 'Accept', tradeDecline: 'Decline', tradeCancel: 'Cancel', tradeWaiting: 'Waiting for your friend…', tradeStDone: 'Trade done ✓', tradeStNo: 'Declined', tradeStCancel: 'Cancelled', tradeNeedFruit: 'You need {f} for this trade', tradeClosed: 'This trade is already closed', tradeCancelled: 'Trade cancelled, fruit returned', tradeDoneYou: 'Trade! You got: {f}', tradeDoneThem: 'Your friend accepted! You got: {f}', tradeDeclined: 'Trade did not happen, {f} returned', msgTrade: '⇄ Fruit trade',
+    catMain: 'General', catGfx: 'Graphics', catProfile: 'Profile', catSound: 'Sound', catOnline: 'Online', catCommunity: 'Community', fruitsBtn: 'Fruits', fruitsTitle: 'Fruits', wheelTitle: 'Wheel', fruitInvTitle: 'Fruits & powers', fruitHint: 'Catch fruits during a run or win them on the wheel. Eat a fruit to get its power. Eating another one replaces it. Trade fruits with friends: the ⇄ button in chat.', fr_spring: 'Spring Fruit', fr_flame: 'Flame Fruit', fr_ice: 'Ice Fruit', fr_storm: 'Storm Fruit', fr_portal: 'Portal Fruit', fr_star: 'Star Fruit', frd_spring: 'Springs on platforms appear 3 times more often.', frd_flame: 'Monsters burn on touch — no countdown, you still bounce and get coins.', frd_ice: 'Moving platforms freeze, blinking ones never vanish.', frd_storm: 'Every 6 seconds lightning hits the nearest monster: +coins.', frd_portal: 'Teleports are common and take you to the highest platform.', frd_star: 'A shower of coins every 1000 points. +50% Cabbit Pass tokens.', rar1: 'Common', rar2: 'Rare', rar3: 'Epic', rar4: 'Legendary', fruitEatenNow: 'Eaten now', fruitNone: 'You have not eaten a fruit yet. Catch one in a run or win one on the wheel!', fruitEat: 'Eat', fruitReplace: 'Eat {new}? The "{old}" power will be lost.', fruitAte: 'You ate: {f}!', fruitGot: 'New fruit: {f}!', wheelSpin: 'Spin · {p}', wheelWon: 'You got:', wheelOdds: 'Odds:', tradeTitle: 'Fruit trade', tradeGiveLabel: 'You give', tradeWantLabel: 'You want', tradeSend: 'Offer', tradeNoFruits: 'You have no fruits to trade yet.', tradeSame: 'You cannot trade a fruit for the same one.', tradeYouGive: 'you give', tradeYouGet: 'you get', tradeTheyGive: 'gives you', tradeTheyWant: 'wants back', tradeAccept: 'Accept', tradeDecline: 'Decline', tradeCancel: 'Cancel', tradeWaiting: 'Waiting for your friend…', tradeStDone: 'Trade done ✓', tradeStNo: 'Declined', tradeStCancel: 'Cancelled', tradeNeedFruit: 'You need {f} for this trade', tradeClosed: 'This trade is already closed', tradeCancelled: 'Trade cancelled, fruit returned', tradeDoneYou: 'Trade! You got: {f}', tradeDoneThem: 'Your friend accepted! You got: {f}', tradeDeclined: 'Trade did not happen, {f} returned', msgTrade: '⇄ Fruit trade',
     settingsSave: '✓ Save', settingsSaved: 'Saved ✓',
     gfxAutoLowNote: '(lag detected — fast mode on)',
     pauseMenu: 'Menu',
@@ -3115,7 +3121,7 @@ const I18N = {
     cloudNotFound: 'Code not found', accountDeleted: 'This account was deleted by the administration. The game will start from scratch.', cloudErr: 'Could not reach the server', cloudLoading: 'Loading…',
     smashToast: 'MACE SMASH!', kickToast: 'KICKED!', perfectToast: 'PERFECT!',
     laserToast: 'WATCH OUT: LASERS!',
-    perkRefund: 'Perks changed — {c} coins refunded', dailyNeedNet: 'You need internet to claim the reward', glassToast: 'THE GLASS SAVED YOU!', tapPrompt: 'TAP!',
+    perkRefund: 'Perks changed — {c} coins refunded', fruitRefund: 'Flame and Storm fruits were removed — {c} coins refunded', wheelSpinN: '×{n} · {p}', wheelSkipOff: 'Animation: on', wheelSkipOn: 'Animation: skip', wheelSkipNow: 'Skip', closedTitle: 'The game is closed', closedText: 'Cabbit Jump! is closed for an indefinite time. Thank you to everyone who was with us for this short while! All your records, coins and purchases will be kept.', closedBye: 'See you! 🐰', dailyNeedNet: 'You need internet to claim the reward', glassToast: 'THE GLASS SAVED YOU!', tapPrompt: 'TAP!',
     items: {
       'hat:none':      { n: 'No hat',           d: '' },
       'hat:tophat':     { n: 'Top Hat',          d: 'Just stylish.' },
@@ -3200,16 +3206,9 @@ function applyStaticI18n(){
   document.querySelectorAll('.chip[data-lang]').forEach(el => {
     el.setAttribute('aria-pressed', el.dataset.lang === lang ? 'true' : 'false');
   });
-  blurToggle.textContent = t('motionBlur') + ': ' + (motionBlurOn ? t('on') : t('off'));
-  blurToggle.setAttribute('aria-pressed', motionBlurOn ? 'true' : 'false');
   if (typeof musicToggle !== 'undefined'){
     musicToggle.textContent = t('musicLabel') + ': ' + (musicOn ? t('on') : t('off'));
     musicToggle.setAttribute('aria-pressed', musicOn ? 'true' : 'false');
-  }
-  const vibroEl = document.getElementById('vibroToggle');
-  if (vibroEl){
-    vibroEl.textContent = t('vibroLabel') + ': ' + (vibroOn ? t('on') : t('off'));
-    vibroEl.setAttribute('aria-pressed', vibroOn ? 'true' : 'false');
   }
 }
 
@@ -3623,7 +3622,7 @@ const hasDoubleJump = () => hasAcc('backpack');
 
 const STATE = { MENU: 0, PLAY: 1, PAUSED: 2, OVER: 3, SETTINGS: 4, NICK: 5, WARDROBE: 6, DYING: 7 };
 let state = STATE.NICK;
-let motionBlurOn = Store.get('blur', '0') === '1'; 
+const motionBlurOn = false;
 
 const hero = {
   x: VW / 2, y: 0, vx: 0, vy: 0,
@@ -4303,9 +4302,7 @@ function drawDyingHero(){
 
 const FRUITS = {
   spring: { rar: 1, c1: '#c4f79c', c2: '#2f9a3c', sw: '#f0ffe0' },
-  flame:  { rar: 1, c1: '#ffcf6a', c2: '#e2331c', sw: '#fff3b0' },
   ice:    { rar: 2, c1: '#e2fbff', c2: '#3b8fdc', sw: '#ffffff' },
-  storm:  { rar: 2, c1: '#fff27a', c2: '#6a42d6', sw: '#fffbd6' },
   portal: { rar: 3, c1: '#f0d0ff', c2: '#6a2cc6', sw: '#f9eeff' },
   star:   { rar: 4, c1: '#fff6c0', c2: '#ff7a2f', sw: '#ffffff' }
 };
@@ -4327,7 +4324,27 @@ function parseFruitState(str){
   }
   return { inv, eat: v && FRUITS[v.eat] ? v.eat : '', rev: v && v.rev > 0 ? Math.floor(v.rev) : 0 };
 }
+const REMOVED_FRUITS = { flame: 200, storm: 400 };
+function removedFruitRefund(str){
+  let v = null;
+  try { v = JSON.parse(str || 'null'); } catch (e) {}
+  let c = 0;
+  if (v && v.inv && typeof v.inv === 'object'){
+    for (const k in REMOVED_FRUITS){ const n = parseInt(v.inv[k], 10); if (n > 0) c += Math.min(99, n) * REMOVED_FRUITS[k]; }
+  }
+  if (v && REMOVED_FRUITS[v.eat]) c += REMOVED_FRUITS[v.eat];
+  return c;
+}
+let fruitRefundCoins = removedFruitRefund(Store.get('fruits', ''));
 let fruitState = parseFruitState(Store.get('fruits', ''));
+if (fruitRefundCoins){
+  coins += fruitRefundCoins;
+  Store.set('coins', coins);
+  fruitState.rev += 1;
+  Store.set('fruits', JSON.stringify(fruitState));
+  const fr = fruitRefundCoins;
+  setTimeout(() => { if (typeof showToast === 'function') showToast(t('fruitRefund').replace('{c}', fr)); if (typeof cloudPushSoon === 'function') cloudPushSoon(); }, 2200);
+}
 function fruitStr(){ return JSON.stringify(fruitState); }
 function saveFruits(){
   fruitState.rev += 1;
@@ -4613,6 +4630,8 @@ const WHEEL = [
 const WHEEL_PRICE = 400;
 let wheelAngle = 0;
 let wheelSpinning = false;
+let wheelSkipNow = false;
+let wheelSkipAnim = Store.get('wheelSkip', '0') === '1';
 function wheelPickIndex(){
   const total = WHEEL.reduce((a, s) => a + s.w, 0);
   let x = Math.random() * total;
@@ -4681,39 +4700,62 @@ function drawWheel(){
 function refreshWheelBtn(){
   const b = document.getElementById('wheelBtn');
   if (!b) return;
-  b.textContent = t('wheelSpin').replace('{p}', WHEEL_PRICE);
-  b.disabled = wheelSpinning;
-  b.classList.toggle('cant', coins < WHEEL_PRICE);
+  b.textContent = wheelSpinning ? t('wheelSkipNow') : t('wheelSpin').replace('{p}', WHEEL_PRICE);
+  b.classList.toggle('cant', !wheelSpinning && coins < WHEEL_PRICE);
+  for (const n of [5, 10]){
+    const m = document.getElementById('wheelBtn' + n);
+    if (!m) continue;
+    m.textContent = t('wheelSpinN').replace('{n}', n).replace('{p}', WHEEL_PRICE * n);
+    m.disabled = wheelSpinning;
+    m.classList.toggle('cant', coins < WHEEL_PRICE * n);
+  }
+  const sk = document.getElementById('wheelSkipBtn');
+  if (sk){ sk.textContent = wheelSkipAnim ? t('wheelSkipOn') : t('wheelSkipOff'); sk.setAttribute('aria-pressed', String(wheelSkipAnim)); }
 }
-function spinWheel(){
-  if (wheelSpinning) return false;
+function toggleWheelSkip(){
+  wheelSkipAnim = !wheelSkipAnim;
+  Store.set('wheelSkip', wheelSkipAnim ? '1' : '0');
+  refreshWheelBtn();
+}
+function spinWheel(times){
+  if (wheelSpinning){ wheelSkipNow = true; return false; }
+  const n = times === 5 || times === 10 ? times : 1;
+  const cost = WHEEL_PRICE * n;
   const res = document.getElementById('wheelResult');
-  if (coins < WHEEL_PRICE){
-    if (res) res.textContent = t('passNoCoins').replace('{p}', WHEEL_PRICE);
+  if (coins < cost){
+    if (res) res.textContent = t('passNoCoins').replace('{p}', cost);
     return false;
   }
-  coins -= WHEEL_PRICE;
-  noteSpent(WHEEL_PRICE);
-  const idx = wheelPickIndex();
-  const s = WHEEL[idx];
-  let prize = '';
-  let fruitWon = '';
-  if (s.k === 'c'){
-    coins += s.v;
-    prize = '+' + s.v + ' ' + t('coinsWord');
-  } else {
-    fruitWon = pick(fruitsOfRarity(s.r));
-    addFruit(fruitWon);
-    prize = fruitName(fruitWon) + ' · ' + rarityName(s.r);
+  coins -= cost;
+  noteSpent(cost);
+  let idx = 0, coinsWon = 0, fruitWon = '';
+  const got = {}, order = [];
+  for (let i = 0; i < n; i++){
+    idx = wheelPickIndex();
+    const s = WHEEL[idx];
+    if (s.k === 'c') coinsWon += s.v;
+    else {
+      const f = pick(fruitsOfRarity(s.r));
+      addFruit(f);
+      if (!fruitWon) fruitWon = f;
+      if (!got[f]){ got[f] = 0; order.push(f); }
+      got[f]++;
+    }
   }
+  coins += coinsWon;
+  const parts = [];
+  if (coinsWon) parts.push('+' + coinsWon + ' ' + t('coinsWord'));
+  for (const f of order) parts.push(fruitName(f) + (n > 1 ? ' ×' + got[f] : ' · ' + rarityName(FRUITS[f].rar)));
+  const prize = parts.join(' · ');
   Store.set('coins', coins);
   cloudPushSoon();
   if (typeof refreshShopState === 'function') refreshShopState();
   wheelSpinning = true;
+  wheelSkipNow = false;
   refreshWheelBtn();
   if (res) res.textContent = '';
   ensureAudio();
-  const n = WHEEL.length, seg = Math.PI * 2 / n;
+  const seg = Math.PI * 2 / WHEEL.length;
   const start = wheelAngle;
   const baseTurns = Math.PI * 2 * 5;
   const cur = ((start % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
@@ -4731,13 +4773,15 @@ function spinWheel(){
     wheelSpinning = false;
     refreshWheelBtn();
     if (res) res.innerHTML = '<b>' + escapeHtml(t('wheelWon')) + '</b> ' + escapeHtml(prize);
-    if (fruitWon){ burstUiFruit(fruitWon); sweep(420, 1400, 0.35, 'triangle', 0.08); }
+    if (fruitWon){ for (let i = order.length - 1; i >= 0; i--) burstUiFruit(order[i]); sweep(420, 1400, 0.35, 'triangle', 0.08); }
     else sfxCoin();
     buzz(30);
     renderFruitsScreen(true);
   };
+  if (wheelSkipAnim){ finish(); return { idx, prize, fruit: fruitWon, fruits: got, coinsWon }; }
   const step = (now) => {
-    const k = Math.min(1, (now - t0) / dur);
+    if (!wheelSpinning) return;
+    const k = wheelSkipNow ? 1 : Math.min(1, (now - t0) / dur);
     const e = 1 - Math.pow(1 - k, 3);
     wheelAngle = start + (end - start) * e;
     const sgi = Math.floor(wheelAngle / seg);
@@ -4746,7 +4790,7 @@ function spinWheel(){
     if (k < 1) requestAnimationFrame(step); else finish();
   };
   requestAnimationFrame(step);
-  return { idx, prize, fruit: fruitWon };
+  return { idx, prize, fruit: fruitWon, fruits: got, coinsWon };
 }
 function burstUiFruit(id){
   const box = document.getElementById('wheelResult');
@@ -5118,8 +5162,46 @@ function isTypingTarget(el){
   return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || !!el.isContentEditable;
 }
 
+function anyOverlayOpen(){
+  const list = document.querySelectorAll ? document.querySelectorAll('.profileOverlay') : [];
+  for (const o of list) if (!o.classList.contains('hidden')) return true;
+  return false;
+}
+function closeAllOverlays(){
+  const list = document.querySelectorAll ? document.querySelectorAll('.profileOverlay') : [];
+  for (const o of list) o.classList.add('hidden');
+}
+function visibleEl(el){ return !!el && !el.classList.contains('hidden') && !(el.closest && el.closest('.hidden')); }
+function stepBack(){
+  const ovs = Array.from(document.querySelectorAll('.profileOverlay')).filter(o => !o.classList.contains('hidden'));
+  if (ovs.length){
+    const top = ovs[ovs.length - 1];
+    const btn = top.querySelector('[id$="Close"], [id$="CloseBtn"], .backIconBtn, [aria-label="Закрыть"], [aria-label="Назад"]');
+    if (btn && visibleEl(btn)) btn.click(); else top.classList.add('hidden');
+    return true;
+  }
+  if (state === STATE.PLAY){ pauseGame(); return true; }
+  const wb = document.getElementById('wardrobeBack');
+  if (visibleEl(document.getElementById('wardrobe')) && wb){ wb.click(); return true; }
+  const sb = document.getElementById('settingsBack');
+  if (visibleEl(document.getElementById('settings')) && sb){ sb.click(); return true; }
+  return false;
+}
+let backArmed = false;
+function armBack(){
+  if (backArmed) return;
+  try { history.pushState({ cabbit: 1 }, ''); backArmed = true; } catch (e) {}
+}
+window.addEventListener('pointerdown', armBack);
+window.addEventListener('popstate', () => {
+  backArmed = false;
+  let handled = false;
+  try { handled = stepBack(); } catch (e) {}
+  if (handled) armBack();
+});
 window.addEventListener('keydown', e => {
   if (isTypingTarget(e.target) || isTypingTarget(document.activeElement)) return;
+  if (state !== STATE.PLAY && anyOverlayOpen()) return;
   if (e.code === 'ArrowLeft'  || e.code === 'KeyA'){ keys.left = true;  e.preventDefault(); }
   if (e.code === 'ArrowRight' || e.code === 'KeyD'){ keys.right = true; e.preventDefault(); }
   if ((e.code === 'ArrowUp' || e.code === 'KeyW') && state === STATE.PLAY){ spearLunge(); e.preventDefault(); }
@@ -8166,7 +8248,6 @@ const bestLine  = document.getElementById('bestLine');
 const rankLine  = document.getElementById('rankLine');
 const coinLine  = document.getElementById('coinLine');
 const overTitle = document.getElementById('overTitle');
-const blurToggle = document.getElementById('blurToggle');
 const shopEl    = document.getElementById('shop');
 
 const show = el => el.classList.remove('hidden');
@@ -8803,6 +8884,7 @@ function goToMenu(){
 }
 
 function startGame(){
+  closeAllOverlays();
   resetGame();
   Store.set('playedOnce', '1');
   const dm = document.getElementById('dailyModal');
@@ -8829,6 +8911,7 @@ function pauseGame(){
 
 function resumeGame(){
   if (state !== STATE.PAUSED) return;
+  closeAllOverlays();
   state = STATE.PLAY;
   last = performance.now();
   acc = 0;
@@ -10934,7 +11017,7 @@ function updateInboxBtn(){
   if (btn) btn.classList.toggle('hidden', !cloudReady());
 }
 
-let notifyOn = Store.get('notify', '0') === '1';
+const notifyOn = false;
 const notifiedTs = {};
 let swReg = null;
 
@@ -11551,8 +11634,6 @@ document.getElementById('cloudRestoreBtn').addEventListener('click', () => {
   cloudRestore(document.getElementById('cloudRestoreInput').value, document.getElementById('cloudRestorePw').value);
 });
 document.getElementById('pwSaveBtn').addEventListener('click', savePassword);
-document.getElementById('notifyToggle').addEventListener('click', toggleNotify);
-if (notifyOn && notifySupported() && Notification.permission === 'granted') registerSw();
 document.getElementById('cloudRefreshBtn').addEventListener('click', cloudFetchLeaderboard);
 document.getElementById('playerSearchBtn').addEventListener('click', runPlayerSearch);
 document.getElementById('playerSearchInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') runPlayerSearch(); });
@@ -11615,7 +11696,10 @@ document.getElementById('settingsBtn').addEventListener('click', openSettings);
 document.getElementById('wardrobeBtn').addEventListener('click', openWardrobe);
 document.getElementById('fruitsBtn').addEventListener('click', openFruits);
 document.getElementById('fruitClose').addEventListener('click', closeFruits);
-document.getElementById('wheelBtn').addEventListener('click', spinWheel);
+document.getElementById('wheelBtn').addEventListener('click', () => spinWheel(1));
+document.getElementById('wheelBtn5').addEventListener('click', () => spinWheel(5));
+document.getElementById('wheelBtn10').addEventListener('click', () => spinWheel(10));
+document.getElementById('wheelSkipBtn').addEventListener('click', toggleWheelSkip);
 document.getElementById('chatTradeBtn').addEventListener('click', openTradeModal);
 document.getElementById('tradeCloseBtn').addEventListener('click', closeTradeModal);
 document.getElementById('tradeSendBtn').addEventListener('click', async () => {
@@ -12329,22 +12413,6 @@ document.querySelectorAll('#gfxRow .chip[data-gfx]').forEach(chip => {
 refreshGfxRow();
 document.getElementById('vignette').classList.toggle('off', lowGfx());
 
-blurToggle.addEventListener('click', () => {
-  motionBlurOn = !motionBlurOn;
-  Store.set('blur', motionBlurOn ? '1' : '0');
-  if (!motionBlurOn){
-    blurAmount = 0;
-    blurCtx.clearRect(0, 0, blurCvs.width, blurCvs.height);
-  }
-  applyStaticI18n();
-});
-
-document.getElementById('vibroToggle').addEventListener('click', () => {
-  vibroOn = !vibroOn;
-  Store.set('vibro', vibroOn ? '1' : '0');
-  if (vibroOn) buzz(30);
-  applyStaticI18n();
-});
 
 const musicToggle = document.getElementById('musicToggle');
 musicToggle.addEventListener('click', () => {
