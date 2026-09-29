@@ -505,6 +505,56 @@
   .trophyLine.up{color:#7dff9a;} .trophyLine.down{color:#ff8a8a;} .trophyLine.zero{color:#e8d9ff;}
   .trophyLine small{font-size:15px;opacity:.75;margin-left:6px;}
   .passLine{font-size:14px;color:#ffd34d;min-height:18px;}
+  .fruitEaten{display:flex;align-items:center;gap:12px;margin:14px 0 6px;padding:12px;border-radius:16px;background:rgba(255,255,255,.08);box-shadow:inset 0 0 0 1.5px rgba(255,211,77,.35);}
+  .fruitEatInfo{flex:1;min-width:0;}
+  .fruitEatLabel{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;opacity:.7;}
+  .fruitName{font-size:16px;font-weight:800;}
+  .fruitCnt{font-size:13px;color:#ffd34d;}
+  .fruitRar{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--rc,#fff);}
+  .fruitDesc{font-size:12.5px;opacity:.85;line-height:1.3;}
+  .wheelWrap{position:relative;width:min(280px,76vw);aspect-ratio:1;margin:10px auto 10px;}
+  .wheelWrap canvas{width:100%;height:100%;display:block;filter:drop-shadow(0 8px 18px rgba(0,0,0,.4));}
+  .wheelPin{position:absolute;left:50%;top:-6px;transform:translateX(-50%);width:0;height:0;border-left:14px solid transparent;border-right:14px solid transparent;border-top:26px solid #fff;filter:drop-shadow(0 3px 2px rgba(0,0,0,.45));}
+  #wheelBtn.cant{opacity:.6;}
+  .wheelResult{display:flex;align-items:center;justify-content:center;gap:8px;min-height:30px;margin-top:8px;font-size:15px;text-align:center;}
+  .wheelResult b{color:#ffd34d;}
+  .wheelOdds{font-size:10.5px;opacity:.55;text-align:center;margin:2px 0 6px;line-height:1.35;}
+  .fruitInv{display:flex;flex-direction:column;gap:8px;margin:10px 0;}
+  .fruitCard{display:flex;align-items:center;gap:10px;padding:10px;border-radius:14px;background:rgba(255,255,255,.07);box-shadow:inset 3px 0 0 var(--rc,#fff);}
+  .fruitCard.empty{opacity:.5;}
+  .fruitCard.eaten{box-shadow:inset 3px 0 0 var(--rc,#fff),inset 0 0 0 2px rgba(255,211,77,.6);}
+  .fruitCardBody{flex:1;min-width:0;}
+  .fruitEatBtn{font-size:13px;padding:8px 12px;flex:none;}
+  .fruitHint{font-size:12px;opacity:.7;text-align:center;line-height:1.4;margin:6px 0 10px;}
+  .fruitPop{animation:fruitPop .5s ease-out;}
+  @keyframes fruitPop{0%{transform:scale(.2)}70%{transform:scale(1.25)}100%{transform:scale(1)}}
+  #tradeModal{z-index:400;}
+  .chatMsgRow.own .tradeSide span{color:#3a1f00 !important;}
+  .chatMsgRow.own .tradeSide small{color:#3a1f00;}
+  .chatMsgRow.own .tradeStatus{background:rgba(255,255,255,.35);}
+  .chatMsgRow.own .tradeStatus.st-done{color:#1f7a2a;}
+  .chatMsgRow.own .tradeStatus.st-no,.chatMsgRow.own .tradeStatus.st-cancel{color:#8a1f1f;}
+  .tradeBox{width:min(360px,92vw);max-height:88vh;overflow-y:auto;border-radius:22px;padding:16px;background:linear-gradient(180deg,#43207a,#1f0f38);box-shadow:0 12px 40px rgba(0,0,0,.5),inset 0 0 0 1.5px rgba(255,211,77,.35);color:#fdf6e8;display:flex;flex-direction:column;gap:8px;}
+  .tradeBoxTitle{font-size:20px;font-weight:800;color:#ffd34d;text-align:center;}
+  .tradePick{display:flex;flex-wrap:wrap;gap:6px;}
+  .tradeChip{display:flex;align-items:center;gap:4px;padding:4px 10px 4px 4px;border-radius:12px;border:none;cursor:pointer;background:rgba(255,255,255,.08);color:#fdf6e8;font:inherit;font-size:12.5px;box-shadow:inset 0 0 0 1.5px transparent;}
+  .tradeChip.sel{background:rgba(255,211,77,.18);box-shadow:inset 0 0 0 2px var(--rc,#ffd34d);}
+  .tradeNote{min-height:16px;font-size:12px;color:#ff9b9b;text-align:center;}
+  .tradeBoxBtns{display:flex;gap:8px;justify-content:center;}
+  .tradeBoxBtns .btn{flex:1;font-size:15px;}
+  .tradeBoxBtns .btn:disabled{opacity:.45;}
+  .chatMsgRow.trade{max-width:86%;}
+  .tradeCard{display:flex;flex-direction:column;gap:6px;min-width:220px;}
+  .tradeHead{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;opacity:.8;}
+  .tradeRow{display:flex;align-items:center;justify-content:space-between;gap:6px;}
+  .tradeSide{display:flex;flex-direction:column;align-items:center;gap:2px;flex:1;text-align:center;font-weight:800;font-size:13px;}
+  .tradeSide small{display:block;font-size:10px;font-weight:600;color:#fdf6e8;opacity:.7;}
+  .tradeArrow{font-size:22px;opacity:.8;}
+  .tradeBtns{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+  .tradeBtns .btn{flex:1;font-size:13px;padding:7px 10px;}
+  .tradeWait{flex:1 1 100%;font-size:12px;opacity:.75;text-align:center;}
+  .tradeStatus{font-size:12.5px;font-weight:800;text-align:center;padding:4px;border-radius:8px;background:rgba(0,0,0,.2);}
+  .tradeStatus.st-done{color:#7dff9a;} .tradeStatus.st-no,.tradeStatus.st-cancel{color:#ffb3b3;}
   .passOverlay{padding:0 !important;align-items:stretch !important;justify-content:stretch !important;background:#1a0d2b !important;}
   .passFull{position:relative;width:100%;height:100vh;height:100dvh;overflow-y:auto;box-sizing:border-box;-webkit-overflow-scrolling:touch;
     padding:calc(env(safe-area-inset-top,0px) + 14px) max(14px,calc((100vw - 560px) / 2)) calc(env(safe-area-inset-bottom,0px) + 24px);
@@ -1327,7 +1377,6 @@
     <button id="dailyBtn" class="menuIconBtn" type="button" aria-label="Ежедневная награда"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="10" width="16" height="10" rx="2" stroke="#fdf6e8" stroke-width="2"/><rect x="3" y="7" width="18" height="4" rx="1.5" stroke="#fdf6e8" stroke-width="2"/><path d="M12 7 V20" stroke="#fdf6e8" stroke-width="2"/><path d="M12 7 C 10 3.5 6.5 4 7.5 6.2 C 8.2 7.4 12 7 12 7 Z M12 7 C 14 3.5 17.5 4 16.5 6.2 C 15.8 7.4 12 7 12 7 Z" stroke="#fdf6e8" stroke-width="1.8" stroke-linejoin="round"/></svg><span id="dailyDot" class="dot hidden"></span></button>
     <button id="menuGearBtn" class="menuIconBtn" type="button" aria-label="Настройки"><svg viewBox="0 0 24 24" fill="none"><path d="M12 8.6 A3.4 3.4 0 1 0 12 15.4 A3.4 3.4 0 1 0 12 8.6 Z" stroke="#fdf6e8" stroke-width="2"/><path d="M12 2.8 V5.2 M12 18.8 V21.2 M2.8 12 H5.2 M18.8 12 H21.2 M5.5 5.5 L7.2 7.2 M16.8 16.8 L18.5 18.5 M5.5 18.5 L7.2 16.8 M16.8 7.2 L18.5 5.5" stroke="#fdf6e8" stroke-width="2.4" stroke-linecap="round"/></svg></button>
     <div id="menuTopBar" class="menuTopBar">
-      <button id="trophyPill" class="topPill trophyPill" type="button" aria-label="Кубки"><span class="tpIcon">🏆</span><b id="menuTrophies">0</b></button>
       <div class="topPill coinPill"><i class="coinDot"></i><span class="coinNum" id="menuCoins">0</span></div>
     </div>
     <div class="spacer"></div>
@@ -1343,22 +1392,15 @@
       <span id="passCardDot" class="passDot hidden">!</span>
     </button>
 
-    <div id="eventBanner" class="eventBanner hidden"></div>
-    <div id="confettiBox" class="confettiBox"></div>
-
     <div class="btnRow rise d3">
       <div class="menuBtnWrap"><button id="playBtn" class="btn" data-i18n="play">Играть</button></div>
       <div class="menuBtnWrap"><button id="pauseMenuBtn" class="btn hidden" data-i18n="pauseMenu">Меню</button></div>
       <div class="menuBtnWrap"><button id="continueBtn" class="btn hidden" disabled data-i18n="cont">Продолжить</button></div>
       <div class="menuBtnWrap"><button id="wardrobeBtn" class="btn" data-i18n="wardrobe">Гардероб</button></div>
+      <div class="menuBtnWrap"><button id="fruitsBtn" class="btn" data-i18n="fruitsBtn">Фрукты</button></div>
       <div class="menuBtnWrap"><button id="settingsBtn" class="btn ghost" data-i18n="settings">Настройки</button></div>
     </div>
     <p id="menuHint" class="hint rise d4 hidden" data-i18n="hint">Клавиши ← → или A / D, на телефоне — кнопки внизу. Тап по экрану: выстрел из лука или двойной прыжок. Встретил монстра — жми, пока идёт отсчёт!</p>
-    <div class="socialRow rise d4">
-      <button id="discordBtn" class="btn ghost">Discord</button>
-      <button id="telegramBtn" class="btn ghost">Telegram</button>
-      <button id="tiktokBtn" class="btn ghost">TikTok</button>
-    </div>
     <div class="spacer"></div>
   </div>
 
@@ -1631,6 +1673,21 @@
           </div>
         </div>
       </div>
+      <div class="setCat" data-cat="community">
+        <button class="setCatHead" type="button" aria-expanded="false"><span class="setCatIcon">✦</span><span class="setCatName" data-i18n="catCommunity">Сообщество</span><span class="setCatArrow">›</span></button>
+        <div class="setCatBody">
+          <div class="settingRow">
+            <div class="socialRow">
+              <button id="discordBtn" class="btn ghost">Discord</button>
+              <button id="telegramBtn" class="btn ghost">Telegram</button>
+              <button id="tiktokBtn" class="btn ghost">TikTok</button>
+            </div>
+          </div>
+          <div class="settingRow">
+            <div id="eventBanner" class="eventBanner hidden"></div>
+          </div>
+        </div>
+      </div>
       <div class="setCat" data-cat="online">
         <button class="setCatHead" type="button" aria-expanded="false"><span class="setCatIcon">☁</span><span class="setCatName" data-i18n="catOnline">Онлайн</span><span class="setCatArrow">›</span></button>
         <div class="setCatBody">
@@ -1674,7 +1731,6 @@
   <div id="over" class="screen hidden">
     <p id="overTitle">Котокролик приземлился</p>
     <div id="finalScore">0</div>
-    <p id="trophyLine" class="trophyLine"></p>
     <p id="coinLine"></p>
     <p id="bestLine">Рекорд: 0</p>
     <p id="rankLine"></p>
@@ -1682,6 +1738,39 @@
     <div class="btnRow">
       <button id="retryBtn" class="btn" data-i18n="retry">Повторить</button>
       <button id="menuBtn" class="btn ghost" data-i18n="toMenu">В меню</button>
+    </div>
+  </div>
+
+  <div id="fruitModal" class="profileOverlay passOverlay hidden">
+    <div class="passFull fruitFull">
+      <button id="fruitClose" class="backIconBtn" aria-label="Закрыть">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M6 6 L18 18 M18 6 L6 18" stroke="#fdf6e8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="passTitle" data-i18n="fruitsTitle">Фрукты</div>
+      <div id="fruitEaten" class="fruitEaten"></div>
+      <div class="passQTitle" data-i18n="wheelTitle">Рулетка</div>
+      <div class="wheelWrap"><canvas id="wheelCanvas" width="560" height="560"></canvas><div class="wheelPin"></div></div>
+      <button id="wheelBtn" class="btn passBuyBtn" type="button"></button>
+      <div id="wheelResult" class="wheelResult"></div>
+      <div id="wheelOdds" class="wheelOdds"></div>
+      <div class="passQTitle" data-i18n="fruitInvTitle">Фрукты и способности</div>
+      <div id="fruitInv" class="fruitInv"></div>
+      <p class="fruitHint" data-i18n="fruitHint">Фрукты можно поймать в забеге или выбить в рулетке. Съешь фрукт — получишь его способность. Съешь другой — старый пропадёт. Меняться фруктами можно с друзьями: кнопка ⇄ в чате.</p>
+    </div>
+  </div>
+
+  <div id="tradeModal" class="profileOverlay hidden">
+    <div class="tradeBox">
+      <div class="tradeBoxTitle" data-i18n="tradeTitle">Обмен фруктами</div>
+      <div class="passQTitle" data-i18n="tradeGiveLabel">Ты отдаёшь</div>
+      <div id="tradeGive" class="tradePick"></div>
+      <div class="passQTitle" data-i18n="tradeWantLabel">Ты хочешь</div>
+      <div id="tradeWant" class="tradePick"></div>
+      <div id="tradeNote" class="tradeNote"></div>
+      <div class="tradeBoxBtns">
+        <button id="tradeCloseBtn" class="btn ghost" type="button" data-i18n="back">Назад</button>
+        <button id="tradeSendBtn" class="btn" type="button" data-i18n="tradeSend">Предложить</button>
+      </div>
     </div>
   </div>
 
@@ -1823,6 +1912,9 @@
         </button>
         <button id="chatPhotoBtn" class="chatToolBtn" type="button" aria-label="Фото">
           <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="3" stroke="#fdf6e8" stroke-width="2"/><circle cx="9" cy="10" r="1.8" fill="#fdf6e8"/><path d="M5 17 L10 12.5 L13 15 L16 12 L20 16" stroke="#fdf6e8" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg>
+        </button>
+        <button id="chatTradeBtn" class="chatToolBtn" type="button" aria-label="Обмен">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M4 8 H17 M13 4 L17 8 L13 12" stroke="#fdf6e8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 16 H7 M11 12 L7 16 L11 20" stroke="#fdf6e8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
         <input id="chatPhotoInput" type="file" accept="image/*" class="hidden">
         <input id="chatInput" type="text" maxlength="200" enterkeyhint="send" autocomplete="off" data-i18n-placeholder="chatPlaceholder" placeholder="Написать сообщение...">
@@ -2137,7 +2229,7 @@ function recordRunForPass(sc, runCoinsGot){
     if (q.done.indexOf(qu.id) === -1 && questProgress(q, qu.id) >= qu.n){ q.done.push(qu.id); questXp += qu.xp; done.push(qu); }
   }
   Store.set('quests', JSON.stringify(q));
-  const runXp = sc >= MIN_RUN_SCORE ? Math.round(Math.min(60, Math.floor(Math.max(0, sc) / 60)) * (typeof hasPerk === 'function' && hasPerk('passboost') ? 1.5 : 1)) : 0;
+  const runXp = sc >= MIN_RUN_SCORE ? Math.round(Math.min(60, Math.floor(Math.max(0, sc) / 60)) * (typeof hasFruit === 'function' && hasFruit('star') ? 1.5 : 1)) : 0;
   addPassXp(runXp + questXp);
   if (done.length) setTimeout(() => showToast(t('questDone').replace('{x}', done.reduce((a, b) => a + b.xp, 0))), 900);
   return { runXp, questXp };
@@ -2834,7 +2926,7 @@ const I18N = {
     gfxLabel: 'Графика', gfx_auto: 'Авто', gfx_high: 'Красиво', gfx_low: 'Быстро', gfx_ultra: 'Ультра',
     expBadge: 'эксперимент',
     gfxUltraNote: '⚗ Экспериментальная функция: объёмные платформы и тени. На слабых телефонах может тормозить.',
-    catMain: 'Основное', catGfx: 'Графика и вид', catProfile: 'Профиль', catSound: 'Звук', catOnline: 'Онлайн',
+    catMain: 'Основное', catGfx: 'Графика и вид', catProfile: 'Профиль', catSound: 'Звук', catOnline: 'Онлайн', catCommunity: 'Сообщество', fruitsBtn: 'Фрукты', fruitsTitle: 'Фрукты', wheelTitle: 'Рулетка', fruitInvTitle: 'Фрукты и способности', fruitHint: 'Фрукты можно поймать в забеге или выбить в рулетке. Съешь фрукт — получишь его способность. Съешь другой — старый пропадёт. Меняться фруктами можно с друзьями: кнопка ⇄ в чате.', fr_spring: 'Пружинный фрукт', fr_flame: 'Огненный фрукт', fr_ice: 'Ледяной фрукт', fr_storm: 'Грозовой фрукт', fr_portal: 'Портальный фрукт', fr_star: 'Звёздный фрукт', frd_spring: 'Пружины на платформах попадаются в 3 раза чаще.', frd_flame: 'Монстры сгорают от касания — без отсчёта, с подкидом и монетами.', frd_ice: 'Движущиеся платформы замерзают, мигающие больше не исчезают.', frd_storm: 'Каждые 6 секунд молния бьёт ближайшего монстра: +монеты.', frd_portal: 'Телепорты попадаются часто и уносят на самую высокую платформу.', frd_star: 'Каждые 1000 очков — звездопад монет. +50% жетонов Cabbit Pass.', rar1: 'Обычный', rar2: 'Редкий', rar3: 'Эпический', rar4: 'Легендарный', fruitEatenNow: 'Сейчас съеден', fruitNone: 'Ты ещё не съел ни одного фрукта. Поймай его в забеге или выбей в рулетке!', fruitEat: 'Съесть', fruitReplace: 'Съесть {new}? Способность «{old}» пропадёт.', fruitAte: 'Ты съел: {f}!', fruitGot: 'Новый фрукт: {f}!', wheelSpin: 'Крутить · {p}', wheelWon: 'Выпало:', wheelOdds: 'Шансы:', tradeTitle: 'Обмен фруктами', tradeGiveLabel: 'Ты отдаёшь', tradeWantLabel: 'Ты хочешь', tradeSend: 'Предложить', tradeNoFruits: 'У тебя пока нет фруктов для обмена.', tradeSame: 'Нельзя менять фрукт на такой же.', tradeYouGive: 'ты отдаёшь', tradeYouGet: 'ты получишь', tradeTheyGive: 'даёт тебе', tradeTheyWant: 'хочет взамен', tradeAccept: 'Принять', tradeDecline: 'Отказать', tradeCancel: 'Отменить', tradeWaiting: 'Ждём ответа друга…', tradeStDone: 'Обмен состоялся ✓', tradeStNo: 'Отказано', tradeStCancel: 'Отменено', tradeNeedFruit: 'Для обмена нужен {f}', tradeClosed: 'Этот обмен уже закрыт', tradeCancelled: 'Обмен отменён, фрукт вернулся', tradeDoneYou: 'Обмен! Ты получил: {f}', tradeDoneThem: 'Друг принял обмен! Ты получил: {f}', tradeDeclined: 'Обмен не состоялся, {f} вернулся', msgTrade: '⇄ Обмен фруктами',
     settingsSave: '✓ Сохранить', settingsSaved: 'Сохранено ✓',
     gfxAutoLowNote: '(лагало — включён быстрый режим)',
     pauseMenu: 'Меню',
@@ -2881,7 +2973,7 @@ const I18N = {
     rotateMsg: 'Переверни телефон вертикально',
     leaderboard: 'Таблица лидеров', empty: '—', wardrobe: 'Гардероб',
     overTitleNormal: 'Котокролик приземлился', overTitleRecord: 'Новый рекорд',
-    overCoins: 'собрано монет', overRecordLabel: 'Рекорд', overNewBest: 'новый личный рекорд', overRank: 'место в рейтинге', overTop1: 'ты первый по кубкам!', passFree: 'Бесплатно', passGold: 'Золотой', howToLabel: 'Как играть', howToOk: 'Понятно!', dailyTitle: 'Ежедневная награда', dailySub: 'Заходи каждый день — награды растут. Пропустишь день — начнёшь сначала.', dailyDay: 'День {d}', dailyClaim: 'Забрать', dailyTomorrow: 'Приходи завтра!', dailyGot: 'Награда получена: {r}', slotTrail: 'Следы', styleLabel: 'Стиль игры', st_classic: 'Классика', st_aero: 'Frutiger Aero', st_neon: 'Неон', st_paper: 'Тетрадка', trophyGoal: 'цель', passSeasonTxt: 'Сезон {s} · осталось {d} дн.', passXpTxt: '{x} / {n} жетонов до уровня {l}', passMaxTxt: 'Максимальный уровень!', passBuy: 'Золотой пасс · {p}', passOwned: 'Золотой пасс активен ✓', passNoCoins: 'Не хватает монет: нужно {p}', passBought: 'Золотой пасс открыт!', passClaim: 'Забрать', passRunXp: 'Cabbit Pass: +{x} жетонов', passLvlUp: 'Новый уровень пасса: {l}!', passQuestsTitle: 'Задания на сегодня', questDone: 'Задание выполнено! +{x} жетонов', qRuns3: 'Сыграй 3 забега', qRuns5: 'Сыграй 5 забегов', qScore: 'Набери {n} очков за забег', qCoins: 'Собери {n} монет', passTitleReward: 'Титул «Cabbit Pass»', coinsWord: 'монет', trophiesTitle: 'Кубки', trophyInfoTxt: 'Забег от 20% цели приносит кубки, отнять их нельзя. Цель забега сейчас — <b>{t}</b> очков: чем выше прыгнешь относительно цели, тем больше кубков. Чем больше кубков, тем выше цель.', trophyRowX2: '×2 цели и больше', trophyRowX15: '×1.5 цели', trophyRowX12: '×1.2 цели', trophyRowX1: 'цель', trophyRowX08: '80% цели', trophyRowX06: '60% цели', trophyRowX04: '40% цели', trophyRowX02: '20% цели', trophyRowX0: 'меньше',
+    overCoins: 'собрано монет', overRecordLabel: 'Рекорд', overNewBest: 'новый личный рекорд', overRank: 'место в рейтинге', overTop1: 'ты первый в рейтинге!', passFree: 'Бесплатно', passGold: 'Золотой', howToLabel: 'Как играть', howToOk: 'Понятно!', dailyTitle: 'Ежедневная награда', dailySub: 'Заходи каждый день — награды растут. Пропустишь день — начнёшь сначала.', dailyDay: 'День {d}', dailyClaim: 'Забрать', dailyTomorrow: 'Приходи завтра!', dailyGot: 'Награда получена: {r}', slotTrail: 'Следы', styleLabel: 'Стиль игры', st_classic: 'Классика', st_aero: 'Frutiger Aero', st_neon: 'Неон', st_paper: 'Тетрадка', trophyGoal: 'цель', passSeasonTxt: 'Сезон {s} · осталось {d} дн.', passXpTxt: '{x} / {n} жетонов до уровня {l}', passMaxTxt: 'Максимальный уровень!', passBuy: 'Золотой пасс · {p}', passOwned: 'Золотой пасс активен ✓', passNoCoins: 'Не хватает монет: нужно {p}', passBought: 'Золотой пасс открыт!', passClaim: 'Забрать', passRunXp: 'Cabbit Pass: +{x} жетонов', passLvlUp: 'Новый уровень пасса: {l}!', passQuestsTitle: 'Задания на сегодня', questDone: 'Задание выполнено! +{x} жетонов', qRuns3: 'Сыграй 3 забега', qRuns5: 'Сыграй 5 забегов', qScore: 'Набери {n} очков за забег', qCoins: 'Собери {n} монет', passTitleReward: 'Титул «Cabbit Pass»', coinsWord: 'монет', trophiesTitle: 'Кубки', trophyInfoTxt: 'Забег от 20% цели приносит кубки, отнять их нельзя. Цель забега сейчас — <b>{t}</b> очков: чем выше прыгнешь относительно цели, тем больше кубков. Чем больше кубков, тем выше цель.', trophyRowX2: '×2 цели и больше', trophyRowX15: '×1.5 цели', trophyRowX12: '×1.2 цели', trophyRowX1: 'цель', trophyRowX08: '80% цели', trophyRowX06: '60% цели', trophyRowX04: '40% цели', trophyRowX02: '20% цели', trophyRowX0: 'меньше',
     retry: 'Повторить', toMenu: 'В меню', scoreWord: 'рекорд',
     cloudTitle: 'Онлайн-профиль', cloudCopy: 'Копировать', cloudRestore: 'Восстановить',
     cloudEnterCode: 'КОД', cloudTop: 'Рейтинг игроков', searchLabel: 'Найти игрока', searchPlaceholder: 'Ник или код', searchBtn: 'Найти', searchNone: 'Никого не нашли', cloudRefresh: 'Обновить рейтинг',
@@ -2965,7 +3057,7 @@ const I18N = {
     gfxLabel: 'Graphics', gfx_auto: 'Auto', gfx_high: 'Pretty', gfx_low: 'Fast', gfx_ultra: 'Ultra',
     expBadge: 'experimental',
     gfxUltraNote: '⚗ Experimental feature: 3D-looking platforms and shadows. May lag on weak phones.',
-    catMain: 'General', catGfx: 'Graphics & look', catProfile: 'Profile', catSound: 'Sound', catOnline: 'Online',
+    catMain: 'General', catGfx: 'Graphics & look', catProfile: 'Profile', catSound: 'Sound', catOnline: 'Online', catCommunity: 'Community', fruitsBtn: 'Fruits', fruitsTitle: 'Fruits', wheelTitle: 'Wheel', fruitInvTitle: 'Fruits & powers', fruitHint: 'Catch fruits during a run or win them on the wheel. Eat a fruit to get its power. Eating another one replaces it. Trade fruits with friends: the ⇄ button in chat.', fr_spring: 'Spring Fruit', fr_flame: 'Flame Fruit', fr_ice: 'Ice Fruit', fr_storm: 'Storm Fruit', fr_portal: 'Portal Fruit', fr_star: 'Star Fruit', frd_spring: 'Springs on platforms appear 3 times more often.', frd_flame: 'Monsters burn on touch — no countdown, you still bounce and get coins.', frd_ice: 'Moving platforms freeze, blinking ones never vanish.', frd_storm: 'Every 6 seconds lightning hits the nearest monster: +coins.', frd_portal: 'Teleports are common and take you to the highest platform.', frd_star: 'A shower of coins every 1000 points. +50% Cabbit Pass tokens.', rar1: 'Common', rar2: 'Rare', rar3: 'Epic', rar4: 'Legendary', fruitEatenNow: 'Eaten now', fruitNone: 'You have not eaten a fruit yet. Catch one in a run or win one on the wheel!', fruitEat: 'Eat', fruitReplace: 'Eat {new}? The "{old}" power will be lost.', fruitAte: 'You ate: {f}!', fruitGot: 'New fruit: {f}!', wheelSpin: 'Spin · {p}', wheelWon: 'You got:', wheelOdds: 'Odds:', tradeTitle: 'Fruit trade', tradeGiveLabel: 'You give', tradeWantLabel: 'You want', tradeSend: 'Offer', tradeNoFruits: 'You have no fruits to trade yet.', tradeSame: 'You cannot trade a fruit for the same one.', tradeYouGive: 'you give', tradeYouGet: 'you get', tradeTheyGive: 'gives you', tradeTheyWant: 'wants back', tradeAccept: 'Accept', tradeDecline: 'Decline', tradeCancel: 'Cancel', tradeWaiting: 'Waiting for your friend…', tradeStDone: 'Trade done ✓', tradeStNo: 'Declined', tradeStCancel: 'Cancelled', tradeNeedFruit: 'You need {f} for this trade', tradeClosed: 'This trade is already closed', tradeCancelled: 'Trade cancelled, fruit returned', tradeDoneYou: 'Trade! You got: {f}', tradeDoneThem: 'Your friend accepted! You got: {f}', tradeDeclined: 'Trade did not happen, {f} returned', msgTrade: '⇄ Fruit trade',
     settingsSave: '✓ Save', settingsSaved: 'Saved ✓',
     gfxAutoLowNote: '(lag detected — fast mode on)',
     pauseMenu: 'Menu',
@@ -3012,7 +3104,7 @@ const I18N = {
     rotateMsg: 'Please rotate your phone back to portrait',
     leaderboard: 'Leaderboard', empty: '—', wardrobe: 'Wardrobe',
     overTitleNormal: 'The cabbit has landed', overTitleRecord: 'New record',
-    overCoins: 'coins collected', overRecordLabel: 'Best', overNewBest: 'new personal best', overRank: 'leaderboard place', overTop1: 'you are #1 in trophies!', passFree: 'Free', passGold: 'Gold', howToLabel: 'How to play', howToOk: 'Got it!', dailyTitle: 'Daily reward', dailySub: 'Come back every day — rewards grow. Miss a day and you start over.', dailyDay: 'Day {d}', dailyClaim: 'Claim', dailyTomorrow: 'Come back tomorrow!', dailyGot: 'Reward received: {r}', slotTrail: 'Trails', styleLabel: 'Game style', st_classic: 'Cabbit', st_aero: 'Frutiger Aero', st_neon: 'Neon', st_paper: 'Notebook', trophyGoal: 'target', passSeasonTxt: 'Season {s} · {d} days left', passXpTxt: '{x} / {n} tokens to level {l}', passMaxTxt: 'Max level!', passBuy: 'Gold pass · {p}', passOwned: 'Gold pass active ✓', passNoCoins: 'Not enough coins: need {p}', passBought: 'Gold pass unlocked!', passClaim: 'Claim', passRunXp: 'Cabbit Pass: +{x} tokens', passLvlUp: 'Pass level up: {l}!', passQuestsTitle: 'Today\'s quests', questDone: 'Quest done! +{x} tokens', qRuns3: 'Play 3 runs', qRuns5: 'Play 5 runs', qScore: 'Score {n} in one run', qCoins: 'Collect {n} coins', passTitleReward: '“Cabbit Pass” title', coinsWord: 'coins', trophiesTitle: 'Trophies', trophyInfoTxt: 'A run of at least 20% of the target gives trophies, they can never be lost. Your run target is now <b>{t}</b> points: the higher you jump compared to it, the more trophies you get. More trophies means a higher target.', trophyRowX2: '×2 target or more', trophyRowX15: '×1.5 target', trophyRowX12: '×1.2 target', trophyRowX1: 'target', trophyRowX08: '80% of target', trophyRowX06: '60% of target', trophyRowX04: '40% of target', trophyRowX02: '20% of target', trophyRowX0: 'less',
+    overCoins: 'coins collected', overRecordLabel: 'Best', overNewBest: 'new personal best', overRank: 'leaderboard place', overTop1: 'you are #1 on the leaderboard!', passFree: 'Free', passGold: 'Gold', howToLabel: 'How to play', howToOk: 'Got it!', dailyTitle: 'Daily reward', dailySub: 'Come back every day — rewards grow. Miss a day and you start over.', dailyDay: 'Day {d}', dailyClaim: 'Claim', dailyTomorrow: 'Come back tomorrow!', dailyGot: 'Reward received: {r}', slotTrail: 'Trails', styleLabel: 'Game style', st_classic: 'Cabbit', st_aero: 'Frutiger Aero', st_neon: 'Neon', st_paper: 'Notebook', trophyGoal: 'target', passSeasonTxt: 'Season {s} · {d} days left', passXpTxt: '{x} / {n} tokens to level {l}', passMaxTxt: 'Max level!', passBuy: 'Gold pass · {p}', passOwned: 'Gold pass active ✓', passNoCoins: 'Not enough coins: need {p}', passBought: 'Gold pass unlocked!', passClaim: 'Claim', passRunXp: 'Cabbit Pass: +{x} tokens', passLvlUp: 'Pass level up: {l}!', passQuestsTitle: 'Today\'s quests', questDone: 'Quest done! +{x} tokens', qRuns3: 'Play 3 runs', qRuns5: 'Play 5 runs', qScore: 'Score {n} in one run', qCoins: 'Collect {n} coins', passTitleReward: '“Cabbit Pass” title', coinsWord: 'coins', trophiesTitle: 'Trophies', trophyInfoTxt: 'A run of at least 20% of the target gives trophies, they can never be lost. Your run target is now <b>{t}</b> points: the higher you jump compared to it, the more trophies you get. More trophies means a higher target.', trophyRowX2: '×2 target or more', trophyRowX15: '×1.5 target', trophyRowX12: '×1.2 target', trophyRowX1: 'target', trophyRowX08: '80% of target', trophyRowX06: '60% of target', trophyRowX04: '40% of target', trophyRowX02: '20% of target', trophyRowX0: 'less',
     retry: 'Retry', toMenu: 'Menu', scoreWord: 'best',
     cloudTitle: 'Online profile', cloudCopy: 'Copy', cloudRestore: 'Restore',
     cloudEnterCode: 'CODE', cloudTop: 'Leaderboard', searchLabel: 'Find a player', searchPlaceholder: 'Nickname or code', searchBtn: 'Find', searchNone: 'Nobody found', cloudRefresh: 'Refresh ranking',
@@ -3181,11 +3273,7 @@ const OUTFITS = {
   },
   perk: {
     none:     { price: 0 },
-    multiacc: { price: 2500 },
-    springs:  { price: 1200 },
-    legs:     { price: 1600 },
-    dodger:   { price: 2000 },
-    passboost: { price: 2800 }
+    multiacc: { price: 2500 }
   },
   trail: {
     none:    { price: 0 },
@@ -3202,9 +3290,10 @@ const OUTFITS = {
 const owned = new Set(String(Store.get('owned', 'hat:none,acc:none,acc:bowtie,tool:none,char:hero,perk:none,trail:none'))
   .split(',').filter(Boolean));
 owned.add('hat:none'); owned.add('acc:none'); owned.add('acc:bowtie'); owned.add('tool:none'); owned.add('char:hero'); owned.add('perk:none'); owned.add('trail:none');
+const REMOVED_PERKS = { magnet: 1800, lucky: 2200, extralife: 3500, springs: 1200, legs: 1600, dodger: 2000, passboost: 2800 };
 let perkRefundCoins = 0;
-for (const k of ['magnet', 'lucky', 'extralife']){
-  if (owned.has('perk:' + k)) perkRefundCoins += ({ magnet: 1800, lucky: 2200, extralife: 3500 })[k];
+for (const k in REMOVED_PERKS){
+  if (owned.has('perk:' + k)) perkRefundCoins += REMOVED_PERKS[k];
 }
 
 const outfit = {
@@ -3257,7 +3346,6 @@ function dropUnownedLockedOutfit(){
   return changed;
 }
 dropUnownedLockedOutfit();
-const REMOVED_PERKS = { magnet: 1800, lucky: 2200, extralife: 3500 };
 function saveOwned(){
   for (const k in REMOVED_PERKS) owned.delete('perk:' + k);
   Store.set('owned', Array.from(owned).join(','));
@@ -3699,7 +3787,7 @@ buildLayers();
 const PW = 76, PH = 16;
 
 const BLINK_PERIOD = 2.4, BLINK_ON = 1.5;
-function blinkSolid(p){ return ((p.blinkT || 0) % BLINK_PERIOD) < BLINK_ON + 0.1; }
+function blinkSolid(p){ return (typeof hasFruit === 'function' && hasFruit('ice')) || ((p.blinkT || 0) % BLINK_PERIOD) < BLINK_ON + 0.1; }
 function makePlatform(y, type, spring){
   return {
     x: rand(6, VW - PW - 6),
@@ -3745,7 +3833,7 @@ function spawnAbove(){
   const pCloud = lerp(0.02, 0.08, d);
   const pBouncy = 0.045;
   const pBlink = lerp(0.0, 0.07, d);
-  const pTele = score > 800 ? 0.022 : 0;
+  const pTele = hasFruit('portal') ? (score > 200 ? 0.08 : 0) : (score > 800 ? 0.022 : 0);
   let acc = pMoving;
   if (r < acc) type = 'moving';
   else if (r < (acc += pBroken)) type = 'broken';
@@ -3754,7 +3842,7 @@ function spawnAbove(){
   else if (r < (acc += pBlink)) type = 'blink';
   else if (r < (acc += pTele)) type = 'tele';
 
-  const springChance = lerp(0.05, 0.11, d) * (hasPerk('springs') ? 2 : 1);
+  const springChance = lerp(0.05, 0.11, d) * (hasFruit('spring') ? 3 : 1);
   const p = makePlatform(y, type, (type === 'normal' || type === 'moving') && Math.random() < springChance);
   if (type === 'blink') p.blinkT = rand(0, 2.4);
 
@@ -3767,6 +3855,7 @@ function spawnAbove(){
   }
 
   platforms.push(p);
+  maybeSpawnFruit(p);
 
   
   if (hasBow() && type === 'normal' && !p.spring && Math.random() < 0.24){
@@ -3956,7 +4045,7 @@ function startMonsterEvent(m){
   monsterEvent = {
     monster: m, elapsed: 0,
     barPos: 0, barDir: 1, barSpeed: QTE_BAR_SPEED,
-    zoneStart: 0.5 - QTE_ZONE_HALF * (hasPerk('dodger') ? 2 : 1), zoneEnd: 0.5 + QTE_ZONE_HALF * (hasPerk('dodger') ? 2 : 1)
+    zoneStart: 0.5 - QTE_ZONE_HALF, zoneEnd: 0.5 + QTE_ZONE_HALF
   };
   hitBtn.classList.remove('hidden');
   hideTouchControls();
@@ -4212,7 +4301,758 @@ function drawDyingHero(){
 }
 
 
+const FRUITS = {
+  spring: { rar: 1, c1: '#c4f79c', c2: '#2f9a3c', sw: '#f0ffe0' },
+  flame:  { rar: 1, c1: '#ffcf6a', c2: '#e2331c', sw: '#fff3b0' },
+  ice:    { rar: 2, c1: '#e2fbff', c2: '#3b8fdc', sw: '#ffffff' },
+  storm:  { rar: 2, c1: '#fff27a', c2: '#6a42d6', sw: '#fffbd6' },
+  portal: { rar: 3, c1: '#f0d0ff', c2: '#6a2cc6', sw: '#f9eeff' },
+  star:   { rar: 4, c1: '#fff6c0', c2: '#ff7a2f', sw: '#ffffff' }
+};
+const FRUIT_IDS = Object.keys(FRUITS);
+const RARITY_COL = { 1: '#c3cadb', 2: '#5fb4ff', 3: '#c77dff', 4: '#ffc33d' };
+const fruitName = (id) => t('fr_' + id);
+const fruitDesc = (id) => t('frd_' + id);
+const rarityName = (r) => t('rar' + r);
+
+function parseFruitState(str){
+  let v = null;
+  try { v = JSON.parse(str || 'null'); } catch (e) {}
+  const inv = {};
+  if (v && v.inv && typeof v.inv === 'object'){
+    for (const k of FRUIT_IDS){
+      const n = parseInt(v.inv[k], 10);
+      if (n > 0) inv[k] = Math.min(99, n);
+    }
+  }
+  return { inv, eat: v && FRUITS[v.eat] ? v.eat : '', rev: v && v.rev > 0 ? Math.floor(v.rev) : 0 };
+}
+let fruitState = parseFruitState(Store.get('fruits', ''));
+function fruitStr(){ return JSON.stringify(fruitState); }
+function saveFruits(){
+  fruitState.rev += 1;
+  Store.set('fruits', fruitStr());
+  if (typeof cloudPushSoon === 'function') cloudPushSoon();
+}
+function fruitCount(id){ return fruitState.inv[id] || 0; }
+function addFruit(id, n){
+  if (!FRUITS[id]) return false;
+  fruitState.inv[id] = Math.min(99, fruitCount(id) + (n || 1));
+  saveFruits();
+  return true;
+}
+function takeFruit(id){
+  if (fruitCount(id) <= 0) return false;
+  fruitState.inv[id] -= 1;
+  if (!fruitState.inv[id]) delete fruitState.inv[id];
+  saveFruits();
+  return true;
+}
+function hasFruit(id){ return fruitState.eat === id; }
+function eatFruit(id){
+  if (fruitCount(id) <= 0) return false;
+  fruitState.inv[id] -= 1;
+  if (!fruitState.inv[id]) delete fruitState.inv[id];
+  fruitState.eat = id;
+  saveFruits();
+  return true;
+}
+function mergeFruitsFrom(str){
+  const r = parseFruitState(str);
+  if (r.rev > fruitState.rev){
+    fruitState = r;
+    Store.set('fruits', fruitStr());
+    return true;
+  }
+  return false;
+}
+function fruitsOfRarity(r){ return FRUIT_IDS.filter(k => FRUITS[k].rar === r); }
+function rollFruit(weights){
+  const w = weights || [62, 27, 9, 2];
+  let x = Math.random() * w.reduce((a, b) => a + b, 0);
+  let rar = 4;
+  for (let i = 0; i < 4; i++){
+    if (x < w[i]){ rar = i + 1; break; }
+    x -= w[i];
+  }
+  return pick(fruitsOfRarity(rar));
+}
+
+function paintFruit(g, x, y, r, id, tm){
+  const f = FRUITS[id];
+  if (!f) return;
+  g.save();
+  g.translate(x, y);
+  g.strokeStyle = '#5a3a1a';
+  g.lineWidth = Math.max(1.5, r * 0.13);
+  g.lineCap = 'round';
+  g.beginPath();
+  g.moveTo(0, -r * 0.9);
+  g.quadraticCurveTo(r * 0.05, -r * 1.25, r * 0.22, -r * 1.36);
+  g.stroke();
+  g.fillStyle = '#56c75a';
+  g.beginPath();
+  g.ellipse(r * 0.42, -r * 1.17, r * 0.34, r * 0.16, -0.5, 0, Math.PI * 2);
+  g.fill();
+  g.strokeStyle = 'rgba(43,34,56,.7)';
+  g.lineWidth = Math.max(1, r * 0.07);
+  g.stroke();
+  const gr = g.createRadialGradient(-r * 0.35, -r * 0.4, r * 0.1, 0, 0, r);
+  gr.addColorStop(0, f.c1);
+  gr.addColorStop(1, f.c2);
+  g.fillStyle = gr;
+  g.beginPath();
+  g.arc(0, 0, r, 0, Math.PI * 2);
+  g.fill();
+  g.save();
+  g.beginPath();
+  g.arc(0, 0, r, 0, Math.PI * 2);
+  g.clip();
+  g.strokeStyle = f.sw;
+  g.globalAlpha *= 0.6;
+  g.lineWidth = Math.max(1.2, r * 0.14);
+  for (let k = 0; k < 3; k++){
+    g.beginPath();
+    for (let i = 0; i <= 22; i++){
+      const a = i / 22 * Math.PI * 2.1 + k * 2.09 + (tm || 0) * 0.5;
+      const rr = r * (0.12 + i / 22 * 0.85);
+      const px = Math.cos(a) * rr, py = Math.sin(a) * rr;
+      if (i) g.lineTo(px, py); else g.moveTo(px, py);
+    }
+    g.stroke();
+  }
+  g.restore();
+  g.strokeStyle = 'rgba(43,34,56,.85)';
+  g.lineWidth = Math.max(1.5, r * 0.11);
+  g.beginPath();
+  g.arc(0, 0, r, 0, Math.PI * 2);
+  g.stroke();
+  g.fillStyle = 'rgba(255,255,255,.6)';
+  g.beginPath();
+  g.ellipse(-r * 0.38, -r * 0.42, r * 0.26, r * 0.14, -0.6, 0, Math.PI * 2);
+  g.fill();
+  g.restore();
+}
+function fruitIconCanvas(id, size){
+  const c = document.createElement('canvas');
+  const k = 2;
+  c.width = size * k; c.height = size * k;
+  c.className = 'fruitIcon';
+  c.style.width = size + 'px';
+  c.style.height = size + 'px';
+  try {
+    const g = c.getContext('2d');
+    g.scale(k, k);
+    paintFruit(g, size / 2, size * 0.58, size * 0.34, id, 0);
+  } catch (e) {}
+  return c;
+}
+
+const fruitPickups = [];
+const bolts = [];
+let fruitSpawnedRun = false;
+let stormT = 0;
+let starNext = 1000;
+const STORM_EVERY = 6;
+function maybeSpawnFruit(p){
+  if (fruitSpawnedRun || score < 400 || p.type !== 'normal' || p.spring) return;
+  if (Math.random() < 0.0016){
+    fruitSpawnedRun = true;
+    fruitPickups.push({ plat: p, x: p.x + p.w / 2, y: p.y - 36, id: rollFruit(), bob: 0, got: 0 });
+  }
+}
+function resetFruitRun(){
+  fruitPickups.length = 0;
+  bolts.length = 0;
+  fruitSpawnedRun = false;
+  stormT = 0;
+  starNext = 1000;
+}
+function stormStrike(){
+  let tx = null, ty = 0, kill = null, crawl = null, bd = 1e9;
+  for (const m of monsters){
+    if (m.frozen) continue;
+    const sy = m.y - camY;
+    if (sy < 0 || sy > VH) continue;
+    const d = Math.abs(m.y - hero.y);
+    if (d < bd){ bd = d; kill = m; crawl = null; tx = m.x; ty = m.y; }
+  }
+  for (const cr of crawlers){
+    const sy = cr.y - camY;
+    if (sy < 0 || sy > VH) continue;
+    const d = Math.abs(cr.y - hero.y);
+    if (d < bd){ bd = d; kill = null; crawl = cr; tx = cr.x; ty = cr.y; }
+  }
+  if (tx === null) return false;
+  bolts.push({ x: tx, y: ty, life: 1, seed: Math.random() * 1000 });
+  if (kill){ burstPixels(kill.x, kill.y, currentWorld().monster.burst); removeMonster(kill); }
+  if (crawl){ const i = crawlers.indexOf(crawl); if (i >= 0) crawlers.splice(i, 1); burstPixels(tx, ty, ['#6be36b', '#2f8f2f', '#bff5a0']); }
+  const bonus = Math.round(3 * coinMult());
+  runCoins += bonus; coins += bonus;
+  Store.set('coins', coins);
+  coinPulse = 1;
+  addToast('+' + bonus, tx + 20, ty - 30, '#fff27a');
+  flash = Math.max(flash, 0.3); flashColor = '#fff7b0';
+  shake = Math.max(shake, 6);
+  ensureAudio();
+  sweep(1800, 160, 0.28, 'sawtooth', 0.06);
+  return true;
+}
+function updateFruits(dt){
+  for (let i = fruitPickups.length - 1; i >= 0; i--){
+    const fp = fruitPickups[i];
+    fp.bob += dt * 2.2;
+    if (fp.plat){
+      if (fp.plat.broken) fp.plat = null;
+      else { fp.x = fp.plat.x + fp.plat.w / 2; fp.y = fp.plat.y - 36; }
+    }
+    if (fp.got > 0){
+      fp.got += dt * 3;
+      if (fp.got > 1) fruitPickups.splice(i, 1);
+      continue;
+    }
+    const dx = fp.x - hero.x, dy = fp.y + Math.sin(fp.bob) * 5 - hero.y;
+    if (dx * dx + dy * dy < 36 * 36){
+      fp.got = 0.01;
+      addFruit(fp.id);
+      burstSpark(fp.x, fp.y, FRUITS[fp.id].c1, 26, 1.3);
+      burstSpark(fp.x, fp.y, '#ffffff', 12, 0.8);
+      addToast(fruitName(fp.id), fp.x, fp.y - 40, RARITY_COL[FRUITS[fp.id].rar]);
+      flash = Math.max(flash, 0.35); flashColor = FRUITS[fp.id].c1;
+      ensureAudio();
+      sweep(420, 1400, 0.35, 'triangle', 0.08);
+      beep(1320, 0.12, 'sine', 0.08);
+      if (typeof showToast === 'function') showToast(t('fruitGot').replace('{f}', fruitName(fp.id)));
+      continue;
+    }
+    if (fp.y - camY > VH + 80) fruitPickups.splice(i, 1);
+  }
+  for (let i = bolts.length - 1; i >= 0; i--){
+    bolts[i].life -= dt * 2.6;
+    if (bolts[i].life <= 0) bolts.splice(i, 1);
+  }
+  if (hasFruit('storm')){
+    stormT += dt;
+    if (stormT >= STORM_EVERY){
+      if (stormStrike()) stormT = 0;
+      else stormT = STORM_EVERY;
+    }
+  }
+  if (hasFruit('star') && score >= starNext){
+    starNext += 1000;
+    const g = Math.round(8 * coinMult());
+    runCoins += g; coins += g;
+    Store.set('coins', coins);
+    coinPulse = 1;
+    for (let k = 0; k < 8; k++) burstSpark(hero.x + rand(-80, 80), hero.y - rand(40, 160), pick(['#fff3b0', '#ffd34d', '#ffffff']), 5, 0.7);
+    addToast('★ +' + g, hero.x, hero.y - 56, '#fff3b0');
+    sfxCoin();
+  }
+}
+function drawFruitPickups(){
+  const tm = performance.now() / 1000;
+  for (const fp of fruitPickups){
+    const y = fp.y - camY + Math.sin(fp.bob) * 5;
+    if (y < -60 || y > VH + 60) continue;
+    ctx.save();
+    ctx.globalAlpha = fp.got > 0 ? Math.max(0, 1 - fp.got) : 1;
+    const sc = fp.got > 0 ? 1 + fp.got * 0.8 : 1;
+    const glow = ctx.createRadialGradient(fp.x, y, 2, fp.x, y, 34);
+    glow.addColorStop(0, 'rgba(255,255,255,.55)');
+    glow.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = glow;
+    ctx.beginPath(); ctx.arc(fp.x, y, 34, 0, Math.PI * 2); ctx.fill();
+    ctx.translate(fp.x, y);
+    ctx.scale(sc, sc);
+    paintFruit(ctx, 0, 0, 14, fp.id, tm);
+    ctx.restore();
+  }
+}
+function drawBolts(){
+  for (const b of bolts){
+    const y1 = b.y - camY;
+    ctx.save();
+    ctx.globalAlpha = clamp(b.life, 0, 1);
+    ctx.strokeStyle = '#fff7b0';
+    ctx.shadowColor = '#fff27a';
+    ctx.shadowBlur = lowGfx() ? 0 : 14;
+    ctx.lineWidth = 3.2;
+    ctx.lineJoin = 'round';
+    ctx.beginPath();
+    let x = b.x + Math.sin(b.seed) * 30, y = -10;
+    ctx.moveTo(x, y);
+    let k = 0;
+    while (y < y1){
+      y = Math.min(y1, y + 34);
+      x = b.x + (y >= y1 ? 0 : Math.sin(b.seed + (++k) * 2.7) * 16);
+      ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.lineWidth = 1.2;
+    ctx.strokeStyle = '#ffffff';
+    ctx.stroke();
+    ctx.restore();
+  }
+}
+function drawFruitHud(){
+  if (!fruitState.eat) return;
+  paintFruit(ctx, VW - 26, 66, 9, fruitState.eat, performance.now() / 1000);
+}
+
+const WHEEL = [
+  { k: 'c', v: 100, w: 22 },
+  { k: 'f', r: 1, w: 18 },
+  { k: 'c', v: 200, w: 20 },
+  { k: 'f', r: 2, w: 9 },
+  { k: 'c', v: 400, w: 16 },
+  { k: 'f', r: 3, w: 4 },
+  { k: 'c', v: 800, w: 8 },
+  { k: 'f', r: 4, w: 1 },
+  { k: 'c', v: 2000, w: 2 }
+];
+const WHEEL_PRICE = 400;
+let wheelAngle = 0;
+let wheelSpinning = false;
+function wheelPickIndex(){
+  const total = WHEEL.reduce((a, s) => a + s.w, 0);
+  let x = Math.random() * total;
+  for (let i = 0; i < WHEEL.length; i++){
+    if (x < WHEEL[i].w) return i;
+    x -= WHEEL[i].w;
+  }
+  return 0;
+}
+function drawWheel(){
+  const c = document.getElementById('wheelCanvas');
+  if (!c || !c.getContext) return;
+  const g = c.getContext('2d');
+  if (!g) return;
+  const W = c.width, R = W / 2 - 8, cx = W / 2, cy = W / 2;
+  const n = WHEEL.length, seg = Math.PI * 2 / n;
+  g.clearRect(0, 0, W, W);
+  g.save();
+  g.translate(cx, cy);
+  g.rotate(wheelAngle);
+  for (let i = 0; i < n; i++){
+    const s = WHEEL[i];
+    const a0 = -Math.PI / 2 - seg / 2 + i * seg;
+    g.beginPath();
+    g.moveTo(0, 0);
+    g.arc(0, 0, R, a0, a0 + seg);
+    g.closePath();
+    g.fillStyle = s.k === 'f' ? RARITY_COL[s.r] : (i % 4 === 0 ? '#5b2d9e' : '#46207f');
+    g.fill();
+    g.strokeStyle = 'rgba(255,255,255,.35)';
+    g.lineWidth = 3;
+    g.stroke();
+    g.save();
+    g.rotate(a0 + seg / 2 + Math.PI / 2);
+    if (s.k === 'f'){
+      paintFruit(g, 0, -R * 0.66, R * 0.12, fruitsOfRarity(s.r)[0], 0);
+      g.fillStyle = '#2b2238';
+      g.font = 'bold ' + Math.round(R * 0.075) + 'px ' + GAME_FONT;
+      g.textAlign = 'center';
+      g.fillText(rarityName(s.r), 0, -R * 0.4);
+    } else {
+      g.fillStyle = '#ffd34d';
+      g.beginPath(); g.arc(0, -R * 0.7, R * 0.07, 0, Math.PI * 2); g.fill();
+      g.strokeStyle = '#b8860b'; g.lineWidth = 3; g.stroke();
+      g.fillStyle = '#fdf6e8';
+      g.font = 'bold ' + Math.round(R * 0.11) + 'px ' + GAME_FONT;
+      g.textAlign = 'center';
+      g.fillText(String(s.v), 0, -R * 0.46);
+    }
+    g.restore();
+  }
+  g.beginPath();
+  g.arc(0, 0, R, 0, Math.PI * 2);
+  g.lineWidth = 10;
+  g.strokeStyle = '#ffd34d';
+  g.stroke();
+  g.restore();
+  g.beginPath();
+  g.arc(cx, cy, R * 0.13, 0, Math.PI * 2);
+  g.fillStyle = '#ffd34d';
+  g.fill();
+  g.lineWidth = 5;
+  g.strokeStyle = '#8a5f00';
+  g.stroke();
+}
+function refreshWheelBtn(){
+  const b = document.getElementById('wheelBtn');
+  if (!b) return;
+  b.textContent = t('wheelSpin').replace('{p}', WHEEL_PRICE);
+  b.disabled = wheelSpinning;
+  b.classList.toggle('cant', coins < WHEEL_PRICE);
+}
+function spinWheel(){
+  if (wheelSpinning) return false;
+  const res = document.getElementById('wheelResult');
+  if (coins < WHEEL_PRICE){
+    if (res) res.textContent = t('passNoCoins').replace('{p}', WHEEL_PRICE);
+    return false;
+  }
+  coins -= WHEEL_PRICE;
+  noteSpent(WHEEL_PRICE);
+  const idx = wheelPickIndex();
+  const s = WHEEL[idx];
+  let prize = '';
+  let fruitWon = '';
+  if (s.k === 'c'){
+    coins += s.v;
+    prize = '+' + s.v + ' ' + t('coinsWord');
+  } else {
+    fruitWon = pick(fruitsOfRarity(s.r));
+    addFruit(fruitWon);
+    prize = fruitName(fruitWon) + ' · ' + rarityName(s.r);
+  }
+  Store.set('coins', coins);
+  cloudPushSoon();
+  if (typeof refreshShopState === 'function') refreshShopState();
+  wheelSpinning = true;
+  refreshWheelBtn();
+  if (res) res.textContent = '';
+  ensureAudio();
+  const n = WHEEL.length, seg = Math.PI * 2 / n;
+  const start = wheelAngle;
+  const baseTurns = Math.PI * 2 * 5;
+  const cur = ((start % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+  const want = ((-idx * seg) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
+  let delta = want - cur;
+  if (delta < 0) delta += Math.PI * 2;
+  const jitter = (Math.random() - 0.5) * seg * 0.6;
+  const end = start + baseTurns + delta + jitter;
+  const dur = 3800;
+  const t0 = performance.now();
+  let lastSeg = Math.floor(start / seg);
+  const finish = () => {
+    wheelAngle = end;
+    drawWheel();
+    wheelSpinning = false;
+    refreshWheelBtn();
+    if (res) res.innerHTML = '<b>' + escapeHtml(t('wheelWon')) + '</b> ' + escapeHtml(prize);
+    if (fruitWon){ burstUiFruit(fruitWon); sweep(420, 1400, 0.35, 'triangle', 0.08); }
+    else sfxCoin();
+    buzz(30);
+    renderFruitsScreen(true);
+  };
+  const step = (now) => {
+    const k = Math.min(1, (now - t0) / dur);
+    const e = 1 - Math.pow(1 - k, 3);
+    wheelAngle = start + (end - start) * e;
+    const sgi = Math.floor(wheelAngle / seg);
+    if (sgi !== lastSeg){ lastSeg = sgi; beep(900, 0.02, 'square', 0.03); }
+    drawWheel();
+    if (k < 1) requestAnimationFrame(step); else finish();
+  };
+  requestAnimationFrame(step);
+  return { idx, prize, fruit: fruitWon };
+}
+function burstUiFruit(id){
+  const box = document.getElementById('wheelResult');
+  if (!box) return;
+  const ic = fruitIconCanvas(id, 44);
+  ic.classList.add('fruitPop');
+  box.insertBefore(ic, box.firstChild);
+}
+
+function renderFruitsScreen(keepWheel){
+  const eatBox = document.getElementById('fruitEaten');
+  if (eatBox){
+    eatBox.innerHTML = '';
+    if (fruitState.eat){
+      const id = fruitState.eat;
+      eatBox.appendChild(fruitIconCanvas(id, 64));
+      const info = document.createElement('div');
+      info.className = 'fruitEatInfo';
+      info.innerHTML = '<div class="fruitEatLabel">' + escapeHtml(t('fruitEatenNow')) + '</div><div class="fruitName" style="color:' + RARITY_COL[FRUITS[id].rar] + '">' + escapeHtml(fruitName(id)) + '</div><div class="fruitDesc">' + escapeHtml(fruitDesc(id)) + '</div>';
+      eatBox.appendChild(info);
+    } else {
+      eatBox.innerHTML = '<div class="fruitEatInfo"><div class="fruitDesc">' + escapeHtml(t('fruitNone')) + '</div></div>';
+    }
+  }
+  const inv = document.getElementById('fruitInv');
+  if (inv){
+    inv.innerHTML = '';
+    for (const id of FRUIT_IDS){
+      const f = FRUITS[id];
+      const n = fruitCount(id);
+      const card = document.createElement('div');
+      card.className = 'fruitCard' + (n ? '' : ' empty') + (fruitState.eat === id ? ' eaten' : '');
+      card.style.setProperty('--rc', RARITY_COL[f.rar]);
+      card.appendChild(fruitIconCanvas(id, 46));
+      const body = document.createElement('div');
+      body.className = 'fruitCardBody';
+      body.innerHTML = '<div class="fruitName">' + escapeHtml(fruitName(id)) + (n ? ' <span class="fruitCnt">×' + n + '</span>' : '') + '</div><div class="fruitRar">' + escapeHtml(rarityName(f.rar)) + '</div><div class="fruitDesc">' + escapeHtml(fruitDesc(id)) + '</div>';
+      card.appendChild(body);
+      if (n){
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'btn fruitEatBtn';
+        b.textContent = t('fruitEat');
+        b.addEventListener('click', () => askEatFruit(id));
+        card.appendChild(b);
+      }
+      inv.appendChild(card);
+    }
+  }
+  const odds = document.getElementById('wheelOdds');
+  if (odds){
+    const total = WHEEL.reduce((a, s) => a + s.w, 0);
+    odds.textContent = t('wheelOdds') + ' ' + WHEEL.map(s => (s.k === 'c' ? s.v : rarityName(s.r)) + ' ' + (Math.round(s.w / total * 1000) / 10) + '%').join(' · ');
+  }
+  refreshWheelBtn();
+  if (!keepWheel || !wheelSpinning) drawWheel();
+}
+function askEatFruit(id){
+  if (fruitCount(id) <= 0) return;
+  if (fruitState.eat && fruitState.eat !== id){
+    const ok = typeof window.confirm === 'function' ? window.confirm(t('fruitReplace').replace('{old}', fruitName(fruitState.eat)).replace('{new}', fruitName(id))) : true;
+    if (!ok) return;
+  }
+  if (eatFruit(id)){
+    showToast(t('fruitAte').replace('{f}', fruitName(id)));
+    sfxCoin();
+    renderFruitsScreen(true);
+  }
+}
+function openFruits(){
+  const m = document.getElementById('fruitModal');
+  if (!m) return;
+  m.classList.remove('hidden');
+  sfxPopupOpen();
+  renderFruitsScreen();
+  const full = m.querySelector ? m.querySelector('.passFull') : null;
+  if (full) full.scrollTop = 0;
+  settleTrades();
+}
+function closeFruits(){
+  const m = document.getElementById('fruitModal');
+  if (m) m.classList.add('hidden');
+  sfxPopupClose();
+  if (typeof refreshShopState === 'function') refreshShopState();
+}
+
+function loadTradeOpen(){
+  try { const a = JSON.parse(Store.get('tradeOpen', '[]')); return Array.isArray(a) ? a.filter(x => x && x.conv && x.id && FRUITS[x.give] && FRUITS[x.want]) : []; } catch (e) { return []; }
+}
+function saveTradeOpen(list){ Store.set('tradeOpen', JSON.stringify(list.slice(-30))); }
+let tradeGiveSel = '', tradeWantSel = '';
+function openTradeModal(){
+  if (!chatWithCode || friendStatusOf(chatWithCode) !== 'friend') return;
+  tradeGiveSel = ''; tradeWantSel = '';
+  renderTradeModal();
+  document.getElementById('tradeModal').classList.remove('hidden');
+  sfxPopupOpen();
+}
+function closeTradeModal(){
+  document.getElementById('tradeModal').classList.add('hidden');
+}
+function renderTradeModal(){
+  const give = document.getElementById('tradeGive');
+  const want = document.getElementById('tradeWant');
+  const send = document.getElementById('tradeSendBtn');
+  const note = document.getElementById('tradeNote');
+  const chip = (id, sel, onPick, cnt) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'tradeChip' + (sel === id ? ' sel' : '');
+    b.style.setProperty('--rc', RARITY_COL[FRUITS[id].rar]);
+    b.appendChild(fruitIconCanvas(id, 38));
+    const s = document.createElement('span');
+    s.textContent = fruitName(id) + (cnt ? ' ×' + cnt : '');
+    b.appendChild(s);
+    b.addEventListener('click', () => { onPick(id); renderTradeModal(); });
+    return b;
+  };
+  if (give){
+    give.innerHTML = '';
+    const mine = FRUIT_IDS.filter(id => fruitCount(id) > 0);
+    if (!mine.length) give.innerHTML = '<div class="fruitDesc">' + escapeHtml(t('tradeNoFruits')) + '</div>';
+    for (const id of mine) give.appendChild(chip(id, tradeGiveSel, (v) => { tradeGiveSel = v; }, fruitCount(id)));
+  }
+  if (want){
+    want.innerHTML = '';
+    for (const id of FRUIT_IDS) want.appendChild(chip(id, tradeWantSel, (v) => { tradeWantSel = v; }, 0));
+  }
+  if (send) send.disabled = !(tradeGiveSel && tradeWantSel && tradeGiveSel !== tradeWantSel && fruitCount(tradeGiveSel) > 0);
+  if (note) note.textContent = tradeGiveSel && tradeGiveSel === tradeWantSel ? t('tradeSame') : '';
+}
+async function sendTradeOffer(give, want){
+  if (!chatWithCode || friendStatusOf(chatWithCode) !== 'friend') return false;
+  if (!FRUITS[give] || !FRUITS[want] || give === want) return false;
+  if (!cloudReady() || !nickname) return false;
+  const spamKey = spamCheck('trade:' + give + want + Date.now());
+  if (spamKey){ showToast(t(spamKey)); return false; }
+  if (!takeFruit(give)) return false;
+  spamCommit();
+  const toCode = chatWithCode, toNick = chatWithNickName;
+  const conv = chatConvId(cloudCode, toCode);
+  const ts = Date.now();
+  const fields = {
+    from: { stringValue: cloudCode }, fromNick: { stringValue: nickname }, text: { stringValue: '' },
+    ts: { integerValue: String(ts) }, read: { booleanValue: false },
+    tradeGive: { stringValue: give }, tradeWant: { stringValue: want }, tradeSt: { stringValue: 'open' }
+  };
+  try {
+    const res = await fetch(cloudBase() + '/conversations/' + conv + '/messages?key=' + CLOUD.apiKey, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fields })
+    });
+    if (!res.ok){ addFruit(give); showToast(t('chatError')); return false; }
+    const doc = await res.json();
+    const id = docCode(doc);
+    const list = loadTradeOpen();
+    list.push({ conv, id, give, want });
+    saveTradeOpen(list);
+    updateConvMeta(conv, toCode, toNick, t('msgTrade'), ts);
+    if (chatWithCode === toCode) fetchChatMessages();
+    return true;
+  } catch (e) {
+    addFruit(give);
+    showToast(t('chatError'));
+    return false;
+  }
+}
+async function tradeCas(conv, id, st){
+  const url = cloudBase() + '/conversations/' + conv + '/messages/' + id;
+  const r = await fetch(url + '?key=' + CLOUD.apiKey);
+  if (!r.ok) return { ok: false, gone: r.status === 404 };
+  const doc = await r.json();
+  const f = (doc && doc.fields) || {};
+  const cur = (f.tradeSt && f.tradeSt.stringValue) || '';
+  if (cur !== 'open') return { ok: false, st: cur, f };
+  const p = await fetch(url + '?updateMask.fieldPaths=tradeSt&updateMask.fieldPaths=tradeBy&currentDocument.updateTime=' + encodeURIComponent(doc.updateTime) + '&key=' + CLOUD.apiKey, {
+    method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ fields: { tradeSt: { stringValue: st }, tradeBy: { stringValue: cloudCode } } })
+  });
+  return { ok: !!(p && p.ok), f };
+}
+let tradeBusy = false;
+async function tradeAction(m, action){
+  if (tradeBusy || !m || !m.id || !m.tradeGive) return false;
+  if (!chatWithCode) return false;
+  const conv = chatConvId(cloudCode, chatWithCode);
+  const isOwn = m.from === cloudCode;
+  if (action === 'accept' && (isOwn || fruitCount(m.tradeWant) <= 0)){ showToast(t('tradeNeedFruit').replace('{f}', fruitName(m.tradeWant))); return false; }
+  if (action === 'cancel' && !isOwn) return false;
+  if (action === 'decline' && isOwn) return false;
+  tradeBusy = true;
+  try {
+    const st = action === 'accept' ? 'done' : (action === 'decline' ? 'no' : 'cancel');
+    const r = await tradeCas(conv, m.id, st);
+    if (!r.ok){ showToast(t('tradeClosed')); return false; }
+    if (action === 'accept'){
+      takeFruit(m.tradeWant);
+      addFruit(m.tradeGive);
+      showToast(t('tradeDoneYou').replace('{f}', fruitName(m.tradeGive)));
+      sweep(420, 1400, 0.35, 'triangle', 0.08);
+    } else if (action === 'cancel'){
+      const list = loadTradeOpen();
+      const i = list.findIndex(x => x.id === m.id);
+      if (i >= 0){ list.splice(i, 1); saveTradeOpen(list); addFruit(m.tradeGive); }
+      showToast(t('tradeCancelled'));
+    }
+    return true;
+  } catch (e) {
+    showToast(t('chatError'));
+    return false;
+  } finally {
+    tradeBusy = false;
+    chatLastSig = null;
+    fetchChatMessages();
+  }
+}
+let settling = false;
+let lastSettle = 0;
+async function settleTrades(force){
+  if (settling || !cloudReady()) return;
+  if (!force && Date.now() - lastSettle < 8000) return;
+  const list = loadTradeOpen();
+  if (!list.length) return;
+  settling = true;
+  lastSettle = Date.now();
+  try {
+    const keep = [];
+    for (const it of list){
+      try {
+        const r = await fetch(cloudBase() + '/conversations/' + it.conv + '/messages/' + it.id + '?key=' + CLOUD.apiKey);
+        if (r.status === 404){ addFruit(it.give); continue; }
+        if (!r.ok){ keep.push(it); continue; }
+        const doc = await r.json();
+        const f = (doc && doc.fields) || {};
+        const st = (f.tradeSt && f.tradeSt.stringValue) || '';
+        if (st === 'done'){ addFruit(it.want); showToast(t('tradeDoneThem').replace('{f}', fruitName(it.want))); }
+        else if (st === 'no' || st === 'cancel'){ addFruit(it.give); showToast(t('tradeDeclined').replace('{f}', fruitName(it.give))); }
+        else keep.push(it);
+      } catch (e) { keep.push(it); }
+    }
+    const now = loadTradeOpen().filter(x => !list.some(y => y.id === x.id));
+    saveTradeOpen(keep.concat(now));
+  } finally {
+    settling = false;
+    if (document.getElementById('fruitModal') && !document.getElementById('fruitModal').classList.contains('hidden')) renderFruitsScreen(true);
+  }
+}
+function makeTradeCard(m, isOwn){
+  const box = document.createElement('div');
+  box.className = 'tradeCard';
+  const head = document.createElement('div');
+  head.className = 'tradeHead';
+  head.textContent = '⇄ ' + t('tradeTitle');
+  box.appendChild(head);
+  const row = document.createElement('div');
+  row.className = 'tradeRow';
+  const side = (id, label) => {
+    const d = document.createElement('div');
+    d.className = 'tradeSide';
+    d.appendChild(fruitIconCanvas(id, 44));
+    const s = document.createElement('span');
+    s.innerHTML = '<small>' + escapeHtml(label) + '</small>' + escapeHtml(fruitName(id));
+    s.style.color = RARITY_COL[FRUITS[id].rar];
+    d.appendChild(s);
+    return d;
+  };
+  row.appendChild(side(m.tradeGive, isOwn ? t('tradeYouGive') : t('tradeTheyGive')));
+  const arrow = document.createElement('div');
+  arrow.className = 'tradeArrow';
+  arrow.textContent = '⇄';
+  row.appendChild(arrow);
+  row.appendChild(side(m.tradeWant, isOwn ? t('tradeYouGet') : t('tradeTheyWant')));
+  box.appendChild(row);
+  const st = m.tradeSt || 'open';
+  if (st !== 'open'){
+    const s = document.createElement('div');
+    s.className = 'tradeStatus st-' + st;
+    s.textContent = st === 'done' ? t('tradeStDone') : (st === 'no' ? t('tradeStNo') : t('tradeStCancel'));
+    box.appendChild(s);
+  } else {
+    const btns = document.createElement('div');
+    btns.className = 'tradeBtns';
+    const mk = (txt, cls, act) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'btn ' + cls;
+      b.textContent = txt;
+      b.addEventListener('click', (ev) => { ev.stopPropagation(); tradeAction(m, act); });
+      return b;
+    };
+    if (isOwn){
+      const w = document.createElement('div');
+      w.className = 'tradeWait';
+      w.textContent = t('tradeWaiting');
+      btns.appendChild(w);
+      btns.appendChild(mk(t('tradeCancel'), 'ghost', 'cancel'));
+    } else {
+      btns.appendChild(mk(t('tradeAccept'), '', 'accept'));
+      btns.appendChild(mk(t('tradeDecline'), 'ghost', 'decline'));
+    }
+    box.appendChild(btns);
+  }
+  return box;
+}
+
 function resetGame(){
+  resetFruitRun();
   platforms.length = 0;
   particles.length = 0;
   trailParts.length = 0;
@@ -4397,7 +5237,7 @@ function stepPhysics(dt){
       for (const q of platforms){
         if (q === p || q.broken || q.type === 'blink' || q.type === 'tele') continue;
         const dy = p.y - q.y;
-        if (dy > 420 && dy < 900 && (!dest || q.y > dest.y)) dest = q;
+        if (hasFruit('portal') ? (dy > 420 && (!dest || q.y < dest.y)) : (dy > 420 && dy < 900 && (!dest || q.y > dest.y))) dest = q;
       }
       burstSpark(hero.x, top, '#c9a8ff', 20, 1.3);
       if (dest){
@@ -4422,7 +5262,7 @@ function stepPhysics(dt){
       buzz(20);
       sfxSpring();
     } else {
-      hero.vy = JUMP_V * (hasPerk('legs') ? 1.12 : 1);
+      hero.vy = JUMP_V;
       burstLeaves(hero.x, top, 1);
       burstSpark(hero.x, top, '#dff9c9', 8, 0.7);
       landDust(hero.x, top);
@@ -4545,7 +5385,7 @@ function updateWorld(dt){
   for (let i = platforms.length - 1; i >= 0; i--){
     const p = platforms[i];
 
-    if (p.type === 'moving' && !p.broken){
+    if (p.type === 'moving' && !p.broken && !hasFruit('ice')){
       p.x += p.vx * dt;
       if (p.x < 4){ p.x = 4; p.vx = Math.abs(p.vx); }
       if (p.x + p.w > VW - 4){ p.x = VW - 4 - p.w; p.vx = -Math.abs(p.vx); }
@@ -4558,7 +5398,8 @@ function updateWorld(dt){
       p.y     += p.fallV * dt;
       p.alpha -= dt * 1.5;
     }
-    if (p.type === 'blink' && !p.broken){
+    if (p.type === 'blink' && !p.broken && hasFruit('ice')){ p.alpha = 1; p.blinkT = 0; }
+    else if (p.type === 'blink' && !p.broken){
       p.blinkT = (p.blinkT || 0) + dt;
       const ph = p.blinkT % BLINK_PERIOD;
       p.alpha = ph < BLINK_ON ? 1 : (ph < BLINK_ON + 0.25 ? 1 - (ph - BLINK_ON) / 0.25 * 0.8 : (ph > BLINK_PERIOD - 0.25 ? 0.2 + (ph - (BLINK_PERIOD - 0.25)) / 0.25 * 0.8 : 0.2));
@@ -4576,6 +5417,7 @@ function updateWorld(dt){
 
   let guard = 0;
   while (lastPlatY > camY - 140 && guard++ < 40) spawnAbove();
+  updateFruits(dt);
 
   
   for (let i = coinsOnMap.length - 1; i >= 0; i--){
@@ -4718,7 +5560,8 @@ function updateWorld(dt){
         const dx = m.x - hero.x, dy = m.y - hero.y;
         const hitDist = m.r + hero.w * 0.32;
         if (dx * dx + dy * dy < hitDist * hitDist && hero.vy > 0){
-          startMonsterEvent(m);
+          if (hasFruit('flame')){ burstSpark(m.x, m.y, '#ff8a3d', 24, 1.4); burstSpark(m.x, m.y, '#ffe37a', 12, 0.9); killMonster(m, true, false); }
+          else startMonsterEvent(m);
         }
       }
 
@@ -6943,9 +7786,6 @@ function drawHUD(){
   const bl = t('scoreWord') + ' ' + Math.max(best, score);
   ctx.strokeText(bl, 19, 58);
   ctx.fillText(bl, 19, 58);
-  const tg = '🏆 ' + t('trophyGoal') + ' ' + trophyTarget(trophies);
-  ctx.strokeText(tg, 19, 78);
-  ctx.fillText(tg, 19, 78);
 
   ctx.globalAlpha = 1;
 
@@ -6975,6 +7815,7 @@ function drawHUD(){
   ctx.fillStyle = '#ffd34d';
   ctx.strokeText(String(runCoins), VW - 42, 21);
   ctx.fillText(String(runCoins), VW - 42, 21);
+  drawFruitHud();
 
   ctx.restore();
 }
@@ -7080,11 +7921,13 @@ function render(){
   drawShadows();
   for (const p of platforms) drawPlatform(p);
   for (const c of coinsOnMap) drawCoin(c);
+  drawFruitPickups();
   for (const m of monsters) drawMonster(m);
   for (const cr of crawlers) drawCrawler(cr);
   drawLasers();
   drawArrows();
   drawParticles();
+  drawBolts();
   drawDeathPortal();
   drawTrail();
   drawHeroWithWrap();
@@ -7439,7 +8282,12 @@ let shopActiveSlot = 'hat';
 function equipOwned(slot, val){
   const multi = (slot === 'hat' || slot === 'acc') && isOwned('perk', 'multiacc');
   const secKey = slot + '2';
-  if (multi){
+  if (multi && val === 'none'){
+    outfit[slot] = 'none';
+    outfit[secKey] = 'none';
+    Store.set(slot, 'none');
+    Store.set(secKey, 'none');
+  } else if (multi){
     if (outfit[slot] === val){
       outfit[slot] = outfit[secKey];
       outfit[secKey] = 'none';
@@ -8003,7 +8851,7 @@ async function fetchRankFor(sc){
         structuredAggregationQuery: {
           structuredQuery: {
             from: [{ collectionId: 'players' }],
-            where: { fieldFilter: { field: { fieldPath: 'trophies' }, op: 'GREATER_THAN', value: { integerValue: String(Math.floor(sc)) } } }
+            where: { fieldFilter: { field: { fieldPath: 'best' }, op: 'GREATER_THAN', value: { integerValue: String(Math.floor(sc)) } } }
           },
           aggregations: [{ alias: 'n', count: {} }]
         }
@@ -8022,9 +8870,9 @@ function showRankLine(isNewBest){
   const id = ++rankReqId;
   if (!rankLine) return;
   rankLine.innerHTML = '';
-  fetchRankFor(trophies).then((rank) => {
+  fetchRankFor(best).then((rank) => {
     if (id !== rankReqId || state !== STATE.OVER || !rank) return;
-    if (rank === 1 && trophies > 0) rankLine.innerHTML = '<span class="newbest">' + t('overTop1') + '</span>';
+    if (rank === 1 && best > 0) rankLine.innerHTML = '<span class="newbest">' + t('overTop1') + '</span>';
     else rankLine.textContent = t('overRank') + ': #' + rank;
   });
 }
@@ -8041,19 +8889,9 @@ function gameOver(){
 
   const isNewBest = score > best;
   if (isNewBest){ best = score; Store.set('best', best); }
-  const trBefore = trophies;
-  lastTrophyDelta = score >= MIN_RUN_SCORE ? trophyDelta(score, trophies) : 0;
-  trophies = Math.max(0, trophies + lastTrophyDelta);
-  Store.set('trophies', trophies);
   const passGain = recordRunForPass(score, runCoins);
   addToLeaderboard(nickname, score);
   cloudPushSoon();
-  const trLine = document.getElementById('trophyLine');
-  if (trLine){
-    const d = lastTrophyDelta;
-    trLine.className = 'trophyLine ' + (d > 0 ? 'up' : (d < 0 ? 'down' : 'zero'));
-    trLine.innerHTML = '🏆 ' + (d > 0 ? '+' : (d < 0 ? '−' : '±')) + Math.abs(d) + '<small>' + trBefore + ' → ' + trophies + '</small>';
-  }
   const pLine = document.getElementById('passLine');
   if (pLine) pLine.textContent = t('passRunXp').replace('{x}', passGain.runXp + passGain.questXp);
 
@@ -8236,6 +9074,7 @@ async function cloudFetchOwnTitle(){
       if (typeof cloudPushSoon === 'function') cloudPushSoon();
     }
     if (f.pass && f.pass.stringValue){ pass = mergePass(parsePassStr(f.pass.stringValue)); savePass(); if (typeof refreshPassCard === 'function') refreshPassCard(); }
+    if (f.fruits && f.fruits.stringValue) mergeFruitsFrom(f.fruits.stringValue);
     if (f.daily && f.daily.stringValue){ mergeDaily(f.daily.stringValue); refreshDailyBtn(); }
     myTitle = (f.title && f.title.stringValue) || '';
     myTitleColor = (f.titleColor && f.titleColor.stringValue) || '';
@@ -8316,7 +9155,8 @@ async function cloudPush(){
     daily:  { stringValue: JSON.stringify(daily) },
     trophies: { integerValue: String(trophies) },
     pass: { stringValue: JSON.stringify(pass) },
-    spent: { integerValue: String(coinsSpent) }
+    spent: { integerValue: String(coinsSpent) },
+    fruits: { stringValue: fruitStr() }
   };
   const mask = Object.keys(fields).map(k => 'updateMask.fieldPaths=' + k).join('&');
   try {
@@ -8447,6 +9287,8 @@ async function cloudRestore(rawCode, rawPw){
     myPwSet = !!storedHash;
     Store.set('pwSet', myPwSet ? '1' : '0');
     coinsSpent = remoteSpent(f); Store.set('spent', coinsSpent);
+    fruitState = parseFruitState(f.fruits && f.fruits.stringValue); Store.set('fruits', fruitStr());
+    saveTradeOpen([]);
     if (f.coins) { coins = parseInt(f.coins.integerValue || '0', 10) || 0; Store.set('coins', coins); }
     if (f.best)  { best  = parseInt(f.best.integerValue  || '0', 10) || 0; Store.set('best', best); }
     trophies = estTrophies(f); Store.set('trophies', trophies);
@@ -8581,7 +9423,7 @@ let lbFieldsByCode = {};
 
 function buildPlayerRow(rowCode, f, rankText){
   const nick = (f.nick && f.nick.stringValue) || '?';
-  const sc = '🏆 ' + statText(f, 'trophies', estTrophies(f));
+  const sc = statText(f, 'best', parseInt((f.best && f.best.integerValue) || '0', 10) || 0);
   const rowAvatarVal = shownAvatar(f, rowCode);
   const rowFrame = (f.frame && f.frame.stringValue) || 'none';
   const rowAvatar = avatarHtml(rowAvatarVal, rowFrame, 'lbAv');
@@ -8700,8 +9542,9 @@ async function cloudFetchLeaderboard(){
         }
       })
     });
-    const [resT, resB] = await Promise.all([lbQ('trophies'), lbQ('best')]);
-    if (!resT.ok && !resB.ok){
+    const resB = await lbQ('best');
+    const resT = { ok: false };
+    if (!resB.ok){
       rows.innerHTML = '<div class="lbRow"><span>' + t('cloudErr') + '</span></div>';
       return;
     }
@@ -8717,7 +9560,7 @@ async function cloudFetchLeaderboard(){
       if (!rowCode || rowCode.charAt(0) === '_' || merged.has(rowCode)) continue;
       merged.set(rowCode, f);
     }
-    const sorted = Array.from(merged.entries()).sort((a, b) => estTrophies(b[1]) - estTrophies(a[1]) || ((parseInt((b[1].best && b[1].best.integerValue) || '0', 10) || 0) - (parseInt((a[1].best && a[1].best.integerValue) || '0', 10) || 0))).slice(0, 100);
+    const sorted = Array.from(merged.entries()).sort((a, b) => ((parseInt((b[1].best && b[1].best.integerValue) || '0', 10) || 0) - (parseInt((a[1].best && a[1].best.integerValue) || '0', 10) || 0))).slice(0, 100);
     rows.innerHTML = '';
     lbFieldsByCode = {};
     let i = 0;
@@ -8826,7 +9669,7 @@ function openProfile(code){
     titleEl.textContent = '';
     titleEl.style.color = '';
   }
-  document.getElementById('profileBest').textContent = '🏆 ' + statText(f, 'trophies', estTrophies(f)) + ' · ' + t('overRecordLabel') + ': ' + statText(f, 'best', bestScore);
+  document.getElementById('profileBest').textContent = t('overRecordLabel') + ': ' + statText(f, 'best', bestScore);
   document.getElementById('profileCoins').textContent = statText(f, 'coins', coinsVal) + ' ' + t('profileCoinsLabel');
 
   renderProfileHero(document.getElementById('profileCanvas'), f);
@@ -9020,7 +9863,7 @@ function shortTimeLabel(ts){
 }
 
 function chatSignature(list){
-  return (list || []).map(m => m.id + (m.read ? 'r' : 'u') + (m.deleted ? 'd' : '') + (m.edited ? 'e' + m.text : '') + (m.reacts ? JSON.stringify(m.reacts) : '')).join(',') + '|' + chatPending.map(p => p.tempId).join(',');
+  return (list || []).map(m => m.id + (m.tradeSt || '') + (m.read ? 'r' : 'u') + (m.deleted ? 'd' : '') + (m.edited ? 'e' + m.text : '') + (m.reacts ? JSON.stringify(m.reacts) : '')).join(',') + '|' + chatPending.map(p => p.tempId).join(',');
 }
 
 const STICKERS = [
@@ -9511,7 +10354,7 @@ function msgMenuAction(act, btn){
 }
 
 function openMsgMenu(m, row){
-  if (!m || m.pending || !m.id) return;
+  if (!m || m.pending || !m.id || m.tradeGive) return;
   const wrap = document.getElementById('chatMsgMenu');
   const panel = document.getElementById('chatMsgMenuPanel');
   if (!wrap || !panel) return;
@@ -9695,7 +10538,13 @@ function renderChatMessages(list, forceBottom){
       else meta += '<span class="chatMsgTick' + (m.read ? ' isRead' : '') + '">' + (m.read ? '✓✓' : '✓') + '</span>';
     }
     meta += '</span>';
-    if (m.sticker && STICKER_IDS.indexOf(m.sticker) !== -1){
+    if (m.tradeGive && m.tradeWant){
+      row.className += ' trade';
+      row.appendChild(makeTradeCard(m, isOwn));
+      const metaEl3 = document.createElement('span');
+      metaEl3.innerHTML = meta;
+      row.appendChild(metaEl3.firstChild);
+    } else if (m.sticker && STICKER_IDS.indexOf(m.sticker) !== -1){
       row.className += ' sticker';
       if (hasQuote) row.appendChild(makeQuoteEl(m));
       row.appendChild(makeStickerCanvas(m.sticker, 112));
@@ -9779,6 +10628,9 @@ async function fetchChatMessages(){
         from: (f.from && f.from.stringValue) || '',
         text: (f.text && f.text.stringValue) || '',
         sticker: (f.sticker && f.sticker.stringValue) || '',
+        tradeGive: (f.tradeGive && FRUITS[f.tradeGive.stringValue]) ? f.tradeGive.stringValue : '',
+        tradeWant: (f.tradeWant && FRUITS[f.tradeWant.stringValue]) ? f.tradeWant.stringValue : '',
+        tradeSt: (f.tradeSt && f.tradeSt.stringValue) || '',
         imgRef: (f.imgRef && f.imgRef.stringValue) || '',
         replyTo: (f.replyTo && f.replyTo.stringValue) || '',
         replyFrom: (f.replyFrom && f.replyFrom.stringValue) || '',
@@ -9799,6 +10651,7 @@ async function fetchChatMessages(){
         chatLastIncomingTs = inTs;
       }
       renderChatMessages(list);
+      if (list.some(x => x.tradeGive && x.from === cloudCode && x.tradeSt && x.tradeSt !== 'open')) settleTrades();
       markIncomingRead(id, list);
       markConvSeen(id, list);
     }
@@ -10510,7 +11363,6 @@ refreshMenuHint();
 applyUiStyle(uiStyle);
 document.getElementById('passClose').addEventListener('click', closePass);
 document.getElementById('passBuyBtn').addEventListener('click', buyGoldPass);
-document.getElementById('trophyPill').addEventListener('click', openTrophyInfo);
 document.getElementById('trophyClose').addEventListener('click', closeTrophyInfo);
 document.getElementById('trophyModal').addEventListener('click', (e) => { if (e.target && e.target.id === 'trophyModal') closeTrophyInfo(); });
 document.getElementById('telegramBtn').addEventListener('click', () => openLinkChoice(TELEGRAM_URL, 'Telegram'));
@@ -10761,6 +11613,18 @@ document.getElementById('playBtn').addEventListener('click', startGame);
 document.getElementById('continueBtn').addEventListener('click', resumeGame);
 document.getElementById('settingsBtn').addEventListener('click', openSettings);
 document.getElementById('wardrobeBtn').addEventListener('click', openWardrobe);
+document.getElementById('fruitsBtn').addEventListener('click', openFruits);
+document.getElementById('fruitClose').addEventListener('click', closeFruits);
+document.getElementById('wheelBtn').addEventListener('click', spinWheel);
+document.getElementById('chatTradeBtn').addEventListener('click', openTradeModal);
+document.getElementById('tradeCloseBtn').addEventListener('click', closeTradeModal);
+document.getElementById('tradeSendBtn').addEventListener('click', async () => {
+  const g = tradeGiveSel, w = tradeWantSel;
+  if (!g || !w) return;
+  closeTradeModal();
+  await sendTradeOffer(g, w);
+});
+setTimeout(() => { if (typeof settleTrades === 'function') settleTrades(true); }, 5000);
 document.getElementById('pauseMenuBtn').addEventListener('click', goToMenu);
 
 
