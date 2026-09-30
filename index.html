@@ -810,6 +810,12 @@
   .wheelResult{flex-wrap:wrap;}
   #closedScreen{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;padding:24px 16px;background:rgba(20,10,40,.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
   #closedScreen[hidden]{display:none;}
+  #banScreen{position:fixed;inset:0;z-index:2147483100;display:flex;align-items:center;justify-content:center;padding:24px 16px;background:rgba(20,6,20,.9);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);}
+  #banScreen[hidden]{display:none;}
+  #adminBanBtn:disabled,#adminUnbanBtn:disabled{opacity:.4;filter:grayscale(.6);cursor:default;}
+  .closedCard.banCard{background:linear-gradient(180deg,#7a2440,#3a0f24);box-shadow:0 18px 50px rgba(0,0,0,.5),inset 0 0 0 2px rgba(255,120,140,.5);}
+  .closedCard.banCard .closedTitle{color:#ff9aa8;}
+  .banDevCode{font-size:24px;font-weight:800;letter-spacing:.08em;margin:0 0 14px;color:#fff;user-select:all;-webkit-user-select:all;}
   .closedCard{width:min(360px,100%);text-align:center;color:#fdf6e8;background:linear-gradient(180deg,#5b2d9e,#3a1870);border-radius:22px;padding:26px 20px 22px;box-shadow:0 18px 50px rgba(0,0,0,.5),inset 0 0 0 2px rgba(255,211,77,.45);}
   .closedIcon{font-size:52px;line-height:1;margin-bottom:10px;}
   .closedTitle{font-size:26px;font-weight:800;color:#ffd34d;margin:0 0 12px;}
@@ -1891,6 +1897,13 @@
 
           <button id="adminPwResetBtn" type="button" class="adminPwResetBtn adminOnly">Сбросить пароль игрока</button>
 
+          <div class="adminCard">
+            <div class="adminCardTitle">Бан по устройству</div>
+            <p id="adminBanInfo" class="adminRoleHint"></p>
+            <button id="adminBanBtn" type="button" class="adminDeleteBtn">Забанить устройство</button>
+            <button id="adminUnbanBtn" type="button" class="adminPwResetBtn">Снять бан</button>
+          </div>
+
           <div class="adminDangerZone adminOnly">
             <div class="adminDangerLabel">Опасная зона</div>
             <button id="adminDeleteBtn" type="button" class="adminDeleteBtn">Удалить аккаунт</button>
@@ -2361,6 +2374,15 @@
   </div>
 </div>
 
+<div id="banScreen" role="dialog" aria-modal="true" aria-labelledby="banTitle" hidden>
+  <div class="closedCard banCard">
+    <h2 id="banTitle" class="closedTitle">Доступ закрыт</h2>
+    <p class="closedText">Это устройство заблокировано за нарушение правил игры, например за использование читов.</p>
+    <div class="closedTimerLbl">Код устройства</div>
+    <div class="banDevCode" id="banDevCode">-</div>
+    <p class="closedBye">Если это ошибка, напиши в Telegram или Discord и назови этот код.</p>
+  </div>
+</div>
 <div id="closedScreen" role="dialog" aria-modal="true" aria-labelledby="closedTitle">
   <div class="closedCard" id="closedCard">
     <h2 id="closedTitle" class="closedTitle" data-i18n="closedTitle">Скоро открытие!</h2>
@@ -6436,7 +6458,7 @@ async function fsQuery(q){
   const res = await fetch(cloudBase() + ':runQuery?key=' + CLOUD.apiKey, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ structuredQuery: Object.assign({ from: [{ collectionId: 'players' }] }, q) }) });
   if (!res.ok) throw new Error('q ' + res.status);
   const data = await res.json();
-  return (Array.isArray(data) ? data : []).filter(r => r && r.document && !(r.document.fields && r.document.fields.deleted && r.document.fields.deleted.booleanValue)).map(r => ({ code: docCode(r.document), f: r.document.fields || {} })).filter(r => r.code && r.code.charAt(0) !== '_');
+  return (Array.isArray(data) ? data : []).filter(r => r && r.document && !(r.document.fields && r.document.fields.deleted && r.document.fields.deleted.booleanValue) && !(r.document.fields && r.document.fields.banned && r.document.fields.banned.booleanValue)).map(r => ({ code: docCode(r.document), f: r.document.fields || {} })).filter(r => r.code && r.code.charAt(0) !== '_');
 }
 async function fetchSeasonTop(key, limit){
   return fsQuery({ orderBy: [{ field: { fieldPath: key }, direction: 'DESCENDING' }], limit: limit || 100 });
@@ -11279,6 +11301,7 @@ function goToMenu(){
 }
 
 function startGame(){
+  if (deviceBlocked) return;
   closeAllOverlays();
   resetGame();
   Store.set('playedOnce', '1');
@@ -11592,6 +11615,7 @@ async function cloudFetchOwnTitle(){
     Store.set('titleColor', myTitleColor);
     applyOwnBadgeFromFields(f);
     setKeepFromFields(f);
+    checkDeviceBan(f);
     myNoImages = !!(f.noImages && f.noImages.booleanValue);
     if (myNoImages && ((f.role && (f.role.stringValue === 'mod' || f.role.stringValue === 'admin')) || adminMode || (DEV_CODE && cloudCode === DEV_CODE))){
       myNoImages = false;
@@ -11675,7 +11699,7 @@ async function cloudPush(){
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ fields })
     });
-    if (pr && pr.ok){ Store.set('cloudSeen', cloudCode); pushSeasonFields(); }
+    if (pr && pr.ok){ Store.set('cloudSeen', cloudCode); pushSeasonFields(); pushDeviceFields(); }
   } catch (e) {  }
 }
 async function pushSeasonFields(){
@@ -11688,6 +11712,165 @@ async function pushSeasonFields(){
       body: JSON.stringify({ fields: sf })
     });
   } catch (e) {}
+}
+
+const BAN_DOC = '_BANS';
+const DEV_KEY = 'cabbitDevice';
+const BAN_KEY = 'cabbitBlocked';
+function readCookie(k){
+  try { const m = document.cookie.match(new RegExp('(?:^|; )' + k + '=([^;]*)')); return m ? decodeURIComponent(m[1]) : ''; } catch (e) { return ''; }
+}
+function writeCookie(k, v){
+  try { document.cookie = k + '=' + encodeURIComponent(v) + '; max-age=315360000; path=/; SameSite=Lax'; } catch (e) {}
+}
+function idbGet(k){
+  return new Promise((res) => {
+    try {
+      const rq = indexedDB.open('cabbitKeep', 1);
+      rq.onupgradeneeded = () => { try { rq.result.createObjectStore('kv'); } catch (e) {} };
+      rq.onsuccess = () => {
+        try {
+          const tx = rq.result.transaction('kv', 'readonly');
+          const g = tx.objectStore('kv').get(k);
+          g.onsuccess = () => res(g.result || '');
+          g.onerror = () => res('');
+        } catch (e) { res(''); }
+      };
+      rq.onerror = () => res('');
+    } catch (e) { res(''); }
+  });
+}
+function idbSet(k, v){
+  try {
+    const rq = indexedDB.open('cabbitKeep', 1);
+    rq.onupgradeneeded = () => { try { rq.result.createObjectStore('kv'); } catch (e) {} };
+    rq.onsuccess = () => { try { rq.result.transaction('kv', 'readwrite').objectStore('kv').put(v, k); } catch (e) {} };
+  } catch (e) {}
+}
+function lsGet(k){ try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } }
+function lsSet(k, v){ try { localStorage.setItem(k, v); } catch (e) {} }
+function hashStr(str){
+  let h1 = 0x811c9dc5, h2 = 0x1b873593;
+  for (let i = 0; i < str.length; i++){
+    const c = str.charCodeAt(i);
+    h1 = Math.imul(h1 ^ c, 16777619);
+    h2 = Math.imul(h2 ^ c, 2246822507);
+  }
+  return ((h1 >>> 0).toString(36) + (h2 >>> 0).toString(36)).toUpperCase();
+}
+function newDeviceId(){
+  const a = new Uint8Array(9);
+  try { crypto.getRandomValues(a); } catch (e) { for (let i = 0; i < 9; i++) a[i] = Math.floor(Math.random() * 256); }
+  return 'D' + Array.from(a, (b) => (b % 36).toString(36)).join('').toUpperCase();
+}
+function deviceFingerprint(){
+  const parts = [];
+  try {
+    const n = navigator;
+    parts.push(n.userAgent || '', n.language || '', (n.languages || []).join(','), n.platform || '', n.hardwareConcurrency || 0, n.deviceMemory || 0, n.maxTouchPoints || 0);
+    parts.push(screen.width + 'x' + screen.height + 'x' + screen.colorDepth, window.devicePixelRatio || 1);
+    parts.push(Intl.DateTimeFormat().resolvedOptions().timeZone || '', new Date().getTimezoneOffset());
+  } catch (e) {}
+  try {
+    const c = document.createElement('canvas');
+    c.width = 220; c.height = 40;
+    const g = c.getContext('2d');
+    g.textBaseline = 'top';
+    g.font = '16px Arial';
+    g.fillStyle = '#f60'; g.fillRect(100, 1, 62, 20);
+    g.fillStyle = '#069'; g.fillText('Cabbit Jump 42 ~', 2, 15);
+    g.fillStyle = 'rgba(102,204,0,.7)'; g.fillText('Cabbit Jump 42 ~', 4, 17);
+    parts.push(hashStr(c.toDataURL()));
+  } catch (e) {}
+  try {
+    const c = document.createElement('canvas');
+    const gl = c.getContext('webgl') || c.getContext('experimental-webgl');
+    if (gl){
+      const d = gl.getExtension('WEBGL_debug_renderer_info');
+      parts.push(d ? gl.getParameter(d.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER));
+      parts.push(d ? gl.getParameter(d.UNMASKED_VENDOR_WEBGL) : gl.getParameter(gl.VENDOR));
+    }
+  } catch (e) {}
+  return 'F' + hashStr(parts.join('|'));
+}
+let myDeviceId = lsGet(DEV_KEY) || readCookie('cjdev');
+if (!/^D[A-Z0-9]{6,20}$/.test(myDeviceId)) myDeviceId = '';
+let myDeviceFp = '';
+function persistDevice(){
+  lsSet(DEV_KEY, myDeviceId);
+  writeCookie('cjdev', myDeviceId);
+  idbSet('dev', myDeviceId);
+}
+async function initDevice(){
+  if (!myDeviceId){
+    const fromDb = await idbGet('dev');
+    myDeviceId = /^D[A-Z0-9]{6,20}$/.test(fromDb) ? fromDb : newDeviceId();
+  }
+  persistDevice();
+  if (!myDeviceFp) myDeviceFp = deviceFingerprint();
+  if (lsGet(BAN_KEY) === '1' || readCookie('cjban') === '1' || (await idbGet('ban')) === '1') blockDevice(true);
+  return myDeviceId;
+}
+let deviceBlocked = false;
+function banExempt(){ return (typeof adminMode !== 'undefined' && adminMode) || (typeof myRole !== 'undefined' && (myRole === 'admin' || myRole === 'mod')) || (DEV_CODE && cloudCode === DEV_CODE); }
+function blockDevice(on){
+  if (on && banExempt()) on = false;
+  deviceBlocked = !!on;
+  lsSet(BAN_KEY, on ? '1' : '0');
+  writeCookie('cjban', on ? '1' : '0');
+  idbSet('ban', on ? '1' : '0');
+  const scr = document.getElementById('banScreen');
+  if (scr){
+    scr.hidden = !on;
+    const code = document.getElementById('banDevCode');
+    if (code) code.textContent = myDeviceId || '-';
+  }
+  if (on && typeof state !== 'undefined' && typeof STATE !== 'undefined' && (state === STATE.PLAY || state === STATE.PAUSED)){
+    try { goToMenu(); } catch (e) {}
+  }
+}
+function banListFrom(doc){
+  const f = (doc && doc.fields) || {};
+  const arr = (k) => (f[k] && f[k].arrayValue && Array.isArray(f[k].arrayValue.values)) ? f[k].arrayValue.values.map(v => v && v.stringValue).filter(Boolean) : [];
+  return { devs: arr('devs'), fps: arr('fps') };
+}
+async function fetchBanList(){
+  const res = await fetch(cloudBase() + '/players/' + BAN_DOC + '?key=' + CLOUD.apiKey);
+  if (res.status === 404) return { devs: [], fps: [] };
+  if (!res.ok) throw new Error('ban list ' + res.status);
+  return banListFrom(await res.json());
+}
+async function checkDeviceBan(ownFields){
+  if (!cloudReady()) return;
+  await initDevice();
+  if (banExempt()){ if (deviceBlocked) blockDevice(false); return; }
+  if (ownFields && ownFields.banned && ownFields.banned.booleanValue){ blockDevice(true); return; }
+  try {
+    const bl = await fetchBanList();
+    const hit = bl.devs.indexOf(myDeviceId) !== -1 || (myDeviceFp && bl.fps.indexOf(myDeviceFp) !== -1);
+    if (hit) blockDevice(true);
+    else if (deviceBlocked && !(ownFields && ownFields.banned && ownFields.banned.booleanValue)) blockDevice(false);
+  } catch (e) {}
+}
+async function pushDeviceFields(){
+  if (!cloudReady() || !myDeviceId) return;
+  try {
+    await fetch(cloudBase() + '/players/' + cloudCode + '?updateMask.fieldPaths=dev&updateMask.fieldPaths=fp&key=' + CLOUD.apiKey, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fields: { dev: { stringValue: myDeviceId }, fp: { stringValue: myDeviceFp || '' } } })
+    });
+  } catch (e) {}
+}
+async function saveBanList(bl){
+  const body = { fields: {
+    devs: { arrayValue: { values: bl.devs.map(v => ({ stringValue: v })) } },
+    fps: { arrayValue: { values: bl.fps.map(v => ({ stringValue: v })) } }
+  } };
+  const res = await fetch(cloudBase() + '/players/' + BAN_DOC + '?updateMask.fieldPaths=devs&updateMask.fieldPaths=fps&key=' + CLOUD.apiKey, {
+    method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+  });
+  return res.ok;
 }
 
 const ONLINE_THRESHOLD_MS = 90000;
@@ -12020,6 +12203,7 @@ async function searchPlayers(query){
       const code = docCode(row.document);
       const df = row.document.fields || {};
       if (df.deleted && df.deleted.booleanValue) continue;
+      if (df.banned && df.banned.booleanValue) continue;
       if (code && !found.has(code)) found.set(code, df);
     }
   }
@@ -12076,6 +12260,7 @@ async function cloudFetchLeaderboard(){
       if (!row || !row.document) continue;
       const f = row.document.fields || {};
       if (f.deleted && f.deleted.booleanValue) continue;
+      if (f.banned && f.banned.booleanValue) continue;
       const path = row.document.name || '';
       const rowCode = path.substring(path.lastIndexOf('/') + 1);
       if (!rowCode || rowCode.charAt(0) === '_' || merged.has(rowCode)) continue;
@@ -14316,6 +14501,8 @@ async function adminLoad(codeOverride){
     adminCurrentPass = f.pass && f.pass.stringValue ? f.pass.stringValue : '';
     document.getElementById('adminPassGold').checked = !!normalizePass(parsePassStr(adminCurrentPass)).gold;
     document.getElementById('adminNoImages').checked = !!(f.noImages && f.noImages.booleanValue);
+    adminBanTarget = { dev: (f.dev && f.dev.stringValue) || '', fp: (f.fp && f.fp.stringValue) || '', banned: !!(f.banned && f.banned.booleanValue) };
+    refreshAdminBanInfo();
     document.getElementById('adminMusicInput').value = (f.music && f.music.stringValue) || '';
     document.getElementById('adminTitleInput').value = (f.title && f.title.stringValue) || '';
     document.getElementById('adminTitleColorInput').value = (f.titleColor && f.titleColor.stringValue) || '';
@@ -14775,6 +14962,59 @@ document.getElementById('adminPwResetBtn').addEventListener('click', adminResetP
 
 let adminDeleteArmedCode = null;
 let adminDeleteArmTimer = null;
+let adminBanTarget = null;
+let adminBanArmed = null;
+function refreshAdminBanInfo(){
+  const info = document.getElementById('adminBanInfo');
+  const bb = document.getElementById('adminBanBtn');
+  const ub = document.getElementById('adminUnbanBtn');
+  if (!info || !adminBanTarget) return;
+  const tb = adminBanTarget;
+  info.textContent = (tb.banned ? 'Забанен. ' : '') + (tb.dev ? 'Устройство: ' + tb.dev : 'Устройство ещё не записано: игрок должен зайти в новую версию игры');
+  if (bb){ bb.textContent = 'Забанить устройство'; bb.disabled = tb.banned; }
+  if (ub) ub.disabled = !tb.banned;
+  adminBanArmed = null;
+}
+async function adminBanDevice(on){
+  if (!adminCurrentCode || !cloudReady() || !isStaff() || !adminBanTarget) return;
+  if (adminCurrentCode === cloudCode || adminCurrentCode === DEV_CODE || adminCurrentRole === 'mod' || adminCurrentRole === 'admin'){
+    adminSetStatus('Нельзя забанить администрацию');
+    return;
+  }
+  const bb = document.getElementById('adminBanBtn');
+  if (on && adminBanArmed !== adminCurrentCode){
+    adminBanArmed = adminCurrentCode;
+    if (bb) bb.textContent = 'Точно забанить? Нажми ещё раз';
+    return;
+  }
+  adminBanArmed = null;
+  adminSetStatus(on ? 'Бан...' : 'Снимаю бан...');
+  try {
+    const bl = await fetchBanList();
+    const tb = adminBanTarget;
+    const setIn = (list, v) => { if (!v) return list; const i = list.indexOf(v); if (on && i === -1) list.push(v); if (!on && i !== -1) list.splice(i, 1); return list; };
+    setIn(bl.devs, tb.dev);
+    setIn(bl.fps, tb.fp);
+    const okList = await saveBanList(bl);
+    const res = await fetch(cloudBase() + '/players/' + adminCurrentCode + '?updateMask.fieldPaths=banned&key=' + CLOUD.apiKey, {
+      method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fields: { banned: { booleanValue: !!on } } })
+    });
+    if (okList && res.ok){
+      tb.banned = !!on;
+      refreshAdminBanInfo();
+      adminSetStatus(on ? 'Устройство забанено, игрок скрыт из рейтинга' : 'Бан снят');
+      if (typeof cloudFetchLeaderboard === 'function') cloudFetchLeaderboard();
+    } else {
+      adminSetStatus('Не удалось сохранить бан');
+    }
+  } catch (e){
+    adminSetStatus('Ошибка связи');
+  }
+}
+document.getElementById('adminBanBtn').addEventListener('click', () => adminBanDevice(true));
+document.getElementById('adminUnbanBtn').addEventListener('click', () => adminBanDevice(false));
+
 const adminDeleteBtnEl = document.getElementById('adminDeleteBtn');
 
 function adminResetDeleteArm(){
@@ -15301,6 +15541,7 @@ if (cloudReady()){
   }, 25000);
 }
 
+initDevice().then(() => { if (cloudReady() && !cloudCode) checkDeviceBan(null); });
 refreshEventBanner();
 if (nickname){
   state = STATE.MENU;
