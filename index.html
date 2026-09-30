@@ -11527,7 +11527,14 @@ const CLOUD = {
 const cloudReady = () => !!(CLOUD.apiKey && CLOUD.projectId);
 const cloudBase  = () => 'https://firestore.googleapis.com/v1/projects/' + CLOUD.projectId + '/databases/(default)/documents';
 
-const DEV_CODE = 'C4N3TAU5';
+const OWNER_SIG = '15713198bac7cc44b203ba133d6e17aa6c76556c46def5d311fa6e6c23bbec95';
+const ownerMemo = new Map();
+function isDevCode(c){
+  if (!c) return false;
+  let v = ownerMemo.get(c);
+  if (v === undefined){ v = sha256Hex('cj|' + String(c)) === OWNER_SIG; ownerMemo.set(c, v); }
+  return v;
+}
 
 
 function makeCloudCode(){
@@ -11617,7 +11624,7 @@ async function cloudFetchOwnTitle(){
     setKeepFromFields(f);
     checkDeviceBan(f);
     myNoImages = !!(f.noImages && f.noImages.booleanValue);
-    if (myNoImages && ((f.role && (f.role.stringValue === 'mod' || f.role.stringValue === 'admin')) || adminMode || (DEV_CODE && cloudCode === DEV_CODE))){
+    if (myNoImages && ((f.role && (f.role.stringValue === 'mod' || f.role.stringValue === 'admin')) || adminMode || isDevCode(cloudCode))){
       myNoImages = false;
       fetch(cloudBase() + '/players/' + cloudCode + '?updateMask.fieldPaths=noImages&key=' + CLOUD.apiKey, {
         method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fields: { noImages: { booleanValue: false } } })
@@ -11812,7 +11819,7 @@ async function initDevice(){
   return myDeviceId;
 }
 let deviceBlocked = false;
-function banExempt(){ return (typeof adminMode !== 'undefined' && adminMode) || (typeof myRole !== 'undefined' && (myRole === 'admin' || myRole === 'mod')) || (DEV_CODE && cloudCode === DEV_CODE); }
+function banExempt(){ return (typeof adminMode !== 'undefined' && adminMode) || (typeof myRole !== 'undefined' && (myRole === 'admin' || myRole === 'mod')) || isDevCode(cloudCode); }
 function blockDevice(on){
   if (on && banExempt()) on = false;
   deviceBlocked = !!on;
@@ -12131,7 +12138,7 @@ function buildPlayerRow(rowCode, f, rankText){
   const rowAvatarVal = shownAvatar(f, rowCode);
   const rowFrame = (f.frame && f.frame.stringValue) || 'none';
   const rowAvatar = avatarHtml(rowAvatarVal, rowFrame, 'lbAv');
-  const isDev = DEV_CODE && rowCode === DEV_CODE;
+  const isDev = isDevCode(rowCode);
   const titleText = (f.title && f.title.stringValue) || '';
   const titleColor = (f.titleColor && f.titleColor.stringValue) || '';
   const div = document.createElement('div');
@@ -12686,7 +12693,7 @@ function toggleStickerPanel(force){
 const chatImgCache = {};
 const chatImgRevealed = {};
 let myNoImages = Store.get('noImages', '0') === '1';
-function photoBanned(){ return myNoImages && !(typeof isStaff === 'function' && isStaff()) && !(DEV_CODE && cloudCode === DEV_CODE); }
+function photoBanned(){ return myNoImages && !(typeof isStaff === 'function' && isStaff()) && !isDevCode(cloudCode); }
 
 function loadChatImage(convId, ref){
   if (!ref || chatImgCache[ref]) return;
@@ -14341,9 +14348,16 @@ setTimeout(() => { if (typeof settleTrades === 'function') settleTrades(true); }
 document.getElementById('pauseMenuBtn').addEventListener('click', goToMenu);
 
 
-const ADMIN_PIN = '1337';
+const GATE_SIG = '91de39aa24911bd1fa10a60866e353ad97cbbc125047504e23fb5e7d694886c9';
+function gateOk(v){
+  const x = String(v || '').trim();
+  if (x.length < 6) return false;
+  let h = sha256Hex('cjpin|' + x);
+  for (let i = 0; i < 2000; i++) h = sha256Hex(h + x);
+  return h === GATE_SIG;
+}
 
-function adminAllowed(){ return (typeof cloudCode !== 'undefined' && cloudCode === DEV_CODE) || myRole === 'admin'; }
+function adminAllowed(){ return (typeof cloudCode !== 'undefined' && isDevCode(cloudCode)) || myRole === 'admin'; }
 let adminMode = localStorage.getItem('cabbitAdminMode') === '1' && adminAllowed();
 let adminCurrentCode = null;
 let adminCurrentEquipped = null;
@@ -14435,10 +14449,10 @@ document.getElementById('adminPinBtn').addEventListener('click', () => {
   const input = document.getElementById('adminPinInput');
   if (!adminAllowed()){
     input.value = '';
-    input.placeholder = 'Только для аккаунта создателя';
+    input.placeholder = 'Неверный PIN';
     return;
   }
-  if (input.value === ADMIN_PIN){
+  if (gateOk(input.value)){
     adminMode = true;
     localStorage.setItem('cabbitAdminMode', '1');
     document.getElementById('adminGate').classList.add('hidden');
@@ -14471,7 +14485,7 @@ async function adminLoad(codeOverride){
     const doc = await res.json();
     const f = doc.fields || {};
     const targetRole = (f.role && f.role.stringValue) || '';
-    if (isModOnly() && (code === cloudCode || targetRole === 'mod' || targetRole === 'admin' || (DEV_CODE && code === DEV_CODE))){
+    if (isModOnly() && (code === cloudCode || targetRole === 'mod' || targetRole === 'admin' || isDevCode(code))){
       adminSetStatus(code === cloudCode ? 'Помощник не может менять свой профиль' : 'Помощник не может менять профиль администрации');
       return;
     }
@@ -14849,7 +14863,7 @@ async function adminResolveReport(repId, convId, imgRef, from, removePhoto, banP
         method: 'PATCH', headers: H, body: JSON.stringify({ fields: { data: { stringValue: '' }, removed: { booleanValue: true } } })
       });
     }
-    let canBan = !!(banPhotos && from && from !== cloudCode && !(DEV_CODE && from === DEV_CODE));
+    let canBan = !!(banPhotos && from && from !== cloudCode && !isDevCode(from));
     if (canBan){
       try {
         const tr = await fetch(cloudBase() + '/players/' + from + '?key=' + CLOUD.apiKey);
@@ -14977,7 +14991,7 @@ function refreshAdminBanInfo(){
 }
 async function adminBanDevice(on){
   if (!adminCurrentCode || !cloudReady() || !isStaff() || !adminBanTarget) return;
-  if (adminCurrentCode === cloudCode || adminCurrentCode === DEV_CODE || adminCurrentRole === 'mod' || adminCurrentRole === 'admin'){
+  if (adminCurrentCode === cloudCode || isDevCode(adminCurrentCode) || adminCurrentRole === 'mod' || adminCurrentRole === 'admin'){
     adminSetStatus('Нельзя забанить администрацию');
     return;
   }
@@ -15106,8 +15120,8 @@ let closedTaps = 0, closedTapT = null;
     if (closedTaps >= 5){ closedTaps = 0; box.hidden = false; pin.focus(); }
   });
   const tryPin = () => {
-    if (!adminAllowed()){ pin.value = ''; pin.placeholder = 'Только для аккаунта создателя'; return; }
-    if (pin.value !== ADMIN_PIN){ pin.value = ''; pin.placeholder = 'Неверный PIN'; return; }
+    if (!adminAllowed()){ pin.value = ''; pin.placeholder = 'Неверный PIN'; return; }
+    if (!gateOk(pin.value)){ pin.value = ''; pin.placeholder = 'Неверный PIN'; return; }
     adminMode = true;
     try { localStorage.setItem('cabbitAdminMode', '1'); } catch (e) {}
     refreshStaffUI();
