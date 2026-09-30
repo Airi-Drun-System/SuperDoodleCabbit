@@ -477,6 +477,86 @@
   .coinPill .coinNum{font-size:15px;}
   .trophyPill .tpIcon{font-size:16px;}
   #menuHint.hidden{display:none;}
+  .closedCard{position:relative;overflow:hidden;}
+  .closedCard.unlocking{transition:opacity .35s ease, transform .35s ease;opacity:0;transform:scale(.85);pointer-events:none;}
+  .unlockFx{position:fixed;inset:0;z-index:2147483550;pointer-events:none;overflow:hidden;}
+  .unlockFx[hidden]{display:none;}
+  .chain{position:absolute;left:50%;top:50%;width:75vmax;height:26px;margin-top:-13px;transform-origin:0 50%;display:flex;}
+  .chain i{flex:1;height:100%;transform:scaleX(0);transform-origin:0 50%;
+    background:radial-gradient(ellipse 12px 8px at 50% 50%, transparent 55%, #c9ccd8 58%, #ffffff 70%, #7c8296 86%, transparent 90%) 0 0/34px 26px repeat-x,
+      linear-gradient(transparent 44%, #9aa0b4 44%, #e6e9f2 50%, #9aa0b4 56%, transparent 56%) 17px 0/34px 26px repeat-x;
+    filter:drop-shadow(0 4px 6px rgba(0,0,0,.6));}
+  .c1{transform:rotate(-35deg);} .c2{transform:rotate(35deg);} .c3{transform:rotate(145deg);} .c4{transform:rotate(-145deg);}
+  .unlockFx.f1 .chain i{animation:chainIn .55s cubic-bezier(.3,1.5,.5,1) forwards;}
+  .unlockFx.f1 .chain{animation:chainTense 1.6s .6s ease-in-out infinite;}
+  .unlockFx.f5 .chain i:first-child{animation:chainSnapA .7s cubic-bezier(.3,0,.6,1) forwards;}
+  .unlockFx.f5 .chain i:last-child{animation:chainSnapB .7s cubic-bezier(.3,0,.6,1) forwards;}
+  @keyframes chainIn{from{transform:scaleX(0);}to{transform:scaleX(1);}}
+  @keyframes chainTense{0%,100%{margin-top:-13px;}50%{margin-top:-11px;}}
+  @keyframes chainSnapA{0%{transform:scaleX(1);opacity:1;}100%{transform:translate(-20px,140px) rotate(28deg) scaleX(.9);opacity:0;}}
+  @keyframes chainSnapB{0%{transform:scaleX(1);opacity:1;}100%{transform:translate(120px,200px) rotate(-22deg) scaleX(.8);opacity:0;}}
+  .ufLock{position:absolute;left:50%;top:50%;width:190px;height:236px;margin:-138px 0 0 -95px;opacity:0;transform:scale(3);}
+  .ufLock .lockSvg{width:100%;height:100%;opacity:1;transform:none;filter:drop-shadow(0 18px 30px rgba(0,0,0,.7));}
+  .ufKey{position:absolute;left:50%;top:50%;width:62px;height:134px;margin:14px 0 0 -31px;opacity:0;transform:translateY(60vh) rotate(-720deg);}
+  .ufKey .keySvg{position:static;width:100%;height:100%;margin:0;opacity:1;transform:none;filter:drop-shadow(0 0 14px rgba(255,211,77,.9));}
+  .ufGlow{position:absolute;left:50%;top:50%;width:520px;height:520px;margin:-260px 0 0 -260px;border-radius:50%;opacity:0;
+    background:radial-gradient(circle, rgba(255,240,170,.95), rgba(255,180,80,.45) 35%, rgba(255,120,40,0) 70%);}
+  .ufSparks{position:absolute;left:50%;top:50%;width:0;height:0;}
+  .ufSparks i{position:absolute;left:-5px;top:-5px;width:10px;height:10px;border-radius:50%;background:#fff3b0;box-shadow:0 0 14px #ffd34d;opacity:0;}
+  .unlockFx.f2 .ufLock{animation:lockSlam .45s cubic-bezier(.5,0,.6,1.6) forwards;}
+  .unlockFx.f2{animation:screenHit .4s .38s ease-out;}
+  .unlockFx.f3 .ufKey{animation:keyFly .75s cubic-bezier(.2,.8,.3,1) forwards;}
+  .unlockFx.f4 .ufKey{animation:keyTurn2 .35s ease-in forwards;}
+  .unlockFx.f4 .ufLock{animation:lockRattle .7s linear forwards;opacity:1;transform:none;}
+  .unlockFx.f4 .ufGlow{animation:glowPulse .7s ease-in-out forwards;}
+  .unlockFx.f5 .lockShackle{animation:shackleBlast .45s cubic-bezier(.2,1.8,.4,1) forwards;}
+  .unlockFx.f5 .ufSparks i{animation:sparkOut .9s ease-out forwards;}
+  .unlockFx.f5 .ufGlow{animation:glowBig .9s ease-out forwards;}
+  .unlockFx.f5 .ufLock{opacity:1;transform:scale(1.1);}
+  .unlockFx.f5 .ufKey{opacity:1;transform:translateY(-52px) scale(.78) rotateY(85deg);}
+  .unlockFx.f6 .ufLock{animation:lockBoom .4s ease-in forwards;}
+  .unlockFx.f6 .ufKey{animation:lockBoom .4s ease-in forwards;}
+  @keyframes lockSlam{0%{opacity:0;transform:scale(3);}70%{opacity:1;transform:scale(.92);}100%{opacity:1;transform:scale(1);}}
+  @keyframes screenHit{0%{transform:translate(0,0);}20%{transform:translate(-10px,6px);}40%{transform:translate(9px,-6px);}60%{transform:translate(-6px,4px);}80%{transform:translate(4px,-2px);}100%{transform:none;}}
+  @keyframes keyFly{0%{opacity:1;transform:translateY(60vh) rotate(-720deg) scale(1.4);}100%{opacity:1;transform:translateY(-52px) rotate(0) scale(.78);}}
+  @keyframes keyTurn2{0%{opacity:1;transform:translateY(-52px) scale(.78) rotateY(0);}100%{opacity:1;transform:translateY(-52px) scale(.78) rotateY(85deg);}}
+  @keyframes lockRattle{0%,100%{transform:translate(0,0) rotate(0);}10%{transform:translate(-8px,2px) rotate(-7deg);}20%{transform:translate(8px,-2px) rotate(7deg);}30%{transform:translate(-9px,1px) rotate(-8deg);}40%{transform:translate(9px,-1px) rotate(8deg);}50%{transform:translate(-10px,2px) rotate(-9deg) scale(1.05);}60%{transform:translate(10px,-2px) rotate(9deg) scale(1.05);}70%{transform:translate(-7px,1px) rotate(-6deg) scale(1.08);}80%{transform:translate(7px,-1px) rotate(6deg) scale(1.08);}90%{transform:translate(-3px,0) rotate(-3deg) scale(1.1);}}
+  @keyframes glowPulse{0%{opacity:0;transform:scale(.4);}50%{opacity:.8;transform:scale(.8);}100%{opacity:.6;transform:scale(.7);}}
+  @keyframes shackleBlast{0%{transform:translateY(0) rotate(0);}100%{transform:translateY(-26px) rotate(-40deg);}}
+  @keyframes sparkOut{0%{opacity:1;transform:translate(0,0) scale(1.4);}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(.3);}}
+  @keyframes glowBig{0%{opacity:.7;transform:scale(.7);}100%{opacity:1;transform:scale(2.4);}}
+  @keyframes lockBoom{0%{opacity:1;transform:scale(1.1);}100%{opacity:0;transform:scale(2.6);}}
+  .unlockFlash{position:fixed;inset:0;z-index:2147483600;background:radial-gradient(circle at 50% 45%, #ffffff, #fff8e6 70%, #ffeccc);opacity:0;pointer-events:none;
+    display:flex;align-items:center;justify-content:center;padding:24px;box-sizing:border-box;transition:opacity .3s ease;}
+  .unlockFlash.hold{opacity:1;}
+  .unlockFlash.msg{pointer-events:auto;cursor:pointer;}
+  .unlockFlash.out{opacity:0;transition:opacity .9s ease;}
+  .flashMsg{width:min(420px,100%);text-align:center;color:#3a1870;opacity:0;transform:translateY(14px);transition:opacity .8s ease, transform .8s ease;}
+  .unlockFlash.msg .flashMsg{opacity:1;transform:none;}
+  .flashMsg p{margin:0 0 14px;font-size:clamp(17px,4.6vw,21px);line-height:1.45;}
+  .flashMsg .fmHead{font-size:clamp(28px,8vw,38px);line-height:1.15;margin-bottom:18px;color:transparent;
+    background:linear-gradient(180deg,#8a4cf0,#5b2d9e);-webkit-background-clip:text;background-clip:text;}
+  .flashMsg .fmLinks{font-size:clamp(15px,4vw,18px);color:#b8741a;}
+  .flashMsg .fmTap{margin-top:22px;font-size:13px;letter-spacing:.14em;text-transform:uppercase;opacity:.55;animation:tapBlink 1.4s ease-in-out infinite;}
+  @keyframes tapBlink{0%,100%{opacity:.25;}50%{opacity:.7;}}
+  .unlockFlash[hidden]{display:none;}
+  .unlockFlash.on{animation:whiteFlash 1.4s ease-out forwards;}
+  @keyframes whiteFlash{0%{opacity:0;}22%{opacity:1;}100%{opacity:0;}}
+  .welcomeDlg{position:fixed;inset:0;z-index:2147483500;display:flex;align-items:center;justify-content:center;padding:24px 16px;background:rgba(12,4,28,.62);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);}
+  .welcomeDlg[hidden]{display:none;}
+  .welcomeCard{width:min(360px,100%);box-sizing:border-box;padding:24px 20px 20px;border-radius:24px;text-align:center;color:#fdf6e8;
+    background:linear-gradient(180deg,#5b2d9e,#2e1260);box-shadow:inset 0 0 0 2px rgba(255,211,77,.55),0 24px 60px rgba(0,0,0,.55);animation:overPop .55s cubic-bezier(.2,1.4,.4,1) both;}
+  .welcomeKicker{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#8fe3ff;}
+  .welcomeTitle{position:relative;display:inline-block;margin:6px 0 14px;font-size:38px;line-height:1.15;color:transparent;
+    background:linear-gradient(180deg,#fff3c4,#ffd34d 50%,#ff9f45);-webkit-background-clip:text;background-clip:text;filter:drop-shadow(0 3px 0 #7a3a0a);padding:4px 6px 0;}
+  .welcomeSplash{position:absolute;right:-24px;bottom:-8px;transform:rotate(-14deg);font-size:17px;color:#ffee3a;-webkit-text-fill-color:#ffee3a;text-shadow:0 2px 0 #5a4200;filter:none;animation:splashPulse .9s ease-in-out infinite alternate;}
+  .welcomeList{list-style:none;margin:0 0 12px;padding:0;display:flex;flex-direction:column;gap:7px;text-align:left;}
+  .welcomeList li{position:relative;padding:9px 12px 9px 34px;border-radius:12px;background:rgba(10,4,24,.45);font-size:15px;}
+  .welcomeList li::before{content:'';position:absolute;left:12px;top:50%;width:11px;height:11px;margin-top:-6px;border-radius:3px;background:#ffd34d;transform:rotate(45deg);}
+  .welcomeNote{margin:0 0 16px;font-size:13.5px;opacity:.8;}
+  .welcomeCard .btn{width:100%;font-size:21px;}
+  @media (prefers-reduced-motion:reduce){ .unlockFx *, .unlockFlash.on, .welcomeCard{animation-duration:.01s !important;} }
+
   .closedAdmin{display:flex;gap:8px;margin-top:14px;}
   .closedAdmin[hidden]{display:none;}
   .closedAdmin .adminInput{flex:1;min-width:0;}
@@ -2227,13 +2307,59 @@
   <button id="aqSettings" class="aqKey aqWide" type="button">Выдать игроку (админка в настройках)</button>
 </div>
 
+<div id="unlockFx" class="unlockFx" hidden>
+  <div class="chain c1"><i></i><i></i></div><div class="chain c2"><i></i><i></i></div><div class="chain c3"><i></i><i></i></div><div class="chain c4"><i></i><i></i></div>
+  <div class="ufGlow"></div>
+  <div class="ufLock"><svg class="lockSvg" viewBox="0 0 120 150" aria-hidden="true">
+        <defs>
+          <linearGradient id="lkBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe07a"/><stop offset="1" stop-color="#e08a1a"/></linearGradient>
+          <linearGradient id="lkShackle" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#c9ccd8"/><stop offset=".5" stop-color="#ffffff"/><stop offset="1" stop-color="#9aa0b4"/></linearGradient>
+        </defs>
+        <g id="lockShackle" class="lockShackle"><path d="M32 70 V44 a28 28 0 0 1 56 0 V70" fill="none" stroke="url(#lkShackle)" stroke-width="13" stroke-linecap="round"/></g>
+        <rect x="14" y="66" width="92" height="74" rx="18" fill="url(#lkBody)" stroke="#7a3a0a" stroke-width="4"/>
+        <rect x="22" y="72" width="76" height="8" rx="4" fill="#fff6c4" opacity=".6"/>
+        <circle cx="60" cy="98" r="10" fill="#3a1f00"/>
+        <rect x="56" y="100" width="8" height="22" rx="4" fill="#3a1f00"/>
+      </svg></div>
+  <div class="ufKey"><svg class="keySvg" id="unlockKey" viewBox="0 0 60 130" aria-hidden="true">
+        <circle cx="30" cy="24" r="20" fill="none" stroke="#ffd34d" stroke-width="9"/>
+        <rect x="26" y="40" width="8" height="78" rx="4" fill="#ffd34d"/>
+        <rect x="34" y="92" width="14" height="7" rx="3" fill="#ffd34d"/>
+        <rect x="34" y="106" width="10" height="7" rx="3" fill="#ffd34d"/>
+      </svg></div>
+  <div class="ufSparks" id="ufSparks"></div>
+</div>
+<div id="unlockFlash" class="unlockFlash" hidden>
+  <div class="flashMsg" id="flashMsg">
+    <p class="fmHead">Здравствуйте, игроки!</p>
+    <p>Я увидел, что вы очень расстроились из-за того, что я закрыл игру. Но так как я довольно нетерпелив, я открываю её уже сегодня.</p>
+    <p>Спасибо за поддержку! Я подготовил обновление, которое должно вас удивить.</p>
+    <p class="fmLinks">Для связи: TikTok, Telegram или Discord</p>
+    <p class="fmTap">Нажми, чтобы продолжить</p>
+  </div>
+</div>
+<div id="welcomeDlg" class="welcomeDlg" hidden role="dialog" aria-modal="true" aria-labelledby="welcomeTitle">
+  <div class="welcomeCard">
+    <div class="welcomeKicker" data-i18n="welcomeKicker">Игра открыта</div>
+    <h2 id="welcomeTitle" class="welcomeTitle">Cabbit Jump!<span class="welcomeSplash">Remastered</span></h2>
+    <ul class="welcomeList">
+      <li data-i18n="welcome1">Боссы в конце каждого мира</li>
+      <li data-i18n="welcome2">Новая графика пяти миров</li>
+      <li data-i18n="welcome3">Сезон 1 и свои кланы</li>
+      <li data-i18n="welcome4">Бестиарий и новые фрукты</li>
+    </ul>
+    <p class="welcomeNote" data-i18n="welcomeNote">Все ваши рекорды, монеты и покупки на месте.</p>
+    <button id="welcomeBtn" class="btn" type="button" data-i18n="welcomeBtn">Играть</button>
+  </div>
+</div>
+
 <div id="closedScreen" role="dialog" aria-modal="true" aria-labelledby="closedTitle">
-  <div class="closedCard">
+  <div class="closedCard" id="closedCard">
     <h2 id="closedTitle" class="closedTitle" data-i18n="closedTitle">Скоро открытие!</h2>
     <p class="closedText" data-i18n="closedText">Cabbit Jump! возвращается с самым большим обновлением: боссы, новая графика, сезоны и кланы. Все ваши рекорды, монеты и покупки на месте.</p>
     <div class="closedTimerLbl" data-i18n="closedTimerLbl">До открытия</div>
     <div class="closedTimer" id="closedTimer">--:--:--</div>
-    <div class="closedBye" data-i18n="closedBye">2 октября, 20:00 по Москве</div>
+    <div class="closedBye" data-i18n="closedBye">Сегодня в 15:15 по Москве</div>
     <div id="closedAdmin" class="closedAdmin" hidden>
       <input id="closedPin" class="adminInput" type="password" inputmode="numeric" placeholder="PIN" autocomplete="off">
       <button id="closedPinBtn" class="btn small" type="button">Войти</button>
@@ -2243,7 +2369,7 @@
 
 <script>
 "use strict";
-const OPEN_AT = Date.UTC(2026, 9, 2, 17, 0, 0);
+const OPEN_AT = Date.UTC(2026, 8, 30, 12, 15, 0);
 let GAME_CLOSED = Date.now() < OPEN_AT;
 const closedEn = (() => { try { return window.localStorage.getItem('doodlecabbit.lang') === 'en'; } catch (e) { return false; } })();
 function closedLeftText(ms){
@@ -2252,9 +2378,60 @@ function closedLeftText(ms){
   const p2 = (n) => String(n).padStart(2, '0');
   return (d > 0 ? d + (closedEn ? 'd ' : ' д ') : '') + p2(h) + ':' + p2(m) + ':' + p2(x);
 }
+function showWelcome(){
+  let seen = false;
+  try { seen = window.localStorage.getItem('doodlecabbit.welcomeRemaster') === '1'; } catch (e) {}
+  if (seen) return;
+  const dlg = document.getElementById('welcomeDlg');
+  if (!dlg) return;
+  dlg.hidden = false;
+  const btn = document.getElementById('welcomeBtn');
+  if (btn) btn.onclick = () => {
+    dlg.hidden = true;
+    try { window.localStorage.setItem('doodlecabbit.welcomeRemaster', '1'); } catch (e) {}
+  };
+}
+function playUnlock(){
+  const scr = document.getElementById('closedScreen');
+  const card = document.getElementById('closedCard');
+  const fx = document.getElementById('unlockFx');
+  const flash = document.getElementById('unlockFlash');
+  if (!scr || !fx){ if (scr) scr.hidden = true; showWelcome(); return; }
+  if (card) card.classList.add('unlocking');
+  fx.hidden = false;
+  const sp = document.getElementById('ufSparks');
+  if (sp){
+    for (let i = 0; i < 28; i++){
+      const d = document.createElement('i');
+      const a = i / 28 * Math.PI * 2, r = 140 + Math.random() * 180;
+      d.style.setProperty('--dx', Math.round(Math.cos(a) * r) + 'px');
+      d.style.setProperty('--dy', Math.round(Math.sin(a) * r) + 'px');
+      d.style.animationDelay = (Math.random() * 0.12).toFixed(2) + 's';
+      sp.appendChild(d);
+    }
+  }
+  const at = (ms, fn) => setTimeout(fn, ms);
+  const step = (c) => fx.classList.add(c);
+  at(60, () => step('f1'));
+  at(800, () => step('f2'));
+  at(1700, () => step('f3'));
+  at(2500, () => step('f4'));
+  at(3300, () => step('f5'));
+  let flashDone = false;
+  const endFlash = () => {
+    if (flashDone || !flash) return;
+    flashDone = true;
+    flash.classList.add('out');
+    setTimeout(() => { flash.hidden = true; flash.classList.remove('hold', 'out', 'msg'); }, 950);
+  };
+  at(3750, () => { step('f6'); if (flash){ flash.hidden = false; requestAnimationFrame(() => flash.classList.add('hold')); } });
+  at(4050, () => { scr.hidden = true; fx.hidden = true; showWelcome(); });
+  at(4500, () => { if (flash){ flash.classList.add('msg'); flash.onclick = endFlash; } });
+  at(19000, endFlash);
+}
 (function closedGate(){
   const scr = document.getElementById('closedScreen');
-  if (!GAME_CLOSED){ if (scr) scr.hidden = true; return; }
+  if (!GAME_CLOSED){ if (scr) scr.hidden = true; setTimeout(showWelcome, 600); return; }
   const stop = (e) => { if (!GAME_CLOSED) return; if (e && e.target && e.target.id === 'closedPin') return; if (e && e.stopImmediatePropagation) e.stopImmediatePropagation(); if (e && e.cancelable && e.preventDefault) e.preventDefault(); };
   ['keydown', 'keyup', 'keypress'].forEach((ev) => window.addEventListener(ev, stop, true));
   const tEl = document.getElementById('closedTimer');
@@ -2262,8 +2439,9 @@ function closedLeftText(ms){
     const left = OPEN_AT - Date.now();
     if (left <= 0){
       GAME_CLOSED = false;
-      if (scr) scr.hidden = true;
       clearInterval(iv);
+      if (tEl) tEl.textContent = '00:00:00';
+      playUnlock();
       return;
     }
     if (tEl) tEl.textContent = closedLeftText(left);
@@ -3249,7 +3427,7 @@ const I18N = {
     gfxLabel: 'Графика', gfx_auto: 'Авто', gfx_high: 'Красиво', gfx_low: 'Быстро', gfx_ultra: 'Ультра',
     expBadge: 'эксперимент',
     gfxUltraNote: '⚗ Экспериментальная функция: объёмные платформы и тени. На слабых телефонах может тормозить.',
-    catMain: 'Основное', catGfx: 'Графика', catProfile: 'Профиль', catSound: 'Звук', catOnline: 'Онлайн', catCommunity: 'Сообщество', fruitsBtn: 'Фрукты', fruitsTitle: 'Фрукты', wheelTitle: 'Рулетка', fruitInvTitle: 'Фрукты и способности', fruitHint: 'Фрукты можно поймать в забеге или выбить в рулетке. Съешь фрукт — получишь его способность. Съешь другой — старый пропадёт. Меняться фруктами можно с друзьями: кнопка ⇄ в чате.', fr_spring: 'Пружинный фрукт', fr_flame: 'Огненный фрукт', fr_ice: 'Ледяной фрукт', fr_storm: 'Грозовой фрукт', fr_portal: 'Портальный фрукт', fr_star: 'Звёздный фрукт', fr_cloud: 'Облачный фрукт', fr_magnet: 'Магнитный фрукт', frd_cloud: 'Падаешь плавно, как пёрышко: легче допрыгнуть до дальней платформы.', frd_magnet: 'Монеты сами летят к тебе, как с нимбом.', fruitEatenTag: 'Съеден', fruitWhere: 'Выпадает в рулетке и в забеге', frd_spring: 'Пружины на платформах попадаются в 3 раза чаще.', frd_flame: 'Монстры сгорают от касания — без отсчёта, с подкидом и монетами.', frd_ice: 'Движущиеся платформы замерзают, мигающие больше не исчезают.', frd_storm: 'Каждые 6 секунд молния бьёт ближайшего монстра: +монеты.', frd_portal: 'Телепорты попадаются часто и уносят на самую высокую платформу.', frd_star: 'Каждые 1000 очков — звездопад монет. +50% жетонов Cabbit Pass.', rar1: 'Обычный', rar2: 'Редкий', rar3: 'Эпический', rar4: 'Легендарный', fruitEatenNow: 'Сейчас съеден', fruitNone: 'Ты ещё не съел ни одного фрукта. Поймай его в забеге или выбей в рулетке!', fruitEat: 'Съесть', fruitReplace: 'Съесть {new}? Способность «{old}» пропадёт.', fruitAte: 'Ты съел: {f}!', fruitGot: 'Новый фрукт: {f}!', wheelSpin: 'Крутить · {p}', wheelWon: 'Выпало:', wheelOdds: 'Шансы:', tradeTitle: 'Обмен фруктами', tradeGiveLabel: 'Ты отдаёшь', tradeWantLabel: 'Ты хочешь', tradeSend: 'Предложить', tradeNoFruits: 'У тебя пока нет фруктов для обмена.', tradeSame: 'Нельзя менять фрукт на такой же.', tradeYouGive: 'ты отдаёшь', tradeYouGet: 'ты получишь', tradeTheyGive: 'даёт тебе', tradeTheyWant: 'хочет взамен', tradeAccept: 'Принять', tradeDecline: 'Отказать', tradeCancel: 'Отменить', tradeWaiting: 'Ждём ответа друга…', tradeStDone: 'Обмен состоялся ✓', tradeStNo: 'Отказано', tradeStCancel: 'Отменено', tradeNeedFruit: 'Для обмена нужен {f}', tradeClosed: 'Этот обмен уже закрыт', tradeCancelled: 'Обмен отменён, фрукт вернулся', tradeDoneYou: 'Обмен! Ты получил: {f}', tradeDoneThem: 'Друг принял обмен! Ты получил: {f}', tradeDeclined: 'Обмен не состоялся, {f} вернулся', msgTrade: '⇄ Обмен фруктами',
+    catMain: 'Основное', catGfx: 'Графика', catProfile: 'Профиль', catSound: 'Звук', catOnline: 'Онлайн', catCommunity: 'Сообщество', fruitsBtn: 'Фрукты', fruitsTitle: 'Фрукты', wheelTitle: 'Рулетка', fruitInvTitle: 'Фрукты и способности', fruitHint: 'Фрукты можно поймать в забеге или выбить в рулетке. Съешь фрукт — получишь его способность. Съешь другой — старый пропадёт. Меняться фруктами можно с друзьями: кнопка ⇄ в чате.', fr_spring: 'Пружинный фрукт', fr_flame: 'Огненный фрукт', fr_ice: 'Ледяной фрукт', fr_storm: 'Грозовой фрукт', fr_portal: 'Портальный фрукт', fr_star: 'Звёздный фрукт', fr_cloud: 'Облачный фрукт', fr_magnet: 'Магнитный фрукт', frd_cloud: 'Падаешь почти вдвое медленнее, как на облаке: легко успеть к дальней платформе.', frd_magnet: 'Монеты сами летят к тебе даже издалека.', fruitEatenTag: 'Съеден', fruitWhere: 'Выпадает в рулетке и в забеге', frd_spring: 'Пружины на каждой третьей платформе — прыжки выше.', starShower: 'Звездопад!', fruitActive: 'Сила: {f}', frd_flame: 'Монстры сгорают от касания — без отсчёта, с подкидом и монетами.', frd_ice: 'Движущиеся платформы замерзают, мигающие не исчезают, монстры еле ползают.', frd_storm: 'Каждые 6 секунд молния бьёт ближайшего монстра: +монеты.', frd_portal: 'Телепорты с самого старта и в 6 раз чаще — уносят на самую высокую платформу.', frd_star: 'Каждые 1000 очков над тобой появляется дорожка из 14 монет. +50% жетонов Cabbit Pass.', rar1: 'Обычный', rar2: 'Редкий', rar3: 'Эпический', rar4: 'Легендарный', fruitEatenNow: 'Сейчас съеден', fruitNone: 'Ты ещё не съел ни одного фрукта. Поймай его в забеге или выбей в рулетке!', fruitEat: 'Съесть', fruitReplace: 'Съесть {new}? Способность «{old}» пропадёт.', fruitAte: 'Ты съел: {f}!', fruitGot: 'Новый фрукт: {f}!', wheelSpin: 'Крутить · {p}', wheelWon: 'Выпало:', wheelOdds: 'Шансы:', tradeTitle: 'Обмен фруктами', tradeGiveLabel: 'Ты отдаёшь', tradeWantLabel: 'Ты хочешь', tradeSend: 'Предложить', tradeNoFruits: 'У тебя пока нет фруктов для обмена.', tradeSame: 'Нельзя менять фрукт на такой же.', tradeYouGive: 'ты отдаёшь', tradeYouGet: 'ты получишь', tradeTheyGive: 'даёт тебе', tradeTheyWant: 'хочет взамен', tradeAccept: 'Принять', tradeDecline: 'Отказать', tradeCancel: 'Отменить', tradeWaiting: 'Ждём ответа друга…', tradeStDone: 'Обмен состоялся ✓', tradeStNo: 'Отказано', tradeStCancel: 'Отменено', tradeNeedFruit: 'Для обмена нужен {f}', tradeClosed: 'Этот обмен уже закрыт', tradeCancelled: 'Обмен отменён, фрукт вернулся', tradeDoneYou: 'Обмен! Ты получил: {f}', tradeDoneThem: 'Друг принял обмен! Ты получил: {f}', tradeDeclined: 'Обмен не состоялся, {f} вернулся', msgTrade: '⇄ Обмен фруктами',
     settingsSave: '✓ Сохранить', settingsSaved: 'Сохранено ✓',
     gfxAutoLowNote: '(лагало — включён быстрый режим)',
     pauseMenu: 'Меню',
@@ -3307,7 +3485,7 @@ const I18N = {
     cloudNotFound: 'Код не найден', accountDeleted: 'Этот аккаунт удалён администрацией. Игра начнётся с нуля.', cloudErr: 'Нет связи с сервером', cloudLoading: 'Загрузка…',
     smashToast: 'СОКРУШИТЕЛЬНЫЙ УДАР!', kickToast: 'ПИНОК!', perfectToast: 'ИДЕАЛЬНО!',
     laserToast: 'ОСТОРОЖНО: ЛАЗЕРЫ!',
-    perkRefund: 'Перки обновились — вернули {c} монет', fruitRefund: 'Огненный и Грозовой фрукты убраны — вернули {c} монет', boss0: 'Король Сумерек', boss1: 'Ледяной Колосс', boss2: 'Магмовый Лорд', boss3: 'Токсичный Слизень', boss4: 'Звёздный Пожиратель', bossWarn: 'Приближается босс!', bossesChip: 'Боссы', seasonTitle: 'Сезон {n}', seasonDaysLeft: 'осталось {d} дн.', seasonBestShort: 'рекорд', ev_boss: 'Неделя боссов', ev_pass: 'Неделя пропуска', ev_fruit: 'Фруктовая неделя', evd_boss: 'За победу над боссом вдвое больше монет.', evd_pass: 'Жетонов Cabbit Pass за забег в полтора раза больше.', evd_fruit: 'В забеге может выпасть два фрукта, а боссы дарят по два фрукта.', tabPlayers: 'Игроки', tabClans: 'Кланы', tabMyClan: 'Мой клан', seasonMyBadges: 'Твои прошлые сезоны', seasonShort: 'Сезон {n}', seasonNoPlayers: 'В этом сезоне ещё никто не сыграл. Стань первым!', seasonRewardsTitle: 'Монеты в конце сезона', seasonTopN: 'Топ-{n}', seasonRewardToast: 'Сезон {s} закончен! Твоё место: {r}. Награда: {c} монет', seasonNoRank: 'вне топ-100', clanNoneYet: 'Кланов пока нет. Создай первый во вкладке «Мой клан»!', clanMembersN: 'участников: {n}', clanPoints: 'очков сезона: {n}', clanCodeLbl: 'Код клана:', clanCopy: 'Копировать', clanCopied: 'Скопировано', clanDisband: 'Распустить клан', clanLeave: 'Выйти из клана', clanLeaveSure: 'Точно? Нажми ещё раз', clanJoin: 'Вступить', clanCreateTitle: 'Создать свой клан', clanNamePh: 'Название клана', clanCreateBtn: 'Создать · {p}', clanJoinTitle: 'Вступить по коду', clanCodePh: 'Код клана', clanJoinHint: 'Код клана — это код игрока, который его создал. Спроси его у лидера или найди клан во вкладке «Кланы».', clanErrName: 'Название — от 3 до 16 символов', clanErrAlready: 'Ты уже в клане', clanErrCoins: 'Нужно {p} монет', clanErrCode: 'Введи код клана', clanErrNotFound: 'Клан с таким кодом не найден', clanErrFull: 'В клане уже {n} игроков, мест нет', clanErrNet: 'Нет связи, попробуй ещё раз', clanDisbanded: 'Лидер распустил твой клан. Можно вступить в другой или создать свой.', bestiaryTitle: 'Бестиарий', bestiarySub: 'Побеждено {a} из {b} · всего побед: {n}', bossWins: 'Побед: {n}', bossUnknown: 'Ещё не встречен · прилетает на {s} очков', bestiaryHint: 'Босс прилетает в конце каждого мира. Лови золотые звёзды — они бьют босса, и уворачивайся от его снарядов. За победу — монеты и фрукт.', bestChip: 'Рекорд', overPoints: 'очков', overWorld: 'Мир', overCoinsTile: 'Монеты', worldLabel: 'МИР {n}', bossIncoming: 'БОСС: {b}!', bossDown: 'БОСС ПОВЕРЖЕН!', bossFled: 'Босс улетел…', bossTime: 'Босс улетит через {s}', bossHint: 'Лови золотые звёзды — они бьют босса. Уворачивайся от его снарядов!', wheelSpinN: '×{n} · {p}', wheelSkipOff: 'Анимация: вкл', wheelSkipOn: 'Анимация: пропуск', wheelSkipNow: 'Пропустить', closedTitle: 'Скоро открытие!', closedText: 'Cabbit Jump! возвращается с самым большим обновлением: боссы, новая графика, сезоны и кланы. Все ваши рекорды, монеты и покупки на месте.', closedTimerLbl: 'До открытия', closedBye: '2 октября, 20:00 по Москве', dailyNeedNet: 'Нужен интернет, чтобы забрать награду', glassToast: 'СТЕКЛО СПАСЛО ТЕБЯ!', tapPrompt: 'ЖМИ!',
+    perkRefund: 'Перки обновились — вернули {c} монет', fruitRefund: 'Огненный и Грозовой фрукты убраны — вернули {c} монет', boss0: 'Король Сумерек', boss1: 'Ледяной Колосс', boss2: 'Магмовый Лорд', boss3: 'Токсичный Слизень', boss4: 'Звёздный Пожиратель', bossWarn: 'Приближается босс!', bossesChip: 'Боссы', seasonTitle: 'Сезон {n}', seasonDaysLeft: 'осталось {d} дн.', seasonBestShort: 'рекорд', ev_boss: 'Неделя боссов', ev_pass: 'Неделя пропуска', ev_fruit: 'Фруктовая неделя', evd_boss: 'За победу над боссом вдвое больше монет.', evd_pass: 'Жетонов Cabbit Pass за забег в полтора раза больше.', evd_fruit: 'В забеге может выпасть два фрукта, а боссы дарят по два фрукта.', tabPlayers: 'Игроки', tabClans: 'Кланы', tabMyClan: 'Мой клан', seasonMyBadges: 'Твои прошлые сезоны', seasonShort: 'Сезон {n}', seasonNoPlayers: 'В этом сезоне ещё никто не сыграл. Стань первым!', seasonRewardsTitle: 'Монеты в конце сезона', seasonTopN: 'Топ-{n}', seasonRewardToast: 'Сезон {s} закончен! Твоё место: {r}. Награда: {c} монет', seasonNoRank: 'вне топ-100', clanNoneYet: 'Кланов пока нет. Создай первый во вкладке «Мой клан»!', clanMembersN: 'участников: {n}', clanPoints: 'очков сезона: {n}', clanCodeLbl: 'Код клана:', clanCopy: 'Копировать', clanCopied: 'Скопировано', clanDisband: 'Распустить клан', clanLeave: 'Выйти из клана', clanLeaveSure: 'Точно? Нажми ещё раз', clanJoin: 'Вступить', clanCreateTitle: 'Создать свой клан', clanNamePh: 'Название клана', clanCreateBtn: 'Создать · {p}', clanJoinTitle: 'Вступить по коду', clanCodePh: 'Код клана', clanJoinHint: 'Код клана — это код игрока, который его создал. Спроси его у лидера или найди клан во вкладке «Кланы».', clanErrName: 'Название — от 3 до 16 символов', clanErrAlready: 'Ты уже в клане', clanErrCoins: 'Нужно {p} монет', clanErrCode: 'Введи код клана', clanErrNotFound: 'Клан с таким кодом не найден', clanErrFull: 'В клане уже {n} игроков, мест нет', clanErrNet: 'Нет связи, попробуй ещё раз', clanDisbanded: 'Лидер распустил твой клан. Можно вступить в другой или создать свой.', bestiaryTitle: 'Бестиарий', bestiarySub: 'Побеждено {a} из {b} · всего побед: {n}', bossWins: 'Побед: {n}', bossUnknown: 'Ещё не встречен · прилетает на {s} очков', bestiaryHint: 'Босс прилетает в конце каждого мира. Лови золотые звёзды — они бьют босса, и уворачивайся от его снарядов. За победу — монеты и фрукт.', bestChip: 'Рекорд', overPoints: 'очков', overWorld: 'Мир', overCoinsTile: 'Монеты', worldLabel: 'МИР {n}', bossIncoming: 'БОСС: {b}!', bossDown: 'БОСС ПОВЕРЖЕН!', bossFled: 'Босс улетел…', bossTime: 'Босс улетит через {s}', bossHint: 'Лови золотые звёзды — они бьют босса. Уворачивайся от его снарядов!', wheelSpinN: '×{n} · {p}', wheelSkipOff: 'Анимация: вкл', wheelSkipOn: 'Анимация: пропуск', wheelSkipNow: 'Пропустить', closedTitle: 'Скоро открытие!', closedText: 'Cabbit Jump! возвращается с самым большим обновлением: боссы, новая графика, сезоны и кланы. Все ваши рекорды, монеты и покупки на месте.', closedTimerLbl: 'До открытия', closedBye: 'Сегодня в 15:15 по Москве', welcomeKicker: 'Игра открыта', welcome1: 'Боссы в конце каждого мира', welcome2: 'Новая графика пяти миров', welcome3: 'Сезон 1 и свои кланы', welcome4: 'Бестиарий и новые фрукты', welcomeNote: 'Все ваши рекорды, монеты и покупки на месте.', welcomeBtn: 'Играть', dailyNeedNet: 'Нужен интернет, чтобы забрать награду', glassToast: 'СТЕКЛО СПАСЛО ТЕБЯ!', tapPrompt: 'ЖМИ!',
     items: {
       'hat:none':      { n: 'Без шляпы',        d: '' },
       'hat:tophat':     { n: 'Цилиндр',          d: 'Просто стильно.' },
@@ -3380,7 +3558,7 @@ const I18N = {
     gfxLabel: 'Graphics', gfx_auto: 'Auto', gfx_high: 'Pretty', gfx_low: 'Fast', gfx_ultra: 'Ultra',
     expBadge: 'experimental',
     gfxUltraNote: '⚗ Experimental feature: 3D-looking platforms and shadows. May lag on weak phones.',
-    catMain: 'General', catGfx: 'Graphics', catProfile: 'Profile', catSound: 'Sound', catOnline: 'Online', catCommunity: 'Community', fruitsBtn: 'Fruits', fruitsTitle: 'Fruits', wheelTitle: 'Wheel', fruitInvTitle: 'Fruits & powers', fruitHint: 'Catch fruits during a run or win them on the wheel. Eat a fruit to get its power. Eating another one replaces it. Trade fruits with friends: the ⇄ button in chat.', fr_spring: 'Spring Fruit', fr_flame: 'Flame Fruit', fr_ice: 'Ice Fruit', fr_storm: 'Storm Fruit', fr_portal: 'Portal Fruit', fr_star: 'Star Fruit', fr_cloud: 'Cloud Fruit', fr_magnet: 'Magnet Fruit', frd_cloud: 'You fall softly like a feather: far platforms are easier to reach.', frd_magnet: 'Coins fly to you on their own, like with the halo.', fruitEatenTag: 'Eaten', fruitWhere: 'Drops from the wheel and during runs', frd_spring: 'Springs on platforms appear 3 times more often.', frd_flame: 'Monsters burn on touch — no countdown, you still bounce and get coins.', frd_ice: 'Moving platforms freeze, blinking ones never vanish.', frd_storm: 'Every 6 seconds lightning hits the nearest monster: +coins.', frd_portal: 'Teleports are common and take you to the highest platform.', frd_star: 'A shower of coins every 1000 points. +50% Cabbit Pass tokens.', rar1: 'Common', rar2: 'Rare', rar3: 'Epic', rar4: 'Legendary', fruitEatenNow: 'Eaten now', fruitNone: 'You have not eaten a fruit yet. Catch one in a run or win one on the wheel!', fruitEat: 'Eat', fruitReplace: 'Eat {new}? The "{old}" power will be lost.', fruitAte: 'You ate: {f}!', fruitGot: 'New fruit: {f}!', wheelSpin: 'Spin · {p}', wheelWon: 'You got:', wheelOdds: 'Odds:', tradeTitle: 'Fruit trade', tradeGiveLabel: 'You give', tradeWantLabel: 'You want', tradeSend: 'Offer', tradeNoFruits: 'You have no fruits to trade yet.', tradeSame: 'You cannot trade a fruit for the same one.', tradeYouGive: 'you give', tradeYouGet: 'you get', tradeTheyGive: 'gives you', tradeTheyWant: 'wants back', tradeAccept: 'Accept', tradeDecline: 'Decline', tradeCancel: 'Cancel', tradeWaiting: 'Waiting for your friend…', tradeStDone: 'Trade done ✓', tradeStNo: 'Declined', tradeStCancel: 'Cancelled', tradeNeedFruit: 'You need {f} for this trade', tradeClosed: 'This trade is already closed', tradeCancelled: 'Trade cancelled, fruit returned', tradeDoneYou: 'Trade! You got: {f}', tradeDoneThem: 'Your friend accepted! You got: {f}', tradeDeclined: 'Trade did not happen, {f} returned', msgTrade: '⇄ Fruit trade',
+    catMain: 'General', catGfx: 'Graphics', catProfile: 'Profile', catSound: 'Sound', catOnline: 'Online', catCommunity: 'Community', fruitsBtn: 'Fruits', fruitsTitle: 'Fruits', wheelTitle: 'Wheel', fruitInvTitle: 'Fruits & powers', fruitHint: 'Catch fruits during a run or win them on the wheel. Eat a fruit to get its power. Eating another one replaces it. Trade fruits with friends: the ⇄ button in chat.', fr_spring: 'Spring Fruit', fr_flame: 'Flame Fruit', fr_ice: 'Ice Fruit', fr_storm: 'Storm Fruit', fr_portal: 'Portal Fruit', fr_star: 'Star Fruit', fr_cloud: 'Cloud Fruit', fr_magnet: 'Magnet Fruit', frd_cloud: 'You fall almost twice as slowly: far platforms are easy to reach.', frd_magnet: 'Coins fly to you even from far away.', fruitEatenTag: 'Eaten', fruitWhere: 'Drops from the wheel and during runs', frd_spring: 'Springs on every third platform: higher jumps.', starShower: 'Star shower!', fruitActive: 'Power: {f}', frd_flame: 'Monsters burn on touch — no countdown, you still bounce and get coins.', frd_ice: 'Moving platforms freeze, blinking ones never vanish, monsters crawl.', frd_storm: 'Every 6 seconds lightning hits the nearest monster: +coins.', frd_portal: 'Teleports from the very start and 6 times more often.', frd_star: 'Every 1000 points a trail of 14 coins appears above you. +50% Cabbit Pass tokens.', rar1: 'Common', rar2: 'Rare', rar3: 'Epic', rar4: 'Legendary', fruitEatenNow: 'Eaten now', fruitNone: 'You have not eaten a fruit yet. Catch one in a run or win one on the wheel!', fruitEat: 'Eat', fruitReplace: 'Eat {new}? The "{old}" power will be lost.', fruitAte: 'You ate: {f}!', fruitGot: 'New fruit: {f}!', wheelSpin: 'Spin · {p}', wheelWon: 'You got:', wheelOdds: 'Odds:', tradeTitle: 'Fruit trade', tradeGiveLabel: 'You give', tradeWantLabel: 'You want', tradeSend: 'Offer', tradeNoFruits: 'You have no fruits to trade yet.', tradeSame: 'You cannot trade a fruit for the same one.', tradeYouGive: 'you give', tradeYouGet: 'you get', tradeTheyGive: 'gives you', tradeTheyWant: 'wants back', tradeAccept: 'Accept', tradeDecline: 'Decline', tradeCancel: 'Cancel', tradeWaiting: 'Waiting for your friend…', tradeStDone: 'Trade done ✓', tradeStNo: 'Declined', tradeStCancel: 'Cancelled', tradeNeedFruit: 'You need {f} for this trade', tradeClosed: 'This trade is already closed', tradeCancelled: 'Trade cancelled, fruit returned', tradeDoneYou: 'Trade! You got: {f}', tradeDoneThem: 'Your friend accepted! You got: {f}', tradeDeclined: 'Trade did not happen, {f} returned', msgTrade: '⇄ Fruit trade',
     settingsSave: '✓ Save', settingsSaved: 'Saved ✓',
     gfxAutoLowNote: '(lag detected — fast mode on)',
     pauseMenu: 'Menu',
@@ -3438,7 +3616,7 @@ const I18N = {
     cloudNotFound: 'Code not found', accountDeleted: 'This account was deleted by the administration. The game will start from scratch.', cloudErr: 'Could not reach the server', cloudLoading: 'Loading…',
     smashToast: 'MACE SMASH!', kickToast: 'KICKED!', perfectToast: 'PERFECT!',
     laserToast: 'WATCH OUT: LASERS!',
-    perkRefund: 'Perks changed — {c} coins refunded', fruitRefund: 'Flame and Storm fruits were removed — {c} coins refunded', boss0: 'Twilight King', boss1: 'Frost Colossus', boss2: 'Magma Lord', boss3: 'Toxic Slime', boss4: 'Star Devourer', bossWarn: 'A boss is coming!', bossesChip: 'Bosses', seasonTitle: 'Season {n}', seasonDaysLeft: '{d} days left', seasonBestShort: 'best', ev_boss: 'Boss week', ev_pass: 'Pass week', ev_fruit: 'Fruit week', evd_boss: 'Beating a boss gives double coins.', evd_pass: '1.5x Cabbit Pass tokens per run.', evd_fruit: 'Up to two fruits per run, and bosses give two fruits.', tabPlayers: 'Players', tabClans: 'Clans', tabMyClan: 'My clan', seasonMyBadges: 'Your past seasons', seasonShort: 'Season {n}', seasonNoPlayers: 'Nobody has played this season yet. Be the first!', seasonRewardsTitle: 'Coins at the end of the season', seasonTopN: 'Top {n}', seasonRewardToast: 'Season {s} is over! Your place: {r}. Reward: {c} coins', seasonNoRank: 'outside top 100', clanNoneYet: 'No clans yet. Create the first one in the My clan tab!', clanMembersN: 'members: {n}', clanPoints: 'season points: {n}', clanCodeLbl: 'Clan code:', clanCopy: 'Copy', clanCopied: 'Copied', clanDisband: 'Disband clan', clanLeave: 'Leave clan', clanLeaveSure: 'Sure? Tap again', clanJoin: 'Join', clanCreateTitle: 'Create your clan', clanNamePh: 'Clan name', clanCreateBtn: 'Create · {p}', clanJoinTitle: 'Join by code', clanCodePh: 'Clan code', clanJoinHint: 'The clan code is the player code of its creator. Ask the leader or find a clan in the Clans tab.', clanErrName: 'Name must be 3 to 16 characters', clanErrAlready: 'You are already in a clan', clanErrCoins: 'You need {p} coins', clanErrCode: 'Enter a clan code', clanErrNotFound: 'No clan with this code', clanErrFull: 'The clan already has {n} players', clanErrNet: 'No connection, try again', clanDisbanded: 'The leader disbanded your clan. Join another or create your own.', bestiaryTitle: 'Bestiary', bestiarySub: 'Beaten {a} of {b} · total wins: {n}', bossWins: 'Wins: {n}', bossUnknown: 'Not met yet · arrives at {s} points', bestiaryHint: 'A boss arrives at the end of every world. Catch the golden stars to hit it and dodge its shots. Beat it for coins and a fruit.', bestChip: 'Best', overPoints: 'points', overWorld: 'World', overCoinsTile: 'Coins', worldLabel: 'WORLD {n}', bossIncoming: 'BOSS: {b}!', bossDown: 'BOSS DEFEATED!', bossFled: 'The boss flew away…', bossTime: 'The boss leaves in {s}', bossHint: 'Catch the golden stars — they hit the boss. Dodge its shots!', wheelSpinN: '×{n} · {p}', wheelSkipOff: 'Animation: on', wheelSkipOn: 'Animation: skip', wheelSkipNow: 'Skip', closedTitle: 'Opening soon!', closedText: 'Cabbit Jump! is coming back with its biggest update: bosses, new graphics, seasons and clans. All your records, coins and purchases are safe.', closedTimerLbl: 'Opens in', closedBye: 'October 2, 17:00 UTC', dailyNeedNet: 'You need internet to claim the reward', glassToast: 'THE GLASS SAVED YOU!', tapPrompt: 'TAP!',
+    perkRefund: 'Perks changed — {c} coins refunded', fruitRefund: 'Flame and Storm fruits were removed — {c} coins refunded', boss0: 'Twilight King', boss1: 'Frost Colossus', boss2: 'Magma Lord', boss3: 'Toxic Slime', boss4: 'Star Devourer', bossWarn: 'A boss is coming!', bossesChip: 'Bosses', seasonTitle: 'Season {n}', seasonDaysLeft: '{d} days left', seasonBestShort: 'best', ev_boss: 'Boss week', ev_pass: 'Pass week', ev_fruit: 'Fruit week', evd_boss: 'Beating a boss gives double coins.', evd_pass: '1.5x Cabbit Pass tokens per run.', evd_fruit: 'Up to two fruits per run, and bosses give two fruits.', tabPlayers: 'Players', tabClans: 'Clans', tabMyClan: 'My clan', seasonMyBadges: 'Your past seasons', seasonShort: 'Season {n}', seasonNoPlayers: 'Nobody has played this season yet. Be the first!', seasonRewardsTitle: 'Coins at the end of the season', seasonTopN: 'Top {n}', seasonRewardToast: 'Season {s} is over! Your place: {r}. Reward: {c} coins', seasonNoRank: 'outside top 100', clanNoneYet: 'No clans yet. Create the first one in the My clan tab!', clanMembersN: 'members: {n}', clanPoints: 'season points: {n}', clanCodeLbl: 'Clan code:', clanCopy: 'Copy', clanCopied: 'Copied', clanDisband: 'Disband clan', clanLeave: 'Leave clan', clanLeaveSure: 'Sure? Tap again', clanJoin: 'Join', clanCreateTitle: 'Create your clan', clanNamePh: 'Clan name', clanCreateBtn: 'Create · {p}', clanJoinTitle: 'Join by code', clanCodePh: 'Clan code', clanJoinHint: 'The clan code is the player code of its creator. Ask the leader or find a clan in the Clans tab.', clanErrName: 'Name must be 3 to 16 characters', clanErrAlready: 'You are already in a clan', clanErrCoins: 'You need {p} coins', clanErrCode: 'Enter a clan code', clanErrNotFound: 'No clan with this code', clanErrFull: 'The clan already has {n} players', clanErrNet: 'No connection, try again', clanDisbanded: 'The leader disbanded your clan. Join another or create your own.', bestiaryTitle: 'Bestiary', bestiarySub: 'Beaten {a} of {b} · total wins: {n}', bossWins: 'Wins: {n}', bossUnknown: 'Not met yet · arrives at {s} points', bestiaryHint: 'A boss arrives at the end of every world. Catch the golden stars to hit it and dodge its shots. Beat it for coins and a fruit.', bestChip: 'Best', overPoints: 'points', overWorld: 'World', overCoinsTile: 'Coins', worldLabel: 'WORLD {n}', bossIncoming: 'BOSS: {b}!', bossDown: 'BOSS DEFEATED!', bossFled: 'The boss flew away…', bossTime: 'The boss leaves in {s}', bossHint: 'Catch the golden stars — they hit the boss. Dodge its shots!', wheelSpinN: '×{n} · {p}', wheelSkipOff: 'Animation: on', wheelSkipOn: 'Animation: skip', wheelSkipNow: 'Skip', closedTitle: 'Opening soon!', closedText: 'Cabbit Jump! is coming back with its biggest update: bosses, new graphics, seasons and clans. All your records, coins and purchases are safe.', closedTimerLbl: 'Opens in', closedBye: 'Today at 12:15 UTC', welcomeKicker: 'The game is open', welcome1: 'Bosses at the end of every world', welcome2: 'New graphics for all five worlds', welcome3: 'Season 1 and your own clans', welcome4: 'Bestiary and new fruits', welcomeNote: 'All your records, coins and purchases are safe.', welcomeBtn: 'Play', dailyNeedNet: 'You need internet to claim the reward', glassToast: 'THE GLASS SAVED YOU!', tapPrompt: 'TAP!',
     items: {
       'hat:none':      { n: 'No hat',           d: '' },
       'hat:tophat':     { n: 'Top Hat',          d: 'Just stylish.' },
@@ -3921,7 +4099,7 @@ const multiOn = () => isOwned('perk', 'multiacc');
 const hasHat  = (v) => (outfit.hat === v || (multiOn() && outfit.hat2 === v)) && isOwned('hat', v);
 const hasAcc  = (v) => (outfit.acc === v || (multiOn() && outfit.acc2 === v)) && isOwned('acc', v);
 const hasGlass = () => hasHat('glass') && !glassUsedThisRun;
-const gravityMult   = () => (hasHat('propeller') ? 0.55 : 1) * (typeof hasFruit === 'function' && hasFruit('cloud') && hero && hero.vy > 0 ? 0.72 : 1);
+const gravityMult   = () => (hasHat('propeller') ? 0.55 : 1) * (typeof hasFruit === 'function' && hasFruit('cloud') && hero && hero.vy > 0 ? 0.55 : 1);
 const scoreMult      = () => hasAcc('tie') ? 1.25 : 1;
 const hasMace       = () => outfit.tool === 'mace' && isOwned('tool', 'mace');
 const hasBow        = () => outfit.tool === 'bow'  && isOwned('tool', 'bow');
@@ -4150,7 +4328,7 @@ function spawnAbove(){
   const pCloud = lerp(0.02, 0.08, d);
   const pBouncy = 0.045;
   const pBlink = lerp(0.0, 0.07, d);
-  const pTele = hasFruit('portal') ? (score > 200 ? 0.08 : 0) : (score > 800 ? 0.022 : 0);
+  const pTele = hasFruit('portal') ? 0.14 : (score > 800 ? 0.022 : 0);
   let acc = pMoving;
   if (r < acc) type = 'moving';
   else if (r < (acc += pBroken)) type = 'broken';
@@ -4159,7 +4337,7 @@ function spawnAbove(){
   else if (r < (acc += pBlink)) type = 'blink';
   else if (r < (acc += pTele)) type = 'tele';
 
-  const springChance = lerp(0.05, 0.11, d) * (hasFruit('spring') ? 3 : 1);
+  const springChance = hasFruit('spring') ? 0.5 : lerp(0.05, 0.11, d);
   const p = makePlatform(y, type, (type === 'normal' || type === 'moving') && Math.random() < springChance);
   if (type === 'blink') p.blinkT = rand(0, 2.4);
 
@@ -4899,14 +5077,16 @@ function updateFruits(dt){
   }
   if (hasFruit('star') && score >= starNext){
     starNext += 1000;
-    const g = Math.round(8 * coinMult());
-    runCoins += g; coins += g;
-    Store.set('coins', coins);
-    coinPulse = 1;
-    for (let k = 0; k < 8; k++) burstSpark(hero.x + rand(-80, 80), hero.y - rand(40, 160), pick(['#fff3b0', '#ffd34d', '#ffffff']), 5, 0.7);
-    addToast('★ +' + g, hero.x, hero.y - 56, '#fff3b0');
+    for (let k = 0; k < 14; k++){
+      const a = k / 13;
+      addCoin(clamp(hero.x + Math.sin(a * 6.2832) * 90, 24, VW - 24), hero.y - 120 - k * 38, null);
+    }
+    for (let k = 0; k < 10; k++) burstSpark(hero.x + rand(-90, 90), hero.y - rand(40, 220), pick(['#fff3b0', '#ffd34d', '#ffffff']), 6, 0.8);
+    addToast(t('starShower'), hero.x, hero.y - 56, '#fff3b0');
+    flash = Math.max(flash, 0.3); flashColor = '#fff3b0';
     sfxCoin();
   }
+  if (hasFruit('cloud') && hero.vy > 60 && Math.random() < dt * 14) addParticle({ kind: 'puff', x: hero.x + rand(-12, 12), y: hero.y + hero.h * 0.45, vx: rand(-20, 20), vy: rand(10, 30), life: 1, decay: rand(1.8, 2.6), r: rand(6, 11), color: pick(['#ffffff', '#e8f0ff', '#dfe8ff']) });
 }
 function drawFruitPickups(){
   const tm = performance.now() / 1000;
@@ -6771,7 +6951,7 @@ function updateWorld(dt){
     if (hasMagnet()){
       const mdx = hero.x - c.x, mdy = hero.y - c.y;
       const md2 = mdx * mdx + mdy * mdy;
-      if (md2 < 160 * 160){
+      if (md2 < (hasFruit('magnet') ? 240 : 160) * (hasFruit('magnet') ? 240 : 160)){
         c.plat = null;
         const md = Math.sqrt(md2) || 1;
         c.x += (mdx / md) * 340 * dt;
@@ -6869,7 +7049,7 @@ function updateWorld(dt){
 
     if (!m.frozen){
       m.bob += dt * 3;
-      m.x += m.vx * dt;
+      m.x += m.vx * dt * (hasFruit('ice') ? 0.3 : 1);
       if (m.x < m.r) { m.x = m.r; m.vx = Math.abs(m.vx); }
       if (m.x > VW - m.r) { m.x = VW - m.r; m.vx = -Math.abs(m.vx); }
 
@@ -10587,6 +10767,7 @@ function startGame(){
   const dm = document.getElementById('dailyModal');
   if (dm) dm.classList.add('hidden');
   state = STATE.PLAY;
+  if (fruitState.eat && FRUITS[fruitState.eat]) setTimeout(() => { if (state === STATE.PLAY) addToast(t('fruitActive').replace('{f}', fruitName(fruitState.eat)), VW / 2, camY + VH * 0.62, RARITY_COL[FRUITS[fruitState.eat].rar]); }, 2600);
   showWorldBanner(0);
   last = performance.now();
   acc = 0;
@@ -14147,6 +14328,7 @@ document.getElementById('adminSaveBtn').addEventListener('click', adminSave);
 function adminOpenGame(){
   if (!GAME_CLOSED) return;
   GAME_CLOSED = false;
+  try { window.localStorage.setItem('doodlecabbit.welcomeRemaster', '1'); } catch (e) {}
   const s = document.getElementById('closedScreen');
   if (s) s.hidden = true;
 }
