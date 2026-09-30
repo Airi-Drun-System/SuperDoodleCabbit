@@ -44,6 +44,7 @@
     background:radial-gradient(ellipse 78% 60% at 50% 50%,rgba(5,0,18,0) 45%,rgba(5,0,18,.4) 100%);
   }
   .vignette.off{display:none;}
+  .vignette.soft{opacity:.4;}
 
   .screen{
     position:absolute;inset:0;
@@ -1928,6 +1929,13 @@
             <p id="gfxUltraNote" class="gfxUltraNote hidden" data-i18n="gfxUltraNote">Экспериментальная функция: объёмные платформы и тени. На слабых телефонах может тормозить.</p>
           </div>
 
+          <div class="settingRow" id="worldLightSetting">
+            <span class="settingLabel" data-i18n="worldLightLabel">Миры</span>
+            <div id="worldLightRow" class="btnRow">
+              <button class="chip" type="button" data-wl="0" data-i18n="wl_dark">Обычные</button>
+              <button class="chip" type="button" data-wl="1" data-i18n="wl_light">Светлые</button>
+            </div>
+          </div>
           <div class="settingRow" id="bgColorSetting">
             <span class="settingLabel" data-i18n="bgColorLabel">Цвет фона</span>
             <div id="bgColorRow" class="swatchRow"></div>
@@ -3426,8 +3434,8 @@ const I18N = {
     cont: 'Продолжить', back: 'Назад', language: 'Язык', motionBlur: 'Motion blur',
     gfxLabel: 'Графика', gfx_auto: 'Авто', gfx_high: 'Красиво', gfx_low: 'Быстро', gfx_ultra: 'Ультра',
     expBadge: 'эксперимент',
-    gfxUltraNote: '⚗ Экспериментальная функция: объёмные платформы и тени. На слабых телефонах может тормозить.',
-    catMain: 'Основное', catGfx: 'Графика', catProfile: 'Профиль', catSound: 'Звук', catOnline: 'Онлайн', catCommunity: 'Сообщество', fruitsBtn: 'Фрукты', fruitsTitle: 'Фрукты', wheelTitle: 'Рулетка', fruitInvTitle: 'Фрукты и способности', fruitHint: 'Фрукты можно поймать в забеге или выбить в рулетке. Съешь фрукт — получишь его способность. Съешь другой — старый пропадёт. Меняться фруктами можно с друзьями: кнопка ⇄ в чате.', fr_spring: 'Пружинный фрукт', fr_flame: 'Огненный фрукт', fr_ice: 'Ледяной фрукт', fr_storm: 'Грозовой фрукт', fr_portal: 'Портальный фрукт', fr_star: 'Звёздный фрукт', fr_cloud: 'Облачный фрукт', fr_magnet: 'Магнитный фрукт', frd_cloud: 'Падаешь почти вдвое медленнее, как на облаке: легко успеть к дальней платформе.', frd_magnet: 'Монеты сами летят к тебе даже издалека.', fruitEatenTag: 'Съеден', fruitWhere: 'Выпадает в рулетке и в забеге', frd_spring: 'Пружины на каждой третьей платформе — прыжки выше.', starShower: 'Звездопад!', fruitActive: 'Сила: {f}', frd_flame: 'Монстры сгорают от касания — без отсчёта, с подкидом и монетами.', frd_ice: 'Движущиеся платформы замерзают, мигающие не исчезают, монстры еле ползают.', frd_storm: 'Каждые 6 секунд молния бьёт ближайшего монстра: +монеты.', frd_portal: 'Телепорты с самого старта и в 6 раз чаще — уносят на самую высокую платформу.', frd_star: 'Каждые 1000 очков над тобой появляется дорожка из 14 монет. +50% жетонов Cabbit Pass.', rar1: 'Обычный', rar2: 'Редкий', rar3: 'Эпический', rar4: 'Легендарный', fruitEatenNow: 'Сейчас съеден', fruitNone: 'Ты ещё не съел ни одного фрукта. Поймай его в забеге или выбей в рулетке!', fruitEat: 'Съесть', fruitReplace: 'Съесть {new}? Способность «{old}» пропадёт.', fruitAte: 'Ты съел: {f}!', fruitGot: 'Новый фрукт: {f}!', wheelSpin: 'Крутить · {p}', wheelWon: 'Выпало:', wheelOdds: 'Шансы:', tradeTitle: 'Обмен фруктами', tradeGiveLabel: 'Ты отдаёшь', tradeWantLabel: 'Ты хочешь', tradeSend: 'Предложить', tradeNoFruits: 'У тебя пока нет фруктов для обмена.', tradeSame: 'Нельзя менять фрукт на такой же.', tradeYouGive: 'ты отдаёшь', tradeYouGet: 'ты получишь', tradeTheyGive: 'даёт тебе', tradeTheyWant: 'хочет взамен', tradeAccept: 'Принять', tradeDecline: 'Отказать', tradeCancel: 'Отменить', tradeWaiting: 'Ждём ответа друга…', tradeStDone: 'Обмен состоялся ✓', tradeStNo: 'Отказано', tradeStCancel: 'Отменено', tradeNeedFruit: 'Для обмена нужен {f}', tradeClosed: 'Этот обмен уже закрыт', tradeCancelled: 'Обмен отменён, фрукт вернулся', tradeDoneYou: 'Обмен! Ты получил: {f}', tradeDoneThem: 'Друг принял обмен! Ты получил: {f}', tradeDeclined: 'Обмен не состоялся, {f} вернулся', msgTrade: '⇄ Обмен фруктами',
+    gfxUltraNote: 'Экспериментальная функция: объёмные платформы и тени. На слабых телефонах может тормозить.', worldLightLabel: 'Миры', wl_dark: 'Обычные', wl_light: 'Светлые',
+    catMain: 'Основное', catGfx: 'Графика', catProfile: 'Профиль', catSound: 'Звук', catOnline: 'Онлайн', catCommunity: 'Сообщество', fruitsBtn: 'Фрукты', fruitsTitle: 'Фрукты', wheelTitle: 'Рулетка', fruitInvTitle: 'Фрукты и способности', fruitHint: 'Фрукты можно поймать в забеге или выбить в рулетке. Съешь фрукт — получишь его способность. Съешь другой — старый пропадёт. Меняться фруктами можно с друзьями: кнопка ⇄ в чате.', fr_spring: 'Пружинный фрукт', fr_flame: 'Огненный фрукт', fr_ice: 'Ледяной фрукт', fr_storm: 'Грозовой фрукт', fr_portal: 'Портальный фрукт', fr_star: 'Звёздный фрукт', fr_cloud: 'Облачный фрукт', fr_magnet: 'Магнитный фрукт', frd_cloud: 'Падаешь почти вдвое медленнее, как на облаке: легко успеть к дальней платформе.', frd_magnet: 'Монеты сами летят к тебе даже издалека.', fruitEatenTag: 'Съеден', fruitWhere: 'Выпадает в рулетке и в забеге', frd_spring: 'Пружины на каждой второй платформе — прыжки выше.', starShower: 'Звездопад!', fruitActive: 'Сила: {f}', frd_flame: 'Монстры сгорают от касания — без отсчёта, с подкидом и монетами.', frd_ice: 'Движущиеся платформы замерзают, мигающие не исчезают, монстры еле ползают.', frd_storm: 'Каждые 6 секунд молния бьёт ближайшего монстра: +монеты.', frd_portal: 'Телепорты с самого старта и в 6 раз чаще — уносят на самую высокую платформу.', frd_star: 'Каждые 1000 очков над тобой появляется дорожка из 14 монет. +50% жетонов Cabbit Pass.', rar1: 'Обычный', rar2: 'Редкий', rar3: 'Эпический', rar4: 'Легендарный', fruitEatenNow: 'Сейчас съеден', fruitNone: 'Ты ещё не съел ни одного фрукта. Поймай его в забеге или выбей в рулетке!', fruitEat: 'Съесть', fruitReplace: 'Съесть {new}? Способность «{old}» пропадёт.', fruitAte: 'Ты съел: {f}!', fruitGot: 'Новый фрукт: {f}!', wheelSpin: 'Крутить · {p}', wheelWon: 'Выпало:', wheelOdds: 'Шансы:', tradeTitle: 'Обмен фруктами', tradeGiveLabel: 'Ты отдаёшь', tradeWantLabel: 'Ты хочешь', tradeSend: 'Предложить', tradeNoFruits: 'У тебя пока нет фруктов для обмена.', tradeSame: 'Нельзя менять фрукт на такой же.', tradeYouGive: 'ты отдаёшь', tradeYouGet: 'ты получишь', tradeTheyGive: 'даёт тебе', tradeTheyWant: 'хочет взамен', tradeAccept: 'Принять', tradeDecline: 'Отказать', tradeCancel: 'Отменить', tradeWaiting: 'Ждём ответа друга…', tradeStDone: 'Обмен состоялся ✓', tradeStNo: 'Отказано', tradeStCancel: 'Отменено', tradeNeedFruit: 'Для обмена нужен {f}', tradeClosed: 'Этот обмен уже закрыт', tradeCancelled: 'Обмен отменён, фрукт вернулся', tradeDoneYou: 'Обмен! Ты получил: {f}', tradeDoneThem: 'Друг принял обмен! Ты получил: {f}', tradeDeclined: 'Обмен не состоялся, {f} вернулся', msgTrade: '⇄ Обмен фруктами',
     settingsSave: '✓ Сохранить', settingsSaved: 'Сохранено ✓',
     gfxAutoLowNote: '(лагало — включён быстрый режим)',
     pauseMenu: 'Меню',
@@ -3557,8 +3565,8 @@ const I18N = {
     cont: 'Continue', back: 'Back', language: 'Language', motionBlur: 'Motion blur',
     gfxLabel: 'Graphics', gfx_auto: 'Auto', gfx_high: 'Pretty', gfx_low: 'Fast', gfx_ultra: 'Ultra',
     expBadge: 'experimental',
-    gfxUltraNote: '⚗ Experimental feature: 3D-looking platforms and shadows. May lag on weak phones.',
-    catMain: 'General', catGfx: 'Graphics', catProfile: 'Profile', catSound: 'Sound', catOnline: 'Online', catCommunity: 'Community', fruitsBtn: 'Fruits', fruitsTitle: 'Fruits', wheelTitle: 'Wheel', fruitInvTitle: 'Fruits & powers', fruitHint: 'Catch fruits during a run or win them on the wheel. Eat a fruit to get its power. Eating another one replaces it. Trade fruits with friends: the ⇄ button in chat.', fr_spring: 'Spring Fruit', fr_flame: 'Flame Fruit', fr_ice: 'Ice Fruit', fr_storm: 'Storm Fruit', fr_portal: 'Portal Fruit', fr_star: 'Star Fruit', fr_cloud: 'Cloud Fruit', fr_magnet: 'Magnet Fruit', frd_cloud: 'You fall almost twice as slowly: far platforms are easy to reach.', frd_magnet: 'Coins fly to you even from far away.', fruitEatenTag: 'Eaten', fruitWhere: 'Drops from the wheel and during runs', frd_spring: 'Springs on every third platform: higher jumps.', starShower: 'Star shower!', fruitActive: 'Power: {f}', frd_flame: 'Monsters burn on touch — no countdown, you still bounce and get coins.', frd_ice: 'Moving platforms freeze, blinking ones never vanish, monsters crawl.', frd_storm: 'Every 6 seconds lightning hits the nearest monster: +coins.', frd_portal: 'Teleports from the very start and 6 times more often.', frd_star: 'Every 1000 points a trail of 14 coins appears above you. +50% Cabbit Pass tokens.', rar1: 'Common', rar2: 'Rare', rar3: 'Epic', rar4: 'Legendary', fruitEatenNow: 'Eaten now', fruitNone: 'You have not eaten a fruit yet. Catch one in a run or win one on the wheel!', fruitEat: 'Eat', fruitReplace: 'Eat {new}? The "{old}" power will be lost.', fruitAte: 'You ate: {f}!', fruitGot: 'New fruit: {f}!', wheelSpin: 'Spin · {p}', wheelWon: 'You got:', wheelOdds: 'Odds:', tradeTitle: 'Fruit trade', tradeGiveLabel: 'You give', tradeWantLabel: 'You want', tradeSend: 'Offer', tradeNoFruits: 'You have no fruits to trade yet.', tradeSame: 'You cannot trade a fruit for the same one.', tradeYouGive: 'you give', tradeYouGet: 'you get', tradeTheyGive: 'gives you', tradeTheyWant: 'wants back', tradeAccept: 'Accept', tradeDecline: 'Decline', tradeCancel: 'Cancel', tradeWaiting: 'Waiting for your friend…', tradeStDone: 'Trade done ✓', tradeStNo: 'Declined', tradeStCancel: 'Cancelled', tradeNeedFruit: 'You need {f} for this trade', tradeClosed: 'This trade is already closed', tradeCancelled: 'Trade cancelled, fruit returned', tradeDoneYou: 'Trade! You got: {f}', tradeDoneThem: 'Your friend accepted! You got: {f}', tradeDeclined: 'Trade did not happen, {f} returned', msgTrade: '⇄ Fruit trade',
+    gfxUltraNote: 'Experimental feature: 3D-looking platforms and shadows. May lag on weak phones.', worldLightLabel: 'Worlds', wl_dark: 'Normal', wl_light: 'Light',
+    catMain: 'General', catGfx: 'Graphics', catProfile: 'Profile', catSound: 'Sound', catOnline: 'Online', catCommunity: 'Community', fruitsBtn: 'Fruits', fruitsTitle: 'Fruits', wheelTitle: 'Wheel', fruitInvTitle: 'Fruits & powers', fruitHint: 'Catch fruits during a run or win them on the wheel. Eat a fruit to get its power. Eating another one replaces it. Trade fruits with friends: the ⇄ button in chat.', fr_spring: 'Spring Fruit', fr_flame: 'Flame Fruit', fr_ice: 'Ice Fruit', fr_storm: 'Storm Fruit', fr_portal: 'Portal Fruit', fr_star: 'Star Fruit', fr_cloud: 'Cloud Fruit', fr_magnet: 'Magnet Fruit', frd_cloud: 'You fall almost twice as slowly: far platforms are easy to reach.', frd_magnet: 'Coins fly to you even from far away.', fruitEatenTag: 'Eaten', fruitWhere: 'Drops from the wheel and during runs', frd_spring: 'Springs on every second platform: higher jumps.', starShower: 'Star shower!', fruitActive: 'Power: {f}', frd_flame: 'Monsters burn on touch — no countdown, you still bounce and get coins.', frd_ice: 'Moving platforms freeze, blinking ones never vanish, monsters crawl.', frd_storm: 'Every 6 seconds lightning hits the nearest monster: +coins.', frd_portal: 'Teleports from the very start and 6 times more often.', frd_star: 'Every 1000 points a trail of 14 coins appears above you. +50% Cabbit Pass tokens.', rar1: 'Common', rar2: 'Rare', rar3: 'Epic', rar4: 'Legendary', fruitEatenNow: 'Eaten now', fruitNone: 'You have not eaten a fruit yet. Catch one in a run or win one on the wheel!', fruitEat: 'Eat', fruitReplace: 'Eat {new}? The "{old}" power will be lost.', fruitAte: 'You ate: {f}!', fruitGot: 'New fruit: {f}!', wheelSpin: 'Spin · {p}', wheelWon: 'You got:', wheelOdds: 'Odds:', tradeTitle: 'Fruit trade', tradeGiveLabel: 'You give', tradeWantLabel: 'You want', tradeSend: 'Offer', tradeNoFruits: 'You have no fruits to trade yet.', tradeSame: 'You cannot trade a fruit for the same one.', tradeYouGive: 'you give', tradeYouGet: 'you get', tradeTheyGive: 'gives you', tradeTheyWant: 'wants back', tradeAccept: 'Accept', tradeDecline: 'Decline', tradeCancel: 'Cancel', tradeWaiting: 'Waiting for your friend…', tradeStDone: 'Trade done ✓', tradeStNo: 'Declined', tradeStCancel: 'Cancelled', tradeNeedFruit: 'You need {f} for this trade', tradeClosed: 'This trade is already closed', tradeCancelled: 'Trade cancelled, fruit returned', tradeDoneYou: 'Trade! You got: {f}', tradeDoneThem: 'Your friend accepted! You got: {f}', tradeDeclined: 'Trade did not happen, {f} returned', msgTrade: '⇄ Fruit trade',
     settingsSave: '✓ Save', settingsSaved: 'Saved ✓',
     gfxAutoLowNote: '(lag detected — fast mode on)',
     pauseMenu: 'Menu',
@@ -4099,6 +4107,7 @@ const multiOn = () => isOwned('perk', 'multiacc');
 const hasHat  = (v) => (outfit.hat === v || (multiOn() && outfit.hat2 === v)) && isOwned('hat', v);
 const hasAcc  = (v) => (outfit.acc === v || (multiOn() && outfit.acc2 === v)) && isOwned('acc', v);
 const hasGlass = () => hasHat('glass') && !glassUsedThisRun;
+const shownHat = (v) => (v === 'glass' && glassUsedThisRun) ? 'none' : v;
 const gravityMult   = () => (hasHat('propeller') ? 0.55 : 1) * (typeof hasFruit === 'function' && hasFruit('cloud') && hero && hero.vy > 0 ? 0.55 : 1);
 const scoreMult      = () => hasAcc('tie') ? 1.25 : 1;
 const hasMace       = () => outfit.tool === 'mace' && isOwned('tool', 'mace');
@@ -4226,21 +4235,40 @@ let layers = [];
 
 const WORLD_THEMES = [
   { name: 'Сумерки',   bg1: [30, 18, 58],  bg2: [96, 52, 132], glow: 'rgba(255,150,90,.22)',
+    lbg1: [136, 156, 255], lbg2: [255, 196, 178], lglow: 'rgba(255,236,170,.55)',
     monster: { light: '#c56bd6', dark: '#6f1f85', spike: '#5a1a6b', stroke: '#3a0f4a',
                burst: ['#8a2be2', '#b268ff', '#d9a6ff', '#4b1a80'] } },
   { name: 'Ледяной мир', bg1: [8, 26, 52],  bg2: [26, 92, 132], glow: 'rgba(120,210,255,.24)',
+    lbg1: [96, 178, 250], lbg2: [214, 242, 255], lglow: 'rgba(255,255,255,.55)',
     monster: { light: '#5fc9e8', dark: '#175a78', spike: '#12455c', stroke: '#0a2f3e',
                burst: ['#2ba8c9', '#7fe0ff', '#c9f6ff', '#0d5064'] } },
   { name: 'Огненный мир', bg1: [48, 10, 10], bg2: [138, 42, 20], glow: 'rgba(255,120,40,.28)',
+    lbg1: [250, 128, 84], lbg2: [255, 214, 150], lglow: 'rgba(255,244,190,.55)',
     monster: { light: '#ff9a5c', dark: '#8a2a10', spike: '#6b2008', stroke: '#3f1204',
                burst: ['#ff5a2b', '#ffb26b', '#ffe3b0', '#7a1f06'] } },
   { name: 'Ядовитый мир', bg1: [8, 38, 16], bg2: [38, 108, 48], glow: 'rgba(140,255,120,.22)',
+    lbg1: [96, 200, 150], lbg2: [222, 255, 188], lglow: 'rgba(255,255,210,.5)',
     monster: { light: '#8fe06a', dark: '#286b1e', spike: '#1d5c1d', stroke: '#123a12',
                burst: ['#4bbd4b', '#a6ff8a', '#eaffd6', '#1d5c1d'] } },
   { name: 'Космос',    bg1: [6, 6, 26],    bg2: [34, 22, 74],  glow: 'rgba(180,150,255,.26)',
+    lbg1: [84, 104, 214], lbg2: [206, 176, 255], lglow: 'rgba(255,220,255,.5)',
     monster: { light: '#a08cf0', dark: '#3a2a7a', spike: '#2c1f5c', stroke: '#180f38',
                burst: ['#6a5acd', '#b0a4ff', '#e6dcff', '#2c1f5c'] } }
 ];
+let worldLight = Store.get('worldLight', '0') === '1';
+function skyOf(w){
+  if (worldLight && w && w.lbg1) return { bg1: w.lbg1, bg2: w.lbg2, glow: w.lglow };
+  return w;
+}
+function setWorldLight(on){
+  worldLight = !!on;
+  Store.set('worldLight', worldLight ? '1' : '0');
+  bgCacheKey = '';
+  for (const k in worldGradCache) delete worldGradCache[k];
+  if (typeof refreshWorldLightRow === 'function') refreshWorldLightRow();
+  const vig = document.getElementById('vignette');
+  if (vig) vig.classList.toggle('soft', worldLight);
+}
 const worldIndex   = () => Math.floor(Math.max(0, score) / 3000) % WORLD_THEMES.length;
 const currentWorld = () => WORLD_THEMES[worldIndex()];
 let lastWorldIdx = 0;
@@ -4614,11 +4642,7 @@ function handleFatalEvent(){
     shake = Math.max(shake, 10);
     flash = 0.55; flashColor = '#bdeaff';
 
-    const glassSlot = outfit.hat === 'glass' ? 'hat' : 'hat2';
-    outfit[glassSlot] = 'none';
     glassUsedThisRun = true;
-    Store.set(glassSlot, 'none');
-    cloudPushSoon();
 
     hero.y = camY + VH * 0.32;
     hero.vy = JUMP_V;
@@ -4824,7 +4848,7 @@ const FRUITS = {
   ice:    { rar: 2, c1: '#e2fbff', c2: '#3b8fdc', sw: '#ffffff' },
   magnet: { rar: 2, c1: '#ffc0c0', c2: '#d8323a', sw: '#fff0f0' },
   portal: { rar: 3, c1: '#f0d0ff', c2: '#6a2cc6', sw: '#f9eeff' },
-  star:   { rar: 4, c1: '#fff6c0', c2: '#ff7a2f', sw: '#ffffff' }
+  star:   { rar: 4, c1: '#fff8c8', c2: '#f59a0c', sw: '#ffffff' }
 };
 const FRUIT_IDS = Object.keys(FRUITS);
 const RARITY_COL = { 1: '#c3cadb', 2: '#5fb4ff', 3: '#c77dff', 4: '#ffc33d' };
@@ -4915,59 +4939,181 @@ function rollFruit(weights){
   return pick(fruitsOfRarity(rar));
 }
 
+function fruitShape(g, r, id){
+  g.beginPath();
+  if (id === 'cloud'){
+    for (const [cx, cy, cr] of [[-0.5, 0.2, 0.55], [0.5, 0.2, 0.55], [-0.2, -0.25, 0.62], [0.3, -0.2, 0.55], [0, 0.35, 0.6]]){
+      g.moveTo(cx * r + cr * r, cy * r);
+      g.arc(cx * r, cy * r, cr * r, 0, Math.PI * 2);
+    }
+  } else if (id === 'ice'){
+    for (let i = 0; i < 6; i++){
+      const a = -Math.PI / 2 + i * Math.PI / 3;
+      const k = i % 3 === 0 ? 1.12 : 0.98;
+      const px = Math.cos(a) * r * k * 0.95, py = Math.sin(a) * r * k;
+      if (i) g.lineTo(px, py); else g.moveTo(px, py);
+    }
+    g.closePath();
+  } else if (id === 'star'){
+    for (let i = 0; i < 10; i++){
+      const a = -Math.PI / 2 + i * Math.PI / 5;
+      const k = i % 2 ? 0.56 : 1.12;
+      const px = Math.cos(a) * r * k, py = Math.sin(a) * r * k + r * 0.06;
+      if (i) g.lineTo(px, py); else g.moveTo(px, py);
+    }
+    g.closePath();
+  } else if (id === 'magnet'){
+    g.moveTo(0, -r * 0.62);
+    g.bezierCurveTo(r * 0.35, -r * 1.05, r * 1.12, -r * 0.85, r * 1.02, -r * 0.05);
+    g.bezierCurveTo(r * 0.95, r * 0.7, r * 0.45, r * 1.02, 0, r * 0.92);
+    g.bezierCurveTo(-r * 0.45, r * 1.02, -r * 0.95, r * 0.7, -r * 1.02, -r * 0.05);
+    g.bezierCurveTo(-r * 1.12, -r * 0.85, -r * 0.35, -r * 1.05, 0, -r * 0.62);
+    g.closePath();
+  } else if (id === 'spring'){
+    g.ellipse(0, r * 0.04, r * 0.9, r * 1.02, 0, 0, Math.PI * 2);
+  } else {
+    g.arc(0, 0, r, 0, Math.PI * 2);
+  }
+}
 function paintFruit(g, x, y, r, id, tm){
   const f = FRUITS[id];
   if (!f) return;
+  const T = tm || 0;
   g.save();
   g.translate(x, y);
+  g.lineJoin = 'round';
+  g.lineCap = 'round';
+  const topY = id === 'star' ? -r * 1.05 : id === 'ice' ? -r * 1.05 : id === 'magnet' ? -r * 0.62 : id === 'cloud' ? -r * 0.82 : -r * 0.95;
   g.strokeStyle = '#5a3a1a';
   g.lineWidth = Math.max(1.5, r * 0.13);
-  g.lineCap = 'round';
   g.beginPath();
-  g.moveTo(0, -r * 0.9);
-  g.quadraticCurveTo(r * 0.05, -r * 1.25, r * 0.22, -r * 1.36);
+  g.moveTo(0, topY + r * 0.1);
+  g.quadraticCurveTo(r * 0.05, topY - r * 0.3, r * 0.22, topY - r * 0.42);
   g.stroke();
-  g.fillStyle = '#56c75a';
+  const leaf = id === 'ice' ? '#bfeaff' : id === 'star' ? '#7ad84a' : id === 'cloud' ? '#9fd6ff' : '#56c75a';
+  g.fillStyle = leaf;
   g.beginPath();
-  g.ellipse(r * 0.42, -r * 1.17, r * 0.34, r * 0.16, -0.5, 0, Math.PI * 2);
+  g.ellipse(r * 0.44, topY - r * 0.24, r * 0.36, r * 0.16, -0.5, 0, Math.PI * 2);
   g.fill();
   g.strokeStyle = 'rgba(43,34,56,.7)';
   g.lineWidth = Math.max(1, r * 0.07);
   g.stroke();
-  const gr = g.createRadialGradient(-r * 0.35, -r * 0.4, r * 0.1, 0, 0, r);
+  if (id === 'ice' || id === 'spring'){
+    g.fillStyle = id === 'ice' ? '#e2fbff' : '#8ae06a';
+    g.beginPath();
+    g.ellipse(-r * 0.3, topY - r * 0.16, r * 0.26, r * 0.12, 0.6, 0, Math.PI * 2);
+    g.fill();
+    g.stroke();
+  }
+
+  g.strokeStyle = 'rgba(43,34,56,.88)';
+  g.lineWidth = Math.max(3, r * 0.22);
+  fruitShape(g, r, id);
+  g.stroke();
+  const gr = g.createRadialGradient(-r * 0.35, -r * 0.4, r * 0.1, 0, 0, r * 1.1);
   gr.addColorStop(0, f.c1);
   gr.addColorStop(1, f.c2);
   g.fillStyle = gr;
-  g.beginPath();
-  g.arc(0, 0, r, 0, Math.PI * 2);
+  fruitShape(g, r, id);
   g.fill();
+
   g.save();
-  g.beginPath();
-  g.arc(0, 0, r, 0, Math.PI * 2);
+  fruitShape(g, r, id);
   g.clip();
+  const a0 = g.globalAlpha;
   g.strokeStyle = f.sw;
-  g.globalAlpha *= 0.6;
+  g.fillStyle = f.sw;
   g.lineWidth = Math.max(1.2, r * 0.14);
-  for (let k = 0; k < 3; k++){
+  if (id === 'spring'){
+    g.globalAlpha = a0 * 0.55;
+    for (let k = -2; k <= 2; k++){
+      const yy = k * r * 0.38 + Math.sin(T * 3) * r * 0.05;
+      g.beginPath();
+      g.moveTo(-r, yy + r * 0.12);
+      g.bezierCurveTo(-r * 0.4, yy - r * 0.2, r * 0.4, yy + r * 0.3, r, yy - r * 0.08);
+      g.stroke();
+    }
+  } else if (id === 'cloud'){
+    g.globalAlpha = a0 * 0.35;
+    g.fillStyle = '#6f96e8';
+    g.beginPath(); g.ellipse(0, r * 0.75, r * 1.1, r * 0.4, 0, 0, Math.PI * 2); g.fill();
+    g.globalAlpha = a0 * 0.9;
+    g.fillStyle = '#ffffff';
+    for (const [cx, cy, cr] of [[-0.3, -0.35, 0.28], [0.25, -0.3, 0.2], [-0.55, 0.05, 0.16]]){
+      g.beginPath(); g.arc(cx * r, cy * r, cr * r, 0, Math.PI * 2); g.fill();
+    }
+  } else if (id === 'ice'){
+    g.globalAlpha = a0 * 0.55;
+    g.lineWidth = Math.max(1, r * 0.08);
     g.beginPath();
-    for (let i = 0; i <= 22; i++){
-      const a = i / 22 * Math.PI * 2.1 + k * 2.09 + (tm || 0) * 0.5;
-      const rr = r * (0.12 + i / 22 * 0.85);
-      const px = Math.cos(a) * rr, py = Math.sin(a) * rr;
-      if (i) g.lineTo(px, py); else g.moveTo(px, py);
+    for (let i = 0; i < 6; i++){
+      const a = -Math.PI / 2 + i * Math.PI / 3;
+      g.moveTo(0, 0); g.lineTo(Math.cos(a) * r * 1.1, Math.sin(a) * r * 1.1);
+    }
+    g.stroke();
+    g.globalAlpha = a0 * 0.5;
+    g.beginPath(); g.moveTo(0, 0); g.lineTo(-r * 0.95, -r * 0.5); g.lineTo(0, -r * 1.1); g.closePath(); g.fill();
+    const sp = (Math.sin(T * 2.4) + 1) / 2;
+    g.globalAlpha = a0 * sp;
+    g.fillStyle = '#ffffff';
+    const qx = r * 0.36, qy = r * 0.34, qs = r * 0.1;
+    g.beginPath();
+    g.moveTo(qx, qy - qs * 2); g.quadraticCurveTo(qx, qy, qx + qs * 2, qy); g.quadraticCurveTo(qx, qy, qx, qy + qs * 2); g.quadraticCurveTo(qx, qy, qx - qs * 2, qy); g.quadraticCurveTo(qx, qy, qx, qy - qs * 2);
+    g.fill();
+  } else if (id === 'magnet'){
+    g.globalAlpha = a0 * 0.8;
+    g.lineWidth = Math.max(2, r * 0.3);
+    g.strokeStyle = '#ffe6e6';
+    g.beginPath();
+    g.moveTo(-r * 0.45, -r * 0.3);
+    g.lineTo(-r * 0.45, r * 0.12);
+    g.arc(0, r * 0.12, r * 0.45, Math.PI, 0, true);
+    g.lineTo(r * 0.45, -r * 0.3);
+    g.stroke();
+    g.fillStyle = '#e6ecf5';
+    g.fillRect(-r * 0.62, -r * 0.5, r * 0.34, r * 0.24);
+    g.fillRect(r * 0.28, -r * 0.5, r * 0.34, r * 0.24);
+  } else if (id === 'portal'){
+    g.globalAlpha = a0 * 0.6;
+    for (let k = 0; k < 3; k++){
+      g.beginPath();
+      for (let i = 0; i <= 22; i++){
+        const a = i / 22 * Math.PI * 2.1 + k * 2.09 + T * 1.6;
+        const q = r * (0.12 + i / 22 * 0.85);
+        const px = Math.cos(a) * q, py = Math.sin(a) * q;
+        if (i) g.lineTo(px, py); else g.moveTo(px, py);
+      }
+      g.stroke();
+    }
+    g.globalAlpha = a0 * 0.9;
+    g.fillStyle = '#2a0f5a';
+    g.beginPath(); g.arc(0, 0, r * 0.18, 0, Math.PI * 2); g.fill();
+  } else if (id === 'star'){
+    g.globalAlpha = a0 * 0.55;
+    g.lineWidth = Math.max(1, r * 0.09);
+    g.beginPath();
+    for (let i = 0; i < 5; i++){
+      const a = -Math.PI / 2 + i * Math.PI * 2 / 5;
+      g.moveTo(0, r * 0.06); g.lineTo(Math.cos(a) * r * 0.95, Math.sin(a) * r * 0.95 + r * 0.06);
     }
     g.stroke();
   }
+  g.globalAlpha = a0;
   g.restore();
-  g.strokeStyle = 'rgba(43,34,56,.85)';
-  g.lineWidth = Math.max(1.5, r * 0.11);
+
+  g.fillStyle = 'rgba(255,255,255,.65)';
   g.beginPath();
-  g.arc(0, 0, r, 0, Math.PI * 2);
-  g.stroke();
-  g.fillStyle = 'rgba(255,255,255,.6)';
-  g.beginPath();
-  g.ellipse(-r * 0.38, -r * 0.42, r * 0.26, r * 0.14, -0.6, 0, Math.PI * 2);
+  g.ellipse(-r * 0.36, -r * 0.4, r * 0.24, r * 0.12, -0.6, 0, Math.PI * 2);
   g.fill();
+  if (f.rar >= 3){
+    const tw = (Math.sin(T * 3.1) + 1) / 2;
+    g.globalAlpha *= 0.4 + tw * 0.6;
+    g.fillStyle = '#ffffff';
+    const sx = r * 0.72, sy = -r * 0.62, s = r * (0.16 + tw * 0.12);
+    g.beginPath();
+    g.moveTo(sx, sy - s * 2); g.quadraticCurveTo(sx, sy, sx + s * 2, sy); g.quadraticCurveTo(sx, sy, sx, sy + s * 2); g.quadraticCurveTo(sx, sy, sx - s * 2, sy); g.quadraticCurveTo(sx, sy, sx, sy - s * 2);
+    g.fill();
+  }
   g.restore();
 }
 function fruitIconCanvas(id, size){
@@ -5093,19 +5239,60 @@ function drawFruitPickups(){
   for (const fp of fruitPickups){
     const y = fp.y - camY + Math.sin(fp.bob) * 5;
     if (y < -60 || y > VH + 60) continue;
+    const f = FRUITS[fp.id];
+    const rc = RARITY_COL[f.rar];
     ctx.save();
     ctx.globalAlpha = fp.got > 0 ? Math.max(0, 1 - fp.got) : 1;
-    const sc = fp.got > 0 ? 1 + fp.got * 0.8 : 1;
-    const glow = ctx.createRadialGradient(fp.x, y, 2, fp.x, y, 34);
-    glow.addColorStop(0, 'rgba(255,255,255,.55)');
+    const sc = fp.got > 0 ? 1 + fp.got * 0.8 : 1 + Math.sin(tm * 4) * 0.04;
+    if (!lowGfx()){
+      ctx.save();
+      ctx.translate(fp.x, y);
+      ctx.rotate(tm * 0.6);
+      const rays = f.rar >= 3 ? 10 : 6;
+      ctx.globalAlpha *= f.rar >= 3 ? 0.5 : 0.3;
+      ctx.fillStyle = rc;
+      ctx.beginPath();
+      for (let i = 0; i < rays; i++){
+        const a = i / rays * Math.PI * 2;
+        ctx.moveTo(0, 0);
+        ctx.arc(0, 0, 40 + (f.rar >= 3 ? 8 : 0), a - 0.12, a + 0.12);
+        ctx.closePath();
+      }
+      ctx.fill();
+      ctx.restore();
+    }
+    const glow = ctx.createRadialGradient(fp.x, y, 2, fp.x, y, 36);
+    glow.addColorStop(0, 'rgba(255,255,255,.6)');
+    glow.addColorStop(0.5, rc + '55');
     glow.addColorStop(1, 'rgba(255,255,255,0)');
     ctx.fillStyle = glow;
-    ctx.beginPath(); ctx.arc(fp.x, y, 34, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(fp.x, y, 36, 0, Math.PI * 2); ctx.fill();
     ctx.translate(fp.x, y);
     ctx.scale(sc, sc);
     paintFruit(ctx, 0, 0, 14, fp.id, tm);
     ctx.restore();
   }
+}
+function drawFruitAura(){
+  if (!fruitState.eat || !FRUITS[fruitState.eat] || state !== STATE.PLAY || lowGfx()) return;
+  const f = FRUITS[fruitState.eat];
+  const tm = performance.now() / 1000;
+  const hx = hero.x, hy = hero.y - camY;
+  ctx.save();
+  for (let i = 0; i < 3; i++){
+    const a = tm * 2.2 + i * 2.094;
+    const px = hx + Math.cos(a) * 30, py = hy + Math.sin(a) * 12 + 4;
+    const front = Math.sin(a) > 0;
+    ctx.globalAlpha = front ? 0.95 : 0.45;
+    const r = front ? 3.4 : 2.4;
+    const g = ctx.createRadialGradient(px, py, 0, px, py, r * 3);
+    g.addColorStop(0, '#ffffff');
+    g.addColorStop(0.35, f.c1);
+    g.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(px, py, r * 3, 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.restore();
 }
 function drawBolts(){
   for (const b of bolts){
@@ -5134,8 +5321,26 @@ function drawBolts(){
   }
 }
 function drawFruitHud(){
-  if (!fruitState.eat) return;
-  paintFruit(ctx, VW - 26, 66, 9, fruitState.eat, performance.now() / 1000);
+  if (!fruitState.eat || !FRUITS[fruitState.eat]) return;
+  const f = FRUITS[fruitState.eat];
+  const tm = performance.now() / 1000;
+  const cx = VW - 28, cy = 70, R = 17;
+  ctx.save();
+  ctx.fillStyle = 'rgba(20,10,40,.55)';
+  ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = RARITY_COL[f.rar];
+  ctx.lineWidth = 2.5;
+  ctx.globalAlpha = 0.5;
+  ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.stroke();
+  ctx.globalAlpha = 1;
+  if (fruitState.eat === 'star'){
+    const k = clamp(1 - (starNext - score) / 1000, 0, 1);
+    ctx.strokeStyle = '#ffd34d';
+    ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.arc(cx, cy, R, -Math.PI / 2, -Math.PI / 2 + k * Math.PI * 2); ctx.stroke();
+  }
+  paintFruit(ctx, cx, cy + 2, 9, fruitState.eat, tm);
+  ctx.restore();
 }
 
 const WHEEL = [
@@ -5616,7 +5821,7 @@ function makeTradeCard(m, isOwn){
 
 const BOSS_FIRST = 2400;
 const BOSS_EVERY = 3000;
-const BOSS_LIFE = 45;
+const BOSS_LIFE = 50;
 let boss = null;
 let bossShots = [];
 let bossOrbs = [];
@@ -5629,7 +5834,7 @@ let bossKillsById = (() => { try { const v = JSON.parse(Store.get('bossKillsBy',
 
 const bossName = (w) => t('boss' + (w % WORLD_THEMES.length));
 const bossTier = () => Math.floor(Math.max(0, score) / BOSS_EVERY);
-function bossMaxHp(tier){ return Math.min(8, 4 + tier); }
+function bossMaxHp(tier){ return Math.min(6, 3 + Math.floor(tier / 2)); }
 
 function resetBoss(){
   boss = null;
@@ -5645,9 +5850,9 @@ function spawnBoss(){
   const tier = bossTier();
   const w = worldIndex();
   boss = {
-    w, tier, x: VW / 2, vx: 70 + tier * 12, sf: -0.35, tsf: 0.27,
+    w, tier, x: VW / 2, vx: 55 + tier * 8, sf: -0.35, tsf: 0.21,
     r: 46, hp: bossMaxHp(tier), max: bossMaxHp(tier), t: 0,
-    atkT: 1.6, orbT: 2.4, hurt: 0, st: 'in', dieT: 0, life: BOSS_LIFE
+    atkT: 2.6, orbT: 1.2, hurt: 0, st: 'in', dieT: 0, life: BOSS_LIFE
   };
   bossWarn = 0;
   addToast(t('bossIncoming').replace('{b}', bossName(w)), VW / 2, camY + VH * 0.34, '#ff6b6b');
@@ -5657,22 +5862,22 @@ function spawnBoss(){
   buzz(60);
 }
 
-function bossAttackEvery(){ return Math.max(0.75, 1.7 - boss.tier * 0.12 - (1 - boss.hp / boss.max) * 0.5); }
+function bossAttackEvery(){ return Math.max(1.3, 2.4 - boss.tier * 0.08 - (1 - boss.hp / boss.max) * 0.4); }
 
 function bossShoot(){
   const b = boss;
   const by = camY + VH * b.sf;
-  const n = b.hp <= b.max / 2 ? 2 : 1;
+  const n = b.tier >= 3 && b.hp <= b.max / 2 ? 2 : 1;
   for (let i = 0; i < n; i++){
-    const aim = clamp((hero.x - b.x) * 0.35, -90, 90);
-    bossShots.push({ x: b.x + (n > 1 ? (i ? 18 : -18) : 0), y: by + b.r * 0.6, vx: aim + (n > 1 ? (i ? 40 : -40) : 0), vy: 170 + b.tier * 18, r: 11, t: 0 });
+    const aim = clamp((hero.x - b.x) * 0.22, -70, 70);
+    bossShots.push({ x: b.x + (n > 1 ? (i ? 18 : -18) : 0), y: by + b.r * 0.6, vx: aim + (n > 1 ? (i ? 40 : -40) : 0), vy: 135 + b.tier * 10, r: 10, t: 0 });
   }
   beep(260, 0.08, 'square', 0.06);
 }
 
 function bossDropOrb(){
   const b = boss;
-  bossOrbs.push({ x: clamp(b.x + rand(-60, 60), 30, VW - 30), y: camY + VH * b.sf + b.r, vy: 95, t: 0, r: 16 });
+  bossOrbs.push({ x: clamp(hero.x + rand(-110, 110), 30, VW - 30), y: camY + VH * b.sf + b.r, vy: 85, t: 0, r: 18 });
 }
 
 function damageBoss(n, fx, fy){
@@ -5763,13 +5968,13 @@ function updateBoss(dt){
     b.atkT -= dt;
     if (b.atkT <= 0){ bossShoot(); b.atkT = bossAttackEvery(); }
     b.orbT -= dt;
-    if (b.orbT <= 0 && bossOrbs.length < 2){ bossDropOrb(); b.orbT = 3.2; }
+    if (b.orbT <= 0 && bossOrbs.length < 3){ bossDropOrb(); b.orbT = 2.2; }
   }
   b.x += b.vx * dt * (b.st === 'fight' ? 1 : 0.4);
   if (b.x < b.r + 6){ b.x = b.r + 6; b.vx = Math.abs(b.vx); }
   if (b.x > VW - b.r - 6){ b.x = VW - b.r - 6; b.vx = -Math.abs(b.vx); }
 
-  const hitR = hero.w * 0.3;
+  const hitR = hero.w * 0.22;
   for (let i = bossShots.length - 1; i >= 0; i--){
     const s = bossShots[i];
     s.t += dt; s.x += s.vx * dt; s.y += s.vy * dt;
@@ -5787,7 +5992,7 @@ function updateBoss(dt){
     o.t += dt; o.y += o.vy * dt;
     if (o.y - camY > VH + 40){ bossOrbs.splice(i, 1); continue; }
     const dx = o.x - hero.x, dy = o.y - hero.y;
-    if (dx * dx + dy * dy < (o.r + hero.w * 0.45) * (o.r + hero.w * 0.45)){
+    if (dx * dx + dy * dy < (o.r + hero.w * 0.55) * (o.r + hero.w * 0.55)){
       bossOrbs.splice(i, 1);
       hero.vy = Math.min(hero.vy, JUMP_V * 0.95);
       airJumps = hasDoubleJump() ? 1 : 0;
@@ -7137,7 +7342,8 @@ function updateWorld(dt){
 
 const bgCacheCvs = document.createElement('canvas');
 let bgCacheKey = '';
-function getBgCache(w){
+function getBgCache(w0){
+  const w = skyOf(w0);
   const withGlow = !lowGfx();
   const key = w.bg1.join(',') + '|' + w.bg2.join(',') + '|' + w.glow + '|' + cvs.width + 'x' + cvs.height + '|' + withGlow + '|' + uiStyle;
   if (key === bgCacheKey) return bgCacheCvs;
@@ -7286,8 +7492,9 @@ function drawBackground(){
           ctx.fill();
         } else if (L.kind === 1 || L.kind === 2){
           if (uiStyle === 'neon') continue;
-          ctx.globalAlpha = uiStyle === 'aero' ? Math.min(0.85, it.a * 2.2) : it.a;
-          ctx.fillStyle = uiStyle === 'aero' ? '#ffffff' : ((L.kind === 1) ? '#b79bff' : '#ffd9f0');
+          const lightSky = worldLight && uiStyle === 'classic';
+          ctx.globalAlpha = (uiStyle === 'aero' || lightSky) ? Math.min(0.85, it.a * (lightSky ? 3 : 2.2)) : it.a;
+          ctx.fillStyle = (uiStyle === 'aero' || lightSky) ? '#ffffff' : ((L.kind === 1) ? '#b79bff' : '#ffd9f0');
           ctx.beginPath();
           ctx.ellipse(it.x, y, it.r, it.r * 0.44, 0, 0, 6.2832);
           ctx.ellipse(it.x - it.r * 0.5, y + it.r * 0.1, it.r * 0.6, it.r * 0.34, 0, 0, 6.2832);
@@ -7487,7 +7694,22 @@ function buildSceneryTile(w, depth){
 function sceneryTile(w, depth){
   const key = w + '|' + depth + '|' + scnRes() + '|' + VW;
   if (!scnCache[key]) scnCache[key] = buildSceneryTile(w, depth);
-  return scnCache[key];
+  if (!worldLight) return scnCache[key];
+  const lk = key + '|L';
+  if (!scnCache[lk]){
+    const src = scnCache[key];
+    const c = document.createElement('canvas');
+    c.width = src.width; c.height = src.height;
+    const g = c.getContext('2d');
+    g.drawImage(src, 0, 0);
+    g.globalCompositeOperation = 'source-atop';
+    const th = WORLD_THEMES[w % WORLD_THEMES.length];
+    g.globalAlpha = depth ? 0.42 : 0.62;
+    g.fillStyle = mixRgb(th.lbg1, th.lbg2, depth ? 0.75 : 0.5, depth ? 0.78 : 0.9);
+    g.fillRect(0, 0, c.width, c.height);
+    scnCache[lk] = c;
+  }
+  return scnCache[lk];
 }
 
 function sceneryEnabled(){ return !lowGfx() && uiStyle === 'classic' && bgTheme === 'auto'; }
@@ -7602,7 +7824,7 @@ function worldGrad(w){
   c.width = cvs.width; c.height = cvs.height;
   const b = c.getContext('2d', { alpha: false });
   b.setTransform(S * DPR, 0, 0, S * DPR, OX * DPR, 0);
-  const th = WORLD_THEMES[w];
+  const th = skyOf(WORLD_THEMES[w]);
   const g = b.createLinearGradient(0, 0, 0, VH);
   g.addColorStop(0, 'rgb(' + th.bg1.join(',') + ')');
   g.addColorStop(1, 'rgb(' + th.bg2.join(',') + ')');
@@ -7700,6 +7922,292 @@ function platSkin(w){
 }
 function skinnedPlatform(p){ return p.type === 'normal' && platformTheme === 'auto' && uiStyle === 'classic'; }
 
+const PLAT3D = [
+  { cap: ['#d4fa96', '#7fd24a', '#3f8f24'], dirt: ['#b07a46', '#7c4c29', '#4a2a16'], peb: '#d8a878', side: '#3a2212', deep: 16, jag: 5, deco: 'grass' },
+  { cap: ['#ffffff', '#e4f3ff', '#9fc8ea'], dirt: ['#8a7e86', '#5e5268', '#342c44'], peb: '#c8d8ee', side: '#241e34', deep: 14, jag: 4, deco: 'snow' },
+  { cap: ['#6e4c52', '#4a3036', '#2a181c'], dirt: ['#402a2e', '#26161a', '#12080a'], peb: '#6a4a4e', side: '#0c0406', deep: 15, jag: 6, deco: 'lava' },
+  { cap: ['#cff58e', '#86cc4e', '#4a8a2c'], dirt: ['#8a7456', '#5c4a34', '#32281a'], peb: '#b0a080', side: '#221a10', deep: 18, jag: 6, deco: 'moss' },
+  { cap: ['#f4f7ff', '#bcc6e2', '#7a86aa'], dirt: ['#5c668c', '#3a4264', '#20263c'], peb: '#8e9ac4', side: '#141828', deep: 10, jag: 0, deco: 'metal' }
+];
+const PLAT3D_T = {
+  broken: { cap: ['#e0b27a', '#b27c46', '#744a24'], dirt: ['#a06a3a', '#744824', '#462810'], peb: '#d8a878', side: '#301a0a', deep: 12, jag: 7, deco: 'dry' },
+  moving: { cap: ['#d8f4ff', '#6cc4f4', '#2c7cc0'], dirt: ['#6c7c9c', '#46526e', '#262c44'], peb: '#a8c8e8', side: '#1a1e30', deep: 13, jag: 5, deco: 'crystal' },
+  bouncy: { cap: ['#ffd6ee', '#ff78c0', '#c23a84'], dirt: ['#d85aa0', '#a0306e', '#601844'], peb: '#ffb0dc', side: '#40102c', deep: 10, jag: 0, deco: 'jelly' }
+};
+const plat3dCache = {};
+function plat3dBody(g, W, H, deep, jag, rnd){
+  g.beginPath();
+  g.moveTo(0, 5);
+  g.lineTo(-0.5, H - 2);
+  const n = 10;
+  for (let i = 0; i <= n; i++){
+    const t = i / n;
+    const bell = Math.pow(Math.sin(Math.PI * t), 0.85);
+    const j = jag ? (rnd(i) - 0.5) * jag * bell : 0;
+    g.lineTo(0.5 + t * (W - 1), H - 1 + bell * deep + j);
+  }
+  g.lineTo(W + 0.5, H - 2);
+  g.lineTo(W, 5);
+  g.closePath();
+}
+function plat3dSkin(w){
+  const R = scnRes();
+  const key = w + '|' + R;
+  if (plat3dCache[key]) return plat3dCache[key];
+  const sk = typeof w === 'number' ? PLAT3D[w % PLAT3D.length] : PLAT3D_T[w];
+  const W = PW, H = PH, PADX = 9, PADT = 13, PADB = 40;
+  const sd = typeof w === 'number' ? w + 3 : w.length * 7 + 1;
+  const rnd = (i) => { const v = Math.sin((i + 1) * 12.9898 + sd * 78.233) * 43758.5453; return v - Math.floor(v); };
+  const c = document.createElement('canvas');
+  c.width = Math.ceil((W + PADX * 2) * R);
+  c.height = Math.ceil((H + PADT + PADB) * R);
+  const g = c.getContext('2d');
+  g.scale(R, R);
+  g.translate(PADX, PADT);
+  const bottom = H - 1 + sk.deep;
+
+  g.save();
+  plat3dBody(g, W, H, sk.deep, sk.jag, rnd);
+  const bg = g.createLinearGradient(0, 4, 0, bottom);
+  bg.addColorStop(0, sk.dirt[0]);
+  bg.addColorStop(0.45, sk.dirt[1]);
+  bg.addColorStop(1, sk.dirt[2]);
+  g.fillStyle = bg;
+  g.fill();
+  g.clip();
+  g.globalAlpha = 0.28;
+  g.strokeStyle = sk.dirt[2];
+  g.lineWidth = 1.4;
+  for (const yy of [H + 1, H + 7]){
+    g.beginPath();
+    g.moveTo(-2, yy);
+    for (let x = 0; x <= W + 4; x += 6) g.quadraticCurveTo(x + 3, yy + (x / 6 % 2 ? 2.2 : -2.2), x + 6, yy);
+    g.stroke();
+  }
+  g.globalAlpha = 1;
+  if (sk.deco === 'metal'){
+    g.strokeStyle = 'rgba(0,0,0,.35)'; g.lineWidth = 1;
+    for (const x of [W * 0.3, W * 0.7]){ g.beginPath(); g.moveTo(x, 8); g.lineTo(x, bottom); g.stroke(); }
+    g.fillStyle = '#5ff4ff';
+    g.shadowColor = '#5ff4ff'; g.shadowBlur = 6;
+    rr(g, 10, H + 1, W - 20, 2.2, 1.1); g.fill();
+    g.shadowBlur = 0;
+    g.fillStyle = '#ffec7a';
+    for (const x of [W * 0.3, W * 0.5, W * 0.7]){ g.beginPath(); g.arc(x, H + 7, 1.3, 0, 6.2832); g.fill(); }
+  } else {
+    for (let i = 0; i < 9; i++){
+      const x = 4 + rnd(i + 20) * (W - 8);
+      const t = x / W;
+      const maxY = H - 1 + Math.pow(Math.sin(Math.PI * t), 0.85) * sk.deep - 3;
+      const y = 9 + rnd(i + 40) * Math.max(1, maxY - 9);
+      const r = 1.1 + rnd(i + 60) * 1.8;
+      g.fillStyle = sk.peb;
+      g.globalAlpha = 0.55;
+      g.beginPath(); g.ellipse(x, y, r * 1.3, r, rnd(i) * 3, 0, 6.2832); g.fill();
+      g.globalAlpha = 0.35;
+      g.fillStyle = sk.dirt[2];
+      g.beginPath(); g.ellipse(x + 0.6, y + 0.8, r * 1.1, r * 0.6, 0, 0, 6.2832); g.fill();
+    }
+    g.globalAlpha = 1;
+  }
+  if (sk.deco === 'lava'){
+    g.strokeStyle = '#ff8a2a'; g.lineWidth = 1.3;
+    g.shadowColor = '#ff5a10'; g.shadowBlur = 7;
+    g.beginPath();
+    g.moveTo(W * 0.2, 9); g.lineTo(W * 0.26, 15); g.lineTo(W * 0.22, 20); g.lineTo(W * 0.3, 26);
+    g.moveTo(W * 0.62, 10); g.lineTo(W * 0.56, 17); g.lineTo(W * 0.64, 23);
+    g.moveTo(W * 0.82, 9); g.lineTo(W * 0.78, 14);
+    g.stroke();
+    g.shadowBlur = 0;
+  }
+  if (sk.deco === 'dry'){
+    g.strokeStyle = 'rgba(40,20,6,.7)'; g.lineWidth = 1.3;
+    g.beginPath();
+    g.moveTo(W * 0.36, 7); g.lineTo(W * 0.42, 13); g.lineTo(W * 0.38, 19); g.lineTo(W * 0.45, 24);
+    g.moveTo(W * 0.66, 7); g.lineTo(W * 0.6, 14); g.lineTo(W * 0.65, 20);
+    g.stroke();
+  }
+  if (sk.deco === 'grass'){
+    g.strokeStyle = 'rgba(58,32,14,.55)'; g.lineWidth = 1;
+    g.beginPath();
+    g.moveTo(W * 0.3, 9); g.quadraticCurveTo(W * 0.27, 14, W * 0.33, 18);
+    g.moveTo(W * 0.7, 9); g.quadraticCurveTo(W * 0.74, 13, W * 0.69, 17);
+    g.stroke();
+  }
+  const sh = g.createLinearGradient(0, 0, W, 0);
+  sh.addColorStop(0, 'rgba(255,240,210,.16)');
+  sh.addColorStop(0.18, 'rgba(0,0,0,0)');
+  sh.addColorStop(0.72, 'rgba(0,0,0,0)');
+  sh.addColorStop(1, 'rgba(0,0,0,.38)');
+  g.fillStyle = sh;
+  g.fillRect(-2, 0, W + 4, bottom + 4);
+  const ao = g.createLinearGradient(0, 6, 0, 13);
+  ao.addColorStop(0, 'rgba(0,0,0,.4)');
+  ao.addColorStop(1, 'rgba(0,0,0,0)');
+  g.fillStyle = ao;
+  g.fillRect(-2, 6, W + 4, 8);
+  g.restore();
+
+  g.lineCap = 'round';
+  if (sk.deco === 'grass' || sk.deco === 'moss'){
+    g.strokeStyle = sk.deco === 'grass' ? '#5a3418' : '#3a2c1a';
+    g.lineWidth = 1;
+    const roots = sk.deco === 'grass' ? [[0.42, 9], [0.5, 13], [0.6, 8]] : [[0.36, 8], [0.52, 12]];
+    for (const [tx, L] of roots){
+      const x = W * tx, y0 = H - 2 + Math.pow(Math.sin(Math.PI * tx), 0.85) * sk.deep;
+      g.beginPath(); g.moveTo(x, y0); g.bezierCurveTo(x - 3, y0 + L * 0.4, x + 3, y0 + L * 0.7, x - 1, y0 + L); g.stroke();
+    }
+    if (sk.deco === 'moss'){
+      g.strokeStyle = '#5aa83a'; g.lineWidth = 1.4;
+      for (const [x, L] of [[5, 16], [W - 8, 22], [W * 0.66, 12]]){
+        g.beginPath(); g.moveTo(x, 8); g.bezierCurveTo(x + 3, 8 + L * 0.35, x - 3, 8 + L * 0.7, x + 1, 8 + L); g.stroke();
+        g.fillStyle = '#8ad85a';
+        for (let k = 1; k <= 3; k++){ g.beginPath(); g.ellipse(x + (k % 2 ? 2 : -2), 8 + L * k / 3.2, 2, 1.1, k % 2 ? 0.6 : -0.6, 0, 6.2832); g.fill(); }
+      }
+    }
+  } else if (sk.deco === 'snow'){
+    g.fillStyle = 'rgba(210,240,255,.95)';
+    for (let i = 0; i < 6; i++){
+      const t = 0.16 + i * 0.136;
+      const x = W * t, y0 = H - 3 + Math.pow(Math.sin(Math.PI * t), 0.85) * sk.deep;
+      const L = 5 + rnd(i + 80) * 8;
+      g.beginPath(); g.moveTo(x - 2.4, y0); g.lineTo(x + 0.3, y0 + L); g.lineTo(x + 2.4, y0); g.closePath(); g.fill();
+    }
+  } else if (sk.deco === 'lava'){
+    g.shadowColor = '#ff6a1a'; g.shadowBlur = 6;
+    for (const [tx, dy, r, col] of [[0.46, 5, 1.6, '#ffb040'], [0.55, 10, 1.2, '#ff7a20'], [0.4, 13, 0.9, '#ffd070']]){
+      g.fillStyle = col;
+      g.beginPath(); g.arc(W * tx, bottom + dy, r, 0, 6.2832); g.fill();
+    }
+    g.shadowBlur = 0;
+  }
+
+  const lip = g.createLinearGradient(0, 3, 0, 11);
+  lip.addColorStop(0, sk.cap[1]);
+  lip.addColorStop(1, sk.cap[2]);
+  g.fillStyle = lip;
+  g.beginPath();
+  g.moveTo(-2, 2);
+  g.lineTo(W + 2, 2);
+  if (sk.deco === 'metal'){
+    g.lineTo(W + 2, 8); g.lineTo(-2, 8);
+  } else if (sk.deco === 'snow'){
+    g.lineTo(W + 2, 7);
+    for (let x = W + 2; x > -2; x -= 7){ g.quadraticCurveTo(x - 3.5, 13 + rnd(x) * 3, x - 7, 7); }
+  } else if (sk.deco === 'jelly'){
+    g.lineTo(W + 2, 7);
+    for (let x = W + 2; x > -2; x -= 9){ g.quadraticCurveTo(x - 4.5, 12 + rnd(x) * 4, x - 9, 7); }
+  } else if (sk.deco === 'lava' || sk.deco === 'dry' || sk.deco === 'crystal'){
+    g.lineTo(W + 1, 8);
+    for (let x = W + 1; x > -1; x -= 6){ g.lineTo(x - 3, 9 + rnd(x) * 2); g.lineTo(x - 6, 8); }
+  } else {
+    g.lineTo(W + 2, 7);
+    for (let x = W + 2; x > -2; x -= 4){ g.lineTo(x - 2, 9 + rnd(x + 5) * 4); g.lineTo(x - 4, 7.5); }
+  }
+  g.closePath();
+  g.fill();
+  if (sk.deco === 'metal'){
+    g.save();
+    g.beginPath(); g.rect(-2, 4.5, W + 4, 3.5); g.clip();
+    g.fillStyle = '#ffd34d'; g.fillRect(-2, 4.5, W + 4, 3.5);
+    g.fillStyle = '#2a2230';
+    for (let x = -6; x < W + 6; x += 7){ g.beginPath(); g.moveTo(x, 8); g.lineTo(x + 3.5, 4.5); g.lineTo(x + 6, 4.5); g.lineTo(x + 2.5, 8); g.closePath(); g.fill(); }
+    g.restore();
+  }
+
+  const tf = g.createLinearGradient(0, -4, 0, 5);
+  tf.addColorStop(0, sk.cap[0]);
+  tf.addColorStop(1, sk.cap[1]);
+  g.fillStyle = tf;
+  rr(g, -2, -4, W + 4, 9, 4.5);
+  g.fill();
+  g.globalAlpha = 0.5;
+  g.fillStyle = '#ffffff';
+  rr(g, 5, -3, W * 0.45, 1.6, 0.8); g.fill();
+  g.globalAlpha = 1;
+
+  if (sk.deco === 'grass' || sk.deco === 'moss'){
+    g.strokeStyle = sk.cap[2]; g.lineWidth = 0.9; g.globalAlpha = 0.45;
+    for (let i = 0; i < 12; i++){
+      const x = 3 + rnd(i + 100) * (W - 6), y = -1 + rnd(i + 120) * 4;
+      g.beginPath(); g.moveTo(x, y + 1.5); g.lineTo(x + (rnd(i) - 0.5) * 2, y - 1); g.stroke();
+    }
+    g.globalAlpha = 1;
+    for (let i = 0; i < 16; i++){
+      const x = 1 + i * (W - 2) / 15 + (rnd(i + 140) - 0.5) * 2;
+      const L = 3 + rnd(i + 160) * 4;
+      g.strokeStyle = i % 3 ? sk.cap[1] : sk.cap[0];
+      g.lineWidth = 1.3;
+      g.beginPath(); g.moveTo(x, -2.5); g.quadraticCurveTo(x + (i % 2 ? 1 : -1), -2.5 - L * 0.6, x + (i % 2 ? 2.2 : -2.2), -2.5 - L); g.stroke();
+    }
+    if (sk.deco === 'grass'){
+      for (const [x, y, col] of [[12, -1, '#ffd1e8'], [W * 0.58, 1.5, '#ffffff'], [W - 16, -0.5, '#fff3a0']]){
+        g.fillStyle = col;
+        for (let k = 0; k < 5; k++){ const a = k * 1.2566; g.beginPath(); g.arc(x + Math.cos(a) * 1.6, y + Math.sin(a) * 1.2, 1.2, 0, 6.2832); g.fill(); }
+        g.fillStyle = '#ffb020'; g.beginPath(); g.arc(x, y, 0.9, 0, 6.2832); g.fill();
+      }
+    } else {
+      for (const [x, s] of [[W * 0.22, 1], [W * 0.78, 0.8]]){
+        g.fillStyle = '#f2e6d0'; rr(g, x - 0.8 * s, -3 - 3 * s, 1.6 * s, 3.5 * s, 0.6); g.fill();
+        g.fillStyle = '#ff6a5a'; g.beginPath(); g.ellipse(x, -3 - 3 * s, 2.8 * s, 1.8 * s, 0, Math.PI, 0); g.fill();
+        g.fillStyle = '#fff'; g.beginPath(); g.arc(x - 1 * s, -4 - 3 * s, 0.5, 0, 6.2832); g.fill();
+      }
+    }
+  } else if (sk.deco === 'snow'){
+    g.fillStyle = '#ffffff';
+    for (let i = 0; i < 5; i++){ g.beginPath(); g.ellipse(6 + i * (W - 12) / 4, -3.5, 6, 2.4, 0, Math.PI, 0); g.fill(); }
+    g.fillStyle = 'rgba(160,210,255,.9)';
+    for (let i = 0; i < 6; i++){ const x = 4 + rnd(i + 200) * (W - 8), y = -2 + rnd(i + 220) * 5; g.beginPath(); g.arc(x, y, 0.7, 0, 6.2832); g.fill(); }
+  } else if (sk.deco === 'dry'){
+    g.strokeStyle = 'rgba(70,36,12,.75)'; g.lineWidth = 1.1;
+    g.beginPath();
+    g.moveTo(W * 0.3, -3); g.lineTo(W * 0.36, 0); g.lineTo(W * 0.33, 4);
+    g.moveTo(W * 0.36, 0); g.lineTo(W * 0.46, 1);
+    g.moveTo(W * 0.7, -3); g.lineTo(W * 0.64, 1); g.lineTo(W * 0.68, 4);
+    g.stroke();
+    g.fillStyle = '#8a5a30';
+    for (let i = 0; i < 5; i++){ g.beginPath(); g.arc(5 + rnd(i + 300) * (W - 10), -1 + rnd(i + 320) * 4, 0.9, 0, 6.2832); g.fill(); }
+  } else if (sk.deco === 'crystal'){
+    for (const [x, hgt, lean] of [[10, 7, -0.3], [15, 4.5, 0.25], [W - 13, 8, 0.3], [W - 18, 5, -0.2], [W * 0.5, 3.5, 0]]){
+      g.save(); g.translate(x, 0); g.rotate(lean);
+      const cg = g.createLinearGradient(-2.5, 0, 2.5, 0);
+      cg.addColorStop(0, '#e8fbff'); cg.addColorStop(0.5, '#7ad8ff'); cg.addColorStop(1, '#2f8ddb');
+      g.fillStyle = cg;
+      g.beginPath(); g.moveTo(-2.5, 1); g.lineTo(-2.5, -hgt + 2); g.lineTo(0, -hgt - 1); g.lineTo(2.5, -hgt + 2); g.lineTo(2.5, 1); g.closePath(); g.fill();
+      g.restore();
+    }
+  } else if (sk.deco === 'jelly'){
+    g.fillStyle = 'rgba(255,255,255,.75)';
+    for (const [x, y, r] of [[12, -1, 1.8], [18, 0.5, 1], [W - 14, -0.5, 1.4], [W * 0.55, 1.5, 0.9]]){ g.beginPath(); g.arc(x, y, r, 0, 6.2832); g.fill(); }
+  } else if (sk.deco === 'lava'){
+    g.strokeStyle = '#ffa040'; g.lineWidth = 1.2;
+    g.shadowColor = '#ff6a1a'; g.shadowBlur = 6;
+    g.beginPath();
+    g.moveTo(8, 0); g.lineTo(16, 2); g.lineTo(24, -1); g.lineTo(32, 1.5);
+    g.moveTo(W - 10, 1); g.lineTo(W - 20, -1.5); g.lineTo(W - 28, 1);
+    g.stroke();
+    g.shadowBlur = 0;
+  } else {
+    g.strokeStyle = 'rgba(80,90,130,.45)'; g.lineWidth = 0.8;
+    g.beginPath();
+    for (const x of [W * 0.33, W * 0.66]){ g.moveTo(x, -3.5); g.lineTo(x, 4.5); }
+    g.stroke();
+    g.fillStyle = '#6a7496';
+    for (const x of [4, W * 0.33 - 3, W * 0.33 + 3, W * 0.66 - 3, W * 0.66 + 3, W - 4]){ g.beginPath(); g.arc(x, 0.5, 0.9, 0, 6.2832); g.fill(); }
+  }
+
+  const s = document.createElement('canvas');
+  s.width = c.width; s.height = c.height;
+  const sg = s.getContext('2d');
+  sg.drawImage(c, 0, 0);
+  sg.globalCompositeOperation = 'source-in';
+  sg.fillStyle = sk.side;
+  sg.fillRect(0, 0, s.width, s.height);
+  const skin = { c, s, ox: -PADX, oy: -PADT, w: W + PADX * 2, h: H + PADT + PADB };
+  plat3dCache[key] = skin;
+  return skin;
+}
+
 let vignetteCvs = null, vignetteKey = '';
 function drawVignette(){
   if (lowGfx()) return;
@@ -7718,7 +8226,9 @@ function drawVignette(){
     v.fillRect(0, 0, W, H);
   }
   pixelTransform();
+  if (worldLight) ctx.globalAlpha = 0.4;
   ctx.drawImage(vignetteCvs, 0, 0, cvs.width, cvs.height);
+  ctx.globalAlpha = 1;
   worldTransform();
 }
 
@@ -8009,6 +8519,29 @@ function drawCloudBody(p, w, h){
   }
 }
 
+function drawPlat3D(p, key, w, h, y){
+  const d = ultraDepthVector(p.x + w / 2, y + h / 2);
+  const k3 = typeof key === 'number' ? PLAT3D[key % PLAT3D.length] : PLAT3D_T[key];
+  const sk3 = plat3dSkin(key);
+  const sx = w - PW;
+  if (k3.deco === 'metal'){
+    const tt = performance.now() / 1000 + p.x * 0.02;
+    const by = h - 1 + k3.deep;
+    const fl = 0.75 + 0.25 * Math.sin(tt * 14) + 0.1 * Math.sin(tt * 31);
+    const jg = ctx.createRadialGradient(w / 2, by + 3, 1, w / 2, by + 3, 20 * fl);
+    jg.addColorStop(0, 'rgba(200,252,255,.95)');
+    jg.addColorStop(0.3, 'rgba(95,244,255,.5)');
+    jg.addColorStop(1, 'rgba(95,244,255,0)');
+    ctx.fillStyle = jg;
+    ctx.beginPath(); ctx.ellipse(w / 2, by + 6 * fl, 12, 16 * fl, 0, 0, 6.2832); ctx.fill();
+  }
+  const sdx = clamp(d.dx * 0.55, -6, 6);
+  if (Math.abs(sdx) > 0.4){
+    for (let st = 3; st >= 1; st--) ctx.drawImage(sk3.s, sk3.ox + sdx * st / 3, sk3.oy, sk3.w + sx, sk3.h);
+  }
+  ctx.drawImage(sk3.c, sk3.ox, sk3.oy, sk3.w + sx, sk3.h);
+}
+
 function drawPlatform(p){
   const y = p.y - camY;
   if (y < -70 || y > VH + 70) return;
@@ -8037,30 +8570,13 @@ function drawPlatform(p){
   if (p.type === 'cloud') drawCloudBody(p, w, h);
   else if (skinnedPlatform(p)){
     const skw = p.skin !== undefined ? p.skin : worldIndex();
-    if (ultraGfx()){
-      const d = ultraDepthVector(p.x + w / 2, y + h / 2);
-      const a0 = ctx.globalAlpha;
-      const shadowK = (1 - ultraSideBlend(d.dy)) * clamp(d.dy / ULTRA_DEPTH_Y, 0, 1);
-      if (shadowK > 0.01){
-        ctx.globalAlpha = a0 * 0.16 * shadowK;
-        ctx.fillStyle = '#000';
-        rr(ctx, d.dx * 1.8, d.dy * 2.2, w, h, 8);
-        ctx.fill();
-        ctx.globalAlpha = a0;
-      }
-      const pal = PLAT_SKINS[skw % PLAT_SKINS.length].body;
-      const side = ultraSideStyle(d.dy, pal[0], pal[1]);
-      ctx.fillStyle = side.color;
-      for (let s = 4; s >= 1; s--){ rr(ctx, d.dx * s / 4, d.dy * s / 4, w, h, 8); ctx.fill(); }
-      ctx.globalAlpha = a0 * side.overlay;
-      ctx.fillStyle = '#000';
-      rr(ctx, d.dx, d.dy, w, h, 8);
-      ctx.fill();
-      ctx.globalAlpha = a0;
+    if (ultraGfx()) drawPlat3D(p, skw, w, h, y);
+    else {
+      const sk = platSkin(skw);
+      ctx.drawImage(sk.c, sk.ox, sk.oy, sk.w + (w - PW), sk.h);
     }
-    const sk = platSkin(skw);
-    ctx.drawImage(sk.c, sk.ox, sk.oy, sk.w + (w - PW), sk.h);
   }
+  else if (ultraGfx() && uiStyle === 'classic' && PLAT3D_T[p.type]) drawPlat3D(p, p.type, w, h, y);
   else if (uiStyle !== 'classic') drawStyledPlatformBody(p, w, h);
   else {
   if (ultraGfx()){
@@ -9251,12 +9767,12 @@ function drawHero(x, y, sx, sy, tilt, face, alpha, ear, phase){
   paintHeroBody(ctx, hero.w, hero.h, ear);
   paintAccessory(ctx, hero.w, hero.h, outfit.acc, A);
   if (outfit.acc2 !== 'none' && isOwned('perk', 'multiacc')) paintAccessory(ctx, hero.w, hero.h, outfit.acc2, A);
-  paintHat(ctx, hero.w, hero.h, outfit.hat, A);
+  paintHat(ctx, hero.w, hero.h, shownHat(outfit.hat), A);
   if (outfit.hat2 !== 'none' && isOwned('perk', 'multiacc')){
     ctx.save();
     ctx.translate(0, -hero.h * 0.20);
     ctx.scale(0.7, 0.7);
-    paintHat(ctx, hero.w, hero.h, outfit.hat2, A);
+    paintHat(ctx, hero.w, hero.h, shownHat(outfit.hat2), A);
     ctx.restore();
   }
   paintTool(ctx, hero.w, hero.h, outfit.tool, A, phase);
@@ -9273,8 +9789,8 @@ let heroShadowKey = '';
 
 function heroShadowKeyNow(){
   const multi = isOwned('perk', 'multiacc');
-  return [outfit.char, currentCharReady() ? 1 : 0, outfit.hat, outfit.acc, outfit.tool,
-    multi ? outfit.hat2 : '', multi ? outfit.acc2 : '', maceReady ? 1 : 0, rigCharActive() ? rigPoseKey() : ''].join('|');
+  return [outfit.char, currentCharReady() ? 1 : 0, shownHat(outfit.hat), outfit.acc, outfit.tool,
+    multi ? shownHat(outfit.hat2) : '', multi ? outfit.acc2 : '', maceReady ? 1 : 0, rigCharActive() ? rigPoseKey() : ''].join('|');
 }
 
 function getHeroShadowCanvas(){
@@ -9297,12 +9813,12 @@ function getHeroShadowCanvas(){
   paintAccessory(g, hero.w, hero.h, outfit.acc, A);
   const multi = isOwned('perk', 'multiacc');
   if (multi && outfit.acc2 !== 'none') paintAccessory(g, hero.w, hero.h, outfit.acc2, A);
-  paintHat(g, hero.w, hero.h, outfit.hat, A);
+  paintHat(g, hero.w, hero.h, shownHat(outfit.hat), A);
   if (multi && outfit.hat2 !== 'none'){
     g.save();
     g.translate(0, -hero.h * 0.20);
     g.scale(0.7, 0.7);
-    paintHat(g, hero.w, hero.h, outfit.hat2, A);
+    paintHat(g, hero.w, hero.h, shownHat(outfit.hat2), A);
     g.restore();
   }
   paintTool(g, hero.w, hero.h, outfit.tool, A, 0);
@@ -9886,6 +10402,7 @@ function render(){
   drawDeathPortal();
   drawTrail();
   drawHeroWithWrap();
+  drawFruitAura();
   drawToasts();
   ctx.restore();
   drawSpeedLines();
@@ -10742,6 +11259,7 @@ function refreshEventBanner(){
 
 function goToMenu(){
   state = STATE.MENU;
+  glassUsedThisRun = false;
   hideAllScreens();
   menuEl.classList.remove('paused');
   show(menuEl);
@@ -11000,7 +11518,7 @@ Store.set('cloudCode', cloudCode);
 
 let accountGone = false;
 let ownDocChecked = false;
-const ACCOUNT_KEEP_KEYS = ['lang', 'gfxMode', 'vibro', 'platformTheme', 'musicVolume', 'music', 'notify', 'chatTheme', 'blur', 'bgTheme', 'uiStyle'];
+const ACCOUNT_KEEP_KEYS = ['lang', 'gfxMode', 'vibro', 'platformTheme', 'musicVolume', 'music', 'notify', 'chatTheme', 'blur', 'bgTheme', 'uiStyle', 'worldLight'];
 
 function wipeDeletedAccount(){
   if (accountGone) return;
@@ -14502,8 +15020,18 @@ function refreshGfxRow(){
 document.querySelectorAll('#gfxRow .chip[data-gfx]').forEach(chip => {
   chip.addEventListener('click', () => setGfxMode(chip.dataset.gfx));
 });
+function refreshWorldLightRow(){
+  document.querySelectorAll('#worldLightRow .chip[data-wl]').forEach(chip => {
+    chip.setAttribute('aria-pressed', (chip.dataset.wl === '1') === worldLight ? 'true' : 'false');
+  });
+}
+document.querySelectorAll('#worldLightRow .chip[data-wl]').forEach(chip => {
+  chip.addEventListener('click', () => { setWorldLight(chip.dataset.wl === '1'); if (typeof wakeScene === 'function') wakeScene(400); });
+});
+refreshWorldLightRow();
 refreshGfxRow();
 document.getElementById('vignette').classList.toggle('off', lowGfx());
+document.getElementById('vignette').classList.toggle('soft', worldLight);
 
 
 const musicToggle = document.getElementById('musicToggle');
