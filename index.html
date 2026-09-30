@@ -812,6 +812,9 @@
   #closedScreen[hidden]{display:none;}
   #banScreen{position:fixed;inset:0;z-index:2147483100;display:flex;align-items:center;justify-content:center;padding:24px 16px;background:rgba(20,6,20,.9);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);}
   #banScreen[hidden]{display:none;}
+  .creditBox{display:flex;flex-direction:column;align-items:stretch;gap:8px;padding:12px;border-radius:14px;background:rgba(255,255,255,.06);box-shadow:inset 0 0 0 1px rgba(255,211,77,.25);}
+  .creditText{margin:0;font-size:13.5px;line-height:1.45;opacity:.92;}
+  .creditBtn{align-self:center;}
   #adminBanBtn:disabled,#adminUnbanBtn:disabled{opacity:.4;filter:grayscale(.6);cursor:default;}
   .closedCard.banCard{background:linear-gradient(180deg,#7a2440,#3a0f24);box-shadow:0 18px 50px rgba(0,0,0,.5),inset 0 0 0 2px rgba(255,120,140,.5);}
   .closedCard.banCard .closedTitle{color:#ff9aa8;}
@@ -1995,6 +1998,12 @@
             </div>
           </div>
           <div class="settingRow">
+            <span class="settingLabel" data-i18n="sfxVolumeLabel">Громкость звуков</span>
+            <div class="btnRow">
+              <input id="sfxVolumeSlider" type="range" min="0" max="100" value="80" style="width:150px;accent-color:#ff9f45;">
+            </div>
+          </div>
+          <div class="settingRow">
             <span class="settingLabel" data-i18n="musicVolumeLabel">Громкость музыки</span>
             <div class="btnRow">
               <input id="musicVolumeSlider" type="range" min="0" max="100" value="28" style="width:150px;accent-color:#ff9f45;">
@@ -2014,6 +2023,11 @@
           </div>
           <div class="settingRow">
             <div id="eventBanner" class="eventBanner hidden"></div>
+          </div>
+          <div class="settingRow creditBox">
+            <span class="settingLabel" data-i18n="creditTitle">Автор кэббита</span>
+            <p class="creditText" data-i18n="creditText">Персонаж кэббит, котокролик с кошачьей мордочкой, придуман и нарисован художником из Instagram koty_vezde. Спасибо за кэббитов: без них этой игры бы не было!</p>
+            <button id="creditBtn" class="btn ghost creditBtn" type="button">@koty_vezde</button>
           </div>
         </div>
       </div>
@@ -3197,199 +3211,269 @@ function setFrameClass(el, frameId){
 
 
 let actx = null;
+let sfxDry = null, sfxWet = null, sfxBus = null, noiseBuf = null;
+let sfxVolume = parseInt(Store.get('sfxVolume', '80'), 10);
+if (!isFinite(sfxVolume) || sfxVolume < 0 || sfxVolume > 100) sfxVolume = 80;
+function makeImpulse(sec, decay){
+  const rate = actx.sampleRate, len = Math.floor(rate * sec);
+  const buf = actx.createBuffer(2, len, rate);
+  for (let ch = 0; ch < 2; ch++){
+    const d = buf.getChannelData(ch);
+    let lp = 0;
+    for (let i = 0; i < len; i++){
+      const k = i / len;
+      const cut = 0.55 - k * 0.4;
+      lp += (Math.random() * 2 - 1 - lp) * cut;
+      d[i] = lp * Math.pow(1 - k, decay) * (i < rate * 0.012 ? i / (rate * 0.012) : 1);
+    }
+  }
+  return buf;
+}
+function makePinkNoise(sec){
+  const rate = actx.sampleRate, len = Math.floor(rate * sec);
+  const buf = actx.createBuffer(1, len, rate);
+  const d = buf.getChannelData(0);
+  let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+  for (let i = 0; i < len; i++){
+    const w = Math.random() * 2 - 1;
+    b0 = 0.99886 * b0 + w * 0.0555179; b1 = 0.99332 * b1 + w * 0.0750759; b2 = 0.969 * b2 + w * 0.153852;
+    b3 = 0.8665 * b3 + w * 0.3104856; b4 = 0.55 * b4 + w * 0.5329522; b5 = -0.7616 * b5 - w * 0.016898;
+    d[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + w * 0.5362) * 0.11;
+    b6 = w * 0.115926;
+  }
+  return buf;
+}
+function applySfxVolume(){
+  if (sfxBus && actx) sfxBus.gain.setTargetAtTime(Math.pow(sfxVolume / 100, 1.4) * 1.5, actx.currentTime, 0.03);
+}
 function ensureAudio(){
-  if (actx) return;
+  if (actx){
+    if (actx.state === 'suspended' && actx.resume){ try { const r = actx.resume(); if (r && r.catch) r.catch(() => {}); } catch (e) {} }
+    return;
+  }
   try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {}
-  if (actx && typeof SFX_BUFFERS !== 'undefined') for (const k in SFX_BUFFERS) decodeBufferSfx(SFX_BUFFERS[k]);
+  if (!actx) return;
+  setupAudioGraph();
+}
+let sfxShift = 0;
+function setupAudioGraph(){
+  try {
+    const comp = actx.createDynamicsCompressor();
+    comp.threshold.value = -20; comp.knee.value = 26; comp.ratio.value = 3.2; comp.attack.value = 0.004; comp.release.value = 0.22;
+    const warm = actx.createBiquadFilter();
+    warm.type = 'lowpass'; warm.frequency.value = 7600; warm.Q.value = 0.4;
+    const air = actx.createBiquadFilter();
+    air.type = 'highpass'; air.frequency.value = 55; air.Q.value = 0.5;
+    sfxBus = actx.createGain();
+    sfxBus.connect(air); air.connect(warm); warm.connect(comp); comp.connect(actx.destination);
+    applySfxVolume();
+    sfxDry = actx.createGain();
+    sfxDry.connect(sfxBus);
+    const conv = actx.createConvolver();
+    conv.buffer = makeImpulse(1.8, 2.8);
+    const wetLp = actx.createBiquadFilter();
+    wetLp.type = 'lowpass'; wetLp.frequency.value = 4200;
+    sfxWet = actx.createGain();
+    sfxWet.gain.value = 0.28;
+    sfxWet.connect(conv); conv.connect(wetLp); wetLp.connect(sfxBus);
+    noiseBuf = makePinkNoise(2.5);
+  } catch (e) { sfxDry = null; sfxWet = null; }
+}
+function sfxDest(){ return sfxDry || (actx && actx.destination); }
+function sendOut(node, verb, pan, t0, pan1, dur){
+  let out = node;
+  if ((pan || pan1) && actx.createStereoPanner){
+    const p = actx.createStereoPanner();
+    p.pan.setValueAtTime(pan || 0, t0);
+    if (pan1 != null) p.pan.linearRampToValueAtTime(pan1, t0 + dur);
+    node.connect(p);
+    out = p;
+  }
+  out.connect(sfxDest());
+  if (sfxWet && verb > 0){
+    const s = actx.createGain();
+    s.gain.value = verb;
+    out.connect(s);
+    s.connect(sfxWet);
+  }
+}
+let lastToneAt = 0;
+function tone(o){
+  if (!actx || sfxVolume <= 0) return;
+  lastToneAt = performance.now();
+  try {
+    const t0 = actx.currentTime + sfxShift + (o.delay || 0);
+    const dur = o.dur || 0.2;
+    const osc = actx.createOscillator();
+    osc.type = o.type || 'sine';
+    osc.frequency.setValueAtTime(o.f, t0);
+    if (o.f2) osc.frequency.exponentialRampToValueAtTime(Math.max(20, o.f2), t0 + (o.glide || dur));
+    if (o.det) osc.detune.value = o.det;
+    if (o.vib){
+      const l = actx.createOscillator(), lg = actx.createGain();
+      l.frequency.value = o.vib;
+      lg.gain.value = o.vibDepth || o.f * 0.02;
+      l.connect(lg); lg.connect(osc.frequency);
+      l.start(t0); l.stop(t0 + dur + 0.05);
+    }
+    const lp = actx.createBiquadFilter();
+    lp.type = 'lowpass';
+    lp.frequency.value = o.lp || Math.min(9000, o.f * 3 + 500);
+    lp.Q.value = 0.3;
+    const g = actx.createGain();
+    const a = Math.max(0.012, o.a || 0.012), vol = o.vol || 0.1;
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(vol, t0 + a);
+    if (o.hold) g.gain.setValueAtTime(vol, t0 + a + o.hold);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    osc.connect(lp); lp.connect(g);
+    sendOut(g, o.verb == null ? 0.35 : o.verb, o.pan, t0, o.pan1, dur);
+    osc.start(t0); osc.stop(t0 + dur + 0.06);
+  } catch (e) {}
+}
+function noiseSweep(o){
+  if (!actx || !noiseBuf || sfxVolume <= 0) return;
+  try {
+    const t0 = actx.currentTime + sfxShift + (o.delay || 0);
+    const dur = o.dur || 0.3;
+    const src = actx.createBufferSource();
+    src.buffer = noiseBuf;
+    const bp = actx.createBiquadFilter();
+    bp.type = o.ftype || 'bandpass';
+    bp.Q.value = o.q || 0.9;
+    bp.frequency.setValueAtTime(o.f0 || 600, t0);
+    bp.frequency.exponentialRampToValueAtTime(Math.max(40, o.f1 || 2000), t0 + dur);
+    const lp = actx.createBiquadFilter();
+    lp.type = 'lowpass'; lp.frequency.value = o.lp || 5200;
+    const g = actx.createGain();
+    const peakAt = t0 + dur * (o.peak == null ? 0.45 : o.peak);
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(o.vol || 0.1, peakAt);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    src.connect(bp); bp.connect(lp); lp.connect(g);
+    sendOut(g, o.verb == null ? 0.4 : o.verb, o.pan0, t0, o.pan1, dur);
+    const off = Math.random() * Math.max(0, noiseBuf.duration - dur - 0.1);
+    src.start(t0, off, dur + 0.05);
+  } catch (e) {}
+}
+function pluck(f, vol, delay, o){
+  o = o || {};
+  tone({ f, dur: o.dur || 0.55, vol: vol, a: 0.004, delay, verb: o.verb == null ? 0.45 : o.verb, pan: o.pan, lp: o.lp || Math.min(8000, f * 2.2 + 400) });
+  tone({ f: f * 2, dur: 0.16, vol: vol * 0.22, a: 0.003, delay, verb: 0.3, pan: o.pan });
+  tone({ f: f * 3.99, dur: 0.05, vol: vol * 0.035, a: 0.002, delay, verb: 0.2, pan: o.pan });
+}
+function whoosh(kind, vol, delay){
+  const v = (vol || 1) * 2.2;
+  if (kind === 'up') noiseSweep({ dur: 0.34, f0: 380, f1: 2600, q: 1.1, vol: 0.11 * v, delay, peak: 0.6 });
+  else if (kind === 'down') noiseSweep({ dur: 0.4, f0: 2400, f1: 320, q: 1.1, vol: 0.11 * v, delay, peak: 0.3 });
+  else if (kind === 'pass') noiseSweep({ dur: 0.55, f0: 500, f1: 1800, q: 0.8, vol: 0.13 * v, delay, pan0: -0.85, pan1: 0.85, peak: 0.5 });
+  else if (kind === 'big'){
+    noiseSweep({ dur: 0.9, f0: 180, f1: 2200, q: 0.7, vol: 0.16 * v, delay, pan0: 0.6, pan1: -0.6, peak: 0.7, verb: 0.6 });
+    tone({ f: 70, f2: 140, dur: 0.9, vol: 0.04 * v, a: 0.25, delay, verb: 0.3, lp: 400 });
+  } else if (kind === 'tiny') noiseSweep({ dur: 0.2, f0: 900, f1: 2600, q: 1.4, vol: 0.05 * v, delay, peak: 0.5, verb: 0.2 });
+  else noiseSweep({ dur: 0.28, f0: 700, f1: 1900, q: 1.2, vol: 0.08 * v, delay, peak: 0.5 });
 }
 function beep(freq, dur, type, gainPeak){
   if (!actx) return;
-  try {
-    dur = dur || 0.15;
-    gainPeak = gainPeak != null ? gainPeak : 0.18;
-    const t0 = actx.currentTime;
-
-    
-    
-    
-    const filter = actx.createBiquadFilter();
-    filter.type = 'lowpass';
-    filter.frequency.setValueAtTime(Math.max(freq * 3.4, 900), t0);
-    filter.frequency.exponentialRampToValueAtTime(Math.max(freq * 1.6, 480), t0 + dur);
-    filter.Q.value = 0.6;
-
-    const gain = actx.createGain();
-    gain.gain.value = 0;
-    filter.connect(gain);
-    gain.connect(actx.destination);
-
-    function layer(detuneCents, mix, waveType){
-      const osc = actx.createOscillator();
-      osc.type = waveType;
-      osc.frequency.value = freq;
-      osc.detune.value = detuneCents;
-      const oGain = actx.createGain();
-      oGain.gain.value = mix;
-      osc.connect(oGain);
-      oGain.connect(filter);
-      osc.start(t0);
-      osc.stop(t0 + dur + 0.05);
-    }
-    const baseType = type || 'sine';
-    
-    
-    const softType = (baseType === 'square' || baseType === 'sawtooth') ? 'triangle' : baseType;
-    layer(0, 1, baseType);
-    layer(7, 0.30, softType);
-
-    const attack = Math.min(0.016, dur * 0.25);
-    gain.gain.linearRampToValueAtTime(gainPeak, t0 + attack);
-    gain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
-  } catch (e) {}
+  const soft = type === 'square' || type === 'sawtooth';
+  const v = (gainPeak != null ? gainPeak : 0.18) * (soft ? 0.55 : 0.75);
+  tone({ f: freq, f2: freq * 0.985, dur: Math.max(0.1, (dur || 0.15) * 1.6), vol: v, a: 0.006, type: 'sine' });
+  tone({ f: freq * 2, dur: Math.max(0.06, (dur || 0.15) * 0.6), vol: v * 0.18, a: 0.004, type: soft ? 'triangle' : 'sine', verb: 0.2 });
 }
-const CUSTOM_SFX = {};
-function loadCustomSfx(key, filename){
-  const a = new Audio(filename);
-  a.preload = 'auto';
-  const state = { audio: a, ok: true };
-  a.addEventListener('error', () => { state.ok = false; });
-  CUSTOM_SFX[key] = state;
-}
-loadCustomSfx('kill', 'sfx-monster-kill.mp3');
-loadCustomSfx('fall', 'sfx-fall.mp3');
-
-const SFX_BUFFERS = {};
-function loadBufferSfx(key, files){
-  const rec = { data: null, buf: null, failed: false, decoding: false };
-  SFX_BUFFERS[key] = rec;
-  const tryAt = (i) => {
-    if (i >= files.length || typeof fetch !== 'function'){ rec.failed = true; return; }
-    try {
-      fetch(files[i])
-        .then((r) => r.ok ? r.arrayBuffer() : Promise.reject(new Error('missing')))
-        .then((ab) => { rec.data = ab; decodeBufferSfx(rec); })
-        .catch(() => tryAt(i + 1));
-    } catch (e) { tryAt(i + 1); }
-  };
-  tryAt(0);
-}
-function decodeBufferSfx(rec){
-  if (!actx || !rec || !rec.data || rec.buf || rec.decoding) return;
-  rec.decoding = true;
-  const data = rec.data;
-  rec.data = null;
-  const ok = (b) => { if (b) rec.buf = b; };
-  const bad = () => { rec.failed = true; };
-  try {
-    const pr = actx.decodeAudioData(data, ok, bad);
-    if (pr && typeof pr.then === 'function') pr.then(ok, bad);
-  } catch (e) { bad(); }
-}
-function playBufferSfx(key, volume, rate){
-  const rec = SFX_BUFFERS[key];
-  if (!rec || rec.failed || !actx) return false;
-  if (!rec.buf){ decodeBufferSfx(rec); return false; }
-  try {
-    const src = actx.createBufferSource();
-    src.buffer = rec.buf;
-    src.playbackRate.value = rate || 1;
-    const g = actx.createGain();
-    g.gain.value = volume != null ? volume : 1;
-    src.connect(g);
-    g.connect(actx.destination);
-    src.start();
-    return true;
-  } catch (e) { return false; }
-}
-loadBufferSfx('jump', ['sfx-jump.mp3', 'sfx-jump.ogg', 'sfx-jump.wav']);
-loadBufferSfx('spear', ['sfx-spear.mp3', 'sfx-spear.ogg', 'sfx-spear.wav']);
-function playCustomSfx(key, volume){
-  const s = CUSTOM_SFX[key];
-  if (!s || !s.ok) return false;
-  try {
-    const node = s.audio.cloneNode();
-    node.volume = volume != null ? volume : 1;
-    const p = node.play();
-    if (p && p.catch) p.catch(() => { s.ok = false; });
-    return true;
-  } catch (e) { return false; }
-}
-const sfxCoin  = () => beep(920, 0.10, 'triangle', 0.14);
-const sfxJump  = () => beep(300, 0.08, 'square', 0.05);
-const sfxLand  = () => { if (playBufferSfx('jump', 0.75, 0.94 + Math.random() * 0.12)) return; sfxJump(); };
-const sfxSpring= () => { beep(500, 0.12, 'sawtooth', 0.12); beep(760, 0.14, 'sawtooth', 0.10); };
-const sfxGlass = () => { beep(1400, 0.05, 'square', 0.12); beep(200, 0.18, 'sawtooth', 0.10); };
-const sfxSmash = () => { if (playCustomSfx('kill')) return; beep(90, 0.22, 'sawtooth', 0.22); beep(660, 0.12, 'square', 0.14); };
-const sfxOver  = () => { if (playCustomSfx('fall')) return; beep(160, 0.35, 'sawtooth', 0.14); };
 function sweep(f0, f1, dur, type, peak){
   if (!actx) return;
-  try {
-    const t0 = actx.currentTime;
-    const osc = actx.createOscillator();
-    osc.type = type || 'sine';
-    osc.frequency.setValueAtTime(f0, t0);
-    osc.frequency.exponentialRampToValueAtTime(f1, t0 + dur);
-    const lfo = actx.createOscillator();
-    lfo.frequency.value = 13;
-    const lfoGain = actx.createGain();
-    lfoGain.gain.value = Math.min(f0, f1) * 0.08;
-    lfo.connect(lfoGain);
-    lfoGain.connect(osc.frequency);
-    const filter = actx.createBiquadFilter();
-    filter.type = 'lowpass';
-    filter.frequency.value = 2200;
-    const gain = actx.createGain();
-    gain.gain.setValueAtTime(0.0001, t0);
-    gain.gain.exponentialRampToValueAtTime(peak, t0 + Math.min(0.08, dur * 0.3));
-    gain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
-    osc.connect(filter);
-    filter.connect(gain);
-    gain.connect(actx.destination);
-    osc.start(t0); lfo.start(t0);
-    osc.stop(t0 + dur + 0.05); lfo.stop(t0 + dur + 0.05);
-  } catch (e) {}
+  tone({ f: f0, f2: f1, dur: dur * 1.15, vol: (peak || 0.1) * 0.7, a: Math.min(0.06, dur * 0.25), vib: 5.5, vibDepth: Math.min(f0, f1) * 0.012, verb: 0.5 });
+  noiseSweep({ dur, f0: Math.min(4000, f0 * 1.5), f1: Math.min(4000, f1 * 1.5), q: 1.3, vol: (peak || 0.1) * 0.35, peak: 0.5 });
+}
+const PENTA = [1046.5, 1174.7, 1318.5, 1568, 1760, 2093, 2349.3, 2637];
+let coinStreak = 0, coinStreakT = 0;
+function sfxCoin(){
+  const now = performance.now();
+  coinStreak = now - coinStreakT < 700 ? Math.min(PENTA.length - 2, coinStreak + 1) : 0;
+  coinStreakT = now;
+  const f = PENTA[coinStreak];
+  const pan = (Math.random() - 0.5) * 0.4;
+  pluck(f, 0.07, 0, { dur: 0.45, pan });
+  pluck(f * 1.498, 0.055, 0.06, { dur: 0.6, pan });
+}
+function sfxJump(){
+  const k = 0.94 + Math.random() * 0.12;
+  tone({ f: 340 * k, f2: 640 * k, dur: 0.16, vol: 0.06, a: 0.008, glide: 0.12, verb: 0.25 });
+  whoosh('tiny', 1.1);
+}
+function sfxLand(){
+  const k = 0.92 + Math.random() * 0.16;
+  tone({ f: 230 * k, f2: 150 * k, dur: 0.14, vol: 0.12, a: 0.003, glide: 0.1, verb: 0.15, lp: 900 });
+  tone({ f: 460 * k, f2: 340 * k, dur: 0.07, vol: 0.03, a: 0.003, verb: 0.1 });
+  noiseSweep({ dur: 0.07, f0: 1400, f1: 500, q: 0.7, vol: 0.025, peak: 0.15, verb: 0.05, lp: 2200 });
+}
+function sfxSpring(){
+  tone({ f: 250, f2: 820, dur: 0.42, glide: 0.24, vol: 0.1, a: 0.01, vib: 9, vibDepth: 16, verb: 0.35 });
+  tone({ f: 500, f2: 1640, dur: 0.22, glide: 0.2, vol: 0.02, a: 0.01, verb: 0.3 });
+  pluck(1568, 0.04, 0.14, { dur: 0.7 });
+  whoosh('up', 0.9);
+}
+function sfxGlass(){
+  [2093, 2637, 3136, 3951, 3136].forEach((f, i) => pluck(f, 0.045, i * 0.03, { dur: 1.1, verb: 0.8, pan: (i - 2) * 0.25 }));
+  noiseSweep({ dur: 0.5, f0: 6000, f1: 3000, q: 2, vol: 0.05, peak: 0.1, ftype: 'bandpass', verb: 0.7, lp: 9000 });
+}
+function sfxSmash(){
+  tone({ f: 150, f2: 55, dur: 0.26, vol: 0.14, a: 0.003, glide: 0.18, verb: 0.2, lp: 600 });
+  tone({ f: 720, f2: 300, dur: 0.1, vol: 0.06, a: 0.003, verb: 0.2 });
+  pluck(1760, 0.04, 0.05, { dur: 0.6 });
+  pluck(2349, 0.03, 0.09, { dur: 0.6 });
+  noiseSweep({ dur: 0.18, f0: 2000, f1: 400, q: 0.8, vol: 0.06, peak: 0.1, verb: 0.3 });
+}
+function sfxOver(){
+  tone({ f: 523, f2: 196, dur: 0.95, glide: 0.8, vol: 0.09, a: 0.02, vib: 5, vibDepth: 6, verb: 0.6 });
+  tone({ f: 659, f2: 247, dur: 0.9, glide: 0.8, vol: 0.04, a: 0.03, verb: 0.6, delay: 0.05 });
+  whoosh('down', 1.1);
 }
 function sfxSpearSynth(){
-  if (!actx) return;
-  try {
-    const t0 = actx.currentTime;
-    const len = Math.floor(actx.sampleRate * 0.34);
-    const nb = actx.createBuffer(1, len, actx.sampleRate);
-    const d = nb.getChannelData(0);
-    for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
-    const ns = actx.createBufferSource();
-    ns.buffer = nb;
-    const bp = actx.createBiquadFilter();
-    bp.type = 'bandpass';
-    bp.Q.value = 1.4;
-    bp.frequency.setValueAtTime(500, t0);
-    bp.frequency.exponentialRampToValueAtTime(3600, t0 + 0.26);
-    const ng = actx.createGain();
-    ng.gain.setValueAtTime(0.0001, t0);
-    ng.gain.exponentialRampToValueAtTime(0.32, t0 + 0.05);
-    ng.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.32);
-    ns.connect(bp); bp.connect(ng); ng.connect(actx.destination);
-    ns.start(t0); ns.stop(t0 + 0.34);
-    for (const [f, v, dl] of [[1860, 0.07, 0.03], [2790, 0.045, 0.035], [4130, 0.025, 0.04]]){
-      const o = actx.createOscillator();
-      o.type = 'sine';
-      o.frequency.setValueAtTime(f, t0 + dl);
-      const g = actx.createGain();
-      g.gain.setValueAtTime(0.0001, t0 + dl);
-      g.gain.exponentialRampToValueAtTime(v, t0 + dl + 0.008);
-      g.gain.exponentialRampToValueAtTime(0.0001, t0 + dl + 0.42);
-      o.connect(g); g.connect(actx.destination);
-      o.start(t0 + dl); o.stop(t0 + dl + 0.45);
-    }
-  } catch (e) {}
-  sweep(170, 620, 0.2, 'triangle', 0.09);
+  whoosh('pass', 1.2);
+  pluck(1318, 0.04, 0.12, { dur: 0.7 });
+  tone({ f: 200, f2: 520, dur: 0.24, vol: 0.06, a: 0.02, verb: 0.3 });
 }
-const sfxSpear = () => { if (playBufferSfx('spear', 0.9, 0.96 + Math.random() * 0.08)) return; sfxSpearSynth(); };
-const sfxPortalOpen  = () => { sweep(120, 560, 0.6, 'sine', 0.17); sweep(240, 1120, 0.55, 'triangle', 0.05); };
-const sfxPortalGulp  = () => { sweep(520, 180, 0.18, 'sine', 0.12); };
-const sfxPortalClose = () => { sweep(640, 90, 0.34, 'sine', 0.16); beep(1500, 0.06, 'triangle', 0.05); };
-const sfxPopupOpen  = () => { ensureAudio(); beep(680, 0.05, 'sine', 0.10); beep(980, 0.07, 'sine', 0.09); };
-const sfxPopupClose = () => { ensureAudio(); beep(560, 0.06, 'sine', 0.08); beep(360, 0.08, 'sine', 0.06); };
+function sfxSpear(){ sfxSpearSynth(); }
+function sfxPortalOpen(){
+  whoosh('big', 0.8);
+  [262, 330, 392, 523].forEach((f, i) => tone({ f, f2: f * 1.5, dur: 0.8, glide: 0.7, vol: 0.035, a: 0.12, delay: i * 0.03, verb: 0.9 }));
+}
+function sfxPortalGulp(){ tone({ f: 640, f2: 170, dur: 0.2, glide: 0.16, vol: 0.09, a: 0.004, verb: 0.4 }); }
+function sfxPortalClose(){
+  whoosh('down', 0.9);
+  pluck(1318.5, 0.05, 0.22, { dur: 0.9, verb: 0.8 });
+}
+function sfxPopupOpen(){
+  ensureAudio();
+  tone({ f: 520, f2: 900, dur: 0.12, glide: 0.07, vol: 0.06, a: 0.004, verb: 0.3 });
+  whoosh('tiny', 0.9);
+}
+function sfxPopupClose(){
+  ensureAudio();
+  tone({ f: 760, f2: 430, dur: 0.12, glide: 0.08, vol: 0.05, a: 0.004, verb: 0.3 });
+  noiseSweep({ dur: 0.18, f0: 2400, f1: 800, q: 1.4, vol: 0.04, peak: 0.3, verb: 0.2 });
+}
+function sfxClick(){
+  if (!actx) return;
+  tone({ f: 1320, f2: 1180, dur: 0.07, vol: 0.035, a: 0.002, verb: 0.15, lp: 3200 });
+  tone({ f: 660, dur: 0.05, vol: 0.02, a: 0.002, verb: 0.1 });
+}
+function sfxTick(){ tone({ f: 1500, f2: 1150, dur: 0.045, vol: 0.03, a: 0.002, verb: 0.15, lp: 3000 }); }
+function sfxWin(){ [1046.5, 1318.5, 1568, 2093].forEach((f, i) => pluck(f, 0.055, i * 0.075, { dur: 0.8, pan: (i - 1.5) * 0.2 })); whoosh('up', 0.6); }
+function sfxLaserWarn(){ pluck(880, 0.05, 0, { dur: 0.3 }); pluck(880, 0.05, 0.16, { dur: 0.3 }); }
+function sfxLaserFire(){ tone({ f: 170, f2: 120, dur: 0.35, vol: 0.09, a: 0.02, type: 'triangle', lp: 700, verb: 0.3 }); noiseSweep({ dur: 0.35, f0: 300, f1: 1500, q: 0.9, vol: 0.07, verb: 0.3 }); }
+function sfxAlert(){ pluck(784, 0.06, 0, { dur: 0.35 }); pluck(988, 0.05, 0.08, { dur: 0.45 }); }
+function sfxPerfect(){ [1568, 2093, 2637].forEach((f, i) => pluck(f, 0.05, i * 0.05, { dur: 0.9, verb: 0.7 })); }
+function sfxArrow(){ noiseSweep({ dur: 0.22, f0: 900, f1: 3200, q: 1.5, vol: 0.07, peak: 0.3, verb: 0.2 }); tone({ f: 560, f2: 880, dur: 0.1, vol: 0.04, a: 0.004, verb: 0.2 }); }
+function sfxBossIn(){ whoosh('big', 1.2); tone({ f: 110, f2: 82, dur: 1.1, vol: 0.12, a: 0.08, vib: 3, vibDepth: 2, lp: 500, verb: 0.5 }); tone({ f: 165, f2: 123, dur: 1.0, vol: 0.05, a: 0.1, lp: 700, verb: 0.5 }); }
+function sfxBossShot(){ tone({ f: 540, f2: 250, dur: 0.14, vol: 0.05, a: 0.004, type: 'triangle', lp: 1600, verb: 0.25 }); }
+function sfxBossDie(){ whoosh('down', 1.3); [523, 659, 784, 1046.5].forEach((f, i) => pluck(f, 0.06, 0.25 + i * 0.09, { dur: 1.1, verb: 0.8 })); }
+function sfxBossWarn(){ pluck(294, 0.08, 0, { dur: 0.6, lp: 900 }); pluck(220, 0.08, 0.18, { dur: 0.8, lp: 800 }); }
+function sfxWorld(){ whoosh('pass', 1.1); [784, 988, 1175, 1568].forEach((f, i) => pluck(f, 0.045, 0.12 + i * 0.07, { dur: 0.9, verb: 0.7 })); }
+function sfxBreak(){ tone({ f: 190, f2: 110, dur: 0.16, vol: 0.08, a: 0.003, lp: 700, verb: 0.15 }); noiseSweep({ dur: 0.2, f0: 900, f1: 250, q: 0.6, vol: 0.08, peak: 0.1, verb: 0.15, lp: 1800 }); }
+function sfxPoof(){ noiseSweep({ dur: 0.3, f0: 1800, f1: 3800, q: 0.6, vol: 0.06, peak: 0.25, verb: 0.5 }); tone({ f: 700, f2: 1100, dur: 0.14, vol: 0.03, a: 0.01, verb: 0.4 }); }
+function sfxFruit(){ sfxWin(); tone({ f: 420, f2: 1400, dur: 0.4, glide: 0.35, vol: 0.05, a: 0.02, verb: 0.5 }); }
 
 let musicOn = Store.get('music', '1') === '1';
 const vibroOn = false;
@@ -3444,8 +3528,14 @@ function startAmbient(){
 function stopAmbient(){ ambientAudio.pause(); }
 function ensureAmbient(){ if (musicOn) startAmbient(); }
 
-window.addEventListener('pointerdown', ensureAudio, { once: true });
+window.addEventListener('pointerdown', ensureAudio);
 window.addEventListener('keydown', ensureAudio, { once: true });
+document.addEventListener('click', (e) => {
+  const el = e.target && e.target.closest ? e.target.closest('button, .btn, .chip, .swatch, [role="button"]') : null;
+  if (!el || el.disabled || el.id === 'hitBtn' || el.id === 'leftBtn' || el.id === 'rightBtn' || el.id === 'spearBtn') return;
+  const at = performance.now();
+  setTimeout(() => { if (lastToneAt < at) sfxClick(); }, 0);
+}, true);
 window.addEventListener('pointerdown', ensureAmbient);
 window.addEventListener('keydown', ensureAmbient);
 
@@ -3467,7 +3557,7 @@ const I18N = {
     frame_none: 'Без рамки', frame_gold: 'Золотое сияние', frame_neon: 'Неон', frame_rainbow: 'Радуга',
     frame_fire: 'Пламя', frame_frost: 'Иней', frame_orbit: 'Звёздная орбита', frame_ears: 'Ушки котокролика',
     frame_crown: 'Корона', frame_hearts: 'Сердечки',
-    musicLabel: 'Музыка', musicVolumeLabel: 'Громкость музыки', vibroLabel: 'Вибрация',
+    musicLabel: 'Музыка', musicVolumeLabel: 'Громкость музыки', sfxVolumeLabel: 'Громкость звуков', creditTitle: 'Автор кэббита', creditText: 'Персонаж кэббит, котокролик с кошачьей мордочкой, придуман и нарисован художником из Instagram koty_vezde. Спасибо за кэббитов: без них этой игры бы не было!', vibroLabel: 'Вибрация',
     profileCommentsLabel: 'Комментарии', profileCommentPlaceholder: 'Оставить комментарий...',
     profileCommentSend: 'Отправить', profileCommentEmpty: 'Пока нет комментариев',
     profileCommentSending: 'Отправка...', profileCommentError: 'Не удалось загрузить',
@@ -3598,7 +3688,7 @@ const I18N = {
     frame_none: 'No frame', frame_gold: 'Golden Glow', frame_neon: 'Neon', frame_rainbow: 'Rainbow',
     frame_fire: 'Blaze', frame_frost: 'Frost', frame_orbit: 'Star Orbit', frame_ears: 'Cabbit Ears',
     frame_crown: 'Crown', frame_hearts: 'Hearts',
-    musicLabel: 'Music', musicVolumeLabel: 'Music volume', vibroLabel: 'Vibration',
+    musicLabel: 'Music', musicVolumeLabel: 'Music volume', sfxVolumeLabel: 'Sound volume', creditTitle: 'Cabbit creator', creditText: 'The cabbit, a bunny with a cat face, was created by the Instagram artist koty_vezde. Thank you for the cabbits: without them this game would not exist!', vibroLabel: 'Vibration',
     profileCommentsLabel: 'Comments', profileCommentPlaceholder: 'Leave a comment...',
     profileCommentSend: 'Send', profileCommentEmpty: 'No comments yet',
     profileCommentSending: 'Sending...', profileCommentError: 'Failed to load',
@@ -4086,12 +4176,116 @@ function rigCharActive(){
 const currentCharReady = () => !!(charImgs[outfit.char] && charImgs[outfit.char].ready);
 
 
-const maceImg = new Image();
-let maceReady = false;
-let maceDraw = null;
-maceImg.onload  = () => { if (maceImg.naturalWidth > 0){ maceDraw = downscaleSprite(maceImg); maceReady = true; } };
-maceImg.onerror = () => { maceReady = false; };
-maceImg.src = 'mace.png';
+const WEP_INK = '#2b2238';
+function inkPath(g, fill, lw){
+  g.lineJoin = 'round'; g.lineCap = 'round';
+  g.strokeStyle = WEP_INK; g.lineWidth = lw || 3;
+  g.stroke();
+  g.fillStyle = fill;
+  g.fill();
+}
+function paintMaceArt(){
+  const K = 4, W = 64, H = 128;
+  const c = document.createElement('canvas');
+  c.width = W * K; c.height = H * K;
+  const g = c.getContext('2d');
+  if (!g) return c;
+  g.scale(K, K);
+  const wood = g.createLinearGradient(27, 0, 37, 0);
+  wood.addColorStop(0, '#6e421f'); wood.addColorStop(0.45, '#b07840'); wood.addColorStop(1, '#5a3418');
+  g.beginPath(); rr(g, 28, 48, 8, 70, 4); inkPath(g, wood, 3);
+  g.save();
+  g.beginPath(); rr(g, 28, 48, 8, 70, 4); g.clip();
+  for (const y of [66, 80, 94, 108]){
+    g.fillStyle = '#5b2f78';
+    g.beginPath(); g.moveTo(26, y); g.lineTo(38, y - 5); g.lineTo(38, y + 1); g.lineTo(26, y + 6); g.closePath(); g.fill();
+    g.fillStyle = 'rgba(255,255,255,.22)';
+    g.beginPath(); g.moveTo(26, y); g.lineTo(38, y - 5); g.lineTo(38, y - 3.5); g.lineTo(26, y + 1.5); g.closePath(); g.fill();
+  }
+  g.restore();
+  const gold = g.createRadialGradient(30, 118, 1, 32, 121, 8);
+  gold.addColorStop(0, '#fff6c0'); gold.addColorStop(0.5, '#ffc83d'); gold.addColorStop(1, '#b8780e');
+  g.beginPath(); g.arc(32, 121, 5.5, 0, 6.2832); inkPath(g, gold, 3);
+  const band = g.createLinearGradient(0, 44, 0, 54);
+  band.addColorStop(0, '#fff0a0'); band.addColorStop(1, '#c98a14');
+  g.beginPath(); rr(g, 23, 44, 18, 8, 3); inkPath(g, band, 3);
+  for (let i = 0; i < 8; i++){
+    const a = i / 8 * 6.2832 - Math.PI / 2;
+    const bx = 32 + Math.cos(a) * 18, by = 26 + Math.sin(a) * 18;
+    const tx = 32 + Math.cos(a) * 27, ty = 26 + Math.sin(a) * 27;
+    const nx = -Math.sin(a) * 6, ny = Math.cos(a) * 6;
+    g.beginPath();
+    g.moveTo(bx + nx, by + ny);
+    g.quadraticCurveTo(tx + nx * 0.25, ty + ny * 0.25, tx, ty);
+    g.quadraticCurveTo(tx - nx * 0.25, ty - ny * 0.25, bx - nx, by - ny);
+    g.closePath();
+    const sg = g.createLinearGradient(bx, by, tx, ty);
+    sg.addColorStop(0, '#8d96aa'); sg.addColorStop(1, '#e9edf5');
+    inkPath(g, sg, 2.6);
+  }
+  const head = g.createRadialGradient(25, 18, 2, 32, 26, 21);
+  head.addColorStop(0, '#ffffff'); head.addColorStop(0.35, '#d9dee8'); head.addColorStop(0.8, '#8a93a8'); head.addColorStop(1, '#5d6478');
+  g.beginPath(); g.arc(32, 26, 19, 0, 6.2832); inkPath(g, head, 3);
+  g.fillStyle = 'rgba(255,255,255,.55)';
+  g.beginPath(); g.ellipse(24, 17, 6, 3, -0.6, 0, 6.2832); g.fill();
+  const glow = g.createRadialGradient(32, 27, 1, 32, 27, 13);
+  glow.addColorStop(0, 'rgba(210,140,255,.75)'); glow.addColorStop(1, 'rgba(210,140,255,0)');
+  g.fillStyle = glow; g.beginPath(); g.arc(32, 27, 13, 0, 6.2832); g.fill();
+  const gem = g.createLinearGradient(26, 20, 38, 34);
+  gem.addColorStop(0, '#f3dcff'); gem.addColorStop(0.45, '#b56bff'); gem.addColorStop(1, '#5a1fb0');
+  g.beginPath(); g.moveTo(32, 18); g.lineTo(39, 27); g.lineTo(32, 36); g.lineTo(25, 27); g.closePath(); inkPath(g, gem, 2.4);
+  g.fillStyle = 'rgba(255,255,255,.85)';
+  g.beginPath(); g.moveTo(32, 20); g.lineTo(35, 25); g.lineTo(32, 27); g.lineTo(29, 25); g.closePath(); g.fill();
+  return c;
+}
+function paintSpearArt(){
+  const K = 4, W = 128;
+  const c = document.createElement('canvas');
+  c.width = W * K; c.height = W * K;
+  const g = c.getContext('2d');
+  if (!g) return c;
+  g.scale(K, K);
+  g.translate(14, 114);
+  g.rotate(-Math.PI / 4);
+  const shaft = g.createLinearGradient(0, -3.5, 0, 3.5);
+  shaft.addColorStop(0, '#c48a4e'); shaft.addColorStop(0.5, '#9a6232'); shaft.addColorStop(1, '#5e3a1c');
+  g.beginPath(); rr(g, 0, -3.4, 116, 6.8, 3.4); inkPath(g, shaft, 2.6);
+  for (let x = 26; x < 50; x += 5){
+    g.fillStyle = '#3d7ad8';
+    g.beginPath(); g.moveTo(x, -3.4); g.lineTo(x + 3, -3.4); g.lineTo(x + 1.5, 3.4); g.lineTo(x - 1.5, 3.4); g.closePath(); g.fill();
+  }
+  g.strokeStyle = WEP_INK; g.lineWidth = 1.2;
+  g.beginPath(); g.moveTo(24, -3.4); g.lineTo(24, 3.4); g.moveTo(51, -3.4); g.lineTo(51, 3.4); g.stroke();
+  const cap = g.createLinearGradient(0, -4, 0, 4);
+  cap.addColorStop(0, '#e9edf5'); cap.addColorStop(1, '#7d869a');
+  g.beginPath(); rr(g, -3, -4.4, 8, 8.8, 3); inkPath(g, cap, 2.4);
+  const rib = g.createLinearGradient(106, 0, 118, 18);
+  rib.addColorStop(0, '#ff6b7a'); rib.addColorStop(1, '#c2253a');
+  g.beginPath();
+  g.moveTo(110, 2); g.bezierCurveTo(104, 10, 112, 14, 104, 22); g.lineTo(109, 21);
+  g.bezierCurveTo(116, 14, 110, 10, 115, 3); g.closePath();
+  inkPath(g, rib, 2);
+  const gold = g.createLinearGradient(0, -8, 0, 8);
+  gold.addColorStop(0, '#fff3a8'); gold.addColorStop(1, '#c98a14');
+  g.beginPath(); rr(g, 109, -8, 7, 16, 3); inkPath(g, gold, 2.6);
+  const blade = g.createLinearGradient(0, -9, 0, 9);
+  blade.addColorStop(0, '#ffffff'); blade.addColorStop(0.45, '#d5dbe6'); blade.addColorStop(1, '#7b8498');
+  g.beginPath();
+  g.moveTo(116, 0);
+  g.bezierCurveTo(124, -10, 140, -8, 154, 0);
+  g.bezierCurveTo(140, 8, 124, 10, 116, 0);
+  g.closePath();
+  inkPath(g, blade, 2.6);
+  g.strokeStyle = 'rgba(80,90,120,.55)'; g.lineWidth = 1;
+  g.beginPath(); g.moveTo(119, 0); g.lineTo(150, 0); g.stroke();
+  g.fillStyle = 'rgba(255,255,255,.8)';
+  g.beginPath(); g.moveTo(122, -2); g.bezierCurveTo(130, -6, 140, -5, 148, -1); g.bezierCurveTo(138, -3, 130, -3, 122, -2); g.fill();
+  return c;
+}
+const maceArt = paintMaceArt();
+const maceImg = { naturalWidth: maceArt.width, naturalHeight: maceArt.height };
+let maceReady = true;
+let maceDraw = maceArt;
 
 
 const ANCHOR_SPRITE = { topY: -0.345, cx: 0.015, hw: 0.235, eyeY: -0.155, eyeDX: 0.085, neckY: 0.145, handX: 0.27, handY: 0.30 };
@@ -4210,8 +4404,7 @@ function spawnLaserWave(){
     lasers.push({ x, w: LASER_W, t: 0, warn: laserWarnDur(), fire: laserFireDur(), fired: false });
   }
   ensureAudio();
-  beep(880, 0.07, 'square', 0.06);
-  setTimeout(() => beep(880, 0.07, 'square', 0.06), 160);
+  sfxLaserWarn();
 }
 
 function laserHitsHero(L){
@@ -4235,7 +4428,7 @@ function updateLasers(dt){
     L.t += dt;
     if (!L.fired && L.t >= L.warn){
       L.fired = true;
-      beep(170, 0.28, 'sawtooth', 0.11);
+      sfxLaserFire();
       shake = Math.max(shake, 5);
     }
     if (L.t >= L.warn + L.fire){ lasers.splice(i, 1); continue; }
@@ -4581,7 +4774,7 @@ function killMonster(m, success, perfect){
     }
     addToast(smash ? t('smashToast') : t('kickToast'), m.x, m.y - 30, smash ? '#d9a6ff' : '#e8d9ff');
     if (smash) sfxSmash(); else sfxSpring();
-    if (perfect) beep(1200, 0.1, 'square', 0.16);
+    if (perfect) sfxPerfect();
     shake = Math.max(shake, (smash ? 18 : 13) + (perfect ? 8 : 0));
     hitStop = perfect ? 0.11 : (smash ? 0.08 : 0.06);
     buzz(perfect ? 55 : 35);
@@ -4617,7 +4810,7 @@ function startMonsterEvent(m){
   hitBtn.classList.remove('hidden');
   hideTouchControls();
   ensureAudio();
-  beep(700, 0.06, 'square', 0.08);
+  sfxAlert();
 }
 
 function resolveMonsterEvent(success){
@@ -5225,8 +5418,7 @@ function updateFruits(dt){
       addToast(fruitName(fp.id), fp.x, fp.y - 40, RARITY_COL[FRUITS[fp.id].rar]);
       flash = Math.max(flash, 0.35); flashColor = FRUITS[fp.id].c1;
       ensureAudio();
-      sweep(420, 1400, 0.35, 'triangle', 0.08);
-      beep(1320, 0.12, 'sine', 0.08);
+      sfxFruit();
       if (typeof showToast === 'function') showToast(t('fruitGot').replace('{f}', fruitName(fp.id)));
       continue;
     }
@@ -5500,6 +5692,7 @@ function spinWheel(times){
   cloudPushSoon();
   if (typeof refreshShopState === 'function') refreshShopState();
   wheelSpinning = true;
+  whoosh('pass', 0.8);
   wheelSkipNow = false;
   refreshWheelBtn();
   if (res) res.textContent = '';
@@ -5522,7 +5715,7 @@ function spinWheel(times){
     wheelSpinning = false;
     refreshWheelBtn();
     if (res) res.innerHTML = '<b>' + escapeHtml(t('wheelWon')) + '</b> ' + escapeHtml(prize);
-    if (fruitWon){ for (let i = order.length - 1; i >= 0; i--) burstUiFruit(order[i]); sweep(420, 1400, 0.35, 'triangle', 0.08); }
+    if (fruitWon){ for (let i = order.length - 1; i >= 0; i--) burstUiFruit(order[i]); sfxWin(); }
     else sfxCoin();
     buzz(30);
     renderFruitsScreen(true);
@@ -5534,7 +5727,7 @@ function spinWheel(times){
     const e = 1 - Math.pow(1 - k, 3);
     wheelAngle = start + (end - start) * e;
     const sgi = Math.floor(wheelAngle / seg);
-    if (sgi !== lastSeg){ lastSeg = sgi; beep(900, 0.02, 'square', 0.03); }
+    if (sgi !== lastSeg){ lastSeg = sgi; sfxTick(); }
     drawWheel();
     if (k < 1) requestAnimationFrame(step); else finish();
   };
@@ -5735,7 +5928,7 @@ async function tradeAction(m, action){
       takeFruit(m.tradeWant);
       addFruit(m.tradeGive);
       showToast(t('tradeDoneYou').replace('{f}', fruitName(m.tradeGive)));
-      sweep(420, 1400, 0.35, 'triangle', 0.08);
+      sfxWin();
     } else if (action === 'cancel'){
       const list = loadTradeOpen();
       const i = list.findIndex(x => x.id === m.id);
@@ -5880,7 +6073,7 @@ function spawnBoss(){
   addToast(t('bossIncoming').replace('{b}', bossName(w)), VW / 2, camY + VH * 0.34, '#ff6b6b');
   flash = 0.5; flashColor = '#ff3b3b';
   shake = Math.max(shake, 10);
-  sweep(160, 90, 0.5, 'sawtooth', 0.12);
+  sfxBossIn();
   buzz(60);
 }
 
@@ -5894,7 +6087,7 @@ function bossShoot(){
     const aim = clamp((hero.x - b.x) * 0.22, -70, 70);
     bossShots.push({ x: b.x + (n > 1 ? (i ? 18 : -18) : 0), y: by + b.r * 0.6, vx: aim + (n > 1 ? (i ? 40 : -40) : 0), vy: 135 + b.tier * 10, r: 10, t: 0 });
   }
-  beep(260, 0.08, 'square', 0.06);
+  sfxBossShot();
 }
 
 function bossDropOrb(){
@@ -5919,7 +6112,7 @@ function damageBoss(n, fx, fy){
   if (b.hp <= 0){
     b.st = 'die'; b.dieT = 0;
     bossShots.length = 0; bossOrbs.length = 0;
-    sweep(900, 120, 0.9, 'sawtooth', 0.12);
+    sfxBossDie();
   }
 }
 
@@ -5956,7 +6149,7 @@ function updateBoss(dt){
   for (let i = bossZaps.length - 1; i >= 0; i--){ bossZaps[i].life -= dt * 3; if (bossZaps[i].life <= 0) bossZaps.splice(i, 1); }
   if (!boss){
     if (state !== STATE.PLAY) return;
-    if (score >= bossNext - 250 && !bossWarn){ bossWarn = 1; addToast(t('bossWarn'), VW / 2, camY + VH * 0.3, '#ff8a8a'); beep(300, 0.2, 'square', 0.08); }
+    if (score >= bossNext - 250 && !bossWarn){ bossWarn = 1; addToast(t('bossWarn'), VW / 2, camY + VH * 0.3, '#ff8a8a'); sfxBossWarn(); }
     if (score >= bossNext && !monsterEvent) spawnBoss();
     return;
   }
@@ -6211,7 +6404,7 @@ function showWorldBanner(w){
     for (let i = 0; i < 3; i++) burstSpark(hero.x, hero.y, wm.burst[i], 14, 1.3);
     addParticle({ kind: 'ring', x: hero.x, y: hero.y, vx: 0, vy: 0, life: 1, decay: 1.1, r: 12, color: wm.light });
   }
-  sweep(330, 990, 0.45, 'triangle', 0.07);
+  sfxWorld();
 }
 function updateWorldBanner(dt){
   if (!worldBanner) return;
@@ -6941,6 +7134,7 @@ function stepPhysics(dt){
       p.rot    = rand(-0.55, 0.55);
       burstShards(p);
       shake = Math.max(shake, 6);
+      sfxBreak();
       hero.sx = 1.16; hero.sy = 0.86;
       return; 
     }
@@ -6956,6 +7150,7 @@ function stepPhysics(dt){
       burstSpark(hero.x, top, '#ffffff', 14, 1);
       landDust(hero.x, top);
       sfxLand();
+      sfxPoof();
       return;
     }
     if (p.type === 'bouncy'){
@@ -7061,8 +7256,7 @@ function shootArrow(){
     ang: Math.atan2(dy, dx)
   });
   ensureAudio();
-  beep(560, 0.05, 'square', 0.05);
-  beep(880, 0.05, 'triangle', 0.04);
+  sfxArrow();
 }
 
 
@@ -9574,7 +9768,6 @@ function paintTool(c, w, h, kind, A, phase){
     c.rotate(Math.sin(phase * 1.2) * 0.04);
     if (spearImg.ready){
       const L = h * 0.95;
-      c.imageSmoothingEnabled = false;
       c.drawImage(spearImg.img, -L * 0.22, -L * 0.78, L, L);
     } else {
       c.rotate(0.55);
@@ -9616,8 +9809,8 @@ function paintTool(c, w, h, kind, A, phase){
     
     const mw = w * 0.62;
     const mh = mw * (maceImg.naturalHeight / maceImg.naturalWidth);
-    c.drawImage(maceDraw || maceImg, -mw / 2, 8 - mh, mw, mh);
-    headY = 8 - mh * 0.88;
+    c.drawImage(maceDraw, -mw / 2, 8 - mh, mw, mh);
+    headY = 8 - mh * 0.8;
   } else {
     
     headY = -24;
@@ -9878,9 +10071,7 @@ function drawHeroShadow(x, y, sx, sy, tilt, face){
 }
 
 
-const spearImg = { img: new Image(), ready: false };
-spearImg.img.onload = () => { spearImg.ready = true; };
-spearImg.img.src = 'spear.png';
+const spearImg = { img: paintSpearArt(), ready: true };
 
 const trailParts = [];
 let trailAcc = 0;
@@ -11280,6 +11471,7 @@ function refreshEventBanner(){
 }
 
 function goToMenu(){
+  if (state !== STATE.MENU) whoosh('soft', 0.8);
   state = STATE.MENU;
   glassUsedThisRun = false;
   hideAllScreens();
@@ -11302,6 +11494,8 @@ function goToMenu(){
 
 function startGame(){
   if (deviceBlocked) return;
+  ensureAudio();
+  whoosh('up', 1.1);
   closeAllOverlays();
   resetGame();
   Store.set('playedOnce', '1');
@@ -11548,7 +11742,7 @@ Store.set('cloudCode', cloudCode);
 
 let accountGone = false;
 let ownDocChecked = false;
-const ACCOUNT_KEEP_KEYS = ['lang', 'gfxMode', 'vibro', 'platformTheme', 'musicVolume', 'music', 'notify', 'chatTheme', 'blur', 'bgTheme', 'uiStyle', 'worldLight'];
+const ACCOUNT_KEEP_KEYS = ['lang', 'gfxMode', 'vibro', 'platformTheme', 'musicVolume', 'music', 'notify', 'chatTheme', 'blur', 'bgTheme', 'uiStyle', 'worldLight', 'sfxVolume'];
 
 function wipeDeletedAccount(){
   if (accountGone) return;
@@ -14079,6 +14273,8 @@ document.getElementById('passBuyBtn').addEventListener('click', buyGoldPass);
 document.getElementById('trophyClose').addEventListener('click', closeTrophyInfo);
 document.getElementById('trophyModal').addEventListener('click', (e) => { if (e.target && e.target.id === 'trophyModal') closeTrophyInfo(); });
 document.getElementById('telegramBtn').addEventListener('click', () => openLinkChoice(TELEGRAM_URL, 'Telegram'));
+const CREDIT_URL = 'https://www.instagram.com/koty_vezde/';
+document.getElementById('creditBtn').addEventListener('click', () => openLinkChoice(CREDIT_URL, 'Instagram'));
 document.getElementById('linkChoiceOpenBtn').addEventListener('click', () => {
   const url = linkChoiceUrl;
   closeLinkChoice();
@@ -15296,6 +15492,17 @@ musicToggle.addEventListener('click', () => {
   applyStaticI18n();
 });
 
+const sfxVolumeSlider = document.getElementById('sfxVolumeSlider');
+sfxVolumeSlider.value = String(sfxVolume);
+let sfxPreviewT = 0;
+sfxVolumeSlider.addEventListener('input', () => {
+  sfxVolume = parseInt(sfxVolumeSlider.value, 10) || 0;
+  Store.set('sfxVolume', String(sfxVolume));
+  ensureAudio();
+  applySfxVolume();
+  const now = performance.now();
+  if (now - sfxPreviewT > 180){ sfxPreviewT = now; sfxCoin(); }
+});
 const musicVolumeSlider = document.getElementById('musicVolumeSlider');
 musicVolumeSlider.value = String(musicVolume);
 musicVolumeSlider.addEventListener('input', () => {
