@@ -1997,6 +1997,10 @@
               <button id="musicToggle" class="chip"></button>
             </div>
           </div>
+          <div class="settingRow hidden" id="musicTrackSetting">
+            <span class="settingLabel" data-i18n="musicTrackLabel">Песня</span>
+            <div id="musicTrackRow" class="btnRow"></div>
+          </div>
           <div class="settingRow">
             <span class="settingLabel" data-i18n="sfxVolumeLabel">Громкость звуков</span>
             <div class="btnRow">
@@ -3495,25 +3499,72 @@ function cleanMusicSrc(v){
   if (/^https:\/\/[^\s"'<>]{4,290}$/i.test(v)) return v;
   return '';
 }
+const MUSIC_TRACKS = {
+  ddlc: { n: 'DDLC theme', file: 'ddlc-theme.mp3' }
+};
+let musicTrack = Store.get('musicTrack', '');
+function trackOwned(id){ return !!MUSIC_TRACKS[id] && typeof owned !== 'undefined' && owned.has('music:' + id); }
+function musicSrcNow(){
+  if (musicTrack && trackOwned(musicTrack)) return MUSIC_TRACKS[musicTrack].file;
+  return customMusic || 'ambient-music.mp3';
+}
+let musicSrcApplied = '';
+function applyMusicSrc(){
+  const src = musicSrcNow();
+  if (src === musicSrcApplied) return false;
+  musicSrcApplied = src;
+  const wasPlaying = !ambientAudio.paused;
+  ambientAudio.pause();
+  ambientAudio.src = src;
+  ambientReady = true;
+  if (wasPlaying && typeof startAmbient === 'function') startAmbient();
+  return true;
+}
+function setMusicTrack(id){
+  musicTrack = MUSIC_TRACKS[id] ? id : '';
+  Store.set('musicTrack', musicTrack);
+  applyMusicSrc();
+  if (musicOn && typeof startAmbient === 'function') startAmbient();
+  refreshMusicRow();
+}
+function refreshMusicTrack(){
+  if (musicTrack && !trackOwned(musicTrack)){ musicTrack = ''; Store.set('musicTrack', ''); }
+  applyMusicSrc();
+  refreshMusicRow();
+}
+function refreshMusicRow(){
+  const setting = document.getElementById('musicTrackSetting');
+  const row = document.getElementById('musicTrackRow');
+  if (!setting || !row) return;
+  const ids = Object.keys(MUSIC_TRACKS).filter(trackOwned);
+  setting.classList.toggle('hidden', ids.length === 0);
+  row.innerHTML = '';
+  const add = (id, label) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'chip';
+    b.textContent = label;
+    b.setAttribute('aria-pressed', (musicTrack || '') === id ? 'true' : 'false');
+    b.addEventListener('click', () => setMusicTrack(id));
+    row.appendChild(b);
+  };
+  add('', t('musicTrackDefault'));
+  for (const id of ids) add(id, MUSIC_TRACKS[id].n);
+}
 function applyCustomMusic(v){
   const src = cleanMusicSrc(v);
   if (src === customMusic) return false;
   customMusic = src;
   Store.set('customMusic', src);
-  const wasPlaying = !ambientAudio.paused;
-  ambientAudio.pause();
-  ambientAudio.src = src || 'ambient-music.mp3';
-  ambientReady = true;
-  if (wasPlaying) startAmbient();
+  applyMusicSrc();
   return true;
 }
 ambientAudio.addEventListener('error', () => {
-  if (customMusic){
-    customMusic = '';
-    const wasOn = musicOn;
+  if (musicSrcApplied && musicSrcApplied !== 'ambient-music.mp3'){
+    musicSrcApplied = 'ambient-music.mp3';
     ambientAudio.src = 'ambient-music.mp3';
     ambientReady = true;
-    if (wasOn && typeof startAmbient === 'function') startAmbient();
+    if (musicOn && typeof startAmbient === 'function') startAmbient();
     return;
   }
   ambientReady = false;
@@ -3557,7 +3608,7 @@ const I18N = {
     frame_none: 'Без рамки', frame_gold: 'Золотое сияние', frame_neon: 'Неон', frame_rainbow: 'Радуга',
     frame_fire: 'Пламя', frame_frost: 'Иней', frame_orbit: 'Звёздная орбита', frame_ears: 'Ушки котокролика',
     frame_crown: 'Корона', frame_hearts: 'Сердечки',
-    musicLabel: 'Музыка', musicVolumeLabel: 'Громкость музыки', sfxVolumeLabel: 'Громкость звуков', creditTitle: 'Автор кэббита', creditText: 'Персонаж кэббит, котокролик с кошачьей мордочкой, придуман и нарисован художником из Instagram koty_vezde. Спасибо за кэббитов: без них этой игры бы не было!', vibroLabel: 'Вибрация',
+    musicLabel: 'Музыка', musicVolumeLabel: 'Громкость музыки', sfxVolumeLabel: 'Громкость звуков', musicTrackLabel: 'Песня', musicTrackDefault: 'Обычная', creditTitle: 'Автор кэббита', creditText: 'Персонаж кэббит, котокролик с кошачьей мордочкой, придуман и нарисован художником из Instagram koty_vezde. Спасибо за кэббитов: без них этой игры бы не было!', vibroLabel: 'Вибрация',
     profileCommentsLabel: 'Комментарии', profileCommentPlaceholder: 'Оставить комментарий...',
     profileCommentSend: 'Отправить', profileCommentEmpty: 'Пока нет комментариев',
     profileCommentSending: 'Отправка...', profileCommentError: 'Не удалось загрузить',
@@ -3688,7 +3739,7 @@ const I18N = {
     frame_none: 'No frame', frame_gold: 'Golden Glow', frame_neon: 'Neon', frame_rainbow: 'Rainbow',
     frame_fire: 'Blaze', frame_frost: 'Frost', frame_orbit: 'Star Orbit', frame_ears: 'Cabbit Ears',
     frame_crown: 'Crown', frame_hearts: 'Hearts',
-    musicLabel: 'Music', musicVolumeLabel: 'Music volume', sfxVolumeLabel: 'Sound volume', creditTitle: 'Cabbit creator', creditText: 'The cabbit, a bunny with a cat face, was created by the Instagram artist koty_vezde. Thank you for the cabbits: without them this game would not exist!', vibroLabel: 'Vibration',
+    musicLabel: 'Music', musicVolumeLabel: 'Music volume', sfxVolumeLabel: 'Sound volume', musicTrackLabel: 'Song', musicTrackDefault: 'Default', creditTitle: 'Cabbit creator', creditText: 'The cabbit, a bunny with a cat face, was created by the Instagram artist koty_vezde. Thank you for the cabbits: without them this game would not exist!', vibroLabel: 'Vibration',
     profileCommentsLabel: 'Comments', profileCommentPlaceholder: 'Leave a comment...',
     profileCommentSend: 'Send', profileCommentEmpty: 'No comments yet',
     profileCommentSending: 'Sending...', profileCommentError: 'Failed to load',
@@ -3960,6 +4011,7 @@ function dropUnownedLockedOutfit(){
   return changed;
 }
 dropUnownedLockedOutfit();
+refreshMusicTrack();
 function saveOwned(){
   for (const k in REMOVED_PERKS) owned.delete('perk:' + k);
   Store.set('owned', Array.from(owned).join(','));
@@ -11212,6 +11264,7 @@ function compactNum(n){
   return String(n);
 }
 function refreshShopState(){
+  if (typeof refreshMusicTrack === 'function') refreshMusicTrack();
   menuBest.textContent  = best;
   const mbc = document.getElementById('menuBestChip'); if (mbc) mbc.textContent = compactNum(best);
   const mbo = document.getElementById('menuBossChip'); if (mbo) mbo.textContent = typeof bossKillsTotal === 'number' ? bossKillsTotal : 0;
@@ -11221,6 +11274,7 @@ function refreshShopState(){
 
   shopEl.querySelectorAll('.chip').forEach(chip => {
     const slot = chip.dataset.slot, val = chip.dataset.val;
+    if (!OUTFITS[slot] || !OUTFITS[slot][val]) return;
     const info = ti(slot, val);
     const priceInfo = OUTFITS[slot][val];
     const own = isOwned(slot, val);
@@ -14780,6 +14834,26 @@ function renderAdminItemsGrid(ownedSet){
       label.appendChild(span);
       grid.appendChild(label);
     }
+  }
+  const mt = document.createElement('div');
+  mt.className = 'adminItemsSlotTitle';
+  mt.textContent = 'МУЗЫКА';
+  grid.appendChild(mt);
+  for (const id of Object.keys(MUSIC_TRACKS)){
+    const key = 'music:' + id;
+    const label = document.createElement('label');
+    const locked = isModOnly();
+    label.className = 'adminItemChip isLimited' + (locked ? ' isDisabled' : '');
+    const cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.dataset.item = key;
+    cb.checked = ownedSet.has(key);
+    if (locked) cb.disabled = true;
+    const span = document.createElement('span');
+    span.textContent = '★ ' + MUSIC_TRACKS[id].n;
+    label.appendChild(cb);
+    label.appendChild(span);
+    grid.appendChild(label);
   }
 }
 
