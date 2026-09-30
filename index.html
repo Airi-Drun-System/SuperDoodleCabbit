@@ -1896,7 +1896,7 @@
 
           <button id="adminPwResetBtn" type="button" class="adminPwResetBtn adminOnly">Сбросить пароль игрока</button>
 
-          <div class="adminCard">
+          <div class="adminCard adminOnly">
             <div class="adminCardTitle">Бан по устройству</div>
             <p id="adminBanInfo" class="adminRoleHint"></p>
             <button id="adminBanBtn" type="button" class="adminDeleteBtn">Забанить устройство</button>
@@ -2529,7 +2529,7 @@ function resize(){
   cssH = window.innerHeight || cssH || VH;
   if (!(cssW > 0)) cssW = VW;
   if (!(cssH > 0)) cssH = VH;
-  DPR  = lowGfx() ? 1 : Math.min(window.devicePixelRatio || 1, gfxMode === 'auto' ? 2 : 3);
+  DPR  = lowGfx() ? 1 : Math.min(window.devicePixelRatio || 1, gfxMode === 'auto' ? 1.75 : 2);
   cvs.width  = Math.round(cssW * DPR);
   cvs.height = Math.round(cssH * DPR);
   blurCvs.width  = lowGfx() ? 1 : cvs.width;
@@ -2541,7 +2541,7 @@ function resize(){
   VH = cssH / S;
   if (!(VH > 0) || !isFinite(VH)) VH = 740;
   ctx.imageSmoothingEnabled = true;
-  ctx.imageSmoothingQuality = lowGfx() ? 'low' : 'high';
+  ctx.imageSmoothingQuality = lowGfx() ? 'low' : 'medium';
 }
 resize();
 
@@ -3270,7 +3270,7 @@ function setupAudioGraph(){
     sfxDry = actx.createGain();
     sfxDry.connect(sfxBus);
     const conv = actx.createConvolver();
-    conv.buffer = makeImpulse(1.8, 2.8);
+    conv.buffer = makeImpulse(1.2, 2.6);
     const wetLp = actx.createBiquadFilter();
     wetLp.type = 'lowpass'; wetLp.frequency.value = 4200;
     sfxWet = actx.createGain();
@@ -3298,9 +3298,16 @@ function sendOut(node, verb, pan, t0, pan1, dur){
   }
 }
 let lastToneAt = 0;
+let voiceWin = 0, voiceCount = 0;
+function voiceOk(){
+  const now = actx.currentTime;
+  if (now - voiceWin > 0.06){ voiceWin = now; voiceCount = 0; }
+  return ++voiceCount <= 16;
+}
 function tone(o){
   if (!actx || sfxVolume <= 0) return;
   lastToneAt = performance.now();
+  if (!voiceOk()) return;
   try {
     const t0 = actx.currentTime + sfxShift + (o.delay || 0);
     const dur = o.dur || 0.2;
@@ -3333,6 +3340,7 @@ function tone(o){
 }
 function noiseSweep(o){
   if (!actx || !noiseBuf || sfxVolume <= 0) return;
+  if (!voiceOk()) return;
   try {
     const t0 = actx.currentTime + sfxShift + (o.delay || 0);
     const dur = o.dur || 0.3;
@@ -6560,10 +6568,10 @@ function bossArt(g, w, r, t, look, hurt){
     rr(g, -r * 0.62, -r * 0.35, r * 0.46, r * 0.3, r * 0.08); g.fill();
     rr(g, r * 0.16, -r * 0.35, r * 0.46, r * 0.3, r * 0.08); g.fill();
     const gl = 0.7 + 0.3 * Math.sin(t * 4);
+    g.fillStyle = 'rgba(95,244,255,' + (gl * 0.35) + ')';
+    g.beginPath(); g.ellipse(-r * 0.39 + look * r * 0.06, -r * 0.2, r * 0.22, r * 0.16, 0, 0, 6.2832); g.ellipse(r * 0.39 + look * r * 0.06, -r * 0.2, r * 0.22, r * 0.16, 0, 0, 6.2832); g.fill();
     g.fillStyle = 'rgba(95,244,255,' + gl + ')';
-    g.shadowColor = '#5ff4ff'; g.shadowBlur = 12;
     g.beginPath(); g.ellipse(-r * 0.39 + look * r * 0.06, -r * 0.2, r * 0.13, r * 0.09, 0, 0, 6.2832); g.ellipse(r * 0.39 + look * r * 0.06, -r * 0.2, r * 0.13, r * 0.09, 0, 0, 6.2832); g.fill();
-    g.shadowBlur = 0;
     g.fillStyle = '#0e2a44';
     rr(g, -r * 0.45, r * 0.35, r * 0.9, r * 0.28, r * 0.08); g.fill();
     g.fillStyle = '#e8f8ff';
@@ -6595,7 +6603,13 @@ function bossArt(g, w, r, t, look, hurt){
     rg.addColorStop(0, flashW ? '#ffffff' : '#6a4a4a'); rg.addColorStop(1, '#1e1012');
     g.fillStyle = rg; g.fill(); g.strokeStyle = MON_INK; g.lineWidth = 3.5; g.stroke();
     g.save();
-    g.strokeStyle = '#ff9a2a'; g.lineWidth = 2.5; g.shadowColor = '#ff5a10'; g.shadowBlur = 10;
+    g.strokeStyle = 'rgba(255,90,16,.35)'; g.lineWidth = 6;
+    g.beginPath();
+    g.moveTo(-r * 0.8, -r * 0.1); g.lineTo(-r * 0.55, r * 0.05); g.lineTo(-r * 0.62, r * 0.35);
+    g.moveTo(r * 0.75, -r * 0.4); g.lineTo(r * 0.55, -r * 0.2); g.lineTo(r * 0.7, r * 0.1); g.lineTo(r * 0.55, r * 0.45);
+    g.moveTo(-r * 0.2, -r * 0.85); g.lineTo(-r * 0.05, -r * 0.62); g.lineTo(r * 0.15, -r * 0.75);
+    g.stroke();
+    g.strokeStyle = '#ff9a2a'; g.lineWidth = 2.5;
     g.beginPath();
     g.moveTo(-r * 0.8, -r * 0.1); g.lineTo(-r * 0.55, r * 0.05); g.lineTo(-r * 0.62, r * 0.35);
     g.moveTo(r * 0.75, -r * 0.4); g.lineTo(r * 0.55, -r * 0.2); g.lineTo(r * 0.7, r * 0.1); g.lineTo(r * 0.55, r * 0.45);
@@ -6698,8 +6712,6 @@ function drawBoss(){
     ctx.globalAlpha = clamp(z.life, 0, 1);
     ctx.strokeStyle = '#fff7b0';
     ctx.lineWidth = 4;
-    ctx.shadowColor = '#ffe37a';
-    ctx.shadowBlur = lowGfx() ? 0 : 16;
     ctx.beginPath();
     const n = 6;
     for (let i = 0; i <= n; i++){
@@ -6921,9 +6933,7 @@ function drawWorldBanner(){
   ctx.lineJoin = 'round';
   ctx.lineWidth = 7;
   ctx.strokeStyle = 'rgba(21,10,43,.85)';
-  if (!lowGfx()){ ctx.shadowColor = th.monster.light; ctx.shadowBlur = 18; }
   ctx.strokeText(th.name, 0, 0);
-  ctx.shadowBlur = 0;
   ctx.fillStyle = '#fdf6e8';
   ctx.fillText(th.name, 0, 0);
   ctx.restore();
@@ -8367,6 +8377,27 @@ function buildSceneryTile(w, depth){
   return c;
 }
 
+function tileSpan(c){
+  if (c.__span !== undefined) return c.__span;
+  c.__span = null;
+  try {
+    const g = c.getContext('2d');
+    const W = c.width, H = c.height;
+    const d = g.getImageData(0, 0, W, H).data;
+    const used = new Uint8Array(W);
+    for (let y = 0; y < H; y += 2){
+      const row = y * W * 4;
+      for (let x = 0; x < W; x++) if (d[row + x * 4 + 3] > 2) used[x] = 1;
+    }
+    let bestA = -1, bestB = -1, runA = -1;
+    for (let x = 0; x <= W; x++){
+      if (x < W && !used[x]){ if (runA < 0) runA = x; }
+      else if (runA >= 0){ if (x - runA > bestB - bestA){ bestA = runA; bestB = x; } runA = -1; }
+    }
+    if (bestA >= 0 && bestB - bestA > W * 0.2) c.__span = [bestA, bestB];
+  } catch (e) { c.__span = null; }
+  return c.__span;
+}
 function sceneryTile(w, depth){
   const key = w + '|' + depth + '|' + scnRes() + '|' + VW;
   if (!scnCache[key]) scnCache[key] = buildSceneryTile(w, depth);
@@ -8443,7 +8474,16 @@ function drawSceneryFor(w, alpha, time){
     const tile = sceneryTile(w, depth);
     const f = depth ? 0.34 : 0.14;
     const off = ((-camY * f) % SCN_T + SCN_T) % SCN_T;
-    for (let y = off - SCN_T; y < VH; y += SCN_T) ctx.drawImage(tile, 0, y, VW, SCN_T);
+    const sp = tileSpan(tile);
+    for (let y = off - SCN_T; y < VH; y += SCN_T){
+      if (y + SCN_T < 0) continue;
+      if (!sp) ctx.drawImage(tile, 0, y, VW, SCN_T);
+      else {
+        const k = VW / tile.width;
+        if (sp[0] > 0) ctx.drawImage(tile, 0, 0, sp[0], tile.height, 0, y, sp[0] * k, SCN_T);
+        if (sp[1] < tile.width) ctx.drawImage(tile, sp[1], 0, tile.width - sp[1], tile.height, sp[1] * k, y, (tile.width - sp[1]) * k, SCN_T);
+      }
+    }
   }
   if (wi === 0){
     for (let i = 0; i < 14; i++){
@@ -8872,14 +8912,21 @@ function plat3dSkin(w){
     for (const x of [4, W * 0.33 - 3, W * 0.33 + 3, W * 0.66 - 3, W * 0.66 + 3, W - 4]){ g.beginPath(); g.arc(x, 0.5, 0.9, 0, 6.2832); g.fill(); }
   }
 
-  const s = document.createElement('canvas');
-  s.width = c.width; s.height = c.height;
-  const sg = s.getContext('2d');
-  sg.drawImage(c, 0, 0);
-  sg.globalCompositeOperation = 'source-in';
-  sg.fillStyle = sk.side;
-  sg.fillRect(0, 0, s.width, s.height);
-  const skin = { c, s, ox: -PADX, oy: -PADT, w: W + PADX * 2, h: H + PADT + PADB };
+  const mkSide = (top, bot) => {
+    const o = document.createElement('canvas');
+    o.width = c.width; o.height = c.height;
+    const og = o.getContext('2d');
+    og.drawImage(c, 0, 0);
+    og.globalCompositeOperation = 'source-in';
+    const lg = og.createLinearGradient(0, 0, 0, o.height);
+    lg.addColorStop(0, top); lg.addColorStop(1, bot);
+    og.fillStyle = lg;
+    og.fillRect(0, 0, o.width, o.height);
+    return o;
+  };
+  const s = mkSide(mixHex(sk.dirt[1], '#000000', 0.25), mixHex(sk.dirt[2], '#000000', 0.35));
+  const s2 = mkSide(mixHex(sk.cap[1], '#000000', 0.3), mixHex(sk.cap[2], '#000000', 0.45));
+  const skin = { c, s, s2, ox: -PADX, oy: -PADT, w: W + PADX * 2, h: H + PADT + PADB };
   plat3dCache[key] = skin;
   return skin;
 }
@@ -9211,9 +9258,17 @@ function drawPlat3D(p, key, w, h, y){
     ctx.fillStyle = jg;
     ctx.beginPath(); ctx.ellipse(w / 2, by + 6 * fl, 12, 16 * fl, 0, 0, 6.2832); ctx.fill();
   }
-  const sdx = clamp(d.dx * 0.55, -6, 6);
-  if (Math.abs(sdx) > 0.4){
-    for (let st = 3; st >= 1; st--) ctx.drawImage(sk3.s, sk3.ox + sdx * st / 3, sk3.oy, sk3.w + sx, sk3.h);
+  const ex = d.dx * 0.9, ey = d.dy * 0.75;
+  if (Math.abs(ex) + Math.abs(ey) > 0.6){
+    const bl = ultraSideBlend(d.dy);
+    const a0 = ctx.globalAlpha;
+    for (let st = 4; st >= 1; st--){
+      const k = st / 4;
+      const x = sk3.ox + ex * k, y = sk3.oy + ey * k;
+      if (bl < 0.98){ ctx.globalAlpha = a0; ctx.drawImage(sk3.s, x, y, sk3.w + sx, sk3.h); }
+      if (bl > 0.02){ ctx.globalAlpha = a0 * bl; ctx.drawImage(sk3.s2, x, y, sk3.w + sx, sk3.h); }
+    }
+    ctx.globalAlpha = a0;
   }
   ctx.drawImage(sk3.c, sk3.ox, sk3.oy, sk3.w + sx, sk3.h);
 }
@@ -10481,7 +10536,7 @@ function drawHeroShadow(x, y, sx, sy, tilt, face){
   ctx.scale(face * sx, sy);
   ctx.imageSmoothingQuality = 'low';
   ctx.drawImage(getHeroShadowCanvas(), -W / 2, -W / 2, W, W);
-  ctx.imageSmoothingQuality = 'high';
+  ctx.imageSmoothingQuality = 'medium';
   ctx.restore();
 }
 
@@ -11051,7 +11106,6 @@ function render(){
 
   if (OX > 0.5) drawSideCurtains();
   worldTransform();
-  drawVignette();
   if (state === STATE.PLAY || state === STATE.DYING){ drawWorldBanner(); drawHUD(); drawBossHud(); }
   if (state === STATE.PLAY) drawMonsterEventUI();
 }
@@ -11130,6 +11184,7 @@ function sceneNeedsRender(now){
   return false;
 }
 
+let lastRenderAt = -1e9;
 function frame(now){
   requestAnimationFrame(frame);
   let realDt = (now - last) / 1000;
@@ -11181,7 +11236,7 @@ function frame(now){
     else shakeX = shakeY = 0;
   }
 
-  if (sceneNeedsRender(now)) render();
+  if (sceneNeedsRender(now) && (now - lastRenderAt >= 15 || now < lastRenderAt)){ lastRenderAt = now; render(); }
   tapEvent = false;
 }
 
@@ -15619,7 +15674,7 @@ function refreshAdminBanInfo(){
   adminBanArmed = null;
 }
 async function adminBanDevice(on){
-  if (!adminCurrentCode || !cloudReady() || !isStaff() || !adminBanTarget) return;
+  if (!adminCurrentCode || !cloudReady() || !adminMode || isModOnly() || !adminBanTarget) return;
   if (adminCurrentCode === cloudCode || isDevCode(adminCurrentCode) || adminCurrentRole === 'mod' || adminCurrentRole === 'admin'){
     adminSetStatus('Нельзя забанить администрацию');
     return;
@@ -16140,7 +16195,7 @@ function drawPreviewHero(entry){
   pctx.setTransform(1, 0, 0, 1, 0, 0);
   pctx.clearRect(0, 0, 220, 220);
   pctx.imageSmoothingEnabled = true;
-  pctx.imageSmoothingQuality = 'high';
+  pctx.imageSmoothingQuality = 'medium';
   pctx.save();
   pctx.translate(110, 114);
   pctx.scale(2.9, 2.9);
