@@ -6577,19 +6577,31 @@ const CLAN_COLORS = ['#ffd34d', '#ff6b8a', '#7fe06b', '#5fc9e8', '#c9a8ff', '#ff
 const WEEK_EVENTS = ['boss', 'pass', 'fruit'];
 const SEASON_REWARDS = [[1, 5000], [3, 3000], [10, 1500], [50, 700], [100, 400]];
 
-function seasonKeyOf(d){ return 'sb_' + d.getUTCFullYear() + '_' + String(d.getUTCMonth() + 1).padStart(2, '0'); }
+const SEASON_ALIAS = { sb_2026_09: 'sb_2026_10' };
+function seasonKeyOf(d){
+  const k = 'sb_' + d.getUTCFullYear() + '_' + String(d.getUTCMonth() + 1).padStart(2, '0');
+  return SEASON_ALIAS[k] || k;
+}
 function seasonKey(){ return seasonKeyOf(new Date()); }
-function prevSeasonKey(){ const d = new Date(); d.setUTCDate(1); d.setUTCMonth(d.getUTCMonth() - 1); return seasonKeyOf(d); }
+function prevSeasonKey(){
+  const m = /^sb_(\d{4})_(\d{2})$/.exec(seasonKey());
+  const d = new Date(Date.UTC(parseInt(m[1], 10), parseInt(m[2], 10) - 2, 1));
+  return seasonKeyOf(d);
+}
 function seasonNumberOf(key){
   const m = /^sb_(\d{4})_(\d{2})$/.exec(key || '');
   if (!m) return 1;
   return Math.max(1, (parseInt(m[1], 10) - SEASON_START_Y) * 12 + parseInt(m[2], 10) - SEASON_START_M + 1);
 }
-function seasonDaysLeft(){
-  const d = new Date();
-  const end = Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 1);
-  return Math.max(1, Math.ceil((end - d.getTime()) / 86400000));
+function seasonEndOf(key){
+  const m = /^sb_(\d{4})_(\d{2})$/.exec(key || '');
+  if (!m) return Date.now();
+  return Date.UTC(parseInt(m[1], 10), parseInt(m[2], 10), 1);
 }
+function seasonDaysLeft(){
+  return Math.max(1, Math.ceil((seasonEndOf(seasonKey()) - Date.now()) / 86400000));
+}
+function sameSeason(a, b){ return (SEASON_ALIAS[a] || a) === (SEASON_ALIAS[b] || b); }
 let weekEventOverride = '';
 function weekEvent(now){
   if (weekEventOverride) return weekEventOverride;
@@ -6605,7 +6617,7 @@ function weekDaysLeft(now){
 }
 
 function loadSeasonBest(){
-  try { const v = JSON.parse(Store.get('seasonBest', 'null')); if (v && v.k === seasonKey()) return Math.max(0, parseInt(v.v, 10) || 0); } catch (e) {}
+  try { const v = JSON.parse(Store.get('seasonBest', 'null')); if (v && sameSeason(v.k, seasonKey())) return Math.max(0, parseInt(v.v, 10) || 0); } catch (e) {}
   return 0;
 }
 function saveSeasonBest(v){ Store.set('seasonBest', JSON.stringify({ k: seasonKey(), v: Math.max(0, Math.floor(v)) })); }
@@ -6635,7 +6647,10 @@ function seasonCloudFields(){
 function mergeSeasonFromCloud(f){
   if (!f) return;
   const k = seasonKey();
-  const r = parseInt((f[k] && f[k].integerValue) || '0', 10) || 0;
+  let r = parseInt((f[k] && f[k].integerValue) || '0', 10) || 0;
+  for (const old in SEASON_ALIAS){
+    if (SEASON_ALIAS[old] === k && f[old] && f[old].integerValue) r = Math.max(r, parseInt(f[old].integerValue, 10) || 0);
+  }
   if (r > loadSeasonBest()) saveSeasonBest(r);
   if (!myClan && f.clan && f.clan.stringValue){
     myClan = f.clan.stringValue;
@@ -6729,6 +6744,7 @@ async function checkSeasonRewards(){
   const cur = seasonKey();
   const last = Store.get('seasonLastKey', '');
   if (last === cur) return;
+  if (sameSeason(last, cur)){ Store.set('seasonLastKey', cur); return; }
   const prevBest = (() => { try { const v = JSON.parse(Store.get('seasonBest', 'null')); return v && v.k === last ? (parseInt(v.v, 10) || 0) : 0; } catch (e) { return 0; } })();
   if (!last || prevBest <= 0 || !cloudReady()){ Store.set('seasonLastKey', cur); return; }
   let rank = 0;
