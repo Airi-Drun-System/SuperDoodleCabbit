@@ -5222,7 +5222,7 @@ function updateFruits(dt){
     }
   }
   if (hasFruit('star') && score >= starNext){
-    starNext += 1000;
+    starNext = (Math.floor(score / 1000) + 1) * 1000;
     for (let k = 0; k < 14; k++){
       const a = k / 13;
       addCoin(clamp(hero.x + Math.sin(a * 6.2832) * 90, 24, VW - 24), hero.y - 120 - k * 38, null);
