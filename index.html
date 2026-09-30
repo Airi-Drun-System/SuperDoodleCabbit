@@ -1813,10 +1813,6 @@
               <span>Запрет на фото в чате</span>
               <input id="adminNoImages" type="checkbox">
             </label>
-            <label class="adminField">
-              <span>Своя музыка</span>
-              <input id="adminMusicInput" class="adminInput" type="text" maxlength="300" placeholder="файл.mp3 или ссылка">
-            </label>
             <div class="adminField">
               <span>Аватар</span>
               <button id="adminAvatarBtn" type="button" class="adminPwResetBtn">Поставить фото</button>
@@ -3492,13 +3488,6 @@ const ambientAudio = new Audio('ambient-music.mp3');
 ambientAudio.loop = true;
 ambientAudio.volume = musicVolume / 100;
 ambientAudio.preload = 'auto';
-let customMusic = '';
-function cleanMusicSrc(v){
-  v = String(v || '').trim();
-  if (/^([\w\-]{1,40}\/)?[\w\-. ()]{1,120}\.(mp3|ogg|m4a|wav|aac)$/i.test(v) && v.indexOf('..') === -1) return v;
-  if (/^https:\/\/[^\s"'<>]{4,290}$/i.test(v)) return v;
-  return '';
-}
 const MUSIC_TRACKS = {
   ddlc: { n: 'DDLC theme', file: 'ddlc-theme.mp3' }
 };
@@ -3506,7 +3495,7 @@ let musicTrack = Store.get('musicTrack', '');
 function trackOwned(id){ return !!MUSIC_TRACKS[id] && typeof owned !== 'undefined' && owned.has('music:' + id); }
 function musicSrcNow(){
   if (musicTrack && trackOwned(musicTrack)) return MUSIC_TRACKS[musicTrack].file;
-  return customMusic || 'ambient-music.mp3';
+  return 'ambient-music.mp3';
 }
 let musicSrcApplied = '';
 function applyMusicSrc(){
@@ -3551,14 +3540,6 @@ function refreshMusicRow(){
   add('', t('musicTrackDefault'));
   for (const id of ids) add(id, MUSIC_TRACKS[id].n);
 }
-function applyCustomMusic(v){
-  const src = cleanMusicSrc(v);
-  if (src === customMusic) return false;
-  customMusic = src;
-  Store.set('customMusic', src);
-  applyMusicSrc();
-  return true;
-}
 ambientAudio.addEventListener('error', () => {
   if (musicSrcApplied && musicSrcApplied !== 'ambient-music.mp3'){
     musicSrcApplied = 'ambient-music.mp3';
@@ -3569,7 +3550,7 @@ ambientAudio.addEventListener('error', () => {
   }
   ambientReady = false;
 });
-applyCustomMusic(Store.get('customMusic', ''));
+Store.set('customMusic', '');
 function startAmbient(){
   if (!musicOn || !ambientReady) return;
   if (!ambientAudio.paused) return;
@@ -11911,7 +11892,6 @@ async function cloudFetchOwnTitle(){
     myPwSet = !!(f.pwHash && f.pwHash.stringValue);
     Store.set('pwSet', myPwSet ? '1' : '0');
     if (typeof refreshPwState === 'function') refreshPwState();
-    applyCustomMusic((f.music && f.music.stringValue) || '');
     myRole = ['mod', 'admin'].indexOf((f.role && f.role.stringValue) || '') !== -1 ? f.role.stringValue : '';
     Store.set('role', myRole);
     if (typeof refreshStaffUI === 'function') refreshStaffUI();
@@ -14783,7 +14763,6 @@ async function adminLoad(codeOverride){
     document.getElementById('adminNoImages').checked = !!(f.noImages && f.noImages.booleanValue);
     adminBanTarget = { dev: (f.dev && f.dev.stringValue) || '', fp: (f.fp && f.fp.stringValue) || '', banned: !!(f.banned && f.banned.booleanValue) };
     refreshAdminBanInfo();
-    document.getElementById('adminMusicInput').value = (f.music && f.music.stringValue) || '';
     document.getElementById('adminTitleInput').value = (f.title && f.title.stringValue) || '';
     document.getElementById('adminTitleColorInput').value = (f.titleColor && f.titleColor.stringValue) || '';
     const badgeNickEl = document.getElementById('adminBadgeNickPreview');
@@ -15007,7 +14986,6 @@ async function adminSave(){
     trophies: statA.fields.trophies, trophiesText: statA.fields.trophiesText,
     pass: { stringValue: adminPassValue() },
     noImages: { booleanValue: !!document.getElementById('adminNoImages').checked },
-    music: { stringValue: cleanMusicSrc(document.getElementById('adminMusicInput').value) },
     owned: { arrayValue: { values: ownedList.map(v => ({ stringValue: v })) } },
     hat:   { stringValue: (adminCurrentEquipped && adminCurrentEquipped.hat)  || 'none' },
     acc:   { stringValue: (adminCurrentEquipped && adminCurrentEquipped.acc)  || 'none' },
@@ -15042,7 +15020,6 @@ async function adminSave(){
         trophies = statA.vals.trophies; Store.set('trophies', trophies);
         pass = normalizePass(parsePassStr(adminPassValue())); savePass();
         myNoImages = !!document.getElementById('adminNoImages').checked; Store.set('noImages', myNoImages ? '1' : '0');
-        applyCustomMusic(document.getElementById('adminMusicInput').value);
         nickname = nickMatch; Store.set('nick', nickname);
         myTitle = titleVal; Store.set('titleText', myTitle);
         myTitleColor = titleColorVal; Store.set('titleColor', myTitleColor);
