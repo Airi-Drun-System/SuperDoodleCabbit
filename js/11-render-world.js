@@ -371,9 +371,29 @@ function tileSpan(c){
   } catch (e) { c.__span = null; }
   return c.__span;
 }
+function tileParts(tile, sp){
+  if (tile.__parts) return tile.__parts;
+  const out = [];
+  const cut = (x, w) => {
+    if (w <= 0) return;
+    const c = document.createElement('canvas');
+    c.width = w; c.height = tile.height;
+    c.getContext('2d').drawImage(tile, x, 0, w, tile.height, 0, 0, w, tile.height);
+    out.push({ c, x });
+  };
+  if (!sp) out.push({ c: tile, x: 0 });
+  else { cut(0, sp[0]); cut(sp[1], tile.width - sp[1]); }
+  tile.__parts = out;
+  return out;
+}
+
 function sceneryTile(w, depth){
   const key = w + '|' + depth + '|' + scnRes() + '|' + VW;
-  if (!scnCache[key]) scnCache[key] = buildSceneryTile(w, depth);
+  if (!scnCache[key]){
+    const tag = '|' + scnRes() + '|' + VW;
+    for (const k in scnCache) if (k.indexOf(tag) === -1) delete scnCache[k];
+    scnCache[key] = buildSceneryTile(w, depth);
+  }
   if (!worldLight) return scnCache[key];
   const lk = key + '|L';
   if (!scnCache[lk]){
@@ -443,11 +463,28 @@ function drawSceneryFor(w, alpha, time){
     gl.addColorStop(1, 'rgba(255,110,30,' + (0.35 * p) + ')');
     ctx.fillStyle = gl; ctx.fillRect(-OX / S, VH * 0.6, cssW / S, VH * 0.4);
   }
+  const PX = S * DPR;
   for (const depth of [0, 1]){
     const tile = sceneryTile(w, depth);
     const f = depth ? 0.34 : 0.14;
     const off = ((-camY * f) % SCN_T + SCN_T) % SCN_T;
     const sp = tileSpan(tile);
+    const exact = Math.abs(tile.width - Math.ceil(VW * PX)) <= 1;
+    if (exact){
+      ctx.save();
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      const x0 = Math.round(OX * DPR);
+      const parts = tileParts(tile, sp);
+      for (let y = off - SCN_T; y < VH; y += SCN_T){
+        if (y + SCN_T < 0) continue;
+        const py = Math.round(y * PX);
+        for (let i = 0; i < parts.length; i++) ctx.drawImage(parts[i].c, x0 + parts[i].x, py);
+      }
+      ctx.restore();
+      continue;
+    }
+    const q = ctx.imageSmoothingQuality;
+    ctx.imageSmoothingQuality = 'low';
     for (let y = off - SCN_T; y < VH; y += SCN_T){
       if (y + SCN_T < 0) continue;
       if (!sp) ctx.drawImage(tile, 0, y, VW, SCN_T);
@@ -457,6 +494,7 @@ function drawSceneryFor(w, alpha, time){
         if (sp[1] < tile.width) ctx.drawImage(tile, sp[1], 0, tile.width - sp[1], tile.height, sp[1] * k, y, (tile.width - sp[1]) * k, SCN_T);
       }
     }
+    ctx.imageSmoothingQuality = q;
   }
   if (wi === 0){
     for (let i = 0; i < 14; i++){

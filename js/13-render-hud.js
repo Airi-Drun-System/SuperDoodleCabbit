@@ -62,7 +62,7 @@ function drawParticles(){
       ctx.strokeStyle = q.color;
       ctx.lineWidth = 3 * a;
       ctx.beginPath();
-      ctx.arc(q.x, y, q.r, 0, 6.2832);
+      ctx.arc(q.x, y, Math.max(0, q.r), 0, 6.2832);
       ctx.stroke();
     } else {
       ctx.globalAlpha = a * 0.4;
@@ -246,8 +246,11 @@ function render(){
   ctx.save();
   ctx.translate(shakeX, shakeY);
   drawShadows();
+  const sq = ctx.imageSmoothingQuality;
+  ctx.imageSmoothingQuality = 'low';
   for (const p of platforms) drawPlatform(p);
   for (const c of coinsOnMap) drawCoin(c);
+  ctx.imageSmoothingQuality = sq;
   drawFruitPickups();
   for (const m of monsters) drawMonster(m);
   drawBoss();
@@ -309,7 +312,17 @@ let last = performance.now(), acc = 0;
 let perfSampleSum = 0, perfSampleCount = 0;
 const PERF_SAMPLE_FRAMES = 90;
 const PERF_SLOW_FRAME = 1 / 42;
+const PERF_FAST_FRAME = 1 / 56;
 
+let perfGoodRuns = 0, autoDprFail = 9;
+function setAutoDpr(v){
+  v = Math.round(clamp(v, AUTO_DPR_MIN, AUTO_DPR_MAX) * 100) / 100;
+  if (v === autoDprCap) return false;
+  autoDprCap = v;
+  Store.set('autoDpr', v);
+  applyGfxChange();
+  return true;
+}
 function trackPerformance(realDt){
   if (gfxMode !== 'auto' || autoLowGfx || state !== STATE.PLAY || monsterEvent){
     perfSampleSum = 0; perfSampleCount = 0;
@@ -322,9 +335,21 @@ function trackPerformance(realDt){
   const avg = perfSampleSum / perfSampleCount;
   perfSampleSum = 0; perfSampleCount = 0;
   if (avg > PERF_SLOW_FRAME){
+    perfGoodRuns = 0;
+    autoDprFail = Math.min(autoDprFail, autoDprCap);
+    if (DPR > AUTO_DPR_MIN + 0.01 && setAutoDpr(Math.min(autoDprCap, DPR) - 0.25)) return;
     autoLowGfx = true;
     applyGfxChange();
+    return;
   }
+  if (avg < PERF_FAST_FRAME){
+    perfGoodRuns++;
+    const next = autoDprCap + 0.25;
+    if (perfGoodRuns >= 4 && next < autoDprFail - 0.01 && (window.devicePixelRatio || 1) > autoDprCap + 0.01){
+      perfGoodRuns = 0;
+      setAutoDpr(next);
+    }
+  } else perfGoodRuns = 0;
 }
 
 function applyGfxChange(){
@@ -364,7 +389,8 @@ function frame(now){
   let realDt = (now - last) / 1000 * PERF_OK;
   last = now;
   trackPerformance(realDt);
-  if (realDt > 0.1) realDt = 0.1;
+  if (!(realDt > 0)) realDt = 0;
+  else if (realDt > 0.1) realDt = 0.1;
 
   if (state === STATE.PLAY){
     let dt = realDt;

@@ -104,6 +104,9 @@ let gfxMode = 'auto';
 try { gfxMode = window.localStorage.getItem('doodlecabbit.gfxMode') || 'auto'; } catch (e) {}
 if (GFX_MODES.indexOf(gfxMode) === -1) gfxMode = 'auto';
 let autoLowGfx = false;
+const AUTO_DPR_MAX = 1.75, AUTO_DPR_MIN = 1;
+let autoDprCap = AUTO_DPR_MAX;
+try { const v = parseFloat(window.localStorage.getItem('doodlecabbit.autoDpr')); if (v >= AUTO_DPR_MIN && v <= AUTO_DPR_MAX) autoDprCap = v; } catch (e) {}
 function lowGfx(){ return gfxMode === 'low' || (gfxMode === 'auto' && autoLowGfx); }
 function ultraGfx(){ return gfxMode === 'ultra'; }
 
@@ -118,7 +121,7 @@ function resize(){
   cssH = window.innerHeight || cssH || VH;
   if (!(cssW > 0)) cssW = VW;
   if (!(cssH > 0)) cssH = VH;
-  DPR  = lowGfx() ? 1 : Math.min(window.devicePixelRatio || 1, gfxMode === 'auto' ? 1.75 : 2);
+  DPR  = lowGfx() ? 1 : Math.min(window.devicePixelRatio || 1, gfxMode === 'auto' ? autoDprCap : 2);
   cvs.width  = Math.round(cssW * DPR);
   cvs.height = Math.round(cssH * DPR);
   blurCvs.width  = lowGfx() ? 1 : cvs.width;
