@@ -633,7 +633,7 @@ document.getElementById('cloudRestoreBtn').addEventListener('click', () => {
   cloudRestore(document.getElementById('cloudRestoreInput').value, document.getElementById('cloudRestorePw').value);
 });
 document.getElementById('pwSaveBtn').addEventListener('click', savePassword);
-document.getElementById('cloudRefreshBtn').addEventListener('click', cloudFetchLeaderboard);
+document.getElementById('cloudRefreshBtn').addEventListener('click', () => { const b = document.getElementById('cloudRefreshBtn'); b.classList.remove('spin'); void b.offsetWidth; b.classList.add('spin'); cloudFetchLeaderboard(false); });
 document.getElementById('playerSearchBtn').addEventListener('click', runPlayerSearch);
 document.getElementById('playerSearchInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') runPlayerSearch(); });
 

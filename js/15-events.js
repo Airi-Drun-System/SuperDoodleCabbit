@@ -289,6 +289,7 @@ function gameOver(){
   noteSeasonScore(score);
   const passGain = recordRunForPass(score, runCoins);
   addToLeaderboard(nickname, score);
+  if (typeof lbFetchedAt !== 'undefined') lbFetchedAt = 0;
   cloudPushSoon();
   const pLine = document.getElementById('passLine');
   if (pLine) pLine.textContent = t('passRunXp').replace('{x}', passGain.runXp + passGain.questXp);

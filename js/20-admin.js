@@ -44,12 +44,12 @@ async function refreshOnlineCounter(){
   const el = document.getElementById('onlineCounter');
   const txt = document.getElementById('onlineCounterText');
   if (!el || !txt) return;
-  if (!isStaff() || !cloudReady()){ el.classList.add('hidden'); return; }
+  if (!isDevCode(cloudCode) || !cloudReady()){ el.classList.add('hidden'); return; }
   el.classList.remove('hidden');
   if (!txt.textContent) txt.textContent = '… ' + t('onlineNow');
   if (document.hidden) return;
   const n = await fetchOnlineCount();
-  if (!isStaff()){ el.classList.add('hidden'); return; }
+  if (!isDevCode(cloudCode)){ el.classList.add('hidden'); return; }
   if (n < 0){ txt.textContent = t('onlineNow') + ': ' + t('onlineErr'); return; }
   txt.textContent = n + ' ' + t('onlineNow') + (eventInfo && eventInfo.count ? ' · ' + eventInfo.count + ' ' + t('onlineTotal') : '');
   el.classList.remove('hidden');

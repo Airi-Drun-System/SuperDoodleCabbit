@@ -6,8 +6,8 @@
 <meta name="theme-color" content="#150a2b">
 <title>Cabbit Jump!</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
-<link rel="preload" href="fonts/bips.woff?v=20261001b" as="font" type="font/woff" crossorigin>
-<link rel="stylesheet" href="css/style.css?v=20261001b">
+<link rel="preload" href="fonts/bips.woff?v=20261005" as="font" type="font/woff" crossorigin>
+<link rel="stylesheet" href="css/style.css?v=20261005">
 </head>
 <body>
 <div id="wrap">
@@ -39,7 +39,9 @@
     <span id="spearCd"></span>
   </button>
 
-  <div id="nickname" class="screen">
+  <div id="bootSplash"><b>Cabbit Jump!</b><i></i></div>
+  <script>setTimeout(function(){var b=document.getElementById("bootSplash");if(b)b.remove();},9000);</script>
+  <div id="nickname" class="screen hidden">
     <div id="nickBox" class="pop">
       <h2 data-i18n="nickTitle" style="font-size:20px;font-weight:800;">Как тебя зовут?</h2>
       <input id="nickInput" type="text" maxlength="14" data-i18n-placeholder="nickPlaceholder" placeholder="Ник котокролика">
@@ -777,26 +779,26 @@
   </div>
 </div>
 
-<script src="js/01-core.js?v=20261001b"></script>
-<script src="js/02-badges.js?v=20261001b"></script>
-<script src="js/03-audio.js?v=20261001b"></script>
-<script src="js/04-outfits.js?v=20261001b"></script>
-<script src="js/05-rig.js?v=20261001b"></script>
-<script src="js/06-world.js?v=20261001b"></script>
-<script src="js/07-fruits.js?v=20261001b"></script>
-<script src="js/08-bosses.js?v=20261001b"></script>
-<script src="js/09-seasons.js?v=20261001b"></script>
-<script src="js/10-physics.js?v=20261001b"></script>
-<script src="js/11-render-world.js?v=20261001b"></script>
-<script src="js/12-render-hero.js?v=20261001b"></script>
-<script src="js/13-render-hud.js?v=20261001b"></script>
-<script src="js/14-ui.js?v=20261001b"></script>
-<script src="js/15-events.js?v=20261001b"></script>
-<script src="js/16-cloud.js?v=20261001b"></script>
-<script src="js/17-device.js?v=20261001b"></script>
-<script src="js/18-profile-chat.js?v=20261001b"></script>
-<script src="js/19-inbox.js?v=20261001b"></script>
-<script src="js/20-admin.js?v=20261001b"></script>
-<script src="js/21-settings.js?v=20261001b"></script>
+<script src="js/01-core.js?v=20261005"></script>
+<script src="js/02-badges.js?v=20261005"></script>
+<script src="js/03-audio.js?v=20261005"></script>
+<script src="js/04-outfits.js?v=20261005"></script>
+<script src="js/05-rig.js?v=20261005"></script>
+<script src="js/06-world.js?v=20261005"></script>
+<script src="js/07-fruits.js?v=20261005"></script>
+<script src="js/08-bosses.js?v=20261005"></script>
+<script src="js/09-seasons.js?v=20261005"></script>
+<script src="js/10-physics.js?v=20261005"></script>
+<script src="js/11-render-world.js?v=20261005"></script>
+<script src="js/12-render-hero.js?v=20261005"></script>
+<script src="js/13-render-hud.js?v=20261005"></script>
+<script src="js/14-ui.js?v=20261005"></script>
+<script src="js/15-events.js?v=20261005"></script>
+<script src="js/16-cloud.js?v=20261005"></script>
+<script src="js/17-device.js?v=20261005"></script>
+<script src="js/18-profile-chat.js?v=20261005"></script>
+<script src="js/19-inbox.js?v=20261005"></script>
+<script src="js/20-admin.js?v=20261005"></script>
+<script src="js/21-settings.js?v=20261005"></script>
 </body>
 </html>

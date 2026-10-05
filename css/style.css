@@ -1632,3 +1632,12 @@ body.st-paper{background:#fcfaf2;}
   .hint{display:none;}
 }
 
+
+#bootSplash{position:fixed;inset:0;z-index:9000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;background:radial-gradient(90% 70% at 50% 40%,#4a2580,#140828);transition:opacity .35s;}
+#bootSplash b{font-family:"BIPs",sans-serif;font-size:44px;color:#ffd34d;text-shadow:0 4px 0 #6a2a00;}
+#bootSplash i{width:46px;height:46px;border-radius:50%;border:5px solid rgba(255,211,77,.25);border-top-color:#ffd34d;animation:bootSpin .8s linear infinite;}
+#bootSplash.gone{opacity:0;pointer-events:none;}
+@keyframes bootSpin{to{transform:rotate(360deg);}}
+#cloudRefreshBtn.spin svg,#cloudRefreshBtn.spin{animation:refSpin .6s ease;}
+@keyframes refSpin{from{transform:rotate(0);}to{transform:rotate(360deg);}}
+body:has(#chatModal:not(.hidden)) .adminFab,body:has(#inboxModal:not(.hidden)) .adminFab,body:has(.profileOverlay:not(.hidden)) .adminFab{display:none !important;}
