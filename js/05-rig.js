@@ -320,7 +320,7 @@ const SPEAR_CD = 6;
 let spearCdLeft = 0;
 let spearCdShown = -1;
 const SPEAR_V = -1250;
-const coinMult      = () => (hasHat('crown') ? 2 : 1) * (eventActive() ? 2 : 1);
+const coinMult      = () => (hasHat('crown') ? 2 : 1);
 const hasMagnet     = () => hasHat('halo') || (typeof hasFruit === 'function' && hasFruit('magnet'));
 const hasDoubleJump = () => hasAcc('backpack');
 

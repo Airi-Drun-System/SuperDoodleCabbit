@@ -121,7 +121,7 @@ function refreshAvatarPreview(){
   const modNote = document.getElementById('avatarModNote');
   if (modNote) modNote.classList.toggle('hidden', !(isCustomAvatar(avatar) && !myAvatarOk));
   if (isCustomAvatar(avatar)){
-    box.innerHTML = '<img src="' + avatar + '" alt="">';
+    box.textContent = ''; const aim = document.createElement('img'); aim.alt = ''; aim.src = avatar; box.appendChild(aim);
     if (removeBtn) removeBtn.classList.remove('hidden');
   } else {
     box.textContent = avatar;
@@ -291,7 +291,6 @@ buildShop();
 applyStaticI18n();
 if (cloudReady()){
   cloudFetchOwnTitle();
-  checkEvent();
   checkPendingGrant();
   updatePresence();
   setInterval(updatePresence, 100000);
@@ -304,7 +303,6 @@ if (cloudReady()){
 }
 
 initDevice().then(() => { if (cloudReady() && !cloudCode) checkDeviceBan(null); });
-refreshEventBanner();
 if (nickname){
   state = STATE.MENU;
   hideAllScreens();

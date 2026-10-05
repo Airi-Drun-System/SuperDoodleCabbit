@@ -3,7 +3,6 @@ const SEASON_START_Y = 2026, SEASON_START_M = 10;
 const CLAN_PRICE = 1000;
 const CLAN_MAX = 20;
 const CLAN_COLORS = ['#ffd34d', '#ff6b8a', '#7fe06b', '#5fc9e8', '#c9a8ff', '#ff9a5c'];
-const WEEK_EVENTS = ['boss', 'pass', 'fruit'];
 const SEASON_REWARDS = [[1, 5000], [3, 3000], [10, 1500], [50, 700], [100, 400]];
 
 const SEASON_ALIAS = { sb_2026_09: 'sb_2026_10' };
@@ -31,20 +30,6 @@ function seasonDaysLeft(){
   return Math.max(1, Math.ceil((seasonEndOf(seasonKey()) - Date.now()) / 86400000));
 }
 function sameSeason(a, b){ return (SEASON_ALIAS[a] || a) === (SEASON_ALIAS[b] || b); }
-let weekEventOverride = '';
-function weekEvent(now){
-  if (weekEventOverride) return weekEventOverride;
-  const t0 = Date.UTC(2026, 8, 28);
-  const w = Math.floor(((now || Date.now()) - t0) / (7 * 86400000));
-  return WEEK_EVENTS[((w % WEEK_EVENTS.length) + WEEK_EVENTS.length) % WEEK_EVENTS.length];
-}
-function weekDaysLeft(now){
-  const t0 = Date.UTC(2026, 8, 28);
-  const ms = (now || Date.now()) - t0;
-  const into = ((ms % (7 * 86400000)) + 7 * 86400000) % (7 * 86400000);
-  return Math.max(1, Math.ceil((7 * 86400000 - into) / 86400000));
-}
-
 function loadSeasonBest(){
   try { const v = JSON.parse(Store.get('seasonBest', 'null')); if (v && sameSeason(v.k, seasonKey())) return Math.max(0, parseInt(v.v, 10) || 0); } catch (e) {}
   return 0;
@@ -206,8 +191,6 @@ function refreshSeasonCard(){
   if (d) d.textContent = t('seasonDaysLeft').replace('{d}', seasonDaysLeft());
   const b = document.getElementById('seasonCardBest');
   if (b) b.textContent = compactNum(loadSeasonBest());
-  const e = document.getElementById('seasonCardEvent');
-  if (e) e.textContent = t('ev_' + weekEvent()) + ' · ' + t('seasonDaysLeft').replace('{d}', weekDaysLeft());
 }
 
 let seasonTab = 'players';
@@ -228,7 +211,7 @@ function setSeasonTab(tab){
   seasonTab = tab;
   document.querySelectorAll('#seasonTabs [data-tab]').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
   const head = document.getElementById('seasonHead');
-  if (head) head.innerHTML = '<div class="seasonHeadTitle">' + escapeHtml(t('seasonTitle').replace('{n}', seasonNumberOf(seasonKey()))) + '</div><div class="seasonHeadSub">' + escapeHtml(t('seasonDaysLeft').replace('{d}', seasonDaysLeft())) + ' · ' + escapeHtml(t('ev_' + weekEvent())) + '</div><div class="seasonHeadHint">' + escapeHtml(t('evd_' + weekEvent())) + '</div>';
+  if (head) head.innerHTML = '<div class="seasonHeadTitle">' + escapeHtml(t('seasonTitle').replace('{n}', seasonNumberOf(seasonKey()))) + '</div><div class="seasonHeadSub">' + escapeHtml(t('seasonDaysLeft').replace('{d}', seasonDaysLeft())) + '</div>';
   if (tab === 'players') renderSeasonPlayers();
   else if (tab === 'clans') renderSeasonClans();
   else renderMyClan();

@@ -74,7 +74,6 @@ async function cloudFetchOwnTitle(){
       if (typeof refreshShopState === 'function') refreshShopState();
       if (typeof cloudPushSoon === 'function') cloudPushSoon();
     }
-    if (f.pass && f.pass.stringValue){ pass = mergePass(parsePassStr(f.pass.stringValue)); savePass(); if (typeof refreshPassCard === 'function') refreshPassCard(); }
     if (f.fruits && f.fruits.stringValue) mergeFruitsFrom(f.fruits.stringValue);
     mergeSeasonFromCloud(f);
     if (f.daily && f.daily.stringValue){ mergeDaily(f.daily.stringValue); refreshDailyBtn(); }
@@ -83,7 +82,6 @@ async function cloudFetchOwnTitle(){
     Store.set('titleText', myTitle);
     Store.set('titleColor', myTitleColor);
     applyOwnBadgeFromFields(f);
-    setKeepFromFields(f);
     checkDeviceBan(f);
     myNoImages = !!(f.noImages && f.noImages.booleanValue);
     if (myNoImages && ((f.role && (f.role.stringValue === 'mod' || f.role.stringValue === 'admin')) || adminMode || isDevCode(cloudCode))){
@@ -156,7 +154,6 @@ async function cloudPush(){
     trail:  { stringValue: outfit.trail },
     daily:  { stringValue: JSON.stringify(daily) },
     trophies: { integerValue: String(trophies) },
-    pass: { stringValue: JSON.stringify(pass) },
     spent: { integerValue: String(coinsSpent) },
     fruits: { stringValue: fruitStr() }
   };

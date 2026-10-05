@@ -65,7 +65,7 @@ function playUnlock(){
 (function closedGate(){
   const scr = document.getElementById('closedScreen');
   if (!GAME_CLOSED){ if (scr) scr.hidden = true; setTimeout(showWelcome, 600); return; }
-  const stop = (e) => { if (!GAME_CLOSED) return; if (e && e.target && e.target.id === 'closedPin') return; if (e && e.stopImmediatePropagation) e.stopImmediatePropagation(); if (e && e.cancelable && e.preventDefault) e.preventDefault(); };
+  const stop = (e) => { if (!GAME_CLOSED) return; if (e && e.target && (e.target.id === 'closedEmail' || e.target.id === 'closedPass')) return; if (e && e.stopImmediatePropagation) e.stopImmediatePropagation(); if (e && e.cancelable && e.preventDefault) e.preventDefault(); };
   ['keydown', 'keyup', 'keypress'].forEach((ev) => window.addEventListener(ev, stop, true));
   const tEl = document.getElementById('closedTimer');
   const tick = () => {
@@ -222,241 +222,8 @@ function openTrophyInfo(){
 }
 function closeTrophyInfo(){ document.getElementById('trophyModal').classList.add('hidden'); sfxPopupClose(); }
 
-const PASS_EPOCH = Date.UTC(2026, 8, 28, 0, 0);
-const PASS_SEASON_MS = 30 * 86400000;
-const PASS_XP_PER_LVL = 250;
-const PASS_LEVELS = 30;
-const PASS_GOLD_PRICE = 15000;
-const PASS_FREE = [{ c: 100 }, { c: 150 }, { i: 'acc:tie' }, { c: 150 }, { c: 200 }, { i: 'acc:pearls' }, { c: 200 }, { c: 250 }, { i: 'acc:scarf' }, { c: 300 },
-  { c: 250 }, { i: 'acc:hearteye' }, { c: 300 }, { c: 300 }, { i: 'hat:cowboy' }, { c: 300 }, { c: 350 }, { i: 'hat:flowercrown' }, { c: 350 }, { c: 400 },
-  { c: 400 }, { i: 'hat:sunhat' }, { c: 400 }, { c: 450 }, { i: 'hat:propeller' }, { c: 450 }, { c: 500 }, { i: 'acc:backpack' }, { c: 500 }, { c: 1000 }];
-const PASS_GOLD = [{ c: 500 }, { c: 500 }, { i: 'hat:crown' }, { c: 600 }, { i: 'tool:mace' }, { c: 600 }, { c: 600 }, { i: 'hat:tophat' }, { c: 700 }, { i: 'hat:halo' },
-  { c: 700 }, { c: 700 }, { i: 'tool:bow' }, { c: 800 }, { c: 800 }, { i: 'hat:bow' }, { c: 800 }, { c: 900 }, { c: 900 }, { i: 'perk:multiacc' },
-  { c: 900 }, { c: 1000 }, { c: 1000 }, { i: 'hat:glass' }, { c: 1000 }, { i: 'char:hero2' }, { c: 1200 }, { c: 1200 }, { c: 1500 }, { t: 1 }];
-const SLOT_ICON = { hat: '🎩', acc: '🎀', tool: '🏹', char: '🐰', perk: '✨' };
-const ITEM_ICON = { 'hat:crown': '👑', 'hat:halo': '😇', 'hat:cowboy': '🤠', 'hat:flowercrown': '🌸', 'hat:sunhat': '👒', 'hat:propeller': '🚁', 'hat:bow': '🎀', 'hat:tophat': '🎩', 'acc:pearls': '📿', 'acc:scarf': '🧣', 'acc:hearteye': '😍', 'acc:backpack': '🎒', 'acc:tie': '👔', 'tool:mace': '🔨', 'tool:bow': '🏹', 'char:hero2': '🐰', 'perk:multiacc': '✨' };
-
 let serverOffset = null;
 function nowServer(){ return Date.now() + (serverOffset || 0); }
-function passSeasonNow(){ return Math.max(1, Math.floor((nowServer() - PASS_EPOCH) / PASS_SEASON_MS) + 1); }
-function passDaysLeft(){ return Math.max(1, Math.ceil((PASS_EPOCH + passSeasonNow() * PASS_SEASON_MS - nowServer()) / 86400000)); }
-function normalizePass(p){
-  const s = passSeasonNow();
-  if (!p || typeof p !== 'object' || p.s !== s) return { s, xp: 0, gold: false, cf: [], cg: [] };
-  const lv = (a) => Array.isArray(a) ? a.map(x => parseInt(x, 10)).filter(x => x >= 1 && x <= PASS_LEVELS).filter((x, i, arr) => arr.indexOf(x) === i) : [];
-  return { s, xp: Math.max(0, Math.min(PASS_LEVELS * PASS_XP_PER_LVL, parseInt(p.xp, 10) || 0)), gold: !!p.gold, cf: lv(p.cf), cg: lv(p.cg) };
-}
-function parsePassStr(str){ try { return JSON.parse(str || 'null'); } catch (e) { return null; } }
-let pass = normalizePass(parsePassStr(Store.get('pass', '')));
-function savePass(){ Store.set('pass', JSON.stringify(pass)); }
-function passLevel(){ pass = normalizePass(pass); return Math.min(PASS_LEVELS, Math.floor(pass.xp / PASS_XP_PER_LVL)); }
-function mergePass(remote){
-  const r = normalizePass(remote);
-  const l = normalizePass(pass);
-  if (r.s !== l.s) return l;
-  const uni = (a, b) => a.concat(b.filter(x => a.indexOf(x) === -1));
-  return { s: l.s, xp: Math.max(l.xp, r.xp), gold: l.gold || r.gold, cf: uni(l.cf, r.cf), cg: uni(l.cg, r.cg) };
-}
-function passClaimableCount(){
-  const lvl = passLevel();
-  let n = 0;
-  for (let L = 1; L <= lvl; L++){
-    if (pass.cf.indexOf(L) === -1) n++;
-    if (pass.gold && pass.cg.indexOf(L) === -1) n++;
-  }
-  return n;
-}
-function addPassXp(x){
-  const before = passLevel();
-  pass.xp = Math.min(PASS_LEVELS * PASS_XP_PER_LVL, pass.xp + Math.max(0, Math.floor(x)));
-  savePass();
-  const after = passLevel();
-  if (after > before) showToast(t('passLvlUp').replace('{l}', after));
-  refreshPassCard();
-  return after > before;
-}
-function rewardLabel(r){
-  if (r.t) return { icon: '👑', text: t('passTitleReward') };
-  if (r.c) return { icon: '🪙', text: r.c + ' ' + t('coinsWord') };
-  const k = r.i.indexOf(':');
-  const slot = r.i.slice(0, k), val = r.i.slice(k + 1);
-  return { icon: ITEM_ICON[r.i] || SLOT_ICON[slot] || '🎁', text: ti(slot, val).n };
-}
-function grantReward(r){
-  if (r.t){
-    if (!myTitle){ myTitle = 'Cabbit Pass'; myTitleColor = 'linear-gradient(90deg,#ffe07a,#ff9f45,#ffe07a)'; Store.set('titleText', myTitle); Store.set('titleColor', myTitleColor); }
-    else { coins += 3000; Store.set('coins', coins); }
-    return;
-  }
-  if (r.c){ coins += r.c; Store.set('coins', coins); return; }
-  if (owned.has(r.i)){
-    const k = r.i.indexOf(':');
-    const info = OUTFITS[r.i.slice(0, k)] && OUTFITS[r.i.slice(0, k)][r.i.slice(k + 1)];
-    coins += Math.max(100, (info && info.price) || 0);
-    Store.set('coins', coins);
-    return;
-  }
-  owned.add(r.i);
-  saveOwned();
-}
-function claimPassReward(line, L){
-  pass = normalizePass(pass);
-  if (L < 1 || L > passLevel()) return false;
-  const arr = line === 'gold' ? pass.cg : pass.cf;
-  if (line === 'gold' && !pass.gold) return false;
-  if (arr.indexOf(L) !== -1) return false;
-  const r = (line === 'gold' ? PASS_GOLD : PASS_FREE)[L - 1];
-  grantReward(r);
-  arr.push(L);
-  savePass();
-  sfxCoin(); buzz(15);
-  refreshShopState();
-  renderPass();
-  cloudPushSoon();
-  return true;
-}
-function buyGoldPass(){
-  pass = normalizePass(pass);
-  if (pass.gold) return false;
-  if (coins < PASS_GOLD_PRICE){ showToast(t('passNoCoins').replace('{p}', PASS_GOLD_PRICE)); return false; }
-  coins -= PASS_GOLD_PRICE;
-  noteSpent(PASS_GOLD_PRICE);
-  Store.set('coins', coins);
-  pass.gold = true;
-  savePass();
-  showToast(t('passBought'));
-  sfxSpring(); buzz(25);
-  refreshShopState();
-  renderPass();
-  cloudPushSoon();
-  return true;
-}
-
-function questDayKey(){ const d = new Date(nowServer()); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
-function questsForDay(key){
-  let h = 0;
-  for (let i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) >>> 0;
-  const runs = h % 2 ? 5 : 3;
-  const sc = [1500, 2500, 3500][h % 3];
-  const cn = (h >> 3) % 2 ? 80 : 40;
-  return [
-    { id: 'runs', n: runs, xp: runs === 5 ? 90 : 60, text: t(runs === 5 ? 'qRuns5' : 'qRuns3') },
-    { id: 'score', n: sc, xp: sc >= 3500 ? 120 : (sc >= 2500 ? 90 : 70), text: t('qScore').replace('{n}', sc) },
-    { id: 'coins', n: cn, xp: cn >= 80 ? 90 : 60, text: t('qCoins').replace('{n}', cn) }
-  ];
-}
-function loadQuestState(){
-  let q = parsePassStr(Store.get('quests', ''));
-  const key = questDayKey();
-  if (q && q.d !== key && serverOffset === null && cloudReady() && Array.isArray(q.done)) return q;
-  if (!q || q.d !== key) q = { d: key, runs: 0, best: 0, coins: 0, done: [] };
-  if (!Array.isArray(q.done)) q.done = [];
-  return q;
-}
-function questProgress(q, id){ return id === 'runs' ? q.runs : (id === 'score' ? q.best : q.coins); }
-const MIN_RUN_SCORE = 150;
-function recordRunForPass(sc, runCoinsGot){
-  const q = loadQuestState();
-  if (sc >= MIN_RUN_SCORE) q.runs += 1;
-  q.best = Math.max(q.best, sc);
-  q.coins += Math.max(0, runCoinsGot);
-  let questXp = 0;
-  const done = [];
-  for (const qu of questsForDay(q.d)){
-    if (q.done.indexOf(qu.id) === -1 && questProgress(q, qu.id) >= qu.n){ q.done.push(qu.id); questXp += qu.xp; done.push(qu); }
-  }
-  Store.set('quests', JSON.stringify(q));
-  const runXp = sc >= MIN_RUN_SCORE ? Math.round(Math.min(60, Math.floor(Math.max(0, sc) / 60)) * (typeof hasFruit === 'function' && hasFruit('star') ? 1.5 : 1) * (weekEvent() === 'pass' ? 1.5 : 1)) : 0;
-  addPassXp(runXp + questXp);
-  if (done.length) setTimeout(() => showToast(t('questDone').replace('{x}', done.reduce((a, b) => a + b.xp, 0))), 900);
-  return { runXp, questXp };
-}
-
-function refreshPassCard(){
-  const lvl = passLevel();
-  const lv = document.getElementById('passCardLvl');
-  if (lv) lv.textContent = lvl + ' / ' + PASS_LEVELS;
-  const fill = document.getElementById('passCardFill');
-  if (fill) fill.style.width = (lvl >= PASS_LEVELS ? 100 : Math.round((pass.xp % PASS_XP_PER_LVL) / PASS_XP_PER_LVL * 100)) + '%';
-  const dot = document.getElementById('passCardDot');
-  const n = passClaimableCount();
-  if (dot){ dot.textContent = n > 9 ? '9+' : String(n); dot.classList.toggle('hidden', n === 0); }
-  const tr = document.getElementById('menuTrophies');
-  if (tr) tr.textContent = typeof compactNum === 'function' ? compactNum(trophies) : trophies;
-}
-
-function renderPass(){
-  pass = normalizePass(pass);
-  const lvl = passLevel();
-  const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
-  set('passSeason', t('passSeasonTxt').replace('{s}', pass.s).replace('{d}', passDaysLeft()));
-  set('passLvlBadge', String(lvl));
-  const fill = document.getElementById('passXpFill');
-  if (fill) fill.style.width = (lvl >= PASS_LEVELS ? 100 : Math.round((pass.xp % PASS_XP_PER_LVL) / PASS_XP_PER_LVL * 100)) + '%';
-  set('passXpText', lvl >= PASS_LEVELS ? t('passMaxTxt') : t('passXpTxt').replace('{x}', pass.xp % PASS_XP_PER_LVL).replace('{n}', PASS_XP_PER_LVL).replace('{l}', lvl + 1));
-  const buy = document.getElementById('passBuyBtn');
-  if (buy){ buy.textContent = pass.gold ? t('passOwned') : t('passBuy').replace('{p}', PASS_GOLD_PRICE); buy.classList.toggle('owned', pass.gold); }
-  const qBox = document.getElementById('passQuests');
-  if (qBox){
-    const q = loadQuestState();
-    let h = '<div class="passQTitle">' + escapeHtml(t('passQuestsTitle')) + '</div>';
-    for (const qu of questsForDay(q.d)){
-      const pr = Math.min(qu.n, questProgress(q, qu.id));
-      const done = q.done.indexOf(qu.id) !== -1;
-      h += '<div class="passQuest' + (done ? ' done' : '') + '"><span>' + (done ? '✅' : '🎯') + '</span><div class="qMain">' + escapeHtml(qu.text) + ' · ' + pr + '/' + qu.n +
-        '<div class="qBar"><i style="width:' + Math.round(pr / qu.n * 100) + '%"></i></div></div><span class="qXp">+' + qu.xp + '</span></div>';
-    }
-    qBox.innerHTML = h;
-  }
-  const track = document.getElementById('passTrack');
-  if (!track) return;
-  track.innerHTML = '';
-  let firstClaim = null;
-  for (let L = 1; L <= PASS_LEVELS; L++){
-    const row = document.createElement('div');
-    row.className = 'passRow' + (L <= lvl ? ' reached' : '');
-    row.dataset.lvl = String(L);
-    const cell = (line) => {
-      const r = (line === 'gold' ? PASS_GOLD : PASS_FREE)[L - 1];
-      const lab = rewardLabel(r);
-      const claimed = (line === 'gold' ? pass.cg : pass.cf).indexOf(L) !== -1;
-      const canLine = line === 'free' || pass.gold;
-      const claimable = !claimed && canLine && L <= lvl;
-      const b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'passCell ' + line + (claimed ? ' claimed' : (claimable ? ' claimable' : (L > lvl || !canLine ? ' locked' : '')));
-      b.dataset.line = line;
-      b.innerHTML = '<span class="pcIcon">' + lab.icon + '</span><span class="pcText">' + escapeHtml(lab.text) + '</span><span class="pcState">' +
-        (claimed ? '✓' : (claimable ? escapeHtml(t('passClaim')) : (!canLine ? '🔒' : ''))) + '</span>';
-      if (claimable){ b.addEventListener('click', () => claimPassReward(line, L)); if (!firstClaim) firstClaim = row; }
-      return b;
-    };
-    row.appendChild(cell('free'));
-    const num = document.createElement('div');
-    num.className = 'passLvlNum';
-    num.textContent = String(L);
-    row.appendChild(num);
-    row.appendChild(cell('gold'));
-    track.appendChild(row);
-  }
-  refreshPassCard();
-  return firstClaim;
-}
-function openPass(){
-  const m = document.getElementById('passModal');
-  if (!m) return;
-  m.classList.remove('hidden');
-  sfxPopupOpen();
-  const first = renderPass();
-  const full = m.querySelector ? m.querySelector('.passFull') : null;
-  if (full) full.scrollTop = 0;
-  if (first && full && parseInt(first.dataset.lvl, 10) > 4 && first.getBoundingClientRect) setTimeout(() => {
-    const fr = full.getBoundingClientRect(), rr = first.getBoundingClientRect();
-    full.scrollTop = Math.max(0, full.scrollTop + rr.top - fr.top - fr.height * 0.4);
-  }, 30);
-}
-function closePass(){ document.getElementById('passModal').classList.add('hidden'); sfxPopupClose(); refreshShopState(); }
-
 
 const DAILY_REWARDS = [{ c: 100 }, { c: 150 }, { c: 200 }, { c: 250 }, { c: 300 }, { c: 400 }, { c: 600, i: 'trail:comet' }];
 function padDay(d){ return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
@@ -624,11 +391,13 @@ let platformTheme = Store.get('platformTheme', 'auto');
 if (!PLATFORM_THEMES[platformTheme]) platformTheme = 'auto';
 
 const AVATAR_LIST = ['🐰','🐱','🦊','🐻','🐼','🐨','🐸','🐯','🦁','🐵','🐹','🐷','🐮','🐔','🐧','🦄','🐙','⭐'];
-const isCustomAvatar = (v) => typeof v === 'string' && v.indexOf('data:image/') === 0;
+const IMG_DATA_RE = /^data:image\/(?:jpeg|png|webp);base64,[A-Za-z0-9+\/]+={0,2}$/;
+const isSafeImgData = (v) => typeof v === 'string' && v.length < 600000 && IMG_DATA_RE.test(v);
+const isCustomAvatar = (v) => isSafeImgData(v);
 
 const LINK_RE = /(https?:\/\/|www\.|t\.me|discord\.gg|[a-z0-9-]{2,}\.(ru|com|net|org|io|me|gg|xyz|su|site|online|link|ly|рф)(?![a-z]))/i;
 function cleanText(str){
-  return String(str || '').replace(/(.)\1{5,}/g, '$1$1$1$1');
+  return String(str || '').replace(/<\/?[a-z!][^>]*>?/gi, '').replace(/(.)\1{5,}/g, '$1$1$1$1');
 }
 function loadTimes(key){ try { const a = JSON.parse(Store.get(key, '[]')); return Array.isArray(a) ? a.filter(x => typeof x === 'number' && x <= Date.now() + 60000) : []; } catch (e) { return []; } }
 const spamState = { times: loadTimes('spamTimes'), last: '', repeat: 0 };
@@ -670,7 +439,7 @@ if (!isValidFrame(avatarFrame)) avatarFrame = 'none';
 function avatarHtml(avatarVal, frameId, extraClass){
   const av = isValidAvatar(avatarVal) ? avatarVal : AVATAR_LIST[0];
   const fr = isValidFrame(frameId) ? frameId : 'none';
-  const inner = isCustomAvatar(av) ? '<img src="' + av + '" alt="">' : escapeHtml(av);
+  const inner = isCustomAvatar(av) ? '<img src="' + escapeHtml(av) + '" alt="">' : escapeHtml(av);
   return '<span class="avFrame frame-' + fr + (extraClass ? ' ' + extraClass : '') + '"><span class="avInner">' + inner + '</span></span>';
 }
 

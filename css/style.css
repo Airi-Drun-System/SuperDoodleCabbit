@@ -1645,3 +1645,5 @@ body:has(#chatModal:not(.hidden)) .adminFab,body:has(#inboxModal:not(.hidden)) .
 .adminConfirmList{margin:6px 0 10px;padding-left:18px;font-size:12.5px;line-height:1.5;}
 .adminGrantLog{margin:8px 0;font-size:11px;line-height:1.45;}
 .adminGrantLog div{margin-bottom:3px;}
+.closedAdmin{flex-wrap:wrap;}
+.adminGate .adminInput{width:100%;max-width:260px;box-sizing:border-box;}

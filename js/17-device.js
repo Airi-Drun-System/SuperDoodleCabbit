@@ -152,7 +152,7 @@ async function saveBanList(bl){
     devs: { arrayValue: { values: bl.devs.map(v => ({ stringValue: v })) } },
     fps: { arrayValue: { values: bl.fps.map(v => ({ stringValue: v })) } }
   } };
-  const res = await fetch(cloudBase() + '/players/' + BAN_DOC + '?updateMask.fieldPaths=devs&updateMask.fieldPaths=fps&key=' + CLOUD.apiKey, {
+  const res = await (typeof sfetch === 'function' ? sfetch : fetch)(cloudBase() + '/players/' + BAN_DOC + '?updateMask.fieldPaths=devs&updateMask.fieldPaths=fps&key=' + CLOUD.apiKey, {
     method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
   });
   return res.ok;
@@ -281,7 +281,6 @@ async function cloudRestore(rawCode, rawPw){
     if (f.coins) { coins = parseInt(f.coins.integerValue || '0', 10) || 0; Store.set('coins', coins); }
     if (f.best)  { best  = parseInt(f.best.integerValue  || '0', 10) || 0; Store.set('best', best); }
     trophies = estTrophies(f); Store.set('trophies', trophies);
-    pass = normalizePass(parsePassStr(f.pass && f.pass.stringValue)); savePass();
     daily = parseDaily(f.daily && f.daily.stringValue); saveDaily();
     if (f.nick && f.nick.stringValue){ nickname = f.nick.stringValue; Store.set('nick', nickname); }
     if (f.frame && f.frame.stringValue && isValidFrame(f.frame.stringValue)){
@@ -380,13 +379,11 @@ function applyGrantOps(o){
     Store.set('role', myRole);
     if (typeof refreshStaffUI === 'function') refreshStaffUI();
   }
-  if ('passGold' in o){ pass.gold = !!o.passGold; savePass(); }
   const add = Array.isArray(o.add) ? o.add.filter(grantItemValid) : [];
   const rm = Array.isArray(o.rm) ? o.rm.filter(grantItemValid) : [];
   if (add.length || rm.length){
-    for (const k of add){ owned.add(k); if (EVENT_TEMP_ITEMS.indexOf(k) !== -1) keepSet.add(k); }
-    for (const k of rm){ owned.delete(k); keepSet.delete(k); }
-    Store.set('keep', Array.from(keepSet).join(','));
+    for (const k of add) owned.add(k);
+    for (const k of rm) owned.delete(k);
     owned.add('hat:none'); owned.add('acc:none'); owned.add('acc:bowtie'); owned.add('tool:none'); owned.add('char:hero'); owned.add('trail:none');
     saveOwned();
     for (const k of rm){
@@ -469,7 +466,7 @@ function buildPlayerRow(rowCode, f, rankText){
   const rowAvatar = avatarHtml(rowAvatarVal, rowFrame, 'lbAv');
   const isDev = isDevCode(rowCode);
   const titleText = (f.title && f.title.stringValue) || '';
-  const titleColor = (f.titleColor && f.titleColor.stringValue) || '';
+  const titleColor = safeCssColor(f.titleColor && f.titleColor.stringValue);
   const div = document.createElement('div');
   div.className = 'lbRow';
   let nameHtml;

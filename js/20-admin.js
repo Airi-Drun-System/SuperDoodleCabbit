@@ -1,27 +1,112 @@
 "use strict";
-const GATE_SIG = '91de39aa24911bd1fa10a60866e353ad97cbbc125047504e23fb5e7d694886c9';
-function gateOk(v){
-  const x = String(v || '').trim();
-  if (x.length < 6) return false;
-  let h = sha256Hex('cjpin|' + x);
-  for (let i = 0; i < 2000; i++) h = sha256Hex(h + x);
-  return h === GATE_SIG;
-}
-
-function adminAllowed(){ return (typeof cloudCode !== 'undefined' && isDevCode(cloudCode)) || myRole === 'admin'; }
-let adminMode = localStorage.getItem('cabbitAdminMode') === '1' && adminAllowed();
+// Вход персонала через Firebase Authentication. Права проверяет сервер (правила Firestore), а не этот файл.
+const STAFF_KEY = 'cjs';
+let staffAuth = null;
+let adminMode = false;
+function adminAllowed(){ return !!(staffAuth && staffAuth.role === 'admin'); }
 let adminCurrentCode = null;
 let adminCurrentEquipped = null;
 let adminCurrentOwned = new Set();
 let adminCurrentRole = '';
 let adminRoleValue = '';
 
+function staffSave(){ try { if (staffAuth && staffAuth.refresh) localStorage.setItem(STAFF_KEY, staffAuth.refresh); else localStorage.removeItem(STAFF_KEY); } catch (e) {} }
+async function staffApplyTokens(j){
+  if (!j) return false;
+  const tok = j.idToken || j.id_token, ref = j.refreshToken || j.refresh_token;
+  if (!tok || !ref) return false;
+  staffAuth = Object.assign(staffAuth || {}, { token: tok, refresh: ref, exp: Date.now() + (parseInt(j.expiresIn || j.expires_in, 10) || 3600) * 1000 });
+  return true;
+}
+async function staffToken(){
+  if (!staffAuth) return '';
+  if (Date.now() > staffAuth.exp - 60000){
+    try {
+      const r = await fetch('https://securetoken.googleapis.com/v1/token?key=' + CLOUD.apiKey, {
+        method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'grant_type=refresh_token&refresh_token=' + encodeURIComponent(staffAuth.refresh)
+      });
+      if (!r.ok){ staffSignOut(); return ''; }
+      await staffApplyTokens(await r.json());
+      staffSave();
+    } catch (e) { return staffAuth ? staffAuth.token : ''; }
+  }
+  return staffAuth ? staffAuth.token : '';
+}
+// fetch с подписью персонала: сервер сам решает, можно ли менять защищённые поля
+async function sfetch(url, opts){
+  const tok = await staffToken();
+  if (!tok) return fetch(url, opts);
+  const o = Object.assign({}, opts || {});
+  o.headers = Object.assign({}, o.headers || {}, { Authorization: 'Bearer ' + tok });
+  return fetch(url, o);
+}
+async function staffLoadRole(){
+  const tok = await staffToken();
+  if (!tok || !staffAuth.uid) return '';
+  try {
+    const r = await sfetch(cloudBase() + '/staff/' + staffAuth.uid + '?key=' + CLOUD.apiKey, { headers: { Authorization: 'Bearer ' + tok } });
+    if (!r.ok) return '';
+    const d = await r.json();
+    const v = d && d.fields && d.fields.role && d.fields.role.stringValue;
+    return v === 'admin' || v === 'mod' ? v : '';
+  } catch (e) { return ''; }
+}
+function staffSignOut(){
+  staffAuth = null;
+  adminMode = false;
+  staffSave();
+  if (typeof refreshStaffUI === 'function') refreshStaffUI();
+}
+async function staffSignIn(email, password){
+  if (!cloudReady()) return false;
+  const e = String(email || '').trim(), pw = String(password || '');
+  if (!e || !pw) return false;
+  try {
+    const r = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=' + CLOUD.apiKey, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: e, password: pw, returnSecureToken: true })
+    });
+    if (!r.ok) return false;
+    const j = await r.json();
+    staffAuth = { uid: j.localId };
+    if (!(await staffApplyTokens(j))){ staffAuth = null; return false; }
+    const role = await staffLoadRole();
+    if (!role){ staffSignOut(); return false; }
+    staffAuth.role = role;
+    adminMode = role === 'admin';
+    staffSave();
+    return true;
+  } catch (err) { staffAuth = null; return false; }
+}
+async function staffRestore(){
+  let ref = '';
+  try { ref = localStorage.getItem(STAFF_KEY) || ''; } catch (e) {}
+  if (!ref || !cloudReady()) return;
+  try {
+    const r = await fetch('https://securetoken.googleapis.com/v1/token?key=' + CLOUD.apiKey, {
+      method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: 'grant_type=refresh_token&refresh_token=' + encodeURIComponent(ref)
+    });
+    if (!r.ok){ staffAuth = null; staffSave(); return; }
+    const j = await r.json();
+    staffAuth = { uid: j.user_id };
+    await staffApplyTokens(j);
+    const role = await staffLoadRole();
+    if (!role){ staffSignOut(); return; }
+    staffAuth.role = role;
+    adminMode = role === 'admin';
+    if (typeof refreshStaffUI === 'function') refreshStaffUI();
+    if (adminMode && typeof adminOpenGame === 'function') adminOpenGame();
+  } catch (e) {}
+}
+
 const isModOnly = () => !adminMode && myRole === 'mod';
 const isStaff = () => adminMode || myRole === 'mod';
 
 async function fetchOnlineCount(){
   try {
-    const res = await fetch(cloudBase() + ':runAggregationQuery?key=' + CLOUD.apiKey, {
+    const res = await sfetch(cloudBase() + ':runAggregationQuery?key=' + CLOUD.apiKey, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ structuredAggregationQuery: {
@@ -51,7 +136,7 @@ async function refreshOnlineCounter(){
   const n = await fetchOnlineCount();
   if (!isDevCode(cloudCode)){ el.classList.add('hidden'); return; }
   if (n < 0){ txt.textContent = t('onlineNow') + ': ' + t('onlineErr'); return; }
-  txt.textContent = n + ' ' + t('onlineNow') + (eventInfo && eventInfo.count ? ' · ' + eventInfo.count + ' ' + t('onlineTotal') : '');
+  txt.textContent = n + ' ' + t('onlineNow');
   el.classList.remove('hidden');
 }
 setInterval(refreshOnlineCounter, 60000);
@@ -59,7 +144,7 @@ setInterval(refreshOnlineCounter, 60000);
 function refreshStaffUI(){
   const tool = document.getElementById('adminTool');
   if (!tool) return;
-  if (adminMode && !adminAllowed()){ adminMode = false; localStorage.removeItem('cabbitAdminMode'); }
+  if (adminMode && !adminAllowed()) adminMode = false;
   tool.classList.toggle('hidden', !isStaff());
   tool.classList.toggle('modMode', isModOnly());
   const title = document.getElementById('adminHeaderTitle');
@@ -96,23 +181,22 @@ document.getElementById('secretZone').addEventListener('click', () => {
   }
 });
 
+async function staffLoginFrom(emailEl, passEl, onOk){
+  const ok = await staffSignIn(emailEl.value, passEl.value);
+  passEl.value = '';
+  if (!ok){ emailEl.placeholder = 'Не удалось войти'; return false; }
+  emailEl.value = '';
+  refreshStaffUI();
+  if (onOk) onOk();
+  return true;
+}
 document.getElementById('adminPinBtn').addEventListener('click', () => {
-  const input = document.getElementById('adminPinInput');
-  if (!adminAllowed()){
-    input.value = '';
-    input.placeholder = 'Неверный PIN';
-    return;
-  }
-  if (gateOk(input.value)){
-    adminMode = true;
-    localStorage.setItem('cabbitAdminMode', '1');
+  staffLoginFrom(document.getElementById('adminEmailInput'), document.getElementById('adminPassInput'), () => {
     document.getElementById('adminGate').classList.add('hidden');
-    refreshStaffUI();
-  } else {
-    input.value = '';
-    input.placeholder = 'Неверный PIN';
-  }
+  });
 });
+const adminLogoutEl = document.getElementById('adminLogoutBtn');
+if (adminLogoutEl) adminLogoutEl.addEventListener('click', () => { staffSignOut(); });
 
 function adminSetStatus(msg){
   const el = document.getElementById('adminStatus');
@@ -131,7 +215,7 @@ async function adminLoad(codeOverride){
   adminSetStatus('Загрузка...');
   document.getElementById('adminPlayerBox').classList.add('hidden');
   try {
-    const res = await fetch(cloudBase() + '/players/' + code + '?key=' + CLOUD.apiKey);
+    const res = await sfetch(cloudBase() + '/players/' + code + '?key=' + CLOUD.apiKey);
     if (!res.ok){ adminSetStatus('Игрок с таким кодом не найден'); return; }
     const doc = await res.json();
     const f = doc.fields || {};
@@ -163,8 +247,6 @@ async function adminLoad(codeOverride){
     document.getElementById('adminCoinsInput').value = statText(f, 'coins', adminCurrentNums.coins);
     document.getElementById('adminBestInput').value  = statText(f, 'best', adminCurrentNums.best);
     document.getElementById('adminTrophiesInput').value = statText(f, 'trophies', adminCurrentNums.trophies);
-    adminCurrentPass = f.pass && f.pass.stringValue ? f.pass.stringValue : '';
-    document.getElementById('adminPassGold').checked = !!normalizePass(parsePassStr(adminCurrentPass)).gold;
     document.getElementById('adminNoImages').checked = !!(f.noImages && f.noImages.booleanValue);
     adminBanTarget = { dev: (f.dev && f.dev.stringValue) || '', fp: (f.fp && f.fp.stringValue) || '', banned: !!(f.banned && f.banned.booleanValue) };
     refreshAdminBanInfo();
@@ -193,7 +275,6 @@ async function adminLoad(codeOverride){
       titleColor: (f.titleColor && f.titleColor.stringValue) || '',
       badge: isValidBadge(f.badge && f.badge.stringValue) ? f.badge.stringValue : '',
       role: adminRoleValue,
-      passGold: !!normalizePass(parsePassStr(adminCurrentPass)).gold,
       noImages: !!(f.noImages && f.noImages.booleanValue),
       fruits: parseFruitState(f.fruits && f.fruits.stringValue),
       season: parseInt((f[seasonKey()] && f[seasonKey()].integerValue) || '0', 10) || 0
@@ -322,7 +403,6 @@ function refreshAdminBadgePreview(){
 renderAdminBadgeGrid();
 refreshAdminBadgePreview();
 
-let adminCurrentPass = '';
 let adminCurrentNums = { coins: 0, best: 0, trophies: 0 };
 function statText(f, key, fallback){
   const tx = f && f[key + 'Text'] && f[key + 'Text'].stringValue;
@@ -347,11 +427,6 @@ function adminStatFields(){
       trophies: { integerValue: String(tr.num) }, trophiesText: { stringValue: tr.text }
     }
   };
-}
-function adminPassValue(){
-  const pv = normalizePass(parsePassStr(adminCurrentPass));
-  pv.gold = !!document.getElementById('adminPassGold').checked;
-  return JSON.stringify(pv);
 }
 
 let adminSnap = null;
@@ -415,8 +490,6 @@ function adminBuildChanges(){
     const badge = isValidBadge(adminBadgeValue) ? adminBadgeValue : '';
     if (badge !== s.badge){ ops.badge = badge; direct.badge = badge; lines.push('Галочка: ' + (badge ? badge : 'убрать')); }
     if (adminRoleValue !== s.role){ ops.role = adminRoleValue; direct.role = adminRoleValue; lines.push('Роль: ' + (adminRoleValue === 'admin' ? 'администратор' : adminRoleValue === 'mod' ? 'помощник' : 'обычный игрок')); }
-    const gold = !!document.getElementById('adminPassGold').checked;
-    if (gold !== s.passGold){ ops.passGold = gold; lines.push('Золотой пасс: ' + (gold ? 'выдать' : 'забрать')); }
     const noImg = !!document.getElementById('adminNoImages').checked;
     if (noImg !== s.noImages){ direct.noImages = noImg; lines.push('Запрет картинок: ' + (noImg ? 'включить' : 'выключить')); }
 
@@ -480,12 +553,12 @@ async function adminConfirmGrant(){
           summary: { stringValue: ch.lines.join('; ').slice(0, 400) }, ops: { stringValue: JSON.stringify(ch.ops) },
           applied: { booleanValue: false }
         } };
-        const r = await fetch(cloudBase() + '/conversations/_g_' + code + '/messages?key=' + CLOUD.apiKey, { method: 'POST', headers: H, body: JSON.stringify(body) });
+        const r = await sfetch(cloudBase() + '/conversations/_g_' + code + '/messages?key=' + CLOUD.apiKey, { method: 'POST', headers: H, body: JSON.stringify(body) });
         if (!r.ok) grantOk = false;
         else {
           const created = await r.json();
           grantId = docCode(created);
-          const chk = await fetch(cloudBase() + '/conversations/_g_' + code + '/messages/' + grantId + '?key=' + CLOUD.apiKey);
+          const chk = await sfetch(cloudBase() + '/conversations/_g_' + code + '/messages/' + grantId + '?key=' + CLOUD.apiKey);
           if (!chk.ok) grantOk = false;
         }
       }
@@ -498,7 +571,7 @@ async function adminConfirmGrant(){
         fields[k] = typeof v === 'boolean' ? { booleanValue: v } : { stringValue: String(v) };
       }
       const mask = dk.map(k => 'updateMask.fieldPaths=' + k).join('&');
-      const r2 = await fetch(cloudBase() + '/players/' + code + '?' + mask + '&key=' + CLOUD.apiKey, { method: 'PATCH', headers: H, body: JSON.stringify({ fields }) });
+      const r2 = await sfetch(cloudBase() + '/players/' + code + '?' + mask + '&key=' + CLOUD.apiKey, { method: 'PATCH', headers: H, body: JSON.stringify({ fields }) });
       if (!r2.ok) directOk = false;
       else if ('badge' in ch.direct && lbFieldsByCode[code]) lbFieldsByCode[code].badge = { stringValue: ch.direct.badge };
     }
@@ -532,7 +605,6 @@ function adminApplyToSnap(ch){
   if ('titleColor' in o) s.titleColor = o.titleColor;
   if ('badge' in o) s.badge = o.badge;
   if ('role' in o){ s.role = o.role; adminCurrentRole = o.role; }
-  if ('passGold' in o) s.passGold = o.passGold;
   if ('noImages' in d) s.noImages = d.noImages;
   if (o.fruitAdd) for (const id of Object.keys(o.fruitAdd)){ const n = Math.max(0, Math.min(99, (s.fruits.inv[id] || 0) + o.fruitAdd[id])); if (n) s.fruits.inv[id] = n; else delete s.fruits.inv[id]; }
   if ('fruitEat' in o) s.fruits.eat = o.fruitEat;
@@ -547,7 +619,7 @@ async function adminRenderGrantLog(code){
   el.textContent = '';
   if (!code || !cloudReady()) return;
   try {
-    const r = await fetch(cloudBase() + '/conversations/_g_' + code + '/messages?pageSize=30&key=' + CLOUD.apiKey);
+    const r = await sfetch(cloudBase() + '/conversations/_g_' + code + '/messages?pageSize=30&key=' + CLOUD.apiKey);
     if (!r.ok) return;
     const data = await r.json();
     const rows = ((data && data.documents) || []).map(d => d.fields || {}).sort((a, b) => (parseInt((b.ts && b.ts.integerValue) || '0', 10) || 0) - (parseInt((a.ts && a.ts.integerValue) || '0', 10) || 0)).slice(0, 5);
@@ -571,7 +643,7 @@ async function adminLoadPhotos(){
   if (!box || !cloudReady() || !isStaff()) return;
   box.innerHTML = '<div class="adminPhotoInfo">Загрузка...</div>';
   try {
-    const res = await fetch(cloudBase() + ':runQuery?key=' + CLOUD.apiKey, {
+    const res = await sfetch(cloudBase() + ':runQuery?key=' + CLOUD.apiKey, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ structuredQuery: {
@@ -602,68 +674,6 @@ async function adminLoadPhotos(){
   }
 }
 
-async function adminLoadReports(){
-  const box = document.getElementById('adminReportsList');
-  if (!box || !cloudReady() || !isStaff()) return;
-  box.innerHTML = '<div class="adminPhotoInfo">Загрузка...</div>';
-  try {
-    const res = await fetch(cloudBase() + '/conversations/_reports/messages?pageSize=30&key=' + CLOUD.apiKey);
-    const data = res.ok ? await res.json() : {};
-    const docs = (data && data.documents) || [];
-    box.innerHTML = '';
-    for (const d of docs){
-      const f = d.fields || {};
-      const g = (k) => (f[k] && f[k].stringValue) || '';
-      const repId = docCode(d);
-      const item = document.createElement('div');
-      item.className = 'adminPhotoItem';
-      item.innerHTML = '<img alt=""><div class="adminPhotoInfo">' + escapeHtml(g('fromNick') || '?') + '<br>' + escapeHtml(g('from')) + '</div>' +
-        '<button type="button" class="adminPhotoNo" title="Удалить фото">✕</button><button type="button" class="adminPhotoNo" title="Удалить и запретить фото">⛔</button><button type="button" class="adminPhotoOk" title="Оставить">✓</button>';
-      const imgEl = item.querySelector('img');
-      fetch(cloudBase() + '/conversations/_images/messages/' + g('imgRef') + '?key=' + CLOUD.apiKey)
-        .then(r => r.ok ? r.json() : null)
-        .then((idoc) => { const v = idoc && idoc.fields && idoc.fields.data && idoc.fields.data.stringValue; if (v && v.indexOf('data:image/') === 0) imgEl.src = v; })
-        .catch(() => {});
-      const btns = item.querySelectorAll('button');
-      btns[0].addEventListener('click', () => adminResolveReport(repId, g('convId'), g('imgRef'), g('from'), true, false, item));
-      btns[1].addEventListener('click', () => adminResolveReport(repId, g('convId'), g('imgRef'), g('from'), true, true, item));
-      btns[2].addEventListener('click', () => adminResolveReport(repId, g('convId'), g('imgRef'), g('from'), false, false, item));
-      box.appendChild(item);
-    }
-    if (!docs.length) box.innerHTML = '<div class="adminPhotoInfo">Жалоб нет ✓</div>';
-  } catch (e){
-    box.innerHTML = '<div class="adminPhotoInfo">Ошибка связи</div>';
-  }
-}
-
-async function adminResolveReport(repId, convId, imgRef, from, removePhoto, banPhotos, item){
-  if (!isStaff() || !cloudReady()) return;
-  const H = { 'Content-Type': 'application/json' };
-  try {
-    if (removePhoto && convId && imgRef){
-      await fetch(cloudBase() + '/conversations/_images/messages/' + imgRef + '?updateMask.fieldPaths=data&updateMask.fieldPaths=removed&key=' + CLOUD.apiKey, {
-        method: 'PATCH', headers: H, body: JSON.stringify({ fields: { data: { stringValue: '' }, removed: { booleanValue: true } } })
-      });
-    }
-    let canBan = !!(banPhotos && from && from !== cloudCode && !isDevCode(from));
-    if (canBan){
-      try {
-        const tr = await fetch(cloudBase() + '/players/' + from + '?key=' + CLOUD.apiKey);
-        const td = tr.ok ? await tr.json() : null;
-        const tf = (td && td.fields) || {};
-        if (tf.role && (tf.role.stringValue === 'mod' || tf.role.stringValue === 'admin')) canBan = false;
-      } catch (e) {}
-    }
-    if (canBan){
-      await fetch(cloudBase() + '/players/' + from + '?updateMask.fieldPaths=noImages&key=' + CLOUD.apiKey, {
-        method: 'PATCH', headers: H, body: JSON.stringify({ fields: { noImages: { booleanValue: true } } })
-      });
-    }
-    await fetch(cloudBase() + '/conversations/_reports/messages/' + repId + '?key=' + CLOUD.apiKey, { method: 'DELETE' });
-    if (item && item.parentNode) item.parentNode.removeChild(item);
-  } catch (e) {}
-}
-document.getElementById('adminReportsBtn').addEventListener('click', adminLoadReports);
 
 const CLAUDE_CODE = 'A3XZ99XW';
 function claudeAccountFields(){
@@ -688,7 +698,7 @@ async function adminCreateClaude(){
   if (!cloudReady() || !adminMode || isModOnly()) return;
   if (st) st.textContent = 'Создание...';
   try {
-    const res = await fetch(cloudBase() + '/players/' + CLAUDE_CODE + '?currentDocument.exists=false&key=' + CLOUD.apiKey, {
+    const res = await sfetch(cloudBase() + '/players/' + CLAUDE_CODE + '?currentDocument.exists=false&key=' + CLOUD.apiKey, {
       method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fields: claudeAccountFields() })
     });
     if (res.ok){ if (st) st.textContent = 'Готово ✓ Код: ' + CLAUDE_CODE + '. Открой его в админке, чтобы выставить кубки и рекорд.'; document.getElementById('adminCodeInput').value = CLAUDE_CODE; }
@@ -702,7 +712,7 @@ async function adminSetAvatar(dataUrl){
   if (!adminCurrentCode || !cloudReady() || !adminMode || isModOnly() || !isCustomAvatar(dataUrl)) return false;
   adminSetStatus('Загрузка аватара...');
   try {
-    const res = await fetch(cloudBase() + '/players/' + adminCurrentCode + '?updateMask.fieldPaths=avatar&updateMask.fieldPaths=avatarOk&updateMask.fieldPaths=avatarPending&key=' + CLOUD.apiKey, {
+    const res = await sfetch(cloudBase() + '/players/' + adminCurrentCode + '?updateMask.fieldPaths=avatar&updateMask.fieldPaths=avatarOk&updateMask.fieldPaths=avatarPending&key=' + CLOUD.apiKey, {
       method: 'PATCH', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ fields: { avatar: { stringValue: dataUrl }, avatarOk: { booleanValue: true }, avatarPending: { booleanValue: false } } })
     });
@@ -733,7 +743,7 @@ async function adminModeratePhoto(code, ok, item){
     : { avatarOk: { booleanValue: false }, avatarPending: { booleanValue: false }, avatarRejected: { booleanValue: true }, avatar: { stringValue: AVATAR_LIST[0] } };
   const mask = Object.keys(fields).map(k => 'updateMask.fieldPaths=' + k).join('&');
   try {
-    const res = await fetch(cloudBase() + '/players/' + code + '?' + mask + '&key=' + CLOUD.apiKey, {
+    const res = await sfetch(cloudBase() + '/players/' + code + '?' + mask + '&key=' + CLOUD.apiKey, {
       method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fields })
     });
     if (res.ok && item && item.parentNode) item.parentNode.removeChild(item);
@@ -745,7 +755,7 @@ document.getElementById('adminPhotoLoadBtn').addEventListener('click', adminLoad
 async function adminResetPassword(){
   if (!adminCurrentCode || !cloudReady() || !adminMode) return;
   try {
-    const res = await fetch(cloudBase() + '/players/' + adminCurrentCode + '?updateMask.fieldPaths=pwHash&key=' + CLOUD.apiKey, {
+    const res = await sfetch(cloudBase() + '/players/' + adminCurrentCode + '?updateMask.fieldPaths=pwHash&key=' + CLOUD.apiKey, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ fields: { pwHash: { stringValue: '' } } })
@@ -792,7 +802,7 @@ async function adminBanDevice(on){
     setIn(bl.devs, tb.dev);
     setIn(bl.fps, tb.fp);
     const okList = await saveBanList(bl);
-    const res = await fetch(cloudBase() + '/players/' + adminCurrentCode + '?updateMask.fieldPaths=banned&key=' + CLOUD.apiKey, {
+    const res = await sfetch(cloudBase() + '/players/' + adminCurrentCode + '?updateMask.fieldPaths=banned&key=' + CLOUD.apiKey, {
       method: 'PATCH', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ fields: { banned: { booleanValue: !!on } } })
     });
@@ -838,7 +848,7 @@ async function adminDeleteAccount(){
   adminSetStatus('Удаление...');
   const deletedCode = adminCurrentCode;
   try {
-    const res = await fetch(cloudBase() + '/players/' + deletedCode + '?key=' + CLOUD.apiKey, {
+    const res = await sfetch(cloudBase() + '/players/' + deletedCode + '?key=' + CLOUD.apiKey, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ fields: { deleted: { booleanValue: true }, deletedAt: { integerValue: String(Date.now()) } } })
@@ -888,32 +898,27 @@ function adminOpenGame(){
   const s = document.getElementById('closedScreen');
   if (s) s.hidden = true;
 }
-if (adminMode) adminOpenGame();
+staffRestore();
 
 let closedTaps = 0, closedTapT = null;
 (function closedAdminEntry(){
   const timer = document.getElementById('closedTimer');
   const box = document.getElementById('closedAdmin');
-  const pin = document.getElementById('closedPin');
+  const em = document.getElementById('closedEmail');
+  const pw = document.getElementById('closedPass');
   const btn = document.getElementById('closedPinBtn');
-  if (!timer || !box || !pin || !btn) return;
+  if (!timer || !box || !em || !pw || !btn) return;
   timer.addEventListener('click', () => {
     closedTaps++;
     clearTimeout(closedTapT);
     closedTapT = setTimeout(() => { closedTaps = 0; }, 2000);
-    if (closedTaps >= 5){ closedTaps = 0; box.hidden = false; pin.focus(); }
+    if (closedTaps >= 5){ closedTaps = 0; box.hidden = false; em.focus(); }
   });
-  const tryPin = () => {
-    if (!adminAllowed()){ pin.value = ''; pin.placeholder = 'Неверный PIN'; return; }
-    if (!gateOk(pin.value)){ pin.value = ''; pin.placeholder = 'Неверный PIN'; return; }
-    adminMode = true;
-    try { localStorage.setItem('cabbitAdminMode', '1'); } catch (e) {}
-    refreshStaffUI();
-    adminOpenGame();
-    refreshAdminQuick();
-  };
-  btn.addEventListener('click', tryPin);
-  pin.addEventListener('keydown', (e) => { if (e.key === 'Enter') tryPin(); });
+  const tryLogin = () => staffLoginFrom(em, pw, () => {
+    if (adminMode){ adminOpenGame(); refreshAdminQuick(); }
+  });
+  btn.addEventListener('click', tryLogin);
+  pw.addEventListener('keydown', (e) => { if (e.key === 'Enter') tryLogin(); });
 })();
 
 let adminGod = false;

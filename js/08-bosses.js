@@ -119,14 +119,14 @@ function damageBoss(n, fx, fy){
 
 function bossReward(){
   const b = boss;
-  const gain = Math.round((40 + 20 * b.tier) * coinMult() * (weekEvent() === 'boss' ? 2 : 1));
+  const gain = Math.round((40 + 20 * b.tier) * coinMult());
   runCoins += gain; coins += gain;
   Store.set('coins', coins);
   coinPulse = 1;
   const by = camY + VH * b.sf;
   addToast(t('bossDown'), VW / 2, by + 40, '#ffe37a');
   addToast('+' + gain, VW / 2, by + 70, '#ffd34d');
-  for (let k = 0; k < (weekEvent() === 'fruit' ? 2 : 1); k++){
+  for (let k = 0; k < 1; k++){
     const f = rollFruit([40, 38, 17, 5]);
     if (f && addFruit(f)) addToast(t('fruitGot').replace('{f}', fruitName(f)), VW / 2, by + 100 + k * 26, RARITY_COL[FRUITS[f].rar]);
   }

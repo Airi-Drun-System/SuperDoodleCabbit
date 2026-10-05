@@ -163,6 +163,17 @@ function refreshLeaderboardUI(){
 function escapeHtml(s){
   return String(s).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 }
+// Цвет титула приходит с сервера: пропускаем только простые цвета и градиенты, иначе пустая строка.
+function safeCssColor(v){
+  const s = String(v || '').trim();
+  if (!s || s.length > 200) return '';
+  if (!/^[#a-zA-Z0-9%.,\s()\-]+$/.test(s)) return '';
+  if (/url|expression|javascript|import|var\(|attr\(|env\(/i.test(s)) return '';
+  const fns = s.match(/[a-z-]+(?=\()/gi) || [];
+  const okFn = ['rgb', 'rgba', 'hsl', 'hsla', 'linear-gradient', 'radial-gradient', 'conic-gradient'];
+  for (const f of fns) if (okFn.indexOf(f.toLowerCase()) === -1) return '';
+  return s;
+}
 
 
 let shopActiveSlot = 'hat';
@@ -404,7 +415,6 @@ function refreshShopState(){
   const mbc = document.getElementById('menuBestChip'); if (mbc) mbc.textContent = compactNum(best);
   const mbo = document.getElementById('menuBossChip'); if (mbo) mbo.textContent = typeof bossKillsTotal === 'number' ? bossKillsTotal : 0;
   menuCoins.textContent = compactNum(coins);
-  if (typeof refreshPassCard === 'function') refreshPassCard();
   if (typeof refreshSeasonCard === 'function') refreshSeasonCard();
 
   shopEl.querySelectorAll('.chip').forEach(chip => {

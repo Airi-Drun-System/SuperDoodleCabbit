@@ -162,7 +162,7 @@ let stormT = 0;
 let starNext = 1000;
 const STORM_EVERY = 6;
 function maybeSpawnFruit(p){
-  if (fruitSpawnedRun >= (weekEvent() === 'fruit' ? 2 : 1) || score < 400 || p.type !== 'normal' || p.spring) return;
+  if (fruitSpawnedRun >= 1 || score < 400 || p.type !== 'normal' || p.spring) return;
   if (Math.random() < 0.0016){
     fruitSpawnedRun += 1;
     fruitPickups.push({ plat: p, x: p.x + p.w / 2, y: p.y - 36, id: rollFruit(), bob: 0, got: 0 });

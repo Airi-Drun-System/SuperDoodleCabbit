@@ -1,148 +1,4 @@
 "use strict";
-const EVENT_GOAL = 100;
-const EVENT_DAYS = 7;
-const EVENT_GIFT_COINS = 500;
-const EVENT_TEMP_ITEMS = ['hat:party', 'hat:crown'];
-const EVENT_DOC = '/players/_event100';
-let keepSet = new Set(String(Store.get('keep', '')).split(',').filter(Boolean));
-function setKeepFromFields(f){
-  const vals = (f && f.keep && f.keep.arrayValue && f.keep.arrayValue.values) || [];
-  keepSet = new Set(vals.map(v => v && v.stringValue).filter(Boolean));
-  Store.set('keep', Array.from(keepSet).join(','));
-}
-function eventTempList(){
-  try { const a = JSON.parse(Store.get('event100temp', '[]')); return Array.isArray(a) ? a : []; } catch (e) { return []; }
-}
-let eventInfo = { count: 0, start: 0, checked: 0 };
-try { eventInfo = Object.assign(eventInfo, JSON.parse(Store.get('event100', '{}')) || {}); } catch (e) {}
-
-function eventActive(now){
-  const tNow = now || nowServer();
-  return eventInfo.start > 0 && tNow >= eventInfo.start && tNow < eventInfo.start + EVENT_DAYS * 86400000;
-}
-
-async function fetchPlayerCount(){
-  try {
-    const res = await fetch(cloudBase() + ':runAggregationQuery?key=' + CLOUD.apiKey, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ structuredAggregationQuery: { structuredQuery: { from: [{ collectionId: 'players' }] }, aggregations: [{ alias: 'n', count: {} }] } })
-    });
-    if (!res.ok) return -1;
-    const data = await res.json();
-    const row = Array.isArray(data) ? data.find(r => r && r.result && r.result.aggregateFields) : null;
-    const v = row ? parseInt(row.result.aggregateFields.n.integerValue, 10) : NaN;
-    return isFinite(v) ? v : -1;
-  } catch (e) { return -1; }
-}
-
-async function fetchEventStart(){
-  try {
-    const res = await fetch(cloudBase() + EVENT_DOC + '?key=' + CLOUD.apiKey);
-    if (!res.ok) return 0;
-    const d = await res.json();
-    return parseInt((d.fields && d.fields.start && d.fields.start.integerValue) || '0', 10) || 0;
-  } catch (e) { return 0; }
-}
-
-async function createEventStart(ts){
-  try {
-    await fetch(cloudBase() + EVENT_DOC + '?currentDocument.exists=false&key=' + CLOUD.apiKey, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ fields: { start: { integerValue: String(ts) }, goal: { integerValue: String(EVENT_GOAL) } } })
-    });
-  } catch (e) {}
-}
-
-async function checkEvent(){
-  if (!cloudReady()) { refreshEventBanner(); return; }
-  const count = await fetchPlayerCount();
-  let start = await fetchEventStart();
-  if (!start && count >= EVENT_GOAL){
-    await createEventStart(nowServer());
-    start = (await fetchEventStart()) || nowServer();
-  }
-  const realCount = count >= 0 ? Math.max(0, count - (start ? 1 : 0)) : eventInfo.count;
-  eventInfo = { count: realCount, start: start || eventInfo.start || 0, checked: Date.now() };
-  Store.set('event100', JSON.stringify(eventInfo));
-  refreshEventBanner();
-  giveEventGift();
-  expireEventGift();
-}
-
-function giveEventGift(){
-  if (!eventActive() || Store.get('event100gift', '') === '1') return false;
-  Store.set('event100gift', '1');
-  const temp = [];
-  for (const it of EVENT_TEMP_ITEMS){
-    if (!owned.has(it)){ owned.add(it); temp.push(it); }
-  }
-  Store.set('event100temp', JSON.stringify(temp));
-  saveOwned();
-  coins += EVENT_GIFT_COINS;
-  Store.set('coins', coins);
-  cloudPushSoon();
-  if (typeof refreshShopState === 'function') refreshShopState();
-  showToast(t('eventGift'));
-  sfxPopupOpen();
-  return true;
-}
-
-function expireEventGift(){
-  if (!eventInfo.start || eventActive()) return false;
-  if (nowServer() < eventInfo.start) return false;
-  const temp = eventTempList();
-  if (!temp.length) return false;
-  let changed = false;
-  for (const it of temp){
-    if (keepSet.has(it)) continue;
-    if (owned.has(it)){ owned.delete(it); changed = true; }
-    const val = it.slice(it.indexOf(':') + 1);
-    if (outfit.hat === val){ outfit.hat = 'none'; Store.set('hat', 'none'); }
-    if (outfit.hat2 === val){ outfit.hat2 = 'none'; Store.set('hat2', 'none'); }
-  }
-  Store.set('event100temp', '[]');
-  if (changed){
-    saveOwned();
-    cloudPushSoon();
-    if (typeof refreshShopState === 'function') refreshShopState();
-  }
-  return changed;
-}
-
-function refreshEventBanner(){
-  const el = document.getElementById('eventBanner');
-  const conf = document.getElementById('confettiBox');
-  if (!el) return;
-  const now = nowServer();
-  if (eventActive(now)){
-    const daysLeft = Math.max(1, Math.ceil((eventInfo.start + EVENT_DAYS * 86400000 - now) / 86400000));
-    el.className = 'eventBanner isLive';
-    el.innerHTML = '<b>' + escapeHtml(t('eventLiveTitle')) + '</b><br>' + escapeHtml(t('eventLiveText')) + ' · ' + escapeHtml(t('eventDaysLeft').replace('{n}', daysLeft));
-    if (conf && conf.dataset.made !== '1' && !lowGfx()){
-      conf.dataset.made = '1';
-      const cols = ['#ff6f91', '#ffd34d', '#6fd3ff', '#8be36a', '#c084fc'];
-      for (let i = 0; i < 18; i++){
-        const sp = document.createElement('span');
-        sp.style.left = (Math.random() * 100) + '%';
-        sp.style.background = cols[i % cols.length];
-        sp.style.animationDuration = (4 + Math.random() * 4) + 's';
-        sp.style.animationDelay = (-Math.random() * 8) + 's';
-        conf.appendChild(sp);
-      }
-    }
-  } else if (eventInfo.start === 0 && eventInfo.count > 0 && eventInfo.count < EVENT_GOAL){
-    el.className = 'eventBanner';
-    const pct = Math.round(eventInfo.count / EVENT_GOAL * 100);
-    el.innerHTML = escapeHtml(t('eventProgress').replace('{n}', eventInfo.count).replace(/\{g\}/g, EVENT_GOAL)) + '<div class="eventBar"><i style="width:' + pct + '%"></i></div>';
-    if (conf){ conf.innerHTML = ''; conf.dataset.made = ''; }
-  } else {
-    el.className = 'eventBanner hidden';
-    if (conf){ conf.innerHTML = ''; conf.dataset.made = ''; }
-  }
-}
-
 function goToMenu(){
   if (state !== STATE.MENU) whoosh('soft', 0.8);
   state = STATE.MENU;
@@ -157,12 +13,11 @@ function goToMenu(){
   refreshShopState();
   document.getElementById('continueBtn').disabled = true;
   updateInboxBtn();
-  refreshEventBanner();
   refreshOnlineCounter();
   refreshDailyBtn();
   refreshMenuHint();
   maybeAutoDaily();
-  if (cloudReady()){ checkPendingGrant(true); fetchInbox(true); if (Date.now() - eventInfo.checked > 5 * 60 * 1000) checkEvent(); }
+  if (cloudReady()){ checkPendingGrant(true); fetchInbox(true); }
 }
 
 function startGame(){
@@ -287,12 +142,9 @@ function gameOver(){
   const isNewBest = score > best;
   if (isNewBest){ best = score; Store.set('best', best); }
   noteSeasonScore(score);
-  const passGain = recordRunForPass(score, runCoins);
   addToLeaderboard(nickname, score);
   if (typeof lbFetchedAt !== 'undefined') lbFetchedAt = 0;
   cloudPushSoon();
-  const pLine = document.getElementById('passLine');
-  if (pLine) pLine.textContent = t('passRunXp').replace('{x}', passGain.runXp + passGain.questXp);
 
   finalEl.textContent = '0';
   overTitle.textContent = isNewBest ? t('overTitleRecord') : t('overTitleNormal');

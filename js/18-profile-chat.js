@@ -120,13 +120,13 @@ function openProfile(code){
   const nick = (f.nick && f.nick.stringValue) || '?';
   profileOpenNick = nick;
   const titleText = (f.title && f.title.stringValue) || '';
-  const titleColor = (f.titleColor && f.titleColor.stringValue) || '';
+  const titleColor = safeCssColor(f.titleColor && f.titleColor.stringValue);
   const bestScore = (f.best && f.best.integerValue) || '0';
   const coinsVal = (f.coins && f.coins.integerValue) || '0';
   const profAvatarVal = shownAvatar(f, code);
   const profAvatarBox = document.getElementById('profileAvatar');
   if (profAvatarBox){
-    if (isCustomAvatar(profAvatarVal)) profAvatarBox.innerHTML = '<img src="' + profAvatarVal + '" alt="">';
+    if (isCustomAvatar(profAvatarVal)){ profAvatarBox.textContent = ''; const pim = document.createElement('img'); pim.alt = ''; pim.src = profAvatarVal; profAvatarBox.appendChild(pim); }
     else profAvatarBox.textContent = profAvatarVal;
   }
   setFrameClass(document.getElementById('profileAvatarFrame'), (f.frame && f.frame.stringValue) || 'none');
@@ -454,71 +454,8 @@ function toggleStickerPanel(force){
   if (btn) btn.classList.toggle('active', show);
 }
 
-const chatImgCache = {};
-const chatImgRevealed = {};
 let myNoImages = Store.get('noImages', '0') === '1';
 function photoBanned(){ return myNoImages && !(typeof isStaff === 'function' && isStaff()) && !isDevCode(cloudCode); }
-
-function loadChatImage(convId, ref){
-  if (!ref || chatImgCache[ref]) return;
-  chatImgCache[ref] = { state: 'loading' };
-  fetch(cloudBase() + '/conversations/_images/messages/' + ref + '?key=' + CLOUD.apiKey)
-    .then(r => r.ok ? r.json() : null)
-    .then((d) => {
-      const f = (d && d.fields) || {};
-      const data = (f.data && f.data.stringValue) || '';
-      chatImgCache[ref] = (f.removed && f.removed.booleanValue) || !data
-        ? { state: 'removed' }
-        : { state: 'ok', data: data.indexOf('data:image/') === 0 ? data : '' };
-      chatLastSig = null;
-      renderChatMessages(chatMessages, false);
-    })
-    .catch(() => { chatImgCache[ref] = { state: 'error' }; });
-}
-
-function compressPhoto(file){
-  return new Promise((resolve) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const img = new Image();
-      img.onload = () => {
-        const tries = [[720, 0.62], [520, 0.5], [380, 0.45]];
-        for (const [max, q] of tries){
-          const w0 = img.naturalWidth || img.width, h0 = img.naturalHeight || img.height;
-          const k = Math.min(1, max / Math.max(w0, h0));
-          const c = document.createElement('canvas');
-          c.width = Math.max(1, Math.round(w0 * k)); c.height = Math.max(1, Math.round(h0 * k));
-          c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
-          const url = c.toDataURL('image/jpeg', q);
-          if (url.length < 320000){ resolve(url); return; }
-        }
-        resolve('');
-      };
-      img.onerror = () => resolve('');
-      img.src = reader.result;
-    };
-    reader.onerror = () => resolve('');
-    reader.readAsDataURL(file);
-  });
-}
-
-async function reportChatPhoto(m){
-  if (!cloudReady() || !m || !m.imgRef) return;
-  const convId = chatConvId(cloudCode, chatWithCode);
-  try {
-    await fetch(cloudBase() + '/conversations/_reports/messages?key=' + CLOUD.apiKey, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ fields: {
-        convId: { stringValue: convId }, imgRef: { stringValue: m.imgRef }, msgId: { stringValue: m.id || '' },
-        from: { stringValue: m.from || '' }, fromNick: { stringValue: chatWithNickName || '' },
-        reporter: { stringValue: cloudCode }, ts: { integerValue: String(Date.now()) }
-      } })
-    });
-    const st = document.getElementById('chatStatus');
-    if (st) st.textContent = t('photoReported');
-  } catch (e) {}
-}
 
 function refreshChatBlockUI(){
   const btn = document.getElementById('chatBlockBtn');
@@ -543,21 +480,12 @@ function toggleBlockChat(){
   fetchInbox();
 }
 
-let chatReplyTo = null;
-
 function msgSnippet(m){
   if (!m) return '';
   if (m.sticker) return '[' + t('msgSticker').replace(/^\[|\]$/g, '') + ']';
-  if (m.imgRef || m.localImg) return '[' + t('msgPhoto').replace(/^\[|\]$/g, '') + ']';
   return cleanText(String(m.text || '')).replace(/\s+/g, ' ').slice(0, 90);
 }
 
-function replyNameFor(from){
-  return from === cloudCode ? t('replyYou') : (chatWithNickName || '?');
-}
-
-let chatEditing = null;
-let chatPin = { id: '', text: '', from: '' };
 let chatTypingSeen = null;
 let chatTypingUntil = 0;
 let chatTypingSentAt = 0;
@@ -603,81 +531,9 @@ function toggleChatMore(force){
   menu.classList.toggle('hidden', !show);
 }
 
-function refreshChatBar(){
-  const bar = document.getElementById('chatReplyBar');
-  if (!bar) return;
-  const on = !!(chatReplyTo || chatEditing);
-  bar.classList.toggle('hidden', !on);
-  if (!on) return;
-  document.getElementById('chatReplyBarIcon').textContent = chatEditing ? '✎' : '↩';
-  document.getElementById('chatReplyBarName').textContent = chatEditing ? t('msgEditing') : replyNameFor(chatReplyTo.from);
-  document.getElementById('chatReplyBarText').textContent = chatEditing ? chatEditing.orig : chatReplyTo.text;
-}
-
-function setChatReply(m){
-  if (m && (m.pending || !m.id)) return;
-  if (m && chatEditing){
-    chatEditing = null;
-    const inp = document.getElementById('chatInput');
-    if (inp) inp.value = '';
-  }
-  chatReplyTo = m ? { id: m.id, from: m.from, text: msgSnippet(m) } : null;
-  refreshChatBar();
-  if (chatReplyTo){
-    buzz(10);
-    const inputEl = document.getElementById('chatInput');
-    if (inputEl && inputEl.focus) inputEl.focus();
-  }
-}
-
-function cancelChatBar(){
-  if (chatEditing){
-    chatEditing = null;
-    const inp = document.getElementById('chatInput');
-    if (inp) inp.value = '';
-  }
-  chatReplyTo = null;
-  refreshChatBar();
-}
-
 function msgDocUrl(msgId, mask){
   const convId = chatConvId(cloudCode, chatWithCode);
   return cloudBase() + '/conversations/' + convId + '/messages/' + msgId + '?' + mask.map(f => 'updateMask.fieldPaths=' + f + '&').join('') + 'key=' + CLOUD.apiKey;
-}
-
-function startEditMsg(m){
-  if (!m || m.from !== cloudCode || m.sticker || m.imgRef || m.pending) return;
-  chatReplyTo = null;
-  chatEditing = { id: m.id, orig: m.text || '' };
-  const inp = document.getElementById('chatInput');
-  if (inp){ inp.value = m.text || ''; if (inp.focus) inp.focus(); }
-  refreshChatBar();
-}
-
-async function saveChatEdit(){
-  const inp = document.getElementById('chatInput');
-  const st = document.getElementById('chatStatus');
-  const ed = chatEditing;
-  if (!ed) return;
-  const text = (inp && inp.value || '').trim();
-  if (!text) return;
-  if (text.length > 200){ if (st) st.textContent = t('chatTooLong'); return; }
-  if (text === ed.orig){ cancelChatBar(); return; }
-  if (!cloudReady() || !chatWithCode) return;
-  chatEditing = null;
-  if (inp) inp.value = '';
-  refreshChatBar();
-  const m = chatMessages.find(x => x.id === ed.id);
-  if (m){ m.text = text; m.edited = true; }
-  chatLastSig = null;
-  renderChatMessages(chatMessages, false);
-  try {
-    const res = await fetch(msgDocUrl(ed.id, ['text', 'edited']), {
-      method: 'PATCH', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ fields: { text: { stringValue: text }, edited: { booleanValue: true } } })
-    });
-    if (!res.ok && st) st.textContent = t('chatError');
-  } catch (e) { if (st) st.textContent = t('chatError'); }
 }
 
 async function deleteChatMsg(m){
@@ -689,20 +545,14 @@ async function deleteChatMsg(m){
   renderChatMessages(chatMessages, false);
   const H = { 'Content-Type': 'application/json' };
   try {
-    await fetch(msgDocUrl(m.id, ['deleted', 'text', 'sticker', 'imgRef', 'replyTo', 'replyFrom', 'replyText']), {
+    await fetch(msgDocUrl(m.id, ['deleted', 'text']), {
       method: 'PATCH', headers: H, body: JSON.stringify({ fields: { deleted: { booleanValue: true }, text: { stringValue: '' } } })
     });
-    if (m.imgRef){
-      await fetch(cloudBase() + '/conversations/_images/messages/' + m.imgRef + '?updateMask.fieldPaths=data&updateMask.fieldPaths=removed&key=' + CLOUD.apiKey, {
-        method: 'PATCH', headers: H, body: JSON.stringify({ fields: { data: { stringValue: '' }, removed: { booleanValue: true } } })
-      });
-    }
     if (wasLast){
       await fetch(cloudBase() + '/conversations/' + convId + '?updateMask.fieldPaths=lastText&key=' + CLOUD.apiKey, {
         method: 'PATCH', headers: H, body: JSON.stringify({ fields: { lastText: { stringValue: t('msgDeleted') } } })
       });
     }
-    if (chatPin.id === m.id) await setChatPin(null);
   } catch (e) {}
 }
 
@@ -720,27 +570,6 @@ function toggleReaction(m, emoji){
   const fields = {};
   if (next) fields[field] = { stringValue: next };
   fetch(msgDocUrl(m.id, [field]), { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fields }) }).catch(() => {});
-}
-
-function renderPinBar(){
-  const bar = document.getElementById('chatPinBar');
-  if (!bar) return;
-  bar.classList.toggle('hidden', !chatPin.id);
-  const tx = document.getElementById('chatPinText');
-  if (tx) tx.textContent = chatPin.id ? cleanText(chatPin.text || '') : '';
-}
-
-async function setChatPin(m){
-  if (!cloudReady() || !chatWithCode) return;
-  const convId = chatConvId(cloudCode, chatWithCode);
-  chatPin = m ? { id: m.id, text: msgSnippet(m), from: m.from } : { id: '', text: '', from: '' };
-  renderPinBar();
-  try {
-    await fetch(cloudBase() + '/conversations/' + convId + '?updateMask.fieldPaths=pinId&updateMask.fieldPaths=pinText&updateMask.fieldPaths=pinFrom&key=' + CLOUD.apiKey, {
-      method: 'PATCH', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ fields: { pinId: { stringValue: chatPin.id }, pinText: { stringValue: chatPin.text }, pinFrom: { stringValue: chatPin.from } } })
-    });
-  } catch (e) {}
 }
 
 async function fetchConvState(){
@@ -764,9 +593,6 @@ async function fetchConvState(){
       refreshFriendUI(who);
       if (fst === 'friend' && !wasFriend) fetchChatMessages();
     }
-    const s = (k) => (f[k] && f[k].stringValue) || '';
-    const np = { id: s('pinId'), text: s('pinText'), from: s('pinFrom') };
-    if (np.id !== chatPin.id || np.text !== chatPin.text){ chatPin = np; renderPinBar(); }
     const tv = (f['typing_' + who] && f['typing_' + who].integerValue) || '';
     if (chatTypingSeen === null) chatTypingSeen = tv;
     else if (tv && tv !== chatTypingSeen){
@@ -779,7 +605,7 @@ async function fetchConvState(){
 }
 
 function sendTyping(){
-  if (!chatWithCode || !cloudReady() || !cloudCode || chatEditing || isBlocked(chatWithCode)) return;
+  if (!chatWithCode || !cloudReady() || !cloudCode || isBlocked(chatWithCode)) return;
   const now = Date.now();
   if (now - chatTypingSentAt < 2500) return;
   chatTypingSentAt = now;
@@ -823,10 +649,7 @@ function msgMenuAction(act, btn){
     return;
   }
   closeMsgMenu();
-  if (act === 'reply') setChatReply(m);
-  else if (act === 'copy') copyChatText(cleanText(m.text || ''));
-  else if (act === 'pin') setChatPin(chatPin.id === m.id ? null : m);
-  else if (act === 'edit') startEditMsg(m);
+  if (act === 'copy') copyChatText(cleanText(m.text || ''));
   else if (act === 'del') deleteChatMsg(m);
 }
 
@@ -838,13 +661,11 @@ function openMsgMenu(m, row){
   closeMsgMenu();
   chatMenuMsg = m;
   const isOwn = m.from === cloudCode;
-  const isText = !m.sticker && !m.imgRef && !m.localImg;
+  const isText = !m.sticker;
   const mine = m.reacts && m.reacts[cloudCode];
   let html = '<div class="chatReactRow">' + CHAT_REACTS.map((e, i) => '<button type="button" class="chatReactPick' + (mine === e ? ' mine' : '') + '" data-i="' + i + '">' + e + '</button>').join('') + '</div>';
-  const acts = [['reply', '↩', t('replyAction')]];
+  const acts = [];
   if (isText) acts.push(['copy', '⧉', t('msgCopy')]);
-  acts.push(['pin', '📌', chatPin.id === m.id ? t('msgUnpin') : t('msgPin')]);
-  if (isOwn && isText) acts.push(['edit', '✎', t('msgEdit')]);
   if (isOwn) acts.push(['del', '🗑', t('msgDelete')]);
   html += acts.map(a => '<button type="button" class="chatMenuAct' + (a[0] === 'del' ? ' danger' : '') + '" data-act="' + a[0] + '"><span>' + a[1] + '</span>' + escapeHtml(a[2]) + '</button>').join('');
   panel.innerHTML = html;
@@ -875,83 +696,27 @@ function openMsgMenu(m, row){
   buzz(12);
 }
 
-function jumpToChatMsg(id){
-  const box = document.getElementById('chatMessagesList');
-  if (!box || !id) return;
-  const rows = box.querySelectorAll('.chatMsgRow');
-  let target = null;
-  for (let i = 0; i < rows.length; i++) if (rows[i].dataset && rows[i].dataset.mid === id) target = rows[i];
-  const st = document.getElementById('chatStatus');
-  if (!target){ if (st) st.textContent = t('replyGone'); return; }
-  if (target.scrollIntoView) target.scrollIntoView({ block: 'center', behavior: 'smooth' });
-  target.classList.remove('flash');
-  void target.offsetWidth;
-  target.classList.add('flash');
-  setTimeout(() => target.classList.remove('flash'), 1200);
-}
-
 function attachReplyGestures(row, m, isOwn){
   if (m.pending || !m.id) return;
-  const icon = document.createElement('span');
-  icon.className = 'chatReplyIcon';
-  icon.textContent = '↩';
-  row.appendChild(icon);
-  const hb = document.createElement('button');
-  hb.type = 'button';
-  hb.className = 'chatReplyHover';
-  hb.title = t('replyAction');
-  hb.textContent = '↩';
-  hb.addEventListener('click', (e) => { e.stopPropagation(); setChatReply(m); });
-  row.appendChild(hb);
-  let sx = 0, sy = 0, dx = 0, mode = '', pressT = null, pressed = false;
+  let pressT = null, pressed = false, sx = 0, sy = 0;
   row.addEventListener('touchstart', (e) => {
     const tt = e.touches && e.touches[0];
     if (!tt) return;
-    sx = tt.clientX; sy = tt.clientY; dx = 0; mode = '';
+    sx = tt.clientX; sy = tt.clientY;
     clearTimeout(pressT);
     pressed = false;
-    pressT = setTimeout(() => { if (!mode){ mode = 'press'; pressed = true; openMsgMenu(m, row); } }, 450);
+    pressT = setTimeout(() => { pressed = true; openMsgMenu(m, row); }, 450);
   }, { passive: true });
   row.addEventListener('touchmove', (e) => {
     const tt = e.touches && e.touches[0];
     if (!tt) return;
-    const mx = tt.clientX - sx, my = tt.clientY - sy;
-    if (!mode){
-      if (Math.abs(mx) > 10 || Math.abs(my) > 10){
-        clearTimeout(pressT);
-        mode = (Math.abs(mx) > Math.abs(my) * 1.3 && mx < 0) ? 'swipe' : 'scroll';
-        if (mode === 'swipe') row.classList.add('swiping');
-      }
-    }
-    if (mode === 'swipe'){
-      dx = Math.max(-90, Math.min(0, mx));
-      row.style.transform = 'translateX(' + dx + 'px)';
-      icon.style.opacity = String(Math.min(1, Math.abs(dx) / 60));
-    }
+    if (Math.abs(tt.clientX - sx) > 10 || Math.abs(tt.clientY - sy) > 10) clearTimeout(pressT);
   }, { passive: true });
-  const end = () => {
-    clearTimeout(pressT);
-    if (mode === 'swipe'){
-      row.classList.remove('swiping');
-      row.style.transform = '';
-      icon.style.opacity = '0';
-      if (Math.abs(dx) >= 55) setChatReply(m);
-    }
-    mode = '';
-  };
+  const end = () => { clearTimeout(pressT); };
   row.addEventListener('touchend', end);
   row.addEventListener('touchcancel', end);
-  row.addEventListener('dblclick', (e) => { e.preventDefault(); setChatReply(m); });
   row.addEventListener('contextmenu', (e) => { e.preventDefault(); openMsgMenu(m, row); });
   row.addEventListener('click', (e) => { if (pressed){ pressed = false; e.stopPropagation(); e.preventDefault(); } }, true);
-}
-
-function makeQuoteEl(m){
-  const q = document.createElement('div');
-  q.className = 'chatQuote';
-  q.innerHTML = '<span class="chatQuoteName">' + escapeHtml(replyNameFor(m.replyFrom)) + '</span><span class="chatQuoteText">' + escapeHtml(cleanText(m.replyText || '')) + '</span>';
-  q.addEventListener('click', (e) => { e.stopPropagation(); jumpToChatMsg(m.replyTo); });
-  return q;
 }
 
 function renderChatMessages(list, forceBottom){
@@ -980,10 +745,8 @@ function renderChatMessages(list, forceBottom){
   chatLastSig = sig;
 
   const all = chatMessages.filter(m => !m.deleted).concat(chatPending.map(p => ({
-    id: p.tempId, from: cloudCode, text: p.text, ts: p.ts, read: false, pending: true, sticker: p.sticker || '', localImg: p.localImg || '',
-    replyTo: p.replyTo || '', replyFrom: p.replyFrom || '', replyText: p.replyText || ''
+    id: p.tempId, from: cloudCode, text: p.text, ts: p.ts, read: false, pending: true, sticker: p.sticker || ''
   })));
-  const convIdNow = chatWithCode ? chatConvId(cloudCode, chatWithCode) : '';
   box.innerHTML = '';
   if (!all.length){
     const empty = document.createElement('div');
@@ -1008,8 +771,7 @@ function renderChatMessages(list, forceBottom){
     const isOwn = m.from === cloudCode;
     row.className = 'chatMsgRow ' + (isOwn ? 'own' : 'their') + (m.pending ? ' pending' : '');
     if (m.id) row.dataset.mid = m.id;
-    const hasQuote = !!(m.replyTo && m.replyText);
-    let meta = '<span class="chatMsgMeta">' + (m.edited ? '<span class="chatMsgEdited">' + escapeHtml(t('msgEditedMark')) + '</span>' : '') + (m.ts ? fmtTime(m.ts) : '');
+    let meta = '<span class="chatMsgMeta">' + (m.ts ? fmtTime(m.ts) : '');
     if (isOwn){
       if (m.pending) meta += '<span class="chatMsgTick">🕓</span>';
       else meta += '<span class="chatMsgTick' + (m.read ? ' isRead' : '') + '">' + (m.read ? '✓✓' : '✓') + '</span>';
@@ -1023,57 +785,26 @@ function renderChatMessages(list, forceBottom){
       row.appendChild(metaEl3.firstChild);
     } else if (m.sticker && STICKER_IDS.indexOf(m.sticker) !== -1){
       row.className += ' sticker';
-      if (hasQuote) row.appendChild(makeQuoteEl(m));
       row.appendChild(makeStickerCanvas(m.sticker, 112));
       const metaEl = document.createElement('span');
       metaEl.innerHTML = meta;
       row.appendChild(metaEl.firstChild);
-    } else if (m.imgRef || m.localImg){
-      row.className += ' photo';
-      if (hasQuote) row.appendChild(makeQuoteEl(m));
-      const wrap = document.createElement('div');
-      wrap.className = 'chatPhoto';
-      const cached = m.imgRef ? chatImgCache[m.imgRef] : null;
-      const src = m.localImg || (cached && cached.state === 'ok' ? cached.data : '');
-      if (cached && cached.state === 'removed'){
-        wrap.innerHTML = '<div class="chatPhotoNote">' + escapeHtml(t('photoRemoved')) + '</div>';
-      } else if (!src){
-        wrap.innerHTML = '<div class="chatPhotoNote">' + escapeHtml(t('photoLoading')) + '</div>';
-        if (m.imgRef && convIdNow) loadChatImage(convIdNow, m.imgRef);
-      } else {
-        const hide = !isOwn && !chatImgRevealed[m.imgRef];
-        if (hide) wrap.className += ' blurred';
-        wrap.innerHTML = '<img src="' + src + '" alt="">' + (hide ? '<div class="chatPhotoCover">' + escapeHtml(t('photoTap')) + '</div>' : '');
-        if (hide) wrap.addEventListener('click', () => { chatImgRevealed[m.imgRef] = true; chatLastSig = null; renderChatMessages(chatMessages, false); });
-      }
-      row.appendChild(wrap);
-      if (!isOwn && m.imgRef && !(cached && cached.state === 'removed')){
-        const rb = document.createElement('button');
-        rb.type = 'button';
-        rb.className = 'chatReportBtn';
-        rb.textContent = '⚠ ' + t('photoReport');
-        rb.addEventListener('click', () => reportChatPhoto(m));
-        row.appendChild(rb);
-      }
-      const metaEl2 = document.createElement('span');
-      metaEl2.innerHTML = meta;
-      row.appendChild(metaEl2.firstChild);
     } else {
       row.innerHTML = '<span class="chatMsgText">' + escapeHtml(cleanText(m.text || '')) + '</span>' + meta;
-      if (hasQuote) row.insertBefore(makeQuoteEl(m), row.firstChild);
     }
     const rk = m.reacts ? Object.keys(m.reacts) : [];
     if (rk.length){
       const counts = {};
       const order = [];
-      for (const k of rk){ const e = m.reacts[k]; if (!counts[e]){ counts[e] = 0; order.push(e); } counts[e]++; }
+      for (const k of rk){ const e = m.reacts[k]; if (CHAT_REACTS.indexOf(e) === -1) continue; if (!counts[e]){ counts[e] = 0; order.push(e); } counts[e]++; }
       const rw = document.createElement('div');
       rw.className = 'chatReacts';
       for (const e of order){
         const chip = document.createElement('button');
         chip.type = 'button';
         chip.className = 'chatReactChip' + (m.reacts[cloudCode] === e ? ' mine' : '');
-        chip.innerHTML = e + (counts[e] > 1 ? '<b>' + counts[e] + '</b>' : '');
+        chip.textContent = e;
+        if (counts[e] > 1){ const cb2 = document.createElement('b'); cb2.textContent = String(counts[e]); chip.appendChild(cb2); }
         chip.addEventListener('click', (ev) => { ev.stopPropagation(); toggleReaction(m, e); });
         rw.appendChild(chip);
       }
@@ -1108,11 +839,6 @@ async function fetchChatMessages(){
         tradeGive: (f.tradeGive && FRUITS[f.tradeGive.stringValue]) ? f.tradeGive.stringValue : '',
         tradeWant: (f.tradeWant && FRUITS[f.tradeWant.stringValue]) ? f.tradeWant.stringValue : '',
         tradeSt: (f.tradeSt && f.tradeSt.stringValue) || '',
-        imgRef: (f.imgRef && f.imgRef.stringValue) || '',
-        replyTo: (f.replyTo && f.replyTo.stringValue) || '',
-        replyFrom: (f.replyFrom && f.replyFrom.stringValue) || '',
-        replyText: (f.replyText && f.replyText.stringValue) || '',
-        edited: !!(f.edited && f.edited.booleanValue),
         deleted: !!(f.deleted && f.deleted.booleanValue),
         reacts: (() => { const r = {}; let any = false; for (const k in f){ if (k.indexOf('react_') === 0 && f[k] && CHAT_REACTS.indexOf(f[k].stringValue) !== -1){ r[k.slice(6)] = f[k].stringValue; any = true; } } return any ? r : null; })(),
         ts: parseInt((f.ts && f.ts.integerValue) || '0', 10) || 0,
@@ -1363,7 +1089,7 @@ function renderFriendGate(st){
 }
 
 function setChatInputsEnabled(on){
-  ['chatInput', 'chatSendBtn', 'chatStickerBtn', 'chatPhotoBtn'].forEach((id) => { const el = document.getElementById(id); if (el) el.disabled = !on; });
+  ['chatInput', 'chatSendBtn', 'chatStickerBtn'].forEach((id) => { const el = document.getElementById(id); if (el) el.disabled = !on; });
 }
 
 function parseConv(doc){
