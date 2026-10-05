@@ -6,8 +6,8 @@
 <meta name="theme-color" content="#150a2b">
 <title>Cabbit Jump!</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
-<link rel="preload" href="fonts/bips.woff?v=20261005" as="font" type="font/woff" crossorigin>
-<link rel="stylesheet" href="css/style.css?v=20261005">
+<link rel="preload" href="fonts/bips.woff?v=20261005b" as="font" type="font/woff" crossorigin>
+<link rel="stylesheet" href="css/style.css?v=20261005b">
 </head>
 <body>
 <div id="wrap">
@@ -260,7 +260,16 @@
             </label>
           </div>
 
-          <button id="adminSaveBtn" class="adminSaveBtn" type="button">✓ Сохранить изменения</button>
+          <button id="adminSaveBtn" class="adminSaveBtn" type="button">Проверить и выдать</button>
+
+          <div id="adminConfirm" class="adminCard hidden">
+            <div class="adminCardTitle">Подтверди выдачу</div>
+            <p id="adminConfirmWho" class="adminRoleHint"></p>
+            <ul id="adminConfirmList" class="adminConfirmList"></ul>
+            <button id="adminConfirmOk" class="adminSaveBtn" type="button">Выдать</button>
+            <button id="adminConfirmCancel" class="adminPwResetBtn" type="button">Отмена</button>
+          </div>
+          <div id="adminGrantLog" class="adminRoleHint adminGrantLog"></div>
 
           <button id="adminPwResetBtn" type="button" class="adminPwResetBtn adminOnly">Сбросить пароль игрока</button>
 
@@ -779,26 +788,26 @@
   </div>
 </div>
 
-<script src="js/01-core.js?v=20261005"></script>
-<script src="js/02-badges.js?v=20261005"></script>
-<script src="js/03-audio.js?v=20261005"></script>
-<script src="js/04-outfits.js?v=20261005"></script>
-<script src="js/05-rig.js?v=20261005"></script>
-<script src="js/06-world.js?v=20261005"></script>
-<script src="js/07-fruits.js?v=20261005"></script>
-<script src="js/08-bosses.js?v=20261005"></script>
-<script src="js/09-seasons.js?v=20261005"></script>
-<script src="js/10-physics.js?v=20261005"></script>
-<script src="js/11-render-world.js?v=20261005"></script>
-<script src="js/12-render-hero.js?v=20261005"></script>
-<script src="js/13-render-hud.js?v=20261005"></script>
-<script src="js/14-ui.js?v=20261005"></script>
-<script src="js/15-events.js?v=20261005"></script>
-<script src="js/16-cloud.js?v=20261005"></script>
-<script src="js/17-device.js?v=20261005"></script>
-<script src="js/18-profile-chat.js?v=20261005"></script>
-<script src="js/19-inbox.js?v=20261005"></script>
-<script src="js/20-admin.js?v=20261005"></script>
-<script src="js/21-settings.js?v=20261005"></script>
+<script src="js/01-core.js?v=20261005b"></script>
+<script src="js/02-badges.js?v=20261005b"></script>
+<script src="js/03-audio.js?v=20261005b"></script>
+<script src="js/04-outfits.js?v=20261005b"></script>
+<script src="js/05-rig.js?v=20261005b"></script>
+<script src="js/06-world.js?v=20261005b"></script>
+<script src="js/07-fruits.js?v=20261005b"></script>
+<script src="js/08-bosses.js?v=20261005b"></script>
+<script src="js/09-seasons.js?v=20261005b"></script>
+<script src="js/10-physics.js?v=20261005b"></script>
+<script src="js/11-render-world.js?v=20261005b"></script>
+<script src="js/12-render-hero.js?v=20261005b"></script>
+<script src="js/13-render-hud.js?v=20261005b"></script>
+<script src="js/14-ui.js?v=20261005b"></script>
+<script src="js/15-events.js?v=20261005b"></script>
+<script src="js/16-cloud.js?v=20261005b"></script>
+<script src="js/17-device.js?v=20261005b"></script>
+<script src="js/18-profile-chat.js?v=20261005b"></script>
+<script src="js/19-inbox.js?v=20261005b"></script>
+<script src="js/20-admin.js?v=20261005b"></script>
+<script src="js/21-settings.js?v=20261005b"></script>
 </body>
 </html>
