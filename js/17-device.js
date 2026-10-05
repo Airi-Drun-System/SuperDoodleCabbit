@@ -348,67 +348,115 @@ async function cloudRestore(rawCode, rawPw){
 }
 
 let grantCheckedAt = 0;
-async function checkPendingGrant(soft){
-  if (soft && Date.now() - grantCheckedAt < 60000) return;
-  grantCheckedAt = Date.now();
-  if (!cloudReady()) return;
-  try {
-    const res = await fetch(cloudBase() + '/players/' + cloudCode + '?key=' + CLOUD.apiKey);
-    if (!res.ok || accountGone) return;
-    const doc = await res.json();
-    const f = (doc && doc.fields) || {};
-    if (f.deleted && f.deleted.booleanValue) return;
-    if (!(f.pending && f.pending.booleanValue)) return;
-
-    if (f.coins) { coins = parseInt(f.coins.integerValue || '0', 10) || 0; Store.set('coins', coins); }
-    coinsSpent = Math.max(coinsSpent, remoteSpent(f)); Store.set('spent', coinsSpent);
-    if (f.best)  { best  = parseInt(f.best.integerValue  || '0', 10) || 0; Store.set('best', best); }
-    if (f.trophies){ trophies = Math.max(0, parseInt(f.trophies.integerValue || '0', 10) || 0); Store.set('trophies', trophies); }
-    if (f.pass && f.pass.stringValue){ const rp = normalizePass(parsePassStr(f.pass.stringValue)); pass = mergePass(rp); if (rp.s === pass.s && !rp.gold) pass.gold = false; savePass(); }
-    if (f.nick && f.nick.stringValue){ nickname = f.nick.stringValue; Store.set('nick', nickname); }
-    if (f.owned && f.owned.arrayValue && Array.isArray(f.owned.arrayValue.values)){
-      owned.clear();
-      for (const v of f.owned.arrayValue.values){
-        if (v && v.stringValue) owned.add(v.stringValue);
+let grantBusy = false;
+function grantsDoneList(){ return String(Store.get('grantsDone', '')).split(',').filter(Boolean); }
+function grantMarkDone(id){
+  const a = grantsDoneList();
+  if (a.indexOf(id) === -1) a.push(id);
+  Store.set('grantsDone', a.slice(-200).join(','));
+}
+function grantItemValid(k){
+  if (typeof k !== 'string') return false;
+  const i = k.indexOf(':');
+  if (i < 1) return false;
+  const sl = k.slice(0, i), v = k.slice(i + 1);
+  if (sl === 'music') return !!(typeof MUSIC_TRACKS !== 'undefined' && MUSIC_TRACKS[v]);
+  return !!(OUTFITS[sl] && OUTFITS[sl][v]);
+}
+function grantInt(v){ const n = Math.trunc(Number(v)); return Number.isFinite(n) ? n : 0; }
+// Применяет одну выдачу к локальному состоянию игрока: только изменения (дельты), без перезаписи всего профиля.
+function applyGrantOps(o){
+  if (!o || typeof o !== 'object') return;
+  if (o.coinsAdd){ coins = Math.max(0, coins + grantInt(o.coinsAdd)); Store.set('coins', coins); }
+  if (o.trophiesAdd){ trophies = Math.max(0, trophies + grantInt(o.trophiesAdd)); Store.set('trophies', trophies); }
+  if ('bestSet' in o){ best = Math.max(0, grantInt(o.bestSet)); Store.set('best', best); }
+  if ('seasonSet' in o){ saveSeasonBest(Math.max(0, grantInt(o.seasonSet))); }
+  if (typeof o.nick === 'string' && o.nick.trim()){ nickname = o.nick.trim().slice(0, 14); Store.set('nick', nickname); }
+  if ('title' in o){ myTitle = String(o.title || '').slice(0, 16); Store.set('titleText', myTitle); }
+  if ('titleColor' in o){ myTitleColor = String(o.titleColor || '').slice(0, 200); Store.set('titleColor', myTitleColor); }
+  if ('badge' in o){ myBadge = isValidBadge(o.badge) ? o.badge : ''; Store.set('badge', myBadge); }
+  if ('role' in o){
+    myRole = (o.role === 'mod' || o.role === 'admin') ? o.role : '';
+    Store.set('role', myRole);
+    if (typeof refreshStaffUI === 'function') refreshStaffUI();
+  }
+  if ('passGold' in o){ pass.gold = !!o.passGold; savePass(); }
+  const add = Array.isArray(o.add) ? o.add.filter(grantItemValid) : [];
+  const rm = Array.isArray(o.rm) ? o.rm.filter(grantItemValid) : [];
+  if (add.length || rm.length){
+    for (const k of add){ owned.add(k); if (EVENT_TEMP_ITEMS.indexOf(k) !== -1) keepSet.add(k); }
+    for (const k of rm){ owned.delete(k); keepSet.delete(k); }
+    Store.set('keep', Array.from(keepSet).join(','));
+    owned.add('hat:none'); owned.add('acc:none'); owned.add('acc:bowtie'); owned.add('tool:none'); owned.add('char:hero'); owned.add('trail:none');
+    saveOwned();
+    for (const k of rm){
+      const i = k.indexOf(':'), sl = k.slice(0, i), v = k.slice(i + 1);
+      if (!OUTFITS[sl]) continue;
+      for (const slotKey of (sl === 'hat' ? ['hat', 'hat2'] : sl === 'acc' ? ['acc', 'acc2'] : [sl])){
+        if (outfit[slotKey] === v){ outfit[slotKey] = (slotKey === 'char') ? 'hero' : 'none'; Store.set(slotKey, outfit[slotKey]); }
       }
-      owned.add('hat:none'); owned.add('acc:none'); owned.add('acc:bowtie'); owned.add('tool:none'); owned.add('char:hero'); owned.add('trail:none');
-      saveOwned();
     }
-    for (const slotKey of ['hat', 'acc', 'tool', 'char', 'perk', 'trail']){
-      const val = f[slotKey] && f[slotKey].stringValue;
-      if (val && OUTFITS[slotKey] && OUTFITS[slotKey][val]){
-        outfit[slotKey] = val;
-        Store.set(slotKey, val);
-      }
-    }
-    const hat2Val = f.hat2 && f.hat2.stringValue;
-    if (hat2Val && OUTFITS.hat[hat2Val]){
-      outfit.hat2 = hat2Val;
-      Store.set('hat2', hat2Val);
-    }
-    const acc2Val = f.acc2 && f.acc2.stringValue;
-    if (acc2Val && OUTFITS.acc[acc2Val]){
-      outfit.acc2 = acc2Val;
-      Store.set('acc2', acc2Val);
-    }
-    myTitle = (f.title && f.title.stringValue) || '';
-    myTitleColor = (f.titleColor && f.titleColor.stringValue) || '';
-    Store.set('titleText', myTitle);
-    Store.set('titleColor', myTitleColor);
-    applyOwnBadgeFromFields(f);
-
     dropUnownedLockedOutfit();
     previewChar = outfit.char;
-    refreshShopState();
-    showToast('Админ обновил твой профиль!');
-
-    await fetch(cloudBase() + '/players/' + cloudCode + '?updateMask.fieldPaths=pending&key=' + CLOUD.apiKey, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ fields: { pending: { booleanValue: false } } })
-    });
-  } catch (e) {}
+  }
+  let fruitChanged = false;
+  if (o.fruitAdd && typeof o.fruitAdd === 'object'){
+    for (const id of Object.keys(o.fruitAdd)){
+      if (!FRUITS[id]) continue;
+      const n = Math.max(0, Math.min(99, fruitCount(id) + grantInt(o.fruitAdd[id])));
+      if (n) fruitState.inv[id] = n; else delete fruitState.inv[id];
+      fruitChanged = true;
+    }
+  }
+  if ('fruitEat' in o){ fruitState.eat = FRUITS[o.fruitEat] ? o.fruitEat : ''; fruitChanged = true; }
+  if (fruitChanged){ fruitState.rev += 1; Store.set('fruits', fruitStr()); }
+  refreshShopState();
+  cloudPushSoon();
 }
+
+async function checkPendingGrant(soft){
+  if (soft && Date.now() - grantCheckedAt < 20000) return;
+  if (grantBusy || !cloudReady() || accountGone || !cloudCode) return;
+  grantBusy = true;
+  grantCheckedAt = Date.now();
+  const H = { 'Content-Type': 'application/json' };
+  const base = cloudBase() + '/conversations/_g_' + cloudCode + '/messages';
+  try {
+    const res = await fetch(base + '?pageSize=50&key=' + CLOUD.apiKey);
+    if (!res.ok) return;
+    const data = await res.json();
+    const docs = ((data && data.documents) || []).map(d => ({ d, f: d.fields || {} }));
+    docs.sort((a, b) => (parseInt((a.f.ts && a.f.ts.integerValue) || '0', 10) || 0) - (parseInt((b.f.ts && b.f.ts.integerValue) || '0', 10) || 0));
+    const got = [];
+    for (const { d, f } of docs){
+      const id = docCode(d);
+      const isApplied = !!(f.applied && f.applied.booleanValue);
+      if (isApplied){
+        const at = parseInt((f.appliedTs && f.appliedTs.integerValue) || '0', 10) || 0;
+        if (at && Date.now() - at > 7 * 86400000) fetch(base + '/' + id + '?key=' + CLOUD.apiKey, { method: 'DELETE' }).catch(() => {});
+        continue;
+      }
+      if (grantsDoneList().indexOf(id) === -1){
+        let ops = null;
+        try { ops = JSON.parse((f.ops && f.ops.stringValue) || 'null'); } catch (e) {}
+        if (ops){ applyGrantOps(ops); got.push((f.summary && f.summary.stringValue) || ''); }
+        grantMarkDone(id);
+      }
+      try {
+        await fetch(base + '/' + id + '?updateMask.fieldPaths=applied&updateMask.fieldPaths=appliedTs&key=' + CLOUD.apiKey, {
+          method: 'PATCH', headers: H,
+          body: JSON.stringify({ fields: { applied: { booleanValue: true }, appliedTs: { integerValue: String(Date.now()) } } })
+        });
+      } catch (e) {}
+    }
+    if (got.length) showToast('Админ выдал тебе: ' + got.filter(Boolean).join('; ').slice(0, 120));
+  } catch (e) {
+  } finally { grantBusy = false; }
+}
+setInterval(() => {
+  if (document.hidden || typeof state === 'undefined') return;
+  if (state === STATE.MENU || state === STATE.WARDROBE || state === STATE.SETTINGS || state === STATE.OVER) checkPendingGrant(true);
+}, 25000);
 
 
 let lbFieldsByCode = {};

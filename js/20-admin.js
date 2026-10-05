@@ -184,6 +184,22 @@ async function adminLoad(codeOverride){
     const asi = document.getElementById('adminSeasonInput');
     if (asi) asi.value = String(parseInt((f[seasonKey()] && f[seasonKey()].integerValue) || '0', 10) || 0);
 
+    adminSnap = {
+      nick: (f.nick && f.nick.stringValue) || '',
+      nums: { coins: adminCurrentNums.coins, best: adminCurrentNums.best, trophies: adminCurrentNums.trophies },
+      shown: { coins: document.getElementById('adminCoinsInput').value.trim(), best: document.getElementById('adminBestInput').value.trim(), trophies: document.getElementById('adminTrophiesInput').value.trim() },
+      owned: new Set(ownedSet),
+      title: (f.title && f.title.stringValue) || '',
+      titleColor: (f.titleColor && f.titleColor.stringValue) || '',
+      badge: isValidBadge(f.badge && f.badge.stringValue) ? f.badge.stringValue : '',
+      role: adminRoleValue,
+      passGold: !!normalizePass(parsePassStr(adminCurrentPass)).gold,
+      noImages: !!(f.noImages && f.noImages.booleanValue),
+      fruits: parseFruitState(f.fruits && f.fruits.stringValue),
+      season: parseInt((f[seasonKey()] && f[seasonKey()].integerValue) || '0', 10) || 0
+    };
+    adminHideConfirm();
+    adminRenderGrantLog(code);
     document.getElementById('adminPlayerBox').classList.remove('hidden');
     adminSetStatus('');
   } catch (e){
@@ -338,118 +354,216 @@ function adminPassValue(){
   return JSON.stringify(pv);
 }
 
-async function modSave(){
-  const statM = adminStatFields();
-  const checked = Array.from(document.querySelectorAll('#adminItemsGrid input[type=checkbox]:checked')).map(cb => cb.dataset.item);
-  const isLimitedKey = (k) => { const i = k.indexOf(':'); const sl = k.slice(0, i), v = k.slice(i + 1); return !!(OUTFITS[sl] && OUTFITS[sl][v] && OUTFITS[sl][v].locked); };
-  const ownedList = checked.filter(k => !isLimitedKey(k));
-  adminCurrentOwned.forEach((k) => { if (isLimitedKey(k) && ownedList.indexOf(k) === -1) ownedList.push(k); });
-  const saveFields = Object.assign({}, statM.fields, {
-    owned: { arrayValue: { values: ownedList.map(v => ({ stringValue: v })) } },
-    pending: { booleanValue: true }
-  });
-  const saveMask = Object.keys(saveFields).map(k => 'updateMask.fieldPaths=' + k).join('&');
-  adminSetStatus('Сохранение...');
-  try {
-    const res = await fetch(cloudBase() + '/players/' + adminCurrentCode + '?' + saveMask + '&key=' + CLOUD.apiKey, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ fields: saveFields })
-    });
-    adminSetStatus(res.ok ? 'Сохранено ✓ — игрок получит это автоматически, как только откроет игру' : 'Не удалось сохранить');
-  } catch (e){
-    adminSetStatus('Ошибка связи при сохранении');
-  }
+let adminSnap = null;
+let adminSending = false;
+let adminPending = null;
+
+function adminItemName(k){
+  const i = k.indexOf(':'), sl = k.slice(0, i), v = k.slice(i + 1);
+  if (sl === 'music') return 'музыка «' + ((MUSIC_TRACKS[v] && MUSIC_TRACKS[v].n) || v) + '»';
+  const n = (OUTFITS[sl] && OUTFITS[sl][v]) ? ti(sl, v).n : v;
+  return n;
+}
+function adminStatChange(inputId, key){
+  const el = document.getElementById(inputId);
+  const raw = String((el && el.value) || '').trim();
+  if (!adminSnap || raw === adminSnap.shown[key]) return null;
+  if (/^-?\d+$/.test(raw)) return { num: Math.max(0, parseInt(raw, 10) || 0), text: '' };
+  if (!raw) return { num: adminSnap.nums[key], text: '' };
+  return { text: raw.slice(0, 16) };
 }
 
-async function adminSave(){
-  if (!adminCurrentCode || !cloudReady() || !isStaff()) return;
-  if (isModOnly()){
-    if (adminCurrentCode === cloudCode || adminCurrentRole === 'mod' || adminCurrentRole === 'admin') return;
-    return modSave();
-  }
-  const statA = adminStatFields();
-  const coinsVal = statA.vals.coins;
-  const bestVal  = statA.vals.best;
-  const ownedList = Array.from(document.querySelectorAll('#adminItemsGrid input[type=checkbox]:checked'))
-    .map(cb => cb.dataset.item);
-  let nickMatch = document.getElementById('adminNickInput').value.trim();
-  if (!nickMatch) nickMatch = 'Котокролик';
-  if (nickMatch.length > 14) nickMatch = nickMatch.slice(0, 14);
-  let titleVal = document.getElementById('adminTitleInput').value.trim();
-  if (titleVal.length > 16) titleVal = titleVal.slice(0, 16);
-  const titleColorVal = document.getElementById('adminTitleColorInput').value.trim();
-  const isSelf = adminCurrentCode === cloudCode;
-  const badgeVal = isValidBadge(adminBadgeValue) ? adminBadgeValue : '';
+// Сравнивает форму со снимком профиля и возвращает только то, что реально изменилось.
+function adminBuildChanges(){
+  const s = adminSnap;
+  const mod = isModOnly();
+  const ops = {}, direct = {}, lines = [];
+  const fmt = (n) => String(n);
 
-  adminSetStatus('Сохранение...');
-  const saveFields = {
-    nick:  { stringValue: nickMatch },
-    nickLower: { stringValue: nickMatch.toLowerCase() },
-    coins: statA.fields.coins, coinsText: statA.fields.coinsText,
-    best:  statA.fields.best, bestText: statA.fields.bestText,
-    trophies: statA.fields.trophies, trophiesText: statA.fields.trophiesText,
-    pass: { stringValue: adminPassValue() },
-    noImages: { booleanValue: !!document.getElementById('adminNoImages').checked },
-    owned: { arrayValue: { values: ownedList.map(v => ({ stringValue: v })) } },
-    hat:   { stringValue: (adminCurrentEquipped && adminCurrentEquipped.hat)  || 'none' },
-    acc:   { stringValue: (adminCurrentEquipped && adminCurrentEquipped.acc)  || 'none' },
-    tool:  { stringValue: (adminCurrentEquipped && adminCurrentEquipped.tool) || 'none' },
-    char:  { stringValue: (adminCurrentEquipped && adminCurrentEquipped.char) || 'hero' },
-    perk:  { stringValue: (adminCurrentEquipped && adminCurrentEquipped.perk) || 'none' },
-    hat2:  { stringValue: (adminCurrentEquipped && adminCurrentEquipped.hat2) || 'none' },
-    acc2:  { stringValue: (adminCurrentEquipped && adminCurrentEquipped.acc2) || 'none' },
-    title:      { stringValue: titleVal },
-    titleColor: { stringValue: titleColorVal },
-    badge:      { stringValue: badgeVal },
-    role:       { stringValue: adminRoleValue },
-    keep:       { arrayValue: { values: ownedList.filter(k => EVENT_TEMP_ITEMS.indexOf(k) !== -1).map(v => ({ stringValue: v })) } },
-    pending:    { booleanValue: !isSelf }
-  };
-  const adminFr = adminCollectFruits();
-  saveFields.fruits = { stringValue: JSON.stringify(adminFr) };
-  const adminSeason = Math.max(0, parseInt((document.getElementById('adminSeasonInput') || {}).value, 10) || 0);
-  saveFields[seasonKey()] = { integerValue: String(adminSeason) };
-  const saveMask = Object.keys(saveFields).map(k => 'updateMask.fieldPaths=' + k).join('&');
+  const c = adminStatChange('adminCoinsInput', 'coins');
+  if (c){
+    if (c.text !== undefined && c.num === undefined){ direct.coinsText = c.text; lines.push('Монеты: текст «' + c.text + '»'); }
+    else { const d = c.num - s.nums.coins; if (d){ ops.coinsAdd = d; lines.push('Монеты: ' + (d > 0 ? '+' : '') + fmt(d) + ' (было ' + s.nums.coins + ', станет ' + c.num + ')'); } direct.coinsText = ''; }
+  }
+  const tr = adminStatChange('adminTrophiesInput', 'trophies');
+  if (tr){
+    if (tr.num === undefined){ direct.trophiesText = tr.text; lines.push('Кубки: текст «' + tr.text + '»'); }
+    else { const d = tr.num - s.nums.trophies; if (d){ ops.trophiesAdd = d; lines.push('Кубки: ' + (d > 0 ? '+' : '') + fmt(d) + ' (было ' + s.nums.trophies + ', станет ' + tr.num + ')'); } direct.trophiesText = ''; }
+  }
+  const b = adminStatChange('adminBestInput', 'best');
+  if (b){
+    if (b.num === undefined){ direct.bestText = b.text; lines.push('Рекорд: текст «' + b.text + '»'); }
+    else { if (b.num !== s.nums.best){ ops.bestSet = b.num; lines.push('Рекорд: установить ' + b.num + ' (было ' + s.nums.best + ')'); } direct.bestText = ''; }
+  }
+
+  const checked = new Set(Array.from(document.querySelectorAll('#adminItemsGrid input[type=checkbox]')).filter(cb => cb.checked && !cb.disabled).map(cb => cb.dataset.item));
+  const universe = Array.from(document.querySelectorAll('#adminItemsGrid input[type=checkbox]')).filter(cb => !cb.disabled).map(cb => cb.dataset.item);
+  const isDefault = (k) => /:none$/.test(k) || k === 'acc:bowtie' || k === 'char:hero';
+  const addL = universe.filter(k => checked.has(k) && !s.owned.has(k));
+  const rmL = universe.filter(k => !checked.has(k) && s.owned.has(k) && !isDefault(k));
+  if (addL.length){ ops.add = addL; lines.push('Выдать предметы: ' + addL.map(adminItemName).join(', ')); }
+  if (rmL.length){ ops.rm = rmL; lines.push('Забрать предметы: ' + rmL.map(adminItemName).join(', ')); }
+
+  if (!mod){
+    let nick = document.getElementById('adminNickInput').value.trim().slice(0, 14);
+    if (!nick) nick = s.nick || 'Котокролик';
+    if (nick !== s.nick){ ops.nick = nick; lines.push('Ник: «' + s.nick + '» -> «' + nick + '»'); }
+    const title = document.getElementById('adminTitleInput').value.trim().slice(0, 16);
+    if (title !== s.title){ ops.title = title; lines.push('Титул: ' + (title ? '«' + title + '»' : 'убрать')); }
+    const tcol = document.getElementById('adminTitleColorInput').value.trim();
+    if (tcol !== s.titleColor){ ops.titleColor = tcol; lines.push('Цвет титула: ' + (tcol || 'по умолчанию')); }
+    const badge = isValidBadge(adminBadgeValue) ? adminBadgeValue : '';
+    if (badge !== s.badge){ ops.badge = badge; direct.badge = badge; lines.push('Галочка: ' + (badge ? badge : 'убрать')); }
+    if (adminRoleValue !== s.role){ ops.role = adminRoleValue; direct.role = adminRoleValue; lines.push('Роль: ' + (adminRoleValue === 'admin' ? 'администратор' : adminRoleValue === 'mod' ? 'помощник' : 'обычный игрок')); }
+    const gold = !!document.getElementById('adminPassGold').checked;
+    if (gold !== s.passGold){ ops.passGold = gold; lines.push('Золотой пасс: ' + (gold ? 'выдать' : 'забрать')); }
+    const noImg = !!document.getElementById('adminNoImages').checked;
+    if (noImg !== s.noImages){ direct.noImages = noImg; lines.push('Запрет картинок: ' + (noImg ? 'включить' : 'выключить')); }
+
+    const fr = adminCollectFruits();
+    const fAdd = {};
+    for (const id of FRUIT_IDS){
+      const d = (fr.inv[id] || 0) - (s.fruits.inv[id] || 0);
+      if (d) fAdd[id] = d;
+    }
+    if (Object.keys(fAdd).length){ ops.fruitAdd = fAdd; lines.push('Фрукты: ' + Object.keys(fAdd).map(id => fruitName(id) + ' ' + (fAdd[id] > 0 ? '+' : '') + fAdd[id]).join(', ')); }
+    if ((fr.eat || '') !== (s.fruits.eat || '')){ ops.fruitEat = fr.eat || ''; lines.push('Съеденный фрукт: ' + (fr.eat ? fruitName(fr.eat) : 'ничего')); }
+    const asi = document.getElementById('adminSeasonInput');
+    const season = Math.max(0, parseInt((asi || {}).value, 10) || 0);
+    if (asi && season !== s.season){ ops.seasonSet = season; lines.push('Рекорд сезона: ' + season + ' (было ' + s.season + ')'); }
+  }
+  return { ops, direct, lines };
+}
+
+function adminHideConfirm(){
+  adminPending = null;
+  const box = document.getElementById('adminConfirm');
+  if (box) box.classList.add('hidden');
+}
+
+// Шаг 1: показать, что именно будет выдано, и ждать подтверждения.
+function adminSave(){
+  if (!adminCurrentCode || !adminSnap || !cloudReady() || !isStaff() || adminSending) return;
+  if (isModOnly() && (adminCurrentCode === cloudCode || adminCurrentRole === 'mod' || adminCurrentRole === 'admin')) return;
+  const ch = adminBuildChanges();
+  if (!ch.lines.length){ adminHideConfirm(); adminSetStatus('Нечего выдавать: ничего не изменено'); return; }
+  adminPending = { code: adminCurrentCode, ch };
+  const nick = (adminSnap.nick || '?');
+  document.getElementById('adminConfirmWho').textContent = 'Игрок: ' + nick + ' (код ' + adminCurrentCode + ')' + (adminCurrentCode === cloudCode ? ' - это ты' : '');
+  const ul = document.getElementById('adminConfirmList');
+  ul.innerHTML = '';
+  for (const ln of ch.lines){ const li = document.createElement('li'); li.textContent = ln; ul.appendChild(li); }
+  document.getElementById('adminConfirm').classList.remove('hidden');
+  adminSetStatus('');
+  document.getElementById('adminConfirm').scrollIntoView({ block: 'center' });
+}
+
+// Шаг 2: после подтверждения отправить заявку игроку и записать поля, которые игра сама не перезаписывает.
+async function adminConfirmGrant(){
+  if (!adminPending || adminSending || !cloudReady()) return;
+  const { code, ch } = adminPending;
+  if (code !== adminCurrentCode || !isStaff()) { adminHideConfirm(); return; }
+  adminSending = true;
+  const okBtn = document.getElementById('adminConfirmOk');
+  okBtn.disabled = true;
+  adminSetStatus('Отправка...');
+  const H = { 'Content-Type': 'application/json' };
+  const isSelf = code === cloudCode;
+  let grantOk = true, directOk = true, grantId = '';
   try {
-    const res = await fetch(cloudBase() + '/players/' + adminCurrentCode + '?' + saveMask + '&key=' + CLOUD.apiKey, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ fields: saveFields })
-    });
-    if (res.ok){
-      if (lbFieldsByCode[adminCurrentCode]) lbFieldsByCode[adminCurrentCode].badge = { stringValue: badgeVal };
+    if (Object.keys(ch.ops).length){
       if (isSelf){
-        coins = coinsVal; Store.set('coins', coins);
-        best  = bestVal;  Store.set('best', best);
-        trophies = statA.vals.trophies; Store.set('trophies', trophies);
-        pass = normalizePass(parsePassStr(adminPassValue())); savePass();
-        myNoImages = !!document.getElementById('adminNoImages').checked; Store.set('noImages', myNoImages ? '1' : '0');
-        nickname = nickMatch; Store.set('nick', nickname);
-        myTitle = titleVal; Store.set('titleText', myTitle);
-        myTitleColor = titleColorVal; Store.set('titleColor', myTitleColor);
-        myBadge = badgeVal; Store.set('badge', myBadge);
-        fruitState = parseFruitState(JSON.stringify(adminFr)); fruitState.rev = adminFr.rev; Store.set('fruits', fruitStr());
-        saveSeasonBest(adminSeason);
-        keepSet = new Set(ownedList.filter(k => EVENT_TEMP_ITEMS.indexOf(k) !== -1));
-        Store.set('keep', Array.from(keepSet).join(','));
-        owned.clear();
-        for (const it of ownedList) owned.add(it);
-        owned.add('hat:none'); owned.add('acc:none'); owned.add('acc:bowtie'); owned.add('tool:none'); owned.add('char:hero');
-        saveOwned();
-        dropUnownedLockedOutfit();
-        previewChar = outfit.char;
-        refreshShopState();
-        adminSetStatus('Сохранено ✓ (это твой профиль — применено сразу)');
+        applyGrantOps(ch.ops);
       } else {
-        adminSetStatus('Сохранено ✓ — игрок получит это автоматически, как только откроет игру');
+        const body = { fields: {
+          to: { stringValue: code }, by: { stringValue: cloudCode || '' }, ts: { integerValue: String(Date.now()) },
+          summary: { stringValue: ch.lines.join('; ').slice(0, 400) }, ops: { stringValue: JSON.stringify(ch.ops) },
+          applied: { booleanValue: false }
+        } };
+        const r = await fetch(cloudBase() + '/conversations/_g_' + code + '/messages?key=' + CLOUD.apiKey, { method: 'POST', headers: H, body: JSON.stringify(body) });
+        if (!r.ok) grantOk = false;
+        else {
+          const created = await r.json();
+          grantId = docCode(created);
+          const chk = await fetch(cloudBase() + '/conversations/_g_' + code + '/messages/' + grantId + '?key=' + CLOUD.apiKey);
+          if (!chk.ok) grantOk = false;
+        }
       }
-    } else {
-      adminSetStatus('Не удалось сохранить');
+    }
+    const dk = Object.keys(ch.direct);
+    if (dk.length && grantOk){
+      const fields = {};
+      for (const k of dk){
+        const v = ch.direct[k];
+        fields[k] = typeof v === 'boolean' ? { booleanValue: v } : { stringValue: String(v) };
+      }
+      const mask = dk.map(k => 'updateMask.fieldPaths=' + k).join('&');
+      const r2 = await fetch(cloudBase() + '/players/' + code + '?' + mask + '&key=' + CLOUD.apiKey, { method: 'PATCH', headers: H, body: JSON.stringify({ fields }) });
+      if (!r2.ok) directOk = false;
+      else if ('badge' in ch.direct && lbFieldsByCode[code]) lbFieldsByCode[code].badge = { stringValue: ch.direct.badge };
     }
   } catch (e){
-    adminSetStatus('Ошибка связи при сохранении');
+    grantOk = false;
   }
+  adminSending = false;
+  okBtn.disabled = false;
+  if (!grantOk){
+    adminSetStatus('Не отправлено: нет связи или сервер отказал. Ничего не выдано, можно повторить.');
+    return;
+  }
+  // обновляем снимок: повторное нажатие не отправит те же изменения второй раз
+  adminApplyToSnap(ch);
+  adminHideConfirm();
+  const waiting = isSelf ? '' : ' Заявка ждёт игрока, статус ниже.';
+  adminSetStatus(directOk ? ('Готово.' + (isSelf ? ' Применено сразу (это твой профиль).' : waiting)) : 'Заявка отправлена, но часть полей (роль, галочка, запрет картинок) не записалась. Повтори.');
+  adminRenderGrantLog(code);
+}
+
+function adminApplyToSnap(ch){
+  const s = adminSnap, o = ch.ops, d = ch.direct;
+  if (o.coinsAdd){ s.nums.coins = Math.max(0, s.nums.coins + o.coinsAdd); s.shown.coins = String(s.nums.coins); }
+  if (o.trophiesAdd){ s.nums.trophies = Math.max(0, s.nums.trophies + o.trophiesAdd); s.shown.trophies = String(s.nums.trophies); }
+  if ('bestSet' in o){ s.nums.best = o.bestSet; s.shown.best = String(o.bestSet); }
+  for (const k of ['coins', 'best', 'trophies']){ if (d[k + 'Text'] !== undefined){ s.shown[k] = d[k + 'Text'] || String(s.nums[k]); } }
+  if (o.add) for (const k of o.add) s.owned.add(k);
+  if (o.rm) for (const k of o.rm) s.owned.delete(k);
+  if ('nick' in o) s.nick = o.nick;
+  if ('title' in o) s.title = o.title;
+  if ('titleColor' in o) s.titleColor = o.titleColor;
+  if ('badge' in o) s.badge = o.badge;
+  if ('role' in o){ s.role = o.role; adminCurrentRole = o.role; }
+  if ('passGold' in o) s.passGold = o.passGold;
+  if ('noImages' in d) s.noImages = d.noImages;
+  if (o.fruitAdd) for (const id of Object.keys(o.fruitAdd)){ const n = Math.max(0, Math.min(99, (s.fruits.inv[id] || 0) + o.fruitAdd[id])); if (n) s.fruits.inv[id] = n; else delete s.fruits.inv[id]; }
+  if ('fruitEat' in o) s.fruits.eat = o.fruitEat;
+  if ('seasonSet' in o) s.season = o.seasonSet;
+  adminCurrentNums = { coins: s.nums.coins, best: s.nums.best, trophies: s.nums.trophies };
+}
+
+// Список последних заявок игрока со статусом: ждёт или получено.
+async function adminRenderGrantLog(code){
+  const el = document.getElementById('adminGrantLog');
+  if (!el) return;
+  el.textContent = '';
+  if (!code || !cloudReady()) return;
+  try {
+    const r = await fetch(cloudBase() + '/conversations/_g_' + code + '/messages?pageSize=30&key=' + CLOUD.apiKey);
+    if (!r.ok) return;
+    const data = await r.json();
+    const rows = ((data && data.documents) || []).map(d => d.fields || {}).sort((a, b) => (parseInt((b.ts && b.ts.integerValue) || '0', 10) || 0) - (parseInt((a.ts && a.ts.integerValue) || '0', 10) || 0)).slice(0, 5);
+    if (code !== adminCurrentCode || !rows.length) return;
+    const waiting = rows.filter(f => !(f.applied && f.applied.booleanValue)).length;
+    const parts = [];
+    if (waiting) parts.push('Не получено игроком: ' + waiting + '. Пока он не откроет игру, форма показывает старые значения. Не отправляй то же самое второй раз.');
+    for (const f of rows){
+      const ok = !!(f.applied && f.applied.booleanValue);
+      const ts = parseInt((f.ts && f.ts.integerValue) || '0', 10) || 0;
+      const when = ts ? new Date(ts).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '';
+      parts.push((ok ? 'Получено' : 'Ждёт') + ' [' + when + ']: ' + ((f.summary && f.summary.stringValue) || ''));
+    }
+    el.innerHTML = '';
+    for (const p of parts){ const div = document.createElement('div'); div.textContent = p; el.appendChild(div); }
+  } catch (e) {}
 }
 
 async function adminLoadPhotos(){
@@ -765,6 +879,8 @@ async function adminDeleteAccount(){
 
 document.getElementById('adminLoadBtn').addEventListener('click', () => adminLoad());
 document.getElementById('adminSaveBtn').addEventListener('click', adminSave);
+document.getElementById('adminConfirmOk').addEventListener('click', adminConfirmGrant);
+document.getElementById('adminConfirmCancel').addEventListener('click', adminHideConfirm);
 function adminOpenGame(){
   if (!GAME_CLOSED) return;
   GAME_CLOSED = false;
