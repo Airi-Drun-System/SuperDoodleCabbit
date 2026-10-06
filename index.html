@@ -6,8 +6,8 @@
 <meta name="theme-color" content="#150a2b">
 <title>Cabbit Jump!</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
-<link rel="preload" href="fonts/bips.woff?v=20261006" as="font" type="font/woff" crossorigin>
-<link rel="stylesheet" href="css/style.css?v=20261006">
+<link rel="preload" href="fonts/bips.woff?v=20261007d" as="font" type="font/woff" crossorigin>
+<link rel="stylesheet" href="css/style.css?v=20261007d">
 </head>
 <body>
 <div id="wrap">
@@ -77,15 +77,10 @@
     <p class="stats rise d1">
       <span><span data-i18n="best">Лучший результат</span>: <b id="menuBest">0</b></span>
     </p>
-    <button id="passBtn" class="passCard rise d2" type="button">
-      <span class="passCardTop"><span class="passLogo">CABBIT PASS</span><span id="passCardLvl" class="passCardLvl">0 / 30</span></span>
-      <span class="passBar"><i id="passCardFill"></i></span>
-      <span id="passCardDot" class="passDot hidden">!</span>
-    </button>
 
     <button id="seasonCard" class="seasonCard rise d2" type="button">
       <span class="seasonTop"><span id="seasonCardTitle" class="seasonLogo">Сезон 1</span><span id="seasonCardDays" class="seasonDays"></span></span>
-      <span class="seasonBottom"><span id="seasonCardEvent" class="seasonEv"></span><span class="seasonBestWrap"><span data-i18n="seasonBestShort">рекорд</span> <b id="seasonCardBest">0</b></span></span>
+      <span class="seasonBottom"><span class="seasonBestWrap"><span data-i18n="seasonBestShort">рекорд</span> <b id="seasonCardBest">0</b></span></span>
     </button>
 
     <div class="btnRow rise d3">
@@ -135,13 +130,15 @@
       <button id="settingsSaveBtn" class="adminSaveBtn settingsSaveBtn" type="button" data-i18n="settingsSave">✓ Сохранить</button>
       <p id="settingsSaveStatus" class="settingsSaveStatus"></p>
       <div id="adminGate" class="adminGate hidden">
-        <input id="adminPinInput" class="adminInput adminPinInput" type="password" placeholder="PIN" inputmode="numeric">
+        <input id="adminEmailInput" class="adminInput" type="email" placeholder="Почта" autocomplete="off">
+        <input id="adminPassInput" class="adminInput" type="password" placeholder="Пароль" autocomplete="off">
         <button id="adminPinBtn" class="btn small">Войти</button>
       </div>
 
       <div id="adminTool" class="adminPanel hidden">
         <div class="adminHeader">
           <span id="adminHeaderTitle" class="adminHeaderTitle">⚒ Админка</span>
+          <button id="adminLogoutBtn" class="btn small" type="button">Выйти</button>
           <p class="adminHint">Открой раздел «Онлайн» ниже и тапни по игроку в рейтинге, чтобы выдать ему вещи или монеты</p>
         </div>
 
@@ -160,12 +157,6 @@
           <div class="adminCardTitle">Фото на проверке</div>
           <button id="adminPhotoLoadBtn" type="button" class="adminPwResetBtn">Показать фото аватаров</button>
           <div id="adminPhotoList" class="adminPhotoList"></div>
-        </div>
-
-        <div class="adminCard">
-          <div class="adminCardTitle">Жалобы на фото</div>
-          <button id="adminReportsBtn" type="button" class="adminPwResetBtn">Показать жалобы</button>
-          <div id="adminReportsList" class="adminPhotoList"></div>
         </div>
 
         <div id="adminPlayerBox" class="adminPlayerBox hidden">
@@ -212,10 +203,6 @@
               <span>Кубки</span>
               <input id="adminTrophiesInput" class="adminInput adminInputNum" type="text" maxlength="16" placeholder="число или слово">
             </label>
-            <label class="adminField adminOnly">
-              <span>Золотой пасс</span>
-              <input id="adminPassGold" type="checkbox">
-            </label>
           </div>
 
           <div class="adminCard adminOnly">
@@ -260,7 +247,16 @@
             </label>
           </div>
 
-          <button id="adminSaveBtn" class="adminSaveBtn" type="button">✓ Сохранить изменения</button>
+          <button id="adminSaveBtn" class="adminSaveBtn" type="button">Проверить и выдать</button>
+
+          <div id="adminConfirm" class="adminCard hidden">
+            <div class="adminCardTitle">Подтверди выдачу</div>
+            <p id="adminConfirmWho" class="adminRoleHint"></p>
+            <ul id="adminConfirmList" class="adminConfirmList"></ul>
+            <button id="adminConfirmOk" class="adminSaveBtn" type="button">Выдать</button>
+            <button id="adminConfirmCancel" class="adminPwResetBtn" type="button">Отмена</button>
+          </div>
+          <div id="adminGrantLog" class="adminRoleHint adminGrantLog"></div>
 
           <button id="adminPwResetBtn" type="button" class="adminPwResetBtn adminOnly">Сбросить пароль игрока</button>
 
@@ -390,7 +386,6 @@
             </div>
           </div>
           <div class="settingRow">
-            <div id="eventBanner" class="eventBanner hidden"></div>
           </div>
           <div class="settingRow creditBox">
             <span class="settingLabel" data-i18n="creditTitle">Автор кэббита</span>
@@ -452,7 +447,6 @@
         <div class="overStat os3"><span class="osLbl" data-i18n="bossesChip">Боссы</span><b id="overBossVal">0</b></div>
       </div>
       <p id="coinLine" class="srOnly"></p>
-      <p id="passLine" class="passLine"></p>
     </div>
     <div class="btnRow overBtns">
       <button id="retryBtn" class="btn" data-i18n="retry">Повторить</button>
@@ -519,24 +513,6 @@
         <button id="tradeCloseBtn" class="btn ghost" type="button" data-i18n="back">Назад</button>
         <button id="tradeSendBtn" class="btn" type="button" data-i18n="tradeSend">Предложить</button>
       </div>
-    </div>
-  </div>
-
-  <div id="passModal" class="profileOverlay passOverlay hidden">
-    <div class="passFull">
-      <button id="passClose" class="backIconBtn" aria-label="Закрыть">
-        <svg viewBox="0 0 24 24" fill="none"><path d="M6 6 L18 18 M18 6 L6 18" stroke="#fdf6e8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-      <div class="passTitle">CABBIT PASS</div>
-      <div id="passSeason" class="passSeason"></div>
-      <div class="passLvlRow">
-        <span id="passLvlBadge" class="passLvlBadge">0</span>
-        <div class="passXpWrap"><div class="passXpBar"><i id="passXpFill"></i></div><div id="passXpText" class="passXpText"></div></div>
-      </div>
-      <button id="passBuyBtn" class="btn passBuyBtn" type="button"></button>
-      <div id="passQuests" class="passQuests"></div>
-      <div class="passColsHead"><span data-i18n="passFree">Бесплатно</span><span></span><span data-i18n="passGold">Золотой</span></div>
-      <div id="passTrack" class="passTrack"></div>
     </div>
   </div>
 
@@ -642,29 +618,15 @@
           <div id="chatPresence" class="chatPresence"></div>
         </div>
       </div>
-      <div id="chatPinBar" class="chatPinBar hidden">
-        <span class="chatPinIcon">📌</span>
-        <div class="chatPinBody"><span class="chatPinTitle" data-i18n="pinnedTitle">Закреплённое сообщение</span><span id="chatPinText" class="chatPinText"></span></div>
-        <button id="chatPinClose" class="chatReplyBarClose" type="button" aria-label="Открепить">✕</button>
-      </div>
       <div id="chatMessagesList" class="chatMessagesList"></div>
       <div id="stickerPanel" class="stickerPanel hidden"></div>
-      <div id="chatReplyBar" class="chatReplyBar hidden">
-        <span id="chatReplyBarIcon" class="chatReplyBarIcon">↩</span>
-        <div class="chatReplyBarBody"><span id="chatReplyBarName" class="chatReplyBarName"></span><span id="chatReplyBarText" class="chatReplyBarText"></span></div>
-        <button id="chatReplyBarClose" class="chatReplyBarClose" type="button" aria-label="Отменить ответ">✕</button>
-      </div>
       <div class="chatForm">
         <button id="chatStickerBtn" class="chatToolBtn" type="button" aria-label="Стикеры">
           <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fdf6e8" stroke-width="2"/><circle cx="9" cy="10" r="1.3" fill="#fdf6e8"/><circle cx="15" cy="10" r="1.3" fill="#fdf6e8"/><path d="M8 14.5 Q12 18 16 14.5" stroke="#fdf6e8" stroke-width="2" stroke-linecap="round"/></svg>
         </button>
-        <button id="chatPhotoBtn" class="chatToolBtn" type="button" aria-label="Фото">
-          <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="3" stroke="#fdf6e8" stroke-width="2"/><circle cx="9" cy="10" r="1.8" fill="#fdf6e8"/><path d="M5 17 L10 12.5 L13 15 L16 12 L20 16" stroke="#fdf6e8" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg>
-        </button>
         <button id="chatTradeBtn" class="chatToolBtn" type="button" aria-label="Обмен">
           <svg viewBox="0 0 24 24" fill="none"><path d="M4 8 H17 M13 4 L17 8 L13 12" stroke="#fdf6e8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 16 H7 M11 12 L7 16 L11 20" stroke="#fdf6e8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
-        <input id="chatPhotoInput" type="file" accept="image/*" class="hidden">
         <input id="chatInput" type="text" maxlength="200" enterkeyhint="send" autocomplete="off" data-i18n-placeholder="chatPlaceholder" placeholder="Написать сообщение...">
         <button id="chatSendBtn" type="button" aria-label="Отправить">
           <svg viewBox="0 0 24 24" fill="none"><path d="M4 12 L20 4 L14 20 L11 13 Z" fill="#3a2400"/></svg>
@@ -773,32 +735,33 @@
     <div class="closedTimer" id="closedTimer">--:--:--</div>
     <div class="closedBye" data-i18n="closedBye">Сегодня в 15:15 по Москве</div>
     <div id="closedAdmin" class="closedAdmin" hidden>
-      <input id="closedPin" class="adminInput" type="password" inputmode="numeric" placeholder="PIN" autocomplete="off">
+      <input id="closedEmail" class="adminInput" type="email" placeholder="Почта" autocomplete="off">
+      <input id="closedPass" class="adminInput" type="password" placeholder="Пароль" autocomplete="off">
       <button id="closedPinBtn" class="btn small" type="button">Войти</button>
     </div>
   </div>
 </div>
 
-<script src="js/01-core.js?v=20261006"></script>
-<script src="js/02-badges.js?v=20261006"></script>
-<script src="js/03-audio.js?v=20261006"></script>
-<script src="js/04-outfits.js?v=20261006"></script>
-<script src="js/05-rig.js?v=20261006"></script>
-<script src="js/06-world.js?v=20261006"></script>
-<script src="js/07-fruits.js?v=20261006"></script>
-<script src="js/08-bosses.js?v=20261006"></script>
-<script src="js/09-seasons.js?v=20261006"></script>
-<script src="js/10-physics.js?v=20261006"></script>
-<script src="js/11-render-world.js?v=20261006"></script>
-<script src="js/12-render-hero.js?v=20261006"></script>
-<script src="js/13-render-hud.js?v=20261006"></script>
-<script src="js/14-ui.js?v=20261006"></script>
-<script src="js/15-events.js?v=20261006"></script>
-<script src="js/16-cloud.js?v=20261006"></script>
-<script src="js/17-device.js?v=20261006"></script>
-<script src="js/18-profile-chat.js?v=20261006"></script>
-<script src="js/19-inbox.js?v=20261006"></script>
-<script src="js/20-admin.js?v=20261006"></script>
-<script src="js/21-settings.js?v=20261006"></script>
+<script src="js/01-core.js?v=20261007d"></script>
+<script src="js/02-badges.js?v=20261007d"></script>
+<script src="js/03-audio.js?v=20261007d"></script>
+<script src="js/04-outfits.js?v=20261007d"></script>
+<script src="js/05-rig.js?v=20261007d"></script>
+<script src="js/06-world.js?v=20261007d"></script>
+<script src="js/07-fruits.js?v=20261007d"></script>
+<script src="js/08-bosses.js?v=20261007d"></script>
+<script src="js/09-seasons.js?v=20261007d"></script>
+<script src="js/10-physics.js?v=20261007d"></script>
+<script src="js/11-render-world.js?v=20261007d"></script>
+<script src="js/12-render-hero.js?v=20261007d"></script>
+<script src="js/13-render-hud.js?v=20261007d"></script>
+<script src="js/14-ui.js?v=20261007d"></script>
+<script src="js/15-events.js?v=20261007d"></script>
+<script src="js/16-cloud.js?v=20261007d"></script>
+<script src="js/17-device.js?v=20261007d"></script>
+<script src="js/18-profile-chat.js?v=20261007d"></script>
+<script src="js/19-inbox.js?v=20261007d"></script>
+<script src="js/20-admin.js?v=20261007d"></script>
+<script src="js/21-settings.js?v=20261007d"></script>
 </body>
 </html>
