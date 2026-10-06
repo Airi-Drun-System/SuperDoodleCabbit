@@ -1,7 +1,7 @@
 "use strict";
 const BOSS_FIRST = 2400;
 const BOSS_EVERY = 3000;
-const BOSS_LIFE = 50;
+const BOSS_LIFE = 60;
 let boss = null;
 let bossShots = [];
 let bossOrbs = [];
@@ -14,7 +14,7 @@ let bossKillsById = (() => { try { const v = JSON.parse(Store.get('bossKillsBy',
 
 const bossName = (w) => t('boss' + (w % WORLD_THEMES.length));
 const bossTier = () => Math.floor(Math.max(0, score) / BOSS_EVERY);
-function bossMaxHp(tier){ return Math.min(6, 3 + Math.floor(tier / 2)); }
+function bossMaxHp(tier){ return Math.min(5, 2 + Math.floor(tier / 3)); }
 
 function resetBoss(){
   boss = null;
@@ -35,6 +35,7 @@ function spawnBoss(){
     atkT: 2.6, orbT: 1.2, hurt: 0, st: 'in', dieT: 0, life: BOSS_LIFE
   };
   bossWarn = 0;
+  addBossPlatform();
   addToast(t('bossIncoming').replace('{b}', bossName(w)), VW / 2, camY + VH * 0.34, '#ff6b6b');
   flash = 0.5; flashColor = '#ff3b3b';
   shake = Math.max(shake, 10);
@@ -42,7 +43,7 @@ function spawnBoss(){
   buzz(60);
 }
 
-function bossAttackEvery(){ const k = [1.05, 1.25, 1.1, 0.9, 1.35][boss.w % 5]; return k * Math.max(1.3, 2.4 - boss.tier * 0.08 - (1 - boss.hp / boss.max) * 0.4); }
+function bossAttackEvery(){ const k = [1.05, 1.25, 1.1, 0.9, 1.35][boss.w % 5]; return 1.3 * k * Math.max(1.4, 2.4 - boss.tier * 0.06 - (1 - boss.hp / boss.max) * 0.3); }
 
 function bossShoot(){
   const b = boss;
@@ -93,7 +94,7 @@ function bossShoot(){
 
 function bossDropOrb(){
   const b = boss;
-  bossOrbs.push({ x: clamp(hero.x + rand(-110, 110), 30, VW - 30), y: camY + VH * b.sf + b.r, vy: 85, t: 0, r: 18 });
+  bossOrbs.push({ x: clamp(hero.x + rand(-80, 80), 30, VW - 30), y: camY + VH * b.sf + b.r, vy: 85, t: 0, r: 18 });
 }
 
 function damageBoss(n, fx, fy){
@@ -119,14 +120,14 @@ function damageBoss(n, fx, fy){
 
 function bossReward(){
   const b = boss;
-  const gain = Math.round((40 + 20 * b.tier) * coinMult());
+  const gain = Math.round((40 + 20 * b.tier) * coinMult() * (weekEvent() === 'boss' ? 2 : 1));
   runCoins += gain; coins += gain;
   Store.set('coins', coins);
   coinPulse = 1;
   const by = camY + VH * b.sf;
   addToast(t('bossDown'), VW / 2, by + 40, '#ffe37a');
   addToast('+' + gain, VW / 2, by + 70, '#ffd34d');
-  for (let k = 0; k < 1; k++){
+  for (let k = 0; k < (weekEvent() === 'fruit' ? 2 : 1); k++){
     const f = rollFruit([40, 38, 17, 5]);
     if (f && addFruit(f)) addToast(t('fruitGot').replace('{f}', fruitName(f)), VW / 2, by + 100 + k * 26, RARITY_COL[FRUITS[f].rar]);
   }
@@ -139,11 +140,22 @@ function bossReward(){
   sfxCoin();
 }
 
+function addBossPlatform(){
+  const w = Math.min(VW - 24, 340);
+  const p = makePlatform(camY + VH * 0.8, 'normal', false);
+  p.x = (VW - w) / 2; p.w = w; p.bossPlat = true;
+  for (let i = platforms.length - 1; i >= 0; i--){
+    const q = platforms[i];
+    if (Math.abs(q.y - p.y) < 40) platforms.splice(i, 1);
+  }
+  platforms.push(p);
+}
+
 function endBoss(){
   boss = null;
   bossShots.length = 0;
   bossOrbs.length = 0;
-  bossNext = (Math.floor(Math.max(0, score) / BOSS_EVERY) + 1) * BOSS_EVERY + BOSS_FIRST;
+  bossNext = Math.max(bossNext + BOSS_EVERY, Math.floor(Math.max(0, score)) + 1500);
 }
 
 function updateBoss(dt){
@@ -184,7 +196,7 @@ function updateBoss(dt){
     b.atkT -= dt;
     if (b.atkT <= 0){ bossShoot(); b.atkT = bossAttackEvery(); }
     b.orbT -= dt;
-    if (b.orbT <= 0 && bossOrbs.length < 3){ bossDropOrb(); b.orbT = 2.2; }
+    if (b.orbT <= 0 && bossOrbs.length < 4){ bossDropOrb(); b.orbT = 1.4; }
   }
   b.x += b.vx * dt * (b.st === 'fight' ? 1 : 0.4);
   if (b.x < b.r + 6){ b.x = b.r + 6; b.vx = Math.abs(b.vx); }

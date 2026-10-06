@@ -1641,9 +1641,3 @@ body.st-paper{background:#fcfaf2;}
 #cloudRefreshBtn.spin svg,#cloudRefreshBtn.spin{animation:refSpin .6s ease;}
 @keyframes refSpin{from{transform:rotate(0);}to{transform:rotate(360deg);}}
 body:has(#chatModal:not(.hidden)) .adminFab,body:has(#inboxModal:not(.hidden)) .adminFab,body:has(.profileOverlay:not(.hidden)) .adminFab{display:none !important;}
-
-.adminConfirmList{margin:6px 0 10px;padding-left:18px;font-size:12.5px;line-height:1.5;}
-.adminGrantLog{margin:8px 0;font-size:11px;line-height:1.45;}
-.adminGrantLog div{margin-bottom:3px;}
-.closedAdmin{flex-wrap:wrap;}
-.adminGate .adminInput{width:100%;max-width:260px;box-sizing:border-box;}
