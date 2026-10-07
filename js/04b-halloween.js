@@ -194,17 +194,17 @@ function hwPaintCandy(g, kind, s){
   g.beginPath(); g.ellipse(-3 * s, -3 * s, 3 * s, 1.6 * s, -0.4, 0, 6.2832); g.fill();
 }
 
-function hwPaintPumpkin(g, R, t, face){
+function hwPaintPumpkin(g, R, t, face, white){
   g.lineJoin = 'round';
-  g.strokeStyle = 'rgba(70,20,0,.6)';
+  g.strokeStyle = white ? 'rgba(255,255,255,.9)' : 'rgba(70,20,0,.6)';
   g.lineWidth = Math.max(1.2, R * 0.09);
-  const cols = ['#e8661a', '#ff8a2a', '#f47820'];
+  const cols = white ? ['#ffffff', '#ffffff', '#ffffff'] : ['#e8661a', '#ff8a2a', '#f47820'];
   const lobes = [[-0.55, 0.62], [0.55, 0.62], [0, 0.72]];
   lobes.forEach(([ox, rw], i) => {
     g.fillStyle = cols[i];
     g.beginPath(); g.ellipse(ox * R, 0, rw * R, R * 0.86, 0, 0, 6.2832); g.fill(); g.stroke();
   });
-  g.fillStyle = '#4f7a2a';
+  g.fillStyle = white ? '#ffffff' : '#4f7a2a';
   g.beginPath();
   g.moveTo(-R * 0.1, -R * 0.78); g.lineTo(R * 0.12, -R * 0.8); g.lineTo(R * 0.2, -R * 1.12); g.lineTo(R * 0.02, -R * 1.1);
   g.closePath(); g.fill(); g.stroke();
@@ -376,12 +376,7 @@ function hwPumpkinBoss(g, r, tt, look, hurt){
   }
   g.save();
   g.translate(look * r * 0.05, Math.sin(tt * 2.4) * 2);
-  if (flashW){ g.globalAlpha = 0.9; }
-  hwPaintPumpkin(g, r * 0.95, tt, !flashW);
-  if (flashW){
-    g.globalCompositeOperation = 'source-atop';
-    g.fillStyle = 'rgba(255,255,255,.85)'; g.fillRect(-r * 2, -r * 2, r * 4, r * 4);
-  }
+  hwPaintPumpkin(g, r * 0.95, tt, !flashW, flashW);
   g.restore();
   g.fillStyle = '#ffd34d'; g.strokeStyle = 'rgba(120,70,0,.6)'; g.lineWidth = 2;
   g.beginPath();

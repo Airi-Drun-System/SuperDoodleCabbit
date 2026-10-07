@@ -14,7 +14,7 @@ let bossKillsById = (() => { try { const v = JSON.parse(Store.get('bossKillsBy',
 
 const bossName = (w) => t('boss' + (w % WORLD_THEMES.length));
 const bossTier = () => Math.floor(Math.max(0, score) / BOSS_EVERY);
-function bossMaxHp(tier){ return Math.min(5, 2 + Math.floor(tier / 3)); }
+function bossMaxHp(tier){ return Math.min(8, 4 + Math.floor(tier / 2)); }
 
 function resetBoss(){
   boss = null;
@@ -44,7 +44,7 @@ function spawnBoss(){
   buzz(60);
 }
 
-function bossAttackEvery(){ const k = [1.05, 1.25, 1.1, 0.9, 1.35][boss.w % 5]; return 1.3 * k * Math.max(1.4, 2.4 - boss.tier * 0.06 - (1 - boss.hp / boss.max) * 0.3); }
+function bossAttackEvery(){ const k = [1.05, 1.25, 1.1, 0.9, 1.35][boss.w % 5]; return 1.0 * k * Math.max(1.4, 2.4 - boss.tier * 0.06 - (1 - boss.hp / boss.max) * 0.3); }
 
 function bossShoot(){
   const b = boss;
@@ -155,6 +155,7 @@ function addBossPlatform(){
 
 function endBoss(){
   boss = null;
+  for (const p of platforms) p.bossPlat = false;
   bossShots.length = 0;
   bossOrbs.length = 0;
   bossNext = Math.max(bossNext + BOSS_EVERY, Math.floor(Math.max(0, score)) + 1500);
@@ -171,6 +172,11 @@ function updateBoss(dt){
   const b = boss;
   b.t += dt;
   b.hurt = Math.max(0, b.hurt - dt * 3);
+  // большая платформа едет вместе с камерой, пока идёт бой
+  let bp = null;
+  for (const p of platforms) if (p.bossPlat){ bp = p; break; }
+  if (!bp && b.st !== 'die'){ addBossPlatform(); for (const p of platforms) if (p.bossPlat){ bp = p; break; } }
+  if (bp) bp.y = Math.min(bp.y, camY + VH * 0.82);
   monsterTimer = Math.max(monsterTimer, 1.5);
   laserTimer = Math.max(laserTimer, 2);
 
