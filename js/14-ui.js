@@ -332,7 +332,7 @@ function buildShop(){
 
     for (const val of Object.keys(OUTFITS[slotDef.key])){
       const priceInfo = OUTFITS[slotDef.key][val];
-      if (priceInfo.locked) continue; 
+      if (priceInfo.locked && !isOwned(slotDef.key, val)) continue; 
       const info = ti(slotDef.key, val);
       const chip = document.createElement('button');
       chip.className = 'chip';

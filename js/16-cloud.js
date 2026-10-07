@@ -76,6 +76,7 @@ async function cloudFetchOwnTitle(){
     }
     if (f.fruits && f.fruits.stringValue) mergeFruitsFrom(f.fruits.stringValue);
     mergeSeasonFromCloud(f);
+    hwMergeCloud(f);
     if (f.daily && f.daily.stringValue){ mergeDaily(f.daily.stringValue); refreshDailyBtn(); }
     myTitle = (f.title && f.title.stringValue) || '';
     myTitleColor = (f.titleColor && f.titleColor.stringValue) || '';
@@ -164,8 +165,21 @@ async function cloudPush(){
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ fields })
     });
-    if (pr && pr.ok){ Store.set('cloudSeen', cloudCode); pushSeasonFields(); pushDeviceFields(); }
+    if (pr && pr.ok){ Store.set('cloudSeen', cloudCode); pushSeasonFields(); pushDeviceFields(); pushHwFields(); }
   } catch (e) {  }
+}
+// поля ивента отдельным запросом, чтобы ошибка в них не ломала основное сохранение
+async function pushHwFields(){
+  if (!HW_ON && !hwCandies) return;
+  try {
+    const hf = hwCloudFields();
+    const hm = Object.keys(hf).map(k => 'updateMask.fieldPaths=' + k).join('&');
+    await fetch(cloudBase() + '/players/' + cloudCode + '?' + hm + '&key=' + CLOUD.apiKey, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fields: hf })
+    });
+  } catch (e) {}
 }
 async function pushSeasonFields(){
   try {

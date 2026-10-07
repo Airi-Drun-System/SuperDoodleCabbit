@@ -1,6 +1,7 @@
 "use strict";
 function resetGame(){
   resetFruitRun();
+  hwResetRun();
   worldBanner = null;
   resetBoss();
   platforms.length = 0;
@@ -456,6 +457,7 @@ function updateWorld(dt){
     }
     if (c.y - camY > VH + 80) coinsOnMap.splice(i, 1);
   }
+  hwUpdate(dt);
 
   
   for (let i = crawlers.length - 1; i >= 0; i--){

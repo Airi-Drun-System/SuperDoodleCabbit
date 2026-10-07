@@ -277,7 +277,21 @@ const ANCHOR_SPRITE = { topY: -0.345, cx: 0.015, hw: 0.235, eyeY: -0.155, eyeDX:
 const ANCHOR_VECTOR = { topY: -0.400, cx: 0.000, hw: 0.290, eyeY: -0.040, eyeDX: 0.150, neckY: 0.330, handX: 0.21, handY: 0.38 };
 
 const CHAR_ANCHORS = {
-  hero2: { topY: -0.46, cx: 0.0, hw: 0.30, eyeY: -0.30, eyeDX: 0.10, neckY: 0.10, handX: 0.18, handY: 0.15 },
+  // стандартный котокролик (hero.png): голова наклонена, вещи меньше и правее, как в Cabbit pet
+  hero: { topY: -0.352, cx: 0.08, hw: 0.235, eyeY: -0.172, eyeDX: 0.105, neckY: 0.102, handX: 0.27, handY: 0.30,
+          hatRot: -0.17, hatS: 0.78, accCx: 0.102, accRot: -0.12, accS: 0.8, eyeCx: 0.105, eyeRot: -0.165 },
+  freehero3: { topY: -0.178, cx: -0.11, hw: 0.235, eyeY: -0.05, eyeDX: 0.053, neckY: 0.086, handX: 0.0, handY: 0.25,
+          hatRot: 0, hatS: 0.55, accCx: -0.12, accRot: 0, accS: 0.56, eyeCx: -0.115, eyeRot: 0 },
+  freehero4: { topY: -0.31, cx: -0.18, hw: 0.235, eyeY: -0.123, eyeDX: 0.0625, neckY: 0.057, handX: 0.0, handY: 0.3,
+          hatRot: -0.2, hatS: 0.45, accCx: -0.15, accRot: -0.2, accS: 0.46, eyeCx: -0.156, eyeRot: -0.21 },
+  hero2: { topY: -0.41, cx: 0.0, hw: 0.235, eyeY: -0.33, eyeDX: 0.09, neckY: -0.17, handX: 0.18, handY: 0.15, hatRot: 0, hatS: 0.53, accCx: 0.0, accRot: 0, accS: 0.55, eyeCx: -0.01, eyeRot: 0 },
+  hero3: { topY: -0.39, cx: -0.02, hw: 0.235, eyeY: -0.12, eyeDX: 0.07, neckY: 0.07, handX: 0.2, handY: 0.3, hatRot: -0.1, hatS: 0.55, accCx: 0.0, accRot: -0.1, accS: 0.55, eyeCx: -0.05, eyeRot: -0.08 },
+  hero4: { topY: -0.36, cx: -0.1, hw: 0.235, eyeY: -0.135, eyeDX: 0.165, neckY: 0.11, handX: 0.3, handY: 0.3, hatRot: 0.08, hatS: 0.85, accCx: -0.08, accRot: 0.08, accS: 0.85, eyeCx: -0.085, eyeRot: 0.08 },
+  hero5: { topY: -0.42, cx: 0.2, hw: 0.235, eyeY: -0.1, eyeDX: 0.075, neckY: 0.06, handX: 0.3, handY: 0.3, hatRot: 0.05, hatS: 0.42, accCx: 0.2, accRot: 0.05, accS: 0.42, eyeCx: 0.205, eyeRot: 0.05 },
+  hero6: { topY: -0.27, cx: 0.02, hw: 0.235, eyeY: -0.13, eyeDX: 0.095, neckY: 0.09, handX: 0.2, handY: 0.3, hatRot: 0, hatS: 0.48, accCx: 0.02, accRot: 0, accS: 0.5, eyeCx: 0.025, eyeRot: 0 },
+  hero7: { topY: -0.42, cx: 0.0, hw: 0.235, eyeY: -0.27, eyeDX: 0.06, neckY: -0.11, handX: 0.18, handY: 0.15, hatRot: 0, hatS: 0.62, accCx: 0.0, accRot: 0, accS: 0.5, eyeCx: -0.01, eyeRot: 0 },
+  hero8: { topY: -0.36, cx: 0.08, hw: 0.235, eyeY: -0.24, eyeDX: 0.07, neckY: -0.09, handX: 0.25, handY: 0.2, hatRot: 0.05, hatS: 0.5, accCx: 0.1, accRot: 0.05, accS: 0.5, eyeCx: 0.1, eyeRot: 0.05 },
+  hero10: { topY: -0.25, cx: 0.05, hw: 0.235, eyeY: -0.13, eyeDX: 0.08, neckY: 0.06, handX: 0.25, handY: 0.3, hatRot: 0, hatS: 0.6, accCx: 0.05, accRot: 0, accS: 0.6, eyeCx: 0.05, eyeRot: 0 },
   hero11: { topY: -0.285, cx: 0.0, hw: 0.235, eyeY: -0.086, eyeDX: 0.094, neckY: 0.15, handX: 0.23, handY: 0.325 }
 };
 const anchors = () => {

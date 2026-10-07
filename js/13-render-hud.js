@@ -233,6 +233,7 @@ function render(){
   ctx.save();
   drawBackground();
   ctx.restore();
+  hwDrawSky();
 
   if (blurAmount > 0.01 && motionBlurOn && !lowGfx()){
     pixelTransform();
@@ -249,8 +250,10 @@ function render(){
   const sq = ctx.imageSmoothingQuality;
   ctx.imageSmoothingQuality = 'low';
   for (const p of platforms) drawPlatform(p);
+  hwDrawPlatDecor();
   for (const c of coinsOnMap) drawCoin(c);
   ctx.imageSmoothingQuality = sq;
+  hwDrawCandies();
   drawFruitPickups();
   for (const m of monsters) drawMonster(m);
   drawBoss();
@@ -283,7 +286,7 @@ function render(){
 
   if (OX > 0.5) drawSideCurtains();
   worldTransform();
-  if (state === STATE.PLAY || state === STATE.DYING){ drawWorldBanner(); drawHUD(); drawBossHud(); }
+  if (state === STATE.PLAY || state === STATE.DYING){ drawWorldBanner(); drawHUD(); hwDrawHud(); drawBossHud(); }
   if (state === STATE.PLAY) drawMonsterEventUI();
 }
 

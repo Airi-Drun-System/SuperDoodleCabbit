@@ -32,11 +32,12 @@ function spawnBoss(){
   boss = {
     w, tier, x: VW / 2, vx: 55 + tier * 8, sf: -0.35, tsf: 0.21,
     r: 46, hp: bossMaxHp(tier), max: bossMaxHp(tier), t: 0,
-    atkT: 2.6, orbT: 1.2, hurt: 0, st: 'in', dieT: 0, life: BOSS_LIFE
+    atkT: 2.6, orbT: 1.2, hurt: 0, st: 'in', dieT: 0, life: BOSS_LIFE,
+    pumpkin: HW_ON && (w % 5) === 0
   };
   bossWarn = 0;
   addBossPlatform();
-  addToast(t('bossIncoming').replace('{b}', bossName(w)), VW / 2, camY + VH * 0.34, '#ff6b6b');
+  addToast(t('bossIncoming').replace('{b}', boss.pumpkin ? t('hwBoss') : bossName(w)), VW / 2, camY + VH * 0.34, '#ff6b6b');
   flash = 0.5; flashColor = '#ff3b3b';
   shake = Math.max(shake, 10);
   sfxBossIn();
@@ -136,6 +137,7 @@ function bossReward(){
   bossKillsById[b.w] = (bossKillsById[b.w] || 0) + 1;
   Store.set('bossKills', String(bossKillsTotal));
   Store.set('bossKillsBy', JSON.stringify(bossKillsById));
+  if (HW_ON) hwAddCandies(15, VW / 2, by + 130);
   if (typeof cloudPushSoon === 'function') cloudPushSoon();
   sfxCoin();
 }
@@ -761,7 +763,8 @@ function drawBoss(){
     ctx.beginPath(); ctx.arc(0, 0, b.r * 2.1, 0, 6.2832); ctx.fill();
   }
   const look = clamp((hero.x - b.x) / 120, -1, 1);
-  bossArt(ctx, b.w, b.r, b.t, look, b.hurt);
+  if (b.pumpkin) hwPumpkinBoss(ctx, b.r, b.t, look, b.hurt);
+  else bossArt(ctx, b.w, b.r, b.t, look, b.hurt);
   ctx.restore();
 }
 
@@ -776,7 +779,7 @@ function drawBossHud(){
   ctx.lineWidth = 4;
   ctx.strokeStyle = 'rgba(21,10,43,.7)';
   ctx.fillStyle = '#ff8a8a';
-  const nm = bossName(b.w);
+  const nm = b.pumpkin ? t('hwBoss') : bossName(b.w);
   ctx.strokeText(nm, VW / 2, y - 3);
   ctx.fillText(nm, VW / 2, y - 3);
   ctx.fillStyle = 'rgba(21,10,43,.7)';

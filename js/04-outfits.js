@@ -36,6 +36,8 @@ const OUTFITS = {
     halo:        { price: 700 },
     starcrown:   { price: 0, locked: true },
     party:       { price: 0, locked: true },
+    witch:       { price: 0, locked: true },
+    pumpkin:     { price: 0, locked: true },
     beanie:      { price: 180 },
     chef:        { price: 160 },
     headphones:  { price: 220 },
@@ -50,7 +52,8 @@ const OUTFITS = {
     pearls:   { price: 90 },
     hearteye: { price: 110 },
     scarf:    { price: 95 },
-    backpack: { price: 320 }
+    backpack: { price: 320 },
+    vampire:  { price: 0, locked: true }
   },
   tool: {
     none: { price: 0 },

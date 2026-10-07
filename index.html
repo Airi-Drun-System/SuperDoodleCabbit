@@ -6,8 +6,8 @@
 <meta name="theme-color" content="#150a2b">
 <title>Cabbit Jump!</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
-<link rel="preload" href="fonts/bips.woff?v=20261007d" as="font" type="font/woff" crossorigin>
-<link rel="stylesheet" href="css/style.css?v=20261007d">
+<link rel="preload" href="fonts/bips.woff?v=20261007k" as="font" type="font/woff" crossorigin>
+<link rel="stylesheet" href="css/style.css?v=20261007k">
 </head>
 <body>
 <div id="wrap">
@@ -81,6 +81,10 @@
     <button id="seasonCard" class="seasonCard rise d2" type="button">
       <span class="seasonTop"><span id="seasonCardTitle" class="seasonLogo">Сезон 1</span><span id="seasonCardDays" class="seasonDays"></span></span>
       <span class="seasonBottom"><span class="seasonBestWrap"><span data-i18n="seasonBestShort">рекорд</span> <b id="seasonCardBest">0</b></span></span>
+    </button>
+    <button id="hwCard" class="seasonCard hwCard rise d2 hidden" type="button">
+      <span class="seasonTop"><span id="hwCardTitle" class="seasonLogo hwLogo">Ночь тыкв</span><span id="hwCardDays" class="seasonDays"></span></span>
+      <span class="seasonBottom"><span id="hwCardNext" class="seasonEv"></span><span class="seasonBestWrap"><b id="hwCardCount">0</b> <span id="hwCardWord">конфет</span></span></span>
     </button>
 
     <div class="btnRow rise d3">
@@ -454,6 +458,19 @@
     </div>
   </div>
 
+  <div id="hwModal" class="profileOverlay passOverlay hidden">
+    <div class="passFull hwFull">
+      <button id="hwClose" class="backIconBtn" aria-label="Закрыть">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M6 6 L18 18 M18 6 L6 18" stroke="#fdf6e8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="passTitle hwTitle" data-i18n="hwTitle">Ночь тыкв</div>
+      <p id="hwSub" class="passSeason"></p>
+      <div id="hwHave" class="hwHave"></div>
+      <div id="hwList" class="hwList"></div>
+      <p class="fruitHint" data-i18n="hwHint"></p>
+    </div>
+  </div>
+
   <div id="seasonModal" class="profileOverlay passOverlay hidden">
     <div class="passFull seasonFull">
       <button id="seasonClose" class="backIconBtn" aria-label="Закрыть">
@@ -742,26 +759,27 @@
   </div>
 </div>
 
-<script src="js/01-core.js?v=20261007d"></script>
-<script src="js/02-badges.js?v=20261007d"></script>
-<script src="js/03-audio.js?v=20261007d"></script>
-<script src="js/04-outfits.js?v=20261007d"></script>
-<script src="js/05-rig.js?v=20261007d"></script>
-<script src="js/06-world.js?v=20261007d"></script>
-<script src="js/07-fruits.js?v=20261007d"></script>
-<script src="js/08-bosses.js?v=20261007d"></script>
-<script src="js/09-seasons.js?v=20261007d"></script>
-<script src="js/10-physics.js?v=20261007d"></script>
-<script src="js/11-render-world.js?v=20261007d"></script>
-<script src="js/12-render-hero.js?v=20261007d"></script>
-<script src="js/13-render-hud.js?v=20261007d"></script>
-<script src="js/14-ui.js?v=20261007d"></script>
-<script src="js/15-events.js?v=20261007d"></script>
-<script src="js/16-cloud.js?v=20261007d"></script>
-<script src="js/17-device.js?v=20261007d"></script>
-<script src="js/18-profile-chat.js?v=20261007d"></script>
-<script src="js/19-inbox.js?v=20261007d"></script>
-<script src="js/20-admin.js?v=20261007d"></script>
-<script src="js/21-settings.js?v=20261007d"></script>
+<script src="js/01-core.js?v=20261007k"></script>
+<script src="js/02-badges.js?v=20261007k"></script>
+<script src="js/03-audio.js?v=20261007k"></script>
+<script src="js/04-outfits.js?v=20261007k"></script>
+<script src="js/04b-halloween.js?v=20261007k"></script>
+<script src="js/05-rig.js?v=20261007k"></script>
+<script src="js/06-world.js?v=20261007k"></script>
+<script src="js/07-fruits.js?v=20261007k"></script>
+<script src="js/08-bosses.js?v=20261007k"></script>
+<script src="js/09-seasons.js?v=20261007k"></script>
+<script src="js/10-physics.js?v=20261007k"></script>
+<script src="js/11-render-world.js?v=20261007k"></script>
+<script src="js/12-render-hero.js?v=20261007k"></script>
+<script src="js/13-render-hud.js?v=20261007k"></script>
+<script src="js/14-ui.js?v=20261007k"></script>
+<script src="js/15-events.js?v=20261007k"></script>
+<script src="js/16-cloud.js?v=20261007k"></script>
+<script src="js/17-device.js?v=20261007k"></script>
+<script src="js/18-profile-chat.js?v=20261007k"></script>
+<script src="js/19-inbox.js?v=20261007k"></script>
+<script src="js/20-admin.js?v=20261007k"></script>
+<script src="js/21-settings.js?v=20261007k"></script>
 </body>
 </html>

@@ -125,6 +125,7 @@ function spawnAbove(){
   maybeSpawnFruit(p);
 
   
+  const coinsBefore = coinsOnMap.length;
   if (hasBow() && type === 'normal' && !p.spring && Math.random() < 0.24){
     crawlers.push({ plat: p, x: p.x + p.w / 2, y: p.y - 13, phase: rand(0, 6.28) });
   }
@@ -132,6 +133,7 @@ function spawnAbove(){
     addCoin(p.x + p.w / 2, p.y - 30, p);
   else if (Math.random() < 0.07)
     addCoin(rand(40, VW - 40), y - rand(20, 46), null);
+  hwOnPlatform(p, coinsOnMap.length !== coinsBefore);
 
   lastPlatY = y;
 }

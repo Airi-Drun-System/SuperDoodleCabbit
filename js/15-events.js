@@ -17,6 +17,7 @@ function goToMenu(){
   refreshDailyBtn();
   refreshMenuHint();
   maybeAutoDaily();
+  hwMenuEnter();
   if (cloudReady()){ checkPendingGrant(true); fetchInbox(true); }
 }
 

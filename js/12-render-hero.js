@@ -3,7 +3,31 @@ const FUR = '#c9c9d4', FUR_LIT = '#eceaf2', FUR_DARK = '#a9a9b8', INK = '#4a4450
 
 function paintEarsGap(){} 
 
+// обёртки: для персонажей с наклонённой головой поворачиваем и масштабируем вещь вокруг точки крепления
 function paintHat(c, w, h, kind, A){
+  if (!kind || kind === 'none') return;
+  if (!A || !(A.hatRot || A.hatS)) return paintHatRaw(c, w, h, kind, A);
+  const px = A.cx * w, py = A.topY * h, k = A.hatS || 1;
+  c.save();
+  c.translate(px, py); c.rotate(A.hatRot || 0); c.scale(k, k); c.translate(-px, -py);
+  paintHatRaw(c, w, h, kind, A);
+  c.restore();
+}
+function paintAccessory(c, w, h, kind, A){
+  if (!kind || kind === 'none') return;
+  if (!A || !isFinite(w) || !isFinite(h)) return;
+  if (!(A.accRot || A.accS || A.eyeRot) || kind === 'backpack') return paintAccessoryRaw(c, w, h, kind, A);
+  const eye = kind === 'hearteye';
+  const cxN = eye ? (A.eyeCx != null ? A.eyeCx : A.cx) : (A.accCx != null ? A.accCx : A.cx);
+  const px = cxN * w, py = (eye ? A.eyeY : A.neckY) * h;
+  const k = eye ? 1 : (A.accS || 1);
+  c.save();
+  c.translate(px, py); c.rotate((eye ? A.eyeRot : A.accRot) || 0); c.scale(k, k); c.translate(-px, -py);
+  paintAccessoryRaw(c, w, h, kind, Object.assign({}, A, { cx: cxN }));
+  c.restore();
+}
+
+function paintHatRaw(c, w, h, kind, A){
   if (!kind || kind === 'none') return;
   const cx = A.cx * w;
   const ty = A.topY * h;
@@ -321,6 +345,35 @@ function paintHat(c, w, h, kind, A){
     c.fillStyle = '#ffe98a';
     c.beginPath(); c.arc(cx + hw * 0.95, ty - h * 0.48, 3, 0, 6.2832); c.fill();
 
+  } else if (kind === 'witch'){
+    c.fillStyle = '#2a1c3f';
+    c.beginPath(); c.ellipse(cx, ty + 3, hw * 2.05, h * 0.07, -0.08, 0, 6.2832); c.fill(); c.stroke();
+    c.fillStyle = '#3b2758';
+    c.beginPath();
+    c.moveTo(cx - hw * 0.95, ty + 2);
+    c.quadraticCurveTo(cx - hw * 0.5, ty - h * 0.3, cx - hw * 0.05, ty - h * 0.5);
+    c.quadraticCurveTo(cx + hw * 0.35, ty - h * 0.66, cx + hw * 1.15, ty - h * 0.52);
+    c.quadraticCurveTo(cx + hw * 0.55, ty - h * 0.42, cx + hw * 0.95, ty + 2);
+    c.closePath();
+    c.fill(); c.stroke();
+    c.fillStyle = '#ff8a2a';
+    c.beginPath();
+    c.moveTo(cx - hw * 0.9, ty - h * 0.02); c.lineTo(cx + hw * 0.9, ty - h * 0.02);
+    c.lineTo(cx + hw * 0.82, ty - h * 0.11); c.lineTo(cx - hw * 0.8, ty - h * 0.11);
+    c.closePath(); c.fill(); c.stroke();
+    c.fillStyle = '#ffd34d';
+    rr(c, cx - hw * 0.16, ty - h * 0.12, hw * 0.32, h * 0.11, 2); c.fill(); c.stroke();
+    c.fillStyle = '#3b2758';
+    rr(c, cx - hw * 0.07, ty - h * 0.095, hw * 0.14, h * 0.06, 1); c.fill();
+
+  } else if (kind === 'pumpkin'){
+    const R = hw * 1.05;
+    c.save();
+    c.translate(cx, ty - R * 0.62);
+    c.rotate(-0.08);
+    hwPaintPumpkin(c, R, performance.now() / 1000, true);
+    c.restore();
+
   } else if (kind === 'chef'){
     c.fillStyle = '#ffffff';
     c.beginPath(); c.arc(cx - hw * 0.55, ty - h * 0.19, hw * 0.52, 0, 6.2832); c.fill(); c.stroke();
@@ -392,7 +445,7 @@ function paintHat(c, w, h, kind, A){
   c.restore();
 }
 
-function paintAccessory(c, w, h, kind, A){
+function paintAccessoryRaw(c, w, h, kind, A){
   if (!kind || kind === 'none') return;
   if (!A || !isFinite(w) || !isFinite(h)) return;
   const cx = A.cx * w;
@@ -417,6 +470,34 @@ function paintAccessory(c, w, h, kind, A){
     c.fillStyle = '#b52f50';
     rr(c, cx - 3.6, y - 4.2, 7.2, 8.4, 2.6);
     c.fill();
+    c.restore();
+
+  } else if (kind === 'vampire'){
+    const y = A.neckY * h;
+    const s = w * 0.3;
+    c.save();
+    c.lineJoin = 'round';
+    c.strokeStyle = 'rgba(20,0,10,.55)';
+    c.lineWidth = 1.4;
+    for (const sd of [-1, 1]){
+      c.fillStyle = '#1e1428';
+      c.beginPath();
+      c.moveTo(cx, y + s * 0.15);
+      c.lineTo(cx + sd * s * 1.05, y - s * 0.95);
+      c.lineTo(cx + sd * s * 0.78, y - s * 0.35);
+      c.lineTo(cx + sd * s * 1.12, y - s * 0.12);
+      c.closePath(); c.fill(); c.stroke();
+      c.fillStyle = '#b3123a';
+      c.beginPath();
+      c.moveTo(cx + sd * s * 0.12, y + s * 0.05);
+      c.lineTo(cx + sd * s * 0.86, y - s * 0.7);
+      c.lineTo(cx + sd * s * 0.66, y - s * 0.28);
+      c.closePath(); c.fill();
+    }
+    c.fillStyle = '#ffd34d';
+    c.beginPath(); c.arc(cx, y + s * 0.12, s * 0.16, 0, 6.2832); c.fill(); c.stroke();
+    c.fillStyle = '#e0204a';
+    c.beginPath(); c.arc(cx, y + s * 0.12, s * 0.09, 0, 6.2832); c.fill();
     c.restore();
 
   } else if (kind === 'tie'){

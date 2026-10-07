@@ -304,6 +304,7 @@ async function cloudRestore(rawCode, rawPw){
     }
     owned.add('hat:none'); owned.add('acc:none'); owned.add('acc:bowtie'); owned.add('tool:none'); owned.add('char:hero'); owned.add('perk:none'); owned.add('trail:none');
     saveOwned();
+    hwRestoreCloud(f);
     for (const slotKey of ['hat', 'acc', 'tool', 'char', 'perk', 'trail']){
       const val = f[slotKey] && f[slotKey].stringValue;
       if (val && OUTFITS[slotKey] && OUTFITS[slotKey][val] && owned.has(slotKey + ':' + val)){

@@ -1647,3 +1647,26 @@ body:has(#chatModal:not(.hidden)) .adminFab,body:has(#inboxModal:not(.hidden)) .
 .adminGrantLog div{margin-bottom:3px;}
 .closedAdmin{flex-wrap:wrap;}
 .adminGate .adminInput{width:100%;max-width:260px;box-sizing:border-box;}
+
+/* ---------- Хэллоуин: Ночь тыкв ---------- */
+.hwCard{background:linear-gradient(135deg,#ff7a1f,#8a2fb8 58%,#2a0f4a);box-shadow:0 5px 0 #2a0f4a,0 10px 20px rgba(0,0,0,.35),inset 0 0 0 1.5px rgba(255,200,120,.55);margin-top:8px;}
+.hwCard:active{box-shadow:0 2px 0 #2a0f4a,inset 0 0 0 1.5px rgba(255,200,120,.55);}
+.hwCard.hidden{display:none;}
+#menu.paused .hwCard{display:none;}
+.hwLogo{color:#ffe08a;}
+.hwCard .seasonEv{color:#fff1d6;}
+.hwCard .seasonBestWrap b{color:#ffd08a;}
+.hwFull{background:linear-gradient(180deg,#ff7a1f 0,#7a2aa8 160px,#1a0d2b 460px);}
+.hwTitle{color:#ffe08a;}
+.hwHave{text-align:center;font-size:18px;font-weight:800;color:#ffb35c;margin:8px 0 14px;text-shadow:0 2px 0 rgba(0,0,0,.35);}
+.hwList{display:flex;flex-direction:column;gap:10px;}
+.hwRow{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:16px;background:rgba(255,255,255,.07);box-shadow:inset 0 0 0 1.5px rgba(255,180,90,.25);}
+.hwRow.done{background:rgba(255,150,50,.16);box-shadow:inset 0 0 0 1.5px rgba(255,200,120,.6);}
+.hwIcon{width:56px;height:56px;flex:0 0 56px;border-radius:12px;background:rgba(0,0,0,.25);}
+.hwInfo{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:3px;}
+.hwInfo b{font-size:15px;}
+.hwInfo span{font-size:12.5px;opacity:.8;}
+.hwRow.done .hwInfo span{color:#ffd08a;opacity:1;font-weight:800;}
+.hwBar{height:7px;border-radius:4px;background:rgba(0,0,0,.35);overflow:hidden;}
+.hwBar i{display:block;height:100%;background:linear-gradient(90deg,#ff7a1f,#ffd08a);border-radius:4px;}
+.hwNeed{flex:0 0 auto;font-size:15px;font-weight:800;color:#ffb35c;min-width:34px;text-align:right;}
