@@ -323,7 +323,7 @@ const hasHat  = (v) => (outfit.hat === v || (multiOn() && outfit.hat2 === v)) &&
 const hasAcc  = (v) => (outfit.acc === v || (multiOn() && outfit.acc2 === v)) && isOwned('acc', v);
 const hasGlass = () => hasHat('glass') && !glassUsedThisRun;
 const shownHat = (v) => (v === 'glass' && glassUsedThisRun) ? 'none' : v;
-const gravityMult   = () => (hasHat('propeller') ? 0.55 : 1) * (typeof hasFruit === 'function' && hasFruit('cloud') && hero && hero.vy > 0 ? 0.55 : 1);
+const gravityMult   = () => (hasHat('propeller') ? 0.55 : 1) * (hasAcc('hooves') ? 0.88 : 1) * (typeof hasFruit === 'function' && hasFruit('cloud') && hero && hero.vy > 0 ? 0.55 : 1);
 const scoreMult      = () => hasAcc('tie') ? 1.25 : 1;
 const hasMace       = () => outfit.tool === 'mace' && isOwned('tool', 'mace');
 const hasBow        = () => outfit.tool === 'bow'  && isOwned('tool', 'bow');

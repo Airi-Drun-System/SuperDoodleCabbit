@@ -38,6 +38,7 @@ const OUTFITS = {
     party:       { price: 0, locked: true },
     witch:       { price: 0, locked: true },
     pumpkin:     { price: 0, locked: true },
+    pig:         { price: 0, locked: true },
     beanie:      { price: 180 },
     chef:        { price: 160 },
     headphones:  { price: 220 },
@@ -53,7 +54,8 @@ const OUTFITS = {
     hearteye: { price: 110 },
     scarf:    { price: 95 },
     backpack: { price: 320 },
-    vampire:  { price: 0, locked: true }
+    vampire:  { price: 0, locked: true },
+    hooves:   { price: 0, locked: true }
   },
   tool: {
     none: { price: 0 },

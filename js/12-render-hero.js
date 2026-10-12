@@ -16,7 +16,7 @@ function paintHat(c, w, h, kind, A){
 function paintAccessory(c, w, h, kind, A){
   if (!kind || kind === 'none') return;
   if (!A || !isFinite(w) || !isFinite(h)) return;
-  if (!(A.accRot || A.accS || A.eyeRot) || kind === 'backpack') return paintAccessoryRaw(c, w, h, kind, A);
+  if (!(A.accRot || A.accS || A.eyeRot) || kind === 'backpack' || kind === 'hooves') return paintAccessoryRaw(c, w, h, kind, A);
   const eye = kind === 'hearteye';
   const cxN = eye ? (A.eyeCx != null ? A.eyeCx : A.cx) : (A.accCx != null ? A.accCx : A.cx);
   const px = cxN * w, py = (eye ? A.eyeY : A.neckY) * h;
@@ -374,6 +374,39 @@ function paintHatRaw(c, w, h, kind, A){
     hwPaintPumpkin(c, R, performance.now() / 1000, true);
     c.restore();
 
+  } else if (kind === 'pig'){
+    c.fillStyle = '#ffffff';
+    for (const sd of [-1, 1]){
+      c.beginPath();
+      c.moveTo(cx + sd * hw * 0.82, ty - h * 0.1);
+      c.quadraticCurveTo(cx + sd * hw * 1.55, ty - h * 0.36, cx + sd * hw * 1.8, ty - h * 0.1);
+      c.quadraticCurveTo(cx + sd * hw * 1.45, ty - h * 0.15, cx + sd * hw * 1.5, ty - h * 0.01);
+      c.quadraticCurveTo(cx + sd * hw * 1.15, ty - h * 0.07, cx + sd * hw * 0.95, ty + 1);
+      c.closePath();
+      c.fill(); c.stroke();
+    }
+    c.fillStyle = '#ff9fb8';
+    for (const sd of [-1, 1]){
+      c.beginPath();
+      c.moveTo(cx + sd * hw * 0.22, ty - h * 0.12);
+      c.quadraticCurveTo(cx + sd * hw * 0.55, ty - h * 0.33, cx + sd * hw * 0.82, ty - h * 0.27);
+      c.quadraticCurveTo(cx + sd * hw * 0.98, ty - h * 0.2, cx + sd * hw * 0.96, ty - h * 0.04);
+      c.closePath();
+      c.fill(); c.stroke();
+    }
+    c.fillStyle = '#ffb3c8';
+    c.beginPath();
+    c.ellipse(cx, ty + 2, hw * 1.02, h * 0.2, 0, Math.PI, 0);
+    c.closePath();
+    c.fill(); c.stroke();
+    c.fillStyle = 'rgba(255,255,255,.45)';
+    c.beginPath(); c.ellipse(cx - hw * 0.5, ty - h * 0.12, hw * 0.22, h * 0.04, -0.5, 0, 6.2832); c.fill();
+    c.fillStyle = '#ff8fae';
+    c.beginPath(); c.ellipse(cx, ty - h * 0.06, hw * 0.46, h * 0.085, 0, 0, 6.2832); c.fill(); c.stroke();
+    c.fillStyle = '#a82f57';
+    c.beginPath(); c.ellipse(cx - hw * 0.16, ty - h * 0.06, 1.8, 2.7, 0, 0, 6.2832); c.fill();
+    c.beginPath(); c.ellipse(cx + hw * 0.16, ty - h * 0.06, 1.8, 2.7, 0, 0, 6.2832); c.fill();
+
   } else if (kind === 'chef'){
     c.fillStyle = '#ffffff';
     c.beginPath(); c.arc(cx - hw * 0.55, ty - h * 0.19, hw * 0.52, 0, 6.2832); c.fill(); c.stroke();
@@ -599,6 +632,42 @@ function paintAccessoryRaw(c, w, h, kind, A){
     c.beginPath();
     c.ellipse(cx + s * 0.85, y - s * 0.3, s * 0.22, s * 0.16, 0.6, 0, 6.2832);
     c.fill(); c.stroke();
+    c.restore();
+
+  } else if (kind === 'hooves'){
+    const fy = h * 0.5;
+    const hoof = (x, y, k) => {
+      c.save();
+      c.translate(x, y);
+      c.scale(k, k);
+      c.fillStyle = '#ff9fb8';
+      c.beginPath();
+      c.moveTo(-w * 0.07, -h * 0.06);
+      c.quadraticCurveTo(-w * 0.09, h * 0.01, -w * 0.06, h * 0.035);
+      c.lineTo(w * 0.06, h * 0.035);
+      c.quadraticCurveTo(w * 0.09, h * 0.01, w * 0.07, -h * 0.06);
+      c.closePath();
+      c.fill(); c.stroke();
+      c.fillStyle = '#c24f78';
+      c.beginPath();
+      c.moveTo(-w * 0.058, h * 0.0);
+      c.lineTo(w * 0.058, h * 0.0);
+      c.lineTo(w * 0.06, h * 0.035);
+      c.lineTo(-w * 0.06, h * 0.035);
+      c.closePath();
+      c.fill();
+      c.strokeStyle = 'rgba(90,20,50,.8)';
+      c.lineWidth = 1.4;
+      c.beginPath(); c.moveTo(0, h * 0.0); c.lineTo(0, h * 0.035); c.stroke();
+      c.fillStyle = 'rgba(255,255,255,.45)';
+      c.beginPath(); c.ellipse(-w * 0.03, -h * 0.035, w * 0.018, h * 0.012, -0.5, 0, 6.2832); c.fill();
+      c.restore();
+    };
+    c.save();
+    c.strokeStyle = 'rgba(90,20,50,.7)';
+    c.lineWidth = 1.5;
+    hoof(cx - w * 0.27, fy - h * 0.06, 0.95);
+    hoof(cx + w * 0.09, fy - h * 0.195, 1.05);
     c.restore();
 
   } else if (kind === 'backpack'){

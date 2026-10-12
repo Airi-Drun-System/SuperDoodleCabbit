@@ -1670,3 +1670,10 @@ body:has(#chatModal:not(.hidden)) .adminFab,body:has(#inboxModal:not(.hidden)) .
 .hwBar{height:7px;border-radius:4px;background:rgba(0,0,0,.35);overflow:hidden;}
 .hwBar i{display:block;height:100%;background:linear-gradient(90deg,#ff7a1f,#ffd08a);border-radius:4px;}
 .hwNeed{flex:0 0 auto;font-size:15px;font-weight:800;color:#ffb35c;min-width:34px;text-align:right;}
+
+.cpCard{background:linear-gradient(135deg,#ff8fb1,#c94c8a 60%,#6b2a7a);box-shadow:0 5px 0 #4a1b58,0 10px 20px rgba(0,0,0,.35),inset 0 0 0 1.5px rgba(255,220,235,.5);}
+.cpCard:active{box-shadow:0 2px 0 #4a1b58,inset 0 0 0 1.5px rgba(255,220,235,.55);}
+.cpCard.hidden{display:none;}
+#menu.paused .cpCard{display:none;}
+.cpCard .seasonEv{color:#ffeaf2;}
+.cpCard .seasonBestWrap b{color:#fff3a8;}

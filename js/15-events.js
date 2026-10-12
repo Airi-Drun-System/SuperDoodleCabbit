@@ -18,6 +18,7 @@ function goToMenu(){
   refreshMenuHint();
   maybeAutoDaily();
   hwMenuEnter();
+  if (typeof cpMenuEnter === 'function') cpMenuEnter();
   if (cloudReady()){ checkPendingGrant(true); fetchInbox(true); }
 }
 
