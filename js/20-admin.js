@@ -129,16 +129,18 @@ async function refreshOnlineCounter(){
   const el = document.getElementById('onlineCounter');
   const txt = document.getElementById('onlineCounterText');
   if (!el || !txt) return;
-  if (!isDevCode(cloudCode) || !cloudReady()){ el.classList.add('hidden'); return; }
-  el.classList.remove('hidden');
-  if (!txt.textContent) txt.textContent = '… ' + t('onlineNow');
+  if (!cloudReady() || accountGone){ el.classList.add('hidden'); return; }
   if (document.hidden) return;
   const n = await fetchOnlineCount();
-  if (!isDevCode(cloudCode)){ el.classList.add('hidden'); return; }
-  if (n < 0){ txt.textContent = t('onlineNow') + ': ' + t('onlineErr'); return; }
-  txt.textContent = n + ' ' + t('onlineNow');
+  if (n < 0){
+    if (isDevCode(cloudCode)){ txt.textContent = t('onlineNow') + ': ' + t('onlineErr'); el.classList.remove('hidden'); }
+    else el.classList.add('hidden');
+    return;
+  }
+  txt.textContent = Math.max(1, n) + ' ' + t('onlineNow');
   el.classList.remove('hidden');
 }
+document.addEventListener('visibilitychange', () => { if (!document.hidden) refreshOnlineCounter(); });
 setInterval(refreshOnlineCounter, 60000);
 
 function refreshStaffUI(){
