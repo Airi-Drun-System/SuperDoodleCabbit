@@ -125,19 +125,48 @@ async function fetchOnlineCount(){
   } catch (e) { return -1; }
 }
 
+async function countPlayers(where){
+  try {
+    const q = { from: [{ collectionId: 'players' }] };
+    if (where) q.where = where;
+    const res = await sfetch(cloudBase() + ':runAggregationQuery?key=' + CLOUD.apiKey, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ structuredAggregationQuery: { structuredQuery: q, aggregations: [{ alias: 'n', count: {} }] } })
+    });
+    if (!res.ok) return -1;
+    const data = await res.json();
+    const row = Array.isArray(data) ? data.find(r => r && r.result && r.result.aggregateFields) : null;
+    const v = row ? parseInt(row.result.aggregateFields.n.integerValue, 10) : NaN;
+    return isFinite(v) ? v : -1;
+  } catch (e) { return -1; }
+}
+let totalPlayers = -1, totalPlayersAt = 0;
+async function fetchTotalPlayers(){
+  if (totalPlayers >= 0 && Date.now() - totalPlayersAt < 300000) return totalPlayers;
+  const all = await countPlayers(null);
+  if (all < 0) return totalPlayers;
+  const del = await countPlayers({ fieldFilter: { field: { fieldPath: 'deleted' }, op: 'EQUAL', value: { booleanValue: true } } });
+  totalPlayers = Math.max(1, all - 1 - Math.max(0, del)); // минус служебный документ банов и удалённые аккаунты
+  totalPlayersAt = Date.now();
+  return totalPlayers;
+}
+
 async function refreshOnlineCounter(){
   const el = document.getElementById('onlineCounter');
   const txt = document.getElementById('onlineCounterText');
   if (!el || !txt) return;
   if (!cloudReady() || accountGone){ el.classList.add('hidden'); return; }
   if (document.hidden) return;
-  const n = await fetchOnlineCount();
-  if (n < 0){
-    if (isDevCode(cloudCode)){ txt.textContent = t('onlineNow') + ': ' + t('onlineErr'); el.classList.remove('hidden'); }
-    else el.classList.add('hidden');
-    return;
+  const dev = isDevCode(cloudCode);
+  const total = await fetchTotalPlayers();
+  const parts = [];
+  if (dev){
+    const n = await fetchOnlineCount();
+    parts.push(n < 0 ? t('onlineNow') + ': ' + t('onlineErr') : n + ' ' + t('onlineNow'));
   }
-  txt.textContent = Math.max(1, n) + ' ' + t('onlineNow');
+  if (total >= 0) parts.push(t('onlineTotal') + ' ' + t('playersWord') + ': ' + total);
+  if (!parts.length){ el.classList.add('hidden'); return; }
+  txt.textContent = parts.join(' · ');
   el.classList.remove('hidden');
 }
 document.addEventListener('visibilitychange', () => { if (!document.hidden) refreshOnlineCounter(); });
