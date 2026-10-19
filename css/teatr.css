@@ -1,60 +1,128 @@
-/* Hop Hop Studio: темы «Деревянный день» и «Ночная премьера». Подключается после style.css, меняет только оформление меню и интерфейса. */
-@font-face{font-family:'TTBubbles';src:url(../fonts/RubikBubbles-Regular.ttf) format('truetype');font-display:swap}
-@font-face{font-family:'TTRubik';src:url(../fonts/Rubik.ttf) format('truetype');font-weight:300 900;font-display:swap}
-body.tt-day{--ink:#5a3719;--card:#fff7e6;--line:#7a4b24;--pri:#4eaa68;--pri-ink:#fff7e6;--pri-edge:#2f6b44;--sec:#a8713f;--sec-ink:#fff7e6;--sec-edge:#6e4220;--acc:#ffc93c;--t-fill:#fff7e6;--t-stroke:#5a3719;--t-shadow:#3a200d;--soft:rgba(90,55,25,.7)}
-body.tt-night{--ink:#fdf6e8;--card:#342c70;--line:#14102f;--pri:#ffd34d;--pri-ink:#2a1a40;--pri-edge:#c58f12;--sec:#7a3f9a;--sec-ink:#fdf6e8;--sec-edge:#4a2362;--acc:#ff8fb1;--t-fill:#ffd34d;--t-stroke:#14102f;--t-shadow:#ff6f91;--soft:rgba(253,246,232,.75)}
-/* фоны экранов */
-body.tt-day.tt-on #menu,body.tt-day.tt-on #settings,body.tt-day.tt-on #wardrobe,body.tt-day.tt-on #nickname,body.tt-day.tt-on #over{color:var(--ink);background:radial-gradient(rgba(60,90,170,.12) 1.6px,transparent 2.2px) 0 0/16px 16px,radial-gradient(circle at 82% 9%,#ffc93c 0 46px,rgba(255,201,60,.38) 47px 76px,transparent 77px),radial-gradient(130% 22% at 15% 100%,#7cc47a 0 62%,transparent 64%),radial-gradient(130% 18% at 95% 100%,#58b06c 0 62%,transparent 64%),linear-gradient(#bfe3ff,#fff1d6);}
-body.tt-day.tt-on #menu.paused{background:rgba(255,241,214,.94);backdrop-filter:blur(6px)}
-body.tt-night.tt-on #menu,body.tt-night.tt-on #settings,body.tt-night.tt-on #wardrobe,body.tt-night.tt-on #nickname,body.tt-night.tt-on #over{color:var(--ink);background:radial-gradient(rgba(180,150,255,.14) 1.6px,transparent 2.2px) 0 0/16px 16px,radial-gradient(2px 2px at 12% 18%,#fff 60%,transparent),radial-gradient(2px 2px at 70% 12%,#fff 60%,transparent),radial-gradient(3px 3px at 88% 34%,#ffd34d 60%,transparent),radial-gradient(2px 2px at 30% 52%,#fff 60%,transparent),radial-gradient(2px 2px at 8% 72%,#fff 60%,transparent),radial-gradient(3px 3px at 92% 78%,#fff 60%,transparent),radial-gradient(2px 2px at 55% 88%,#ffd34d 60%,transparent),linear-gradient(100deg,transparent 14%,rgba(255,240,180,.10) 18% 26%,transparent 30%,transparent 50%,rgba(255,240,180,.08) 54% 60%,transparent 64%),linear-gradient(#1b1650,#2d1b5e);}
-body.tt-night.tt-on #menu.paused{background:rgba(20,14,56,.94);backdrop-filter:blur(6px)}
-/* рамка из лампочек на экранах ночной темы */
-body.tt-night.tt-on #menu::before,body.tt-night.tt-on #wardrobe::before,body.tt-night.tt-on #settings::before,body.tt-night.tt-on #over::before{content:'';position:fixed;inset:7px;border:6px dotted #ffd34d;border-radius:24px;pointer-events:none;z-index:60;opacity:.85;filter:drop-shadow(0 0 5px rgba(255,211,77,.7))}
+/* Hop Hop Studio: тема «Театр». Единственная тема, подключается после style.css, шрифт BIPs из style.css. */
+body.tt-on{--ink:#2b1a3e;--paper:#f6ead2;--card:#fff6df;--line:#2b1a3e;--red:#e8503a;--red-d:#8d2a1b;--gold:#f2c14e;--gold-d:#a8761a;--navy:#2f2e7a;--navy-d:#17164a;--green:#2f9e6f;--green-d:#17583e;--soft:rgba(43,26,62,.72);--curtain:#b3202a;--brass:#e8b53a}
+/* фон экранов: бумага с растром и занавес сверху */
+body.tt-on #menu:not(.paused),body.tt-on #settings,body.tt-on #wardrobe,body.tt-on #nickname,body.tt-on #over{
+  color:var(--ink);padding-top:92px;
+  background:
+    radial-gradient(rgba(43,26,62,.10) 1.4px,transparent 2px) 0 0/12px 12px,
+    radial-gradient(circle at 12% 40%,rgba(120,150,230,.30) 0 90px,transparent 91px),
+    radial-gradient(circle at 92% 70%,rgba(240,150,90,.28) 0 110px,transparent 111px),
+    var(--paper);}
+body.tt-on #menu.paused{background:rgba(246,234,210,.96);backdrop-filter:blur(6px)}
+body.tt-on #menu:not(.paused)::before,body.tt-on #settings::before,body.tt-on #wardrobe::before,body.tt-on #nickname::before,body.tt-on #over::before{
+  content:'';position:fixed;left:0;right:0;top:0;height:78px;z-index:30;pointer-events:none;
+  background:repeating-linear-gradient(90deg,#b3202a 0 22px,#8e141f 22px 34px,#c42a35 34px 44px);
+  border-bottom:7px solid var(--brass);border-radius:0 0 50% 50%/0 0 22px 22px;box-shadow:0 8px 14px rgba(0,0,0,.28)}
 /* текст */
-body.tt-on .screen,body.tt-on .stats,body.tt-on .hint,body.tt-on .settingLabel,body.tt-on .setCatHead,body.tt-on #overTitle,body.tt-on #bestLine,body.tt-on .pauseLabel,body.tt-on #rankLine{color:var(--ink);text-shadow:none}
+body.tt-on .screen,body.tt-on .stats,body.tt-on .hint,body.tt-on .settingLabel,body.tt-on .setCatHead,body.tt-on #bestLine,body.tt-on #rankLine{color:var(--ink);text-shadow:none}
 body.tt-on .hint{color:var(--soft)}
-/* заголовки: Rubik Bubbles */
-body.tt-on .title,body.tt-on .passTitle,body.tt-on #finalScore{font-family:'TTBubbles','bips',sans-serif;font-weight:400;color:var(--t-fill);-webkit-text-stroke:3px var(--t-stroke);paint-order:stroke fill;text-shadow:0 5px 0 var(--t-shadow);letter-spacing:.5px}
-body.tt-on #finalScore{font-size:clamp(54px,18vw,96px);text-shadow:0 6px 0 var(--t-shadow)}
-body.tt-on #menu .titleSwing{position:relative;padding:12px 26px 16px;border-radius:24px;margin-top:6px;box-shadow:0 7px 0 rgba(0,0,0,.25)}
-body.tt-day.tt-on #menu .titleSwing{background:repeating-linear-gradient(0deg,#b27a47 0 34px,#a06a3a 34px 37px);border:5px solid #6e4220}
-body.tt-night.tt-on #menu .titleSwing{background:#14102f;border:6px dotted #ffd34d;box-shadow:0 0 22px rgba(255,211,77,.5)}
-body.tt-on #menu .titleSwing .title{margin:0}
-body.tt-on .splash{font-family:'TTRubik','bips',sans-serif;font-weight:800;color:#2a1a40;background:#ffd34d;padding:3px 10px;border-radius:8px;border:2px solid var(--t-stroke);text-shadow:none;-webkit-text-stroke:0;box-shadow:3px 4px 0 rgba(0,0,0,.3)}
+body.tt-on .pauseLabel{color:var(--curtain);text-shadow:none}
+/* заголовки: белые с тёмной обводкой и красной тенью */
+body.tt-on .title,body.tt-on .passTitle,body.tt-on #finalScore,body.tt-on #overTitle,body.tt-on .welcomeTitle{color:#fff;-webkit-text-stroke:3px var(--navy-d);paint-order:stroke fill;text-shadow:0 4px 0 var(--red);letter-spacing:.5px;filter:none;background:none;-webkit-background-clip:border-box;background-clip:border-box;animation:none}
+body.tt-on #menu:not(.paused) #titleSign{font-size:clamp(40px,12vw,58px);color:#fff;background:none;filter:none;text-shadow:0 5px 0 var(--red);-webkit-text-stroke:3px var(--navy-d);animation:none;line-height:1.05}
+body.tt-on #menu .titleSwing{order:1;margin-top:-6px}
+body.tt-on #menu:not(.paused) .splash{right:-18px;bottom:-16px}
+body.tt-on .splash{color:#2a1a40;background:var(--gold);padding:2px 9px;border-radius:7px;border:2px solid var(--navy-d);text-shadow:none;box-shadow:3px 4px 0 rgba(0,0,0,.3);font-size:clamp(13px,3.8vw,17px);animation:none;right:-34px;bottom:-4px;transform:rotate(-8deg)}
+/* меню: окно кассы с котокроликом и прилавок с билетами */
+body.tt-on #menu:not(.paused) .spacer{display:none}
+body.tt-on #menu .heroStage{order:2;margin-top:14px !important;width:min(250px,64vw);height:min(200px,24vh);margin:4px 0 0;border:8px solid var(--brass);border-bottom:0;border-radius:140px 140px 10px 10px;overflow:hidden;background:radial-gradient(circle at 50% 42%,#ffe39a 0 30%,#d9763e 78%,#5b2a3c);box-shadow:0 6px 0 rgba(0,0,0,.28)}
+body.tt-on .stageRays,body.tt-on .stageIsland{display:none}
+body.tt-on .stageHalo{background:radial-gradient(circle,rgba(255,244,200,.8),transparent 68%);opacity:.9}
+body.tt-on #menu .heroStage #menuPreview{margin-bottom:6px;width:min(150px,20vh);height:min(150px,20vh)}
+body.tt-on #menu .menuChips{order:3;margin:6px 0 10px}
+body.tt-on #menu .seasonCard{order:6;width:min(340px,94vw);padding:8px 14px;gap:2px;box-shadow:0 4px 0 rgba(0,0,0,.28)}
+body.tt-on #menu:not(.paused) #playBtn::before{border-left-color:#fff6df}
+body.tt-on #menu .btnRow{order:5}
+body.tt-on #menu:not(.paused) .btnRow{width:min(340px,94vw);margin-top:6px;padding:22px 16px 20px;gap:14px 10px;background:linear-gradient(#8a5a33,#5e3a1e);border-top:8px solid var(--brass);border-radius:6px 6px 14px 14px;box-shadow:0 8px 0 rgba(0,0,0,.28);position:relative}
+body.tt-on #menu:not(.paused) .btnRow::before{content:'КАССА';position:absolute;left:50%;top:-22px;transform:translateX(-50%);padding:1px 16px;background:var(--curtain);color:#fff3c8;border:3px solid var(--brass);border-radius:8px;font-size:15px;letter-spacing:3px}
+body.tt-on #menu:not(.paused) .menuBtnWrap:has(#playBtn){transform:rotate(-2deg)}
+body.tt-on #menu:not(.paused) .menuBtnWrap:has(#wardrobeBtn){transform:rotate(3deg)}
+body.tt-on #menu:not(.paused) .menuBtnWrap:has(#fruitsBtn){transform:rotate(-3deg)}
 /* кнопки-билеты */
-body.tt-on .btn{font-family:'TTRubik','bips',sans-serif;font-weight:800;color:var(--pri-ink);background:var(--pri);border:3px solid var(--pri-edge);border-radius:16px;box-shadow:0 6px 0 var(--pri-edge),0 12px 18px rgba(0,0,0,.25);text-shadow:none;letter-spacing:.3px}
-body.tt-on .btn:active{transform:translateY(5px);box-shadow:0 1px 0 var(--pri-edge)}
-body.tt-on .btn:disabled{opacity:.5;filter:grayscale(.4)}
-body.tt-on #wardrobeBtn,body.tt-on #fruitsBtn,body.tt-on .btn.ghost,body.tt-on .shopTab,body.tt-on .chip,body.tt-on .charArrow{font-family:'TTRubik','bips',sans-serif;font-weight:700;color:var(--sec-ink);background:var(--sec);border:3px solid var(--sec-edge);border-radius:14px;box-shadow:0 5px 0 var(--sec-edge);text-shadow:none}
-body.tt-on .btn.ghost:active,body.tt-on .charArrow:active{transform:translateY(4px);box-shadow:0 1px 0 var(--sec-edge)}
-body.tt-on .chip[aria-pressed="true"],body.tt-on .shopTab.active{background:var(--acc);color:#2a1a40;border-color:var(--line)}
-body.tt-on #playBtn{font-size:26px}
-/* карточки и панели */
-body.tt-on #settingsBox,body.tt-on .setCat,body.tt-on #shop,body.tt-on #nickBox,body.tt-on .profileCard,body.tt-on .passCard,body.tt-on .overCard,body.tt-on .seasonCard,body.tt-on #lockedPanel,body.tt-on .welcomeCard{color:var(--ink);background:var(--card);border:3px solid var(--line);border-radius:20px;box-shadow:0 6px 0 rgba(0,0,0,.25)}
-body.tt-on .topPill,body.tt-on .menuChip,body.tt-on .inboxBtn,body.tt-on .menuIconBtn,body.tt-on #pauseBtn,body.tt-on .ctrlBtn,body.tt-on .backIconBtn{color:var(--ink);background:var(--card);border:3px solid var(--line);box-shadow:0 4px 0 rgba(0,0,0,.25)}
-body.tt-on .menuChip b,body.tt-on .coinNum{color:var(--acc)}
-body.tt-day.tt-on .coinNum,body.tt-day.tt-on .menuChip b{color:#b36a00}
-body.tt-day.tt-on .menuIconBtn svg [stroke],body.tt-day.tt-on .backIconBtn svg [stroke],body.tt-day.tt-on .inboxBtn svg [stroke]{stroke:#5a3719}
-body.tt-day.tt-on .inboxBtn svg [fill],body.tt-day.tt-on .menuIconBtn svg [fill]{fill:#5a3719}
-body.tt-on .heroStage .stageHalo{background:radial-gradient(circle,var(--acc) 0 38%,transparent 40%);opacity:.55}
-body.tt-on .stageRays{opacity:.25}
-body.tt-on .overStat{background:rgba(0,0,0,.08);border:2px solid var(--line);border-radius:14px}
-body.tt-on #overTitle{font-family:'TTBubbles','bips',sans-serif;font-size:clamp(26px,7.5vw,40px);color:var(--t-fill);-webkit-text-stroke:2px var(--t-stroke);paint-order:stroke fill;text-shadow:0 4px 0 var(--t-shadow)}
-body.tt-on input[type=text],body.tt-on input[type=search],body.tt-on #nickInput{color:var(--ink);background:rgba(255,255,255,.55);border:3px solid var(--line);border-radius:12px}
-body.tt-night.tt-on input[type=text],body.tt-night.tt-on #nickInput{background:rgba(255,255,255,.1)}
-/* карточки сезонов, ежедневная награда, магазин */
-body.tt-on .seasonLogo{text-shadow:none}
-body.tt-day.tt-on .seasonLogo,body.tt-day.tt-on .seasonEv{color:#b36a00}
+body.tt-on .menuBtnWrap,body.tt-on .btn:not(.small):not(.cloudBtn){filter:drop-shadow(0 5px 0 rgba(0,0,0,.35))}
+body.tt-on .menuBtnWrap .btn{filter:none}
+body.tt-on .btn{color:#fff6df;background:var(--red);border:0;border-radius:10px;box-shadow:none;text-shadow:0 2px 0 var(--red-d);letter-spacing:.4px;
+  -webkit-mask:radial-gradient(circle 9px at 0 50%,#0000 98%,#000) left/51% 100% no-repeat,radial-gradient(circle 9px at 100% 50%,#0000 98%,#000) right/51% 100% no-repeat;
+  mask:radial-gradient(circle 9px at 0 50%,#0000 98%,#000) left/51% 100% no-repeat,radial-gradient(circle 9px at 100% 50%,#0000 98%,#000) right/51% 100% no-repeat}
+body.tt-on .btn:active{transform:translateY(4px)}
+body.tt-on .btn:disabled{opacity:.55;filter:grayscale(.5)}
+body.tt-on #playBtn{font-size:27px}
+body.tt-on #wardrobeBtn,body.tt-on .btn.ghost{background:var(--gold);color:#3a2200;text-shadow:none}
+body.tt-on #fruitsBtn{background:var(--navy);color:#fff6df;text-shadow:none}
+body.tt-on .btn.small{border-radius:12px}
+/* мелкие кнопки, чипы, вкладки */
+body.tt-on .chip,body.tt-on .shopTab,body.tt-on .charArrow{font-weight:700;color:#fff6df;background:var(--navy);border:3px solid var(--navy-d);border-radius:12px;box-shadow:0 4px 0 var(--navy-d);text-shadow:none}
+body.tt-on .charArrow:active,body.tt-on .chip:active{transform:translateY(3px);box-shadow:0 1px 0 var(--navy-d)}
+body.tt-on .chip[aria-pressed="true"],body.tt-on .chip.active,body.tt-on .shopTab.active{background:var(--gold);color:#3a2200;border-color:var(--gold-d);box-shadow:0 4px 0 var(--gold-d)}
+/* карточки и панели: бумажные */
+body.tt-on #settingsBox,body.tt-on #shop,body.tt-on #nickBox,body.tt-on .profileCard,body.tt-on .passCard,body.tt-on .overCard,body.tt-on .seasonCard,body.tt-on #lockedPanel,body.tt-on .welcomeCard,body.tt-on .dailyCard{color:var(--ink);background:var(--card);border:3px solid var(--line);border-radius:18px;box-shadow:0 6px 0 rgba(0,0,0,.28)}
+body.tt-on .welcomeKicker{color:var(--curtain)}
+body.tt-on .welcomeList li{background:rgba(43,26,62,.08);color:var(--ink)}
+body.tt-on .welcomeNote{color:var(--soft)}
+body.tt-on .topPill,body.tt-on .menuChip,body.tt-on .inboxBtn,body.tt-on .menuIconBtn,body.tt-on #pauseBtn,body.tt-on .ctrlBtn,body.tt-on .backIconBtn{color:#fff6df;background:var(--navy-d);border:3px solid var(--brass);box-shadow:0 4px 0 rgba(0,0,0,.3)}
+body.tt-on .menuChip b,body.tt-on .coinNum{color:#ffd34d}
+body.tt-on .menuIconBtn svg [stroke],body.tt-on .backIconBtn svg [stroke],body.tt-on .inboxBtn svg [stroke],body.tt-on .ctrlBtn svg [stroke],body.tt-on #pauseBtn svg [stroke]{stroke:#ffd34d}
+body.tt-on .menuIconBtn svg [fill]:not([fill=none]),body.tt-on .inboxBtn svg [fill]:not([fill=none]),body.tt-on #pauseBtn svg [fill]:not([fill=none]),body.tt-on .ctrlBtn svg [fill]:not([fill=none]){fill:#ffd34d}
+/* настройки-бирка в углу меню */
+body.tt-on #menu #menuGearBtn{border-radius:10px 10px 10px 22px;transform:rotate(8deg);background:var(--curtain)}
+body.tt-on .heroStage .stageHalo{opacity:.9}
+body.tt-on .seasonLogo{text-shadow:none;color:var(--curtain)}
+body.tt-on .seasonEv{color:var(--curtain)}
 body.tt-on .seasonDays,body.tt-on .seasonBestWrap,body.tt-on .seasonBestWrap b{color:var(--ink)}
 body.tt-on .dailyTitle,body.tt-on .dailySub,body.tt-on .dailyTile b{color:var(--ink)}
-body.tt-on .dailyTile{color:var(--ink);background:rgba(0,0,0,.06);box-shadow:inset 0 0 0 2px var(--line);border-radius:12px}
-body.tt-on .dailyTile.today{background:rgba(255,201,60,.35);box-shadow:inset 0 0 0 3px var(--acc)}
-body.tt-on #shop .chip,body.tt-on .shopPanel .chip{color:var(--ink);background:var(--card);border:3px solid var(--line);border-radius:14px;box-shadow:0 4px 0 rgba(0,0,0,.25)}
-body.tt-on #shop .chip .price{color:var(--acc)}
-body.tt-day.tt-on #shop .chip .price{color:#b36a00}
-body.tt-on #shop .chip[aria-pressed="true"]{background:var(--acc);color:#2a1a40;border-color:var(--line)}
-body.tt-on #shop .chip[aria-pressed="true"] .price,body.tt-on #shop .chip[aria-pressed="true"] .idesc{color:#5a3200}
-body.tt-on .profileOverlay .profileCard{background:var(--card);color:var(--ink)}
-body.tt-on .chip.unowned{opacity:.85;filter:none}
+body.tt-on .dailyTile{color:var(--ink);background:rgba(43,26,62,.07);box-shadow:inset 0 0 0 2px var(--line);border-radius:12px}
+body.tt-on .dailyTile.today{background:rgba(242,193,78,.45);box-shadow:inset 0 0 0 3px var(--gold-d)}
+/* итог игры */
+body.tt-on #finalScore{font-size:clamp(54px,18vw,96px);text-shadow:0 6px 0 var(--red)}
+body.tt-on #overTitle{font-size:clamp(28px,8vw,44px)}
+body.tt-on .overStat{background:rgba(43,26,62,.08);border:2px solid var(--line);border-radius:14px}
 body.tt-on .overScoreLbl,body.tt-on .osLbl,body.tt-on .overStat b{color:var(--ink);opacity:1;text-shadow:none}
-body.tt-day.tt-on .overStat b{color:#b36a00}
+body.tt-on input[type=text],body.tt-on input[type=search],body.tt-on input[type=password],body.tt-on input[type=email],body.tt-on #nickInput{color:var(--ink);background:#fffaf0;border:3px solid var(--line);border-radius:12px;font-family:inherit}
+/* магазин / гардероб */
+body.tt-on #wardrobe .chip,body.tt-on #shop .chip,body.tt-on .shopPanel .chip{color:var(--ink);background:var(--card);border:3px solid var(--line);border-radius:14px;box-shadow:0 4px 0 rgba(0,0,0,.28)}
+body.tt-on #shop .chip .price,body.tt-on #wardrobe .chip .price{color:#b36a00}
+body.tt-on #shop .chip[aria-pressed="true"],body.tt-on #wardrobe .chip[aria-pressed="true"]{background:var(--gold);color:#3a2200;border-color:var(--gold-d)}
+body.tt-on #shop .chip[aria-pressed="true"] .price,body.tt-on #shop .chip[aria-pressed="true"] .idesc{color:#5a3200}
+body.tt-on .chip.unowned{opacity:.85;filter:none}
+body.tt-on #wardrobe .shopTab{color:#fff6df}
+body.tt-on #wardrobe .shopTab.active{color:#3a2200}
+/* настройки: программка, каждая группа - отрывной билет */
+body.tt-on #settingsBox{background:transparent;border:0;box-shadow:none;padding:0;gap:14px;width:min(420px,94vw)}
+body.tt-on .setCat{background:var(--card);border:3px solid var(--line);border-radius:12px;box-shadow:0 5px 0 rgba(0,0,0,.28);position:relative;overflow:hidden}
+body.tt-on .setCat::before,body.tt-on .setCat::after{content:'';position:absolute;top:22px;width:18px;height:18px;border-radius:50%;background:var(--paper);border:3px solid var(--line);z-index:2}
+body.tt-on .setCat::before{left:-12px}body.tt-on .setCat::after{right:-12px}
+body.tt-on .setCatHead{color:var(--ink);font-size:19px;padding:14px 22px;border-bottom:0}
+body.tt-on .setCat.open .setCatHead{border-bottom:3px dashed rgba(43,26,62,.35)}
+body.tt-on .setCatIcon{background:var(--red);color:#fff6df;border-radius:50%}
+body.tt-on .setCatArrow{color:var(--ink);opacity:.8}
+body.tt-on .setCatBody{padding:12px 22px 18px}
+body.tt-on .settingLabel{font-size:15px;font-weight:700}
+body.tt-on .howToText,body.tt-on .gfxNote,body.tt-on .gfxUltraNote{color:var(--soft)}
+body.tt-on #settings .settingsSaveBtn,body.tt-on #settingsSaveBtn{background:var(--green);color:#fff6df;border-radius:12px}
+body.tt-on #settingsTitle{margin:0}
+/* ползунки и подсказки */
+body.tt-on input[type=range]{accent-color:var(--red)}
+body.tt-on #toastBanner{background:var(--navy-d) !important;color:#ffd34d !important;border:3px solid var(--brass)}
+/* гардероб: бумага вместо серых плашек */
+body.tt-on #shop{background:var(--card);box-shadow:0 6px 0 rgba(0,0,0,.28)}
+body.tt-on #shop::before{display:none}
+body.tt-on .shopTabs,body.tt-on #shopTabs{background:transparent;box-shadow:none}
+body.tt-on #wardrobe .chip .iname{color:var(--ink)}
+body.tt-on #wardrobe .chip .idesc{color:var(--soft);opacity:1}
+body.tt-on #wardrobe .chip .price{background:rgba(43,26,62,.12);color:#8a4a00}
+body.tt-on #wardrobe .chip[aria-pressed="true"] .iname{color:#3a2200}
+body.tt-on #wardrobe .chip[aria-pressed="true"] .idesc{color:#5a3200}
+body.tt-on .buyAllBtn{background:var(--green);color:#fff6df;border-radius:12px}
+body.tt-on .buyAllCost,body.tt-on .charInfo,body.tt-on #charInfo{color:var(--ink)}
+body.tt-on .settingRow .btnRow{justify-content:flex-start}
+body.tt-on .settingRow{align-items:flex-start}
+body.tt-on #wardrobe .shopTabs{background:transparent;box-shadow:none;padding:0;gap:8px}
+body.tt-on #wardrobe .shopTab{background:var(--navy);color:#fff6df;border:3px solid var(--navy-d);box-shadow:0 4px 0 var(--navy-d);padding:8px 12px;border-radius:12px}
+body.tt-on #wardrobe .shopTab.active{background:var(--gold);color:#3a2200;border-color:var(--gold-d);box-shadow:0 4px 0 var(--gold-d)}
+body.tt-on #wardrobe #shop{background:var(--card);box-shadow:0 6px 0 rgba(0,0,0,.28)}
+body.tt-on #wardrobe .chip{background:var(--card);color:var(--ink);box-shadow:0 4px 0 rgba(0,0,0,.28)}
+body.tt-on #wardrobe .chip[aria-pressed="true"]{background:var(--gold);box-shadow:0 4px 0 var(--gold-d);border-color:var(--gold-d)}
+body.tt-on #wardrobe .charArrow{background:var(--navy-d);box-shadow:0 4px 0 rgba(0,0,0,.3);border:3px solid var(--brass)}
+body.tt-on #wardrobe .chip .chipIcon{background:rgba(43,26,62,.1)}
+body.tt-on #wardrobe .coinNum,body.tt-on #wardrobeCoins{color:#b36a00}
+body.tt-on #wardrobe .ownedTag{color:#2a7a3a}
