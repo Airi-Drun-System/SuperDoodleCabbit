@@ -594,17 +594,28 @@ async function adminConfirmGrant(){
         }
       }
     }
-    const dk = Object.keys(ch.direct);
+    const fields = {};
+    for (const k of Object.keys(ch.direct)){
+      const v = ch.direct[k];
+      fields[k] = typeof v === 'boolean' ? { booleanValue: v } : { stringValue: String(v) };
+    }
+    // Зеркалим в облачный профиль то, что видно в рейтинге: иначе рейтинг показывает старое, пока игрок не зайдёт и не применит заявку.
+    const o = ch.ops, sn = adminSnap, I = (n) => ({ integerValue: String(Math.max(0, Math.floor(n))) });
+    if ('nick' in o){ fields.nick = { stringValue: o.nick }; fields.nickLower = { stringValue: o.nick.toLowerCase() }; }
+    if ('title' in o) fields.title = { stringValue: o.title };
+    if ('titleColor' in o) fields.titleColor = { stringValue: o.titleColor };
+    if (o.coinsAdd) fields.coins = I(sn.nums.coins + o.coinsAdd);
+    if (o.trophiesAdd) fields.trophies = I(sn.nums.trophies + o.trophiesAdd);
+    if ('bestSet' in o) fields.best = I(o.bestSet);
+    const dk = Object.keys(fields);
     if (dk.length && grantOk){
-      const fields = {};
-      for (const k of dk){
-        const v = ch.direct[k];
-        fields[k] = typeof v === 'boolean' ? { booleanValue: v } : { stringValue: String(v) };
-      }
       const mask = dk.map(k => 'updateMask.fieldPaths=' + k).join('&');
       const r2 = await sfetch(cloudBase() + '/players/' + code + '?' + mask + '&key=' + CLOUD.apiKey, { method: 'PATCH', headers: H, body: JSON.stringify({ fields }) });
       if (!r2.ok) directOk = false;
-      else if ('badge' in ch.direct && lbFieldsByCode[code]) lbFieldsByCode[code].badge = { stringValue: ch.direct.badge };
+      else {
+        const lf = lbFieldsByCode[code];
+        if (lf) for (const k of dk) lf[k] = fields[k];
+      }
     }
   } catch (e){
     grantOk = false;
@@ -621,6 +632,7 @@ async function adminConfirmGrant(){
   const waiting = isSelf ? '' : ' Заявка ждёт игрока, статус ниже.';
   adminSetStatus(directOk ? ('Готово.' + (isSelf ? ' Применено сразу (это твой профиль).' : waiting)) : 'Заявка отправлена, но часть полей (роль, галочка, запрет картинок) не записалась. Повтори.');
   adminRenderGrantLog(code);
+  if (typeof cloudFetchLeaderboard === 'function') cloudFetchLeaderboard();
 }
 
 function adminApplyToSnap(ch){
