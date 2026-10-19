@@ -1641,7 +1641,7 @@ const TT_SKY = {
 function ttMode(){
   if (bgTheme !== 'auto' || uiStyle !== 'classic') return '';
   const c = document.body.classList;
-  return c.contains('tt-night') ? 'night' : c.contains('tt-day') ? 'day' : '';
+  return c.contains('tt-on') ? 'day' : '';
 }
 const TT_TYPE = { moving: ['#7ad3ff', '#2f8ddb'], broken: ['#d9a46c', '#8f5a30'], bouncy: ['#ffb3e0', '#e8559f'], blink: ['#b8fff4', '#3fd6c2'], tele: ['#dcc6ff', '#9a66f0'] };
 function drawTTPlatform(p, w, h){
