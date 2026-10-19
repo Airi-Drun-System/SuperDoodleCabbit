@@ -88,7 +88,7 @@ function getBgCache(w0){
 function drawBackground(){
   const styleBg = STYLE_BG[uiStyle];
   const themed = !styleBg && bgTheme !== 'auto' && BG_THEMES[bgTheme];
-  const w = styleBg || (themed ? BG_THEMES[bgTheme] : currentWorld());
+  const w = styleBg || (themed ? BG_THEMES[bgTheme] : (ttMode() ? TT_SKY[ttMode()] : currentWorld()));
   const cache = getBgCache(w);
   ctx.save();
   ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -1310,6 +1310,7 @@ function drawPlatform(p){
   ctx.translate(-w / 2, -h / 2);
 
   if (p.type === 'cloud') drawCloudBody(p, w, h);
+  else if (ttMode() && platformTheme === 'auto' && uiStyle === 'classic') drawTTPlatform(p, w, h);
   else if (skinnedPlatform(p)){
     const skw = p.skin !== undefined ? p.skin : worldIndex();
     if (ultraGfx()) drawPlat3D(p, skw, w, h, y);
@@ -1631,4 +1632,35 @@ function drawMonster(m){
   monsterArt(ctx, m.w != null ? m.w : worldIndex(), m.r, performance.now() / 1000 + m.x * 0.013, look);
 
   ctx.restore();
+}
+/* time-of-day theme (day = wood, night = theatre); see css/teatr.css */
+const TT_SKY = {
+  day:   { bg1: [124, 202, 255], bg2: [255, 238, 196], glow: 'rgba(255,244,190,.45)' },
+  night: { bg1: [22, 14, 64],    bg2: [78, 42, 124],   glow: 'rgba(255,210,100,.22)' }
+};
+function ttMode(){
+  if (bgTheme !== 'auto' || uiStyle !== 'classic') return '';
+  const c = document.body.classList;
+  return c.contains('tt-night') ? 'night' : c.contains('tt-day') ? 'day' : '';
+}
+const TT_TYPE = { moving: ['#7ad3ff', '#2f8ddb'], broken: ['#d9a46c', '#8f5a30'], bouncy: ['#ffb3e0', '#e8559f'], blink: ['#b8fff4', '#3fd6c2'], tele: ['#dcc6ff', '#9a66f0'] };
+function drawTTPlatform(p, w, h){
+  const night = ttMode() === 'night', ty = TT_TYPE[p.type], r = h * 0.4;
+  const top = ty ? ty[0] : (night ? '#ffe9a8' : '#8fdc4a');
+  const mid = ty ? ty[1] : (night ? '#e9b64a' : '#4fae2a');
+  ctx.globalAlpha *= 0.25; ctx.fillStyle = night ? '#000' : '#3a2410';
+  rr(ctx, 2, 4, w - 2, h, r); ctx.fill(); ctx.globalAlpha /= 0.25;
+  const g = ctx.createLinearGradient(0, 0, 0, h);
+  if (night){ g.addColorStop(0, top); g.addColorStop(1, mid); }
+  else { g.addColorStop(0, '#d9a066'); g.addColorStop(1, '#a8693a'); }
+  ctx.fillStyle = g; rr(ctx, 0, 0, w, h, r); ctx.fill();
+  if (night){
+    ctx.lineWidth = 2; ctx.strokeStyle = '#fff3c4'; ctx.stroke();
+    if (!lowGfx()){ ctx.fillStyle = '#fff'; for (let x = 8; x < w - 4; x += 12){ ctx.beginPath(); ctx.arc(x, h * 0.5, 1.6, 0, 6.2832); ctx.fill(); } }
+  } else {
+    ctx.lineWidth = 2; ctx.strokeStyle = '#6b3f1d'; ctx.stroke();
+    const gg = ctx.createLinearGradient(0, 0, 0, h * 0.55); gg.addColorStop(0, top); gg.addColorStop(1, mid);
+    ctx.fillStyle = gg; rr(ctx, 1, 1, w - 2, h * 0.5, r * 0.8); ctx.fill();
+    if (!lowGfx()){ ctx.strokeStyle = 'rgba(80,40,10,.35)'; ctx.lineWidth = 1; ctx.beginPath(); for (let x = 14; x < w - 6; x += 22){ ctx.moveTo(x, h * 0.62); ctx.lineTo(x + 8, h * 0.62); } ctx.stroke(); }
+  }
 }
