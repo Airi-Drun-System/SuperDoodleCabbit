@@ -174,6 +174,8 @@ setInterval(refreshOnlineCounter, 60000);
 
 function refreshStaffUI(){
   const tool = document.getElementById('adminTool');
+  const openBtn = document.getElementById('adminOpenBtn');
+  if (openBtn) openBtn.classList.toggle('hidden', isStaff());
   if (!tool) return;
   if (adminMode && !adminAllowed()) adminMode = false;
   tool.classList.toggle('hidden', !isStaff());
@@ -225,6 +227,14 @@ document.getElementById('adminPinBtn').addEventListener('click', () => {
   staffLoginFrom(document.getElementById('adminEmailInput'), document.getElementById('adminPassInput'), () => {
     document.getElementById('adminGate').classList.add('hidden');
   });
+});
+// видимая кнопка входа для админа внизу настроек (старый вход — 5 тапов в левый верхний угол меню — тоже работает)
+const adminOpenBtnEl = document.getElementById('adminOpenBtn');
+if (adminOpenBtnEl) adminOpenBtnEl.addEventListener('click', () => {
+  document.getElementById('adminGate').classList.remove('hidden');
+  adminOpenBtnEl.classList.add('hidden');
+  const em = document.getElementById('adminEmailInput');
+  if (em) em.focus();
 });
 const adminLogoutEl = document.getElementById('adminLogoutBtn');
 if (adminLogoutEl) adminLogoutEl.addEventListener('click', () => { staffSignOut(); });
