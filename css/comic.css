@@ -216,3 +216,11 @@ html body .aqKey,html body .adminItemChip,html body .adminRoleOpt,html body .adm
 html body .aqKey[aria-pressed="true"],html body .adminRoleOpt.active,html body .adminRoleOpt[aria-pressed="true"]{background:var(--ye)!important}
 html body .adminDeleteBtn{background:#ff5a5a!important;color:#fff!important}
 html body .adminCard button:not(.adminRoleOpt):not(.adminBadgeOpt):not(.adminGradientChip):not(.adminDeleteBtn),html body .adminPwResetBtn{background:var(--ye)!important;color:var(--nv)!important;box-shadow:0 0 0 2.5px var(--nv)!important;border:0!important;text-shadow:none!important;opacity:1!important}
+
+/* ---------- загрузочный экран в стиле комикса ---------- */
+html body #bootSplash{background:var(--sky)!important;gap:28px}
+html body #bootSplash b{font:400 clamp(44px,13vw,72px)/.9 'RB','BIPs',sans-serif;color:#fff;-webkit-text-stroke:3px var(--nv);paint-order:stroke fill;text-shadow:5px 6px 0 var(--nv);rotate:-5deg;text-align:center}
+/* вместо крутилки — прыгающая наклейка-кубик */
+html body #bootSplash i{width:34px;height:34px;border:0;border-radius:9px;background:var(--ye);box-shadow:0 0 0 4px #fff,0 0 0 7px var(--nv);animation:cjBootHop .7s cubic-bezier(.33,0,.2,1) infinite alternate}
+@keyframes cjBootHop{from{transform:translateY(0) rotate(0) scaleY(.86)}to{transform:translateY(-26px) rotate(90deg) scaleY(1)}}
+@media (prefers-reduced-motion:reduce){html body #bootSplash i{animation:none}}
