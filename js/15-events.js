@@ -18,7 +18,6 @@ function goToMenu(){
   refreshMenuHint();
   maybeAutoDaily();
   hwMenuEnter();
-  if (typeof cpMenuEnter === 'function') cpMenuEnter();
   if (cloudReady()){ checkPendingGrant(true); fetchInbox(true); }
 }
 
@@ -114,22 +113,7 @@ function fillOverStats(isNewBest){
     (function tick(){ const k = clamp((performance.now() - t0) / 700, 0, 1); cv.textContent = '+' + Math.round(target * k); if (k < 1 && state === STATE.OVER) requestAnimationFrame(tick); })();
   }
   const burst = document.getElementById('overBurst');
-  if (burst){
-    burst.textContent = '';
-    if (isNewBest && !lowGfx()){
-      const cols = ['#ffd34d', '#ff9f45', '#ff6b8a', '#7fe06b', '#8fd2f5', '#c9a8ff'];
-      for (let i = 0; i < 36; i++){
-        const c = document.createElement('i');
-        const a = Math.random() * Math.PI * 2, d = 90 + Math.random() * 110;
-        c.style.background = cols[i % cols.length];
-        c.style.setProperty('--dx', Math.round(Math.cos(a) * d) + 'px');
-        c.style.setProperty('--dy', Math.round(Math.sin(a) * d * 0.8 + 60) + 'px');
-        c.style.setProperty('--rot', Math.round((Math.random() - 0.5) * 720) + 'deg');
-        c.style.animationDelay = (0.2 + Math.random() * 0.25).toFixed(2) + 's';
-        burst.appendChild(c);
-      }
-    }
-  }
+  if (burst) burst.classList.toggle('on', !!isNewBest);
 }
 function gameOver(){
   if (state !== STATE.PLAY && state !== STATE.DYING) return;

@@ -1,793 +1,657 @@
 <!DOCTYPE html>
+
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#150a2b">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<meta content="#150a2b" name="theme-color"/>
 <title>Cabbit Jump!</title>
-<link rel="icon" type="image/svg+xml" href="favicon.svg">
-<link rel="preload" href="fonts/bips.woff?v=20261013b" as="font" type="font/woff" crossorigin>
-<link rel="stylesheet" href="css/style.css?v=20261013b">
-<link rel="stylesheet" href="css/teatr.css?v=3">
-<script src="js/teatr-time.js?v=3"></script>
-</head>
+<link href="favicon.svg" rel="icon" type="image/svg+xml"/>
+<link as="font" crossorigin="" href="fonts/bips.woff?v=20261013b" rel="preload" type="font/woff"/>
+<link href="css/style.css?v=20261102" rel="stylesheet"/>
+<link href="css/comic.css?v=20261102" rel="stylesheet"/></head>
 <body>
 <div id="wrap">
-  <canvas id="game"></canvas>
-  <div id="vignette" class="vignette"></div>
-
-  <div id="rotateOverlay" class="hidden">
-    <div class="rotateIcon">⟲</div>
-    <p data-i18n="rotateMsg">Переверни телефон вертикально</p>
-  </div>
-
-  <div id="onlineCounter" class="onlineCounter hidden"><i></i><span id="onlineCounterText"></span></div>
-  <div id="toastBanner" class="hidden" style="position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:400;background:rgba(20,10,40,.92);color:#ffd34d;padding:10px 18px;border-radius:14px;font-weight:800;font-size:13px;pointer-events:none;transition:opacity .3s;max-width:88vw;text-align:center;"></div>
-
-  <button id="pauseBtn" class="hidden" aria-label="Пауза">
-    <svg viewBox="0 0 24 24" fill="none"><rect x="6" y="4" width="4" height="16" rx="1" fill="#fdf6e8"/><rect x="14" y="4" width="4" height="16" rx="1" fill="#fdf6e8"/></svg>
-  </button>
-
-  <button id="leftBtn" class="hidden ctrlBtn" aria-label="Влево">
-    <svg viewBox="0 0 24 24" fill="none"><path d="M15 5 L8 12 L15 19" stroke="#fdf6e8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-  </button>
-  <button id="rightBtn" class="hidden ctrlBtn" aria-label="Вправо">
-    <svg viewBox="0 0 24 24" fill="none"><path d="M9 5 L16 12 L9 19" stroke="#fdf6e8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-  </button>
-
-  <button id="hitBtn" class="hidden" data-i18n="tapPrompt">ЖМИ!</button>
-  <button id="spearBtn" class="hidden" type="button" aria-label="Копьё">
-    <svg viewBox="0 0 24 24" fill="none"><path d="M5 19 L16 8" stroke="#fdf6e8" stroke-width="2.6" stroke-linecap="round"/><path d="M14 5 L20 4 L19 10 Z" fill="#fdf6e8" stroke="#fdf6e8" stroke-width="1.6" stroke-linejoin="round"/><path d="M4 16 L8 20" stroke="#fdf6e8" stroke-width="2.2" stroke-linecap="round"/></svg>
-    <span id="spearCd"></span>
-  </button>
-
-  <div id="bootSplash"><b>Cabbit Jump!</b><i></i></div>
-  <script>setTimeout(function(){var b=document.getElementById("bootSplash");if(b)b.remove();},9000);</script>
-  <div id="nickname" class="screen hidden">
-    <div id="nickBox" class="pop">
-      <h2 data-i18n="nickTitle" style="font-size:20px;font-weight:800;">Как тебя зовут?</h2>
-      <input id="nickInput" type="text" maxlength="14" data-i18n-placeholder="nickPlaceholder" placeholder="Ник котокролика">
-      <button id="nickConfirm" class="btn" data-i18n="nickConfirm">Готово</button>
-    </div>
-  </div>
-
-  <div id="menu" class="screen hidden">
-    <div id="secretZone" style="position:absolute;top:0;left:0;width:48px;height:48px;z-index:50;"></div>
-    <div id="pauseLabel" class="pauseLabel" data-i18n="pauseLabel">Пауза</div>
-    <button id="inboxBtn" class="inboxBtn hidden" type="button" aria-label="Сообщения">
-      <svg viewBox="0 0 24 24" fill="none"><path d="M4 5.5 C4 4.7 4.7 4 5.5 4 H18.5 C19.3 4 20 4.7 20 5.5 V15 C20 15.8 19.3 16.5 18.5 16.5 H10 L6 20 V16.5 H5.5 C4.7 16.5 4 15.8 4 15 Z" fill="#fdf6e8"/></svg>
-      <span id="inboxBadge" class="inboxBadge hidden">0</span>
-    </button>
-    <button id="dailyBtn" class="menuIconBtn" type="button" aria-label="Ежедневная награда"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="10" width="16" height="10" rx="2" stroke="#fdf6e8" stroke-width="2"/><rect x="3" y="7" width="18" height="4" rx="1.5" stroke="#fdf6e8" stroke-width="2"/><path d="M12 7 V20" stroke="#fdf6e8" stroke-width="2"/><path d="M12 7 C 10 3.5 6.5 4 7.5 6.2 C 8.2 7.4 12 7 12 7 Z M12 7 C 14 3.5 17.5 4 16.5 6.2 C 15.8 7.4 12 7 12 7 Z" stroke="#fdf6e8" stroke-width="1.8" stroke-linejoin="round"/></svg><span id="dailyDot" class="dot hidden"></span></button>
-    <button id="menuGearBtn" class="menuIconBtn" type="button" aria-label="Настройки"><svg viewBox="0 0 24 24" fill="none"><path d="M12 8.6 A3.4 3.4 0 1 0 12 15.4 A3.4 3.4 0 1 0 12 8.6 Z" stroke="#fdf6e8" stroke-width="2"/><path d="M12 2.8 V5.2 M12 18.8 V21.2 M2.8 12 H5.2 M18.8 12 H21.2 M5.5 5.5 L7.2 7.2 M16.8 16.8 L18.5 18.5 M5.5 18.5 L7.2 16.8 M16.8 7.2 L18.5 5.5" stroke="#fdf6e8" stroke-width="2.4" stroke-linecap="round"/></svg></button>
-    <div id="menuTopBar" class="menuTopBar">
-      <div class="topPill coinPill"><i class="coinDot"></i><span class="coinNum" id="menuCoins">0</span></div>
-    </div>
-    <div class="spacer"></div>
-    <div class="heroStage" id="heroStage">
-      <div class="stageRays"></div>
-      <div class="stageHalo"></div>
-      <canvas id="menuPreview" class="heroBob" width="220" height="220"></canvas>
-      <div class="stageIsland"><i></i><i></i><i></i></div>
-    </div>
-    <div class="titleSwing" id="titleSwing"><h1 class="title" id="titleSign">Cabbit Jump!</h1><span class="splash" id="menuSplash">Remastered</span></div>
-    <div class="menuChips" id="menuChips">
-      <span class="menuChip chipBest"><span data-i18n="bestChip">Рекорд</span> <b id="menuBestChip">0</b></span>
-      <button type="button" id="bossChipBtn" class="menuChip chipBoss"><span data-i18n="bossesChip">Боссы</span> <b id="menuBossChip">0</b></button>
-    </div>
-
-    <p class="stats rise d1">
-      <span><span data-i18n="best">Лучший результат</span>: <b id="menuBest">0</b></span>
-    </p>
-
-    <button id="seasonCard" class="seasonCard rise d2" type="button">
-      <span class="seasonTop"><span id="seasonCardTitle" class="seasonLogo">Сезон 1</span><span id="seasonCardDays" class="seasonDays"></span></span>
-      <span class="seasonBottom"><span class="seasonBestWrap"><span data-i18n="seasonBestShort">рекорд</span> <b id="seasonCardBest">0</b></span></span>
-    </button>
-    <button id="hwCard" class="seasonCard hwCard rise d2 hidden" type="button">
-      <span class="seasonTop"><span id="hwCardTitle" class="seasonLogo hwLogo">Ночь тыкв</span><span id="hwCardDays" class="seasonDays"></span></span>
-      <span class="seasonBottom"><span id="hwCardNext" class="seasonEv"></span><span class="seasonBestWrap"><b id="hwCardCount">0</b> <span id="hwCardWord">конфет</span></span></span>
-    </button>
-
-    <button id="cpCard" class="seasonCard cpCard rise d2 hidden" type="button">
-      <span class="seasonTop"><span id="cpCardTitle" class="seasonLogo">My Flying Pig</span></span>
-      <span class="seasonBottom"><span id="cpCardText" class="seasonEv"></span><span class="seasonBestWrap"><b id="cpCardWord"></b></span></span>
-    </button>
-
-    <div class="btnRow rise d3">
-      <div class="menuBtnWrap"><button id="playBtn" class="btn" data-i18n="play">Играть</button></div>
-      <div class="menuBtnWrap"><button id="pauseMenuBtn" class="btn hidden" data-i18n="pauseMenu">Меню</button></div>
-      <div class="menuBtnWrap"><button id="continueBtn" class="btn hidden" disabled data-i18n="cont">Продолжить</button></div>
-      <div class="menuBtnWrap"><button id="wardrobeBtn" class="btn" data-i18n="wardrobe">Гардероб</button></div>
-      <div class="menuBtnWrap"><button id="fruitsBtn" class="btn" data-i18n="fruitsBtn">Фрукты</button></div>
-      <div class="menuBtnWrap"><button id="settingsBtn" class="btn ghost" data-i18n="settings">Настройки</button></div>
-    </div>
-    <p id="menuHint" class="hint rise d4 hidden" data-i18n="hint">Клавиши ← → или A / D, на телефоне — кнопки внизу. Тап по экрану: выстрел из лука или двойной прыжок. Встретил монстра — жми, пока идёт отсчёт!</p>
-    <div class="spacer"></div>
-  </div>
-
-  <div id="wardrobe" class="screen hidden">
-    <button id="wardrobeBack" class="backIconBtn" aria-label="Назад">
-      <svg viewBox="0 0 24 24" fill="none"><path d="M15 5 L8 12 L15 19" stroke="#fdf6e8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </button>
-    <div class="spacer"></div>
-    <h1 class="title pop" data-i18n="wardrobe" style="font-size:clamp(24px,7vw,40px);">Гардероб</h1>
-    <div class="charSwitcher rise d1">
-      <button id="charPrev" class="charArrow" aria-label="Предыдущий персонаж">‹</button>
-      <canvas id="preview2" class="heroBob" width="220" height="220"></canvas>
-      <button id="charNext" class="charArrow" aria-label="Следующий персонаж">›</button>
-    </div>
-    <div id="charInfo" class="charInfo rise d1"></div>
-    <p class="stats rise d1">
-      <span><i class="coinDot"></i><span class="coinNum" id="wardrobeCoins">0</span></span>
-    </p>
-    <div id="shopTabs" class="shopTabs rise d2"></div>
-    <div id="buyAllRow" class="buyAllRow rise d2 hidden">
-      <button id="buyAllBtn" class="buyAllBtn" type="button"></button>
-      <span id="buyAllCost" class="buyAllCost"></span>
-    </div>
-    <div id="shop" class="rise d2"></div>
-    <div id="lockedPanel" class="hidden"></div>
-    <div class="spacer"></div>
-  </div>
-
-  <div id="settings" class="screen hidden">
-    <button id="settingsBack" class="backIconBtn" aria-label="Назад">
-      <svg viewBox="0 0 24 24" fill="none"><path d="M15 5 L8 12 L15 19" stroke="#fdf6e8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </button>
-    <div class="spacer"></div>
-    <h1 id="settingsTitle" class="title pop" data-i18n="settings" style="font-size:clamp(24px,7vw,40px);">Настройки</h1>
-    <div id="settingsBox" class="rise d1">
-      <button id="settingsSaveBtn" class="adminSaveBtn settingsSaveBtn" type="button" data-i18n="settingsSave">✓ Сохранить</button>
-      <p id="settingsSaveStatus" class="settingsSaveStatus"></p>
-      <div id="adminGate" class="adminGate hidden">
-        <input id="adminEmailInput" class="adminInput" type="email" placeholder="Почта" autocomplete="off">
-        <input id="adminPassInput" class="adminInput" type="password" placeholder="Пароль" autocomplete="off">
-        <button id="adminPinBtn" class="btn small">Войти</button>
-      </div>
-
-      <div id="adminTool" class="adminPanel hidden">
-        <div class="adminHeader">
-          <span id="adminHeaderTitle" class="adminHeaderTitle">⚒ Админка</span>
-          <button id="adminLogoutBtn" class="btn small" type="button">Выйти</button>
-          <p class="adminHint">Открой раздел «Онлайн» ниже и тапни по игроку в рейтинге, чтобы выдать ему вещи или монеты</p>
-        </div>
-
-        <div class="adminSearchRow">
-          <input id="adminCodeInput" class="adminInput" type="text" placeholder="Код игрока">
-          <button id="adminLoadBtn" class="adminIconBtn" aria-label="Загрузить">↓</button>
-        </div>
-
-        <div class="adminCard adminOnly">
-          <div class="adminCardTitle">Аккаунт Claude</div>
-          <button id="adminClaudeBtn" type="button" class="adminPwResetBtn">Создать аккаунт Claude</button>
-          <p id="adminClaudeStatus" class="adminRoleHint"></p>
-        </div>
-
-        <div class="adminCard">
-          <div class="adminCardTitle">Фото на проверке</div>
-          <button id="adminPhotoLoadBtn" type="button" class="adminPwResetBtn">Показать фото аватаров</button>
-          <div id="adminPhotoList" class="adminPhotoList"></div>
-        </div>
-
-        <div id="adminPlayerBox" class="adminPlayerBox hidden">
-          <p id="adminCodeLine" class="adminCodeLine"></p>
-
-          <div class="adminCard adminOnly">
-            <div class="adminCardTitle">Игрок</div>
-            <label class="adminField">
-              <span>Ник</span>
-              <input id="adminNickInput" class="adminInput" type="text" maxlength="14">
-            </label>
-            <label class="adminField">
-              <span>Запрет на фото в чате</span>
-              <input id="adminNoImages" type="checkbox">
-            </label>
-            <div class="adminField">
-              <span>Аватар</span>
-              <button id="adminAvatarBtn" type="button" class="adminPwResetBtn">Поставить фото</button>
-              <input id="adminAvatarInput" type="file" accept="image/*" class="hidden">
-            </div>
-          </div>
-
-          <div class="adminCard adminOnly">
-            <div class="adminCardTitle">Роль</div>
-            <div id="adminRoleRow" class="adminRoleRow">
-              <button type="button" class="adminRoleOpt" data-role="">Игрок</button>
-              <button type="button" class="adminRoleOpt" data-role="mod">Помощник</button>
-              <button type="button" class="adminRoleOpt" data-role="admin">Админ</button>
-            </div>
-            <p class="adminRoleHint">Помощник может выдавать только обычные вещи, монеты и очки рекорда</p>
-          </div>
-
-          <div class="adminCard">
-            <div class="adminCardTitle">Статистика</div>
-            <label class="adminField">
-              <span>Монеты</span>
-              <input id="adminCoinsInput" class="adminInput adminInputNum" type="text" maxlength="16" placeholder="число или слово">
-            </label>
-            <label class="adminField">
-              <span>Рекорд</span>
-              <input id="adminBestInput" class="adminInput adminInputNum" type="text" maxlength="16" placeholder="число или слово">
-            </label>
-            <label class="adminField hidden">
-              <span>Кубки</span>
-              <input id="adminTrophiesInput" class="adminInput adminInputNum" type="text" maxlength="16" placeholder="число или слово">
-            </label>
-          </div>
-
-          <div class="adminCard adminOnly">
-            <div class="adminCardTitle">Титул</div>
-            <label class="adminField">
-              <span>Текст</span>
-              <input id="adminTitleInput" class="adminInput" type="text" maxlength="16" placeholder="слово">
-            </label>
-            <label class="adminField">
-              <span>Цвет</span>
-              <input id="adminTitleColorInput" class="adminInput adminInputMono" type="text" placeholder="#ffd34d или gradient(...)">
-            </label>
-            <div id="adminGradientPresets" class="adminGradientPresets"></div>
-          </div>
-
-          <div class="adminCard adminOnly">
-            <div class="adminCardTitle">Галочка</div>
-            <div class="adminBadgePreviewRow">
-              <span id="adminBadgeNickPreview" class="adminBadgeNickPreview">Ник</span>
-              <img id="adminBadgePreview" class="nickBadge hidden" alt="">
-              <span id="adminBadgeHint" class="adminBadgeHint"></span>
-            </div>
-            <div id="adminBadgeGrid" class="adminBadgeGrid"></div>
-          </div>
-
-          <div class="adminCard">
-            <div class="adminCardTitle">Предметы</div>
-            <div id="adminItemsGrid" class="adminItemsGrid"></div>
-          </div>
-
-          <div class="adminCard adminOnly">
-            <div class="adminCardTitle">Фрукты</div>
-            <div id="adminFruitGrid" class="adminFruitGrid"></div>
-            <p class="adminRoleHint">Число — сколько фруктов лежит у игрока. Кружок справа — какой фрукт сейчас съеден.</p>
-          </div>
-
-          <div class="adminCard adminOnly">
-            <div class="adminCardTitle">Сезон</div>
-            <label class="adminField">
-              <span>Рекорд сезона</span>
-              <input id="adminSeasonInput" class="adminInput adminInputNum" type="text" inputmode="numeric" maxlength="9">
-            </label>
-          </div>
-
-          <button id="adminSaveBtn" class="adminSaveBtn" type="button">Проверить и выдать</button>
-
-          <div id="adminConfirm" class="adminCard hidden">
-            <div class="adminCardTitle">Подтверди выдачу</div>
-            <p id="adminConfirmWho" class="adminRoleHint"></p>
-            <ul id="adminConfirmList" class="adminConfirmList"></ul>
-            <button id="adminConfirmOk" class="adminSaveBtn" type="button">Выдать</button>
-            <button id="adminConfirmCancel" class="adminPwResetBtn" type="button">Отмена</button>
-          </div>
-          <div id="adminGrantLog" class="adminRoleHint adminGrantLog"></div>
-
-          <button id="adminPwResetBtn" type="button" class="adminPwResetBtn adminOnly">Сбросить пароль игрока</button>
-
-          <div class="adminCard adminOnly">
-            <div class="adminCardTitle">Бан по устройству</div>
-            <p id="adminBanInfo" class="adminRoleHint"></p>
-            <button id="adminBanBtn" type="button" class="adminDeleteBtn">Забанить устройство</button>
-            <button id="adminUnbanBtn" type="button" class="adminPwResetBtn">Снять бан</button>
-          </div>
-
-          <div class="adminDangerZone adminOnly">
-            <div class="adminDangerLabel">Опасная зона</div>
-            <button id="adminDeleteBtn" type="button" class="adminDeleteBtn">Удалить аккаунт</button>
-          </div>
-        </div>
-        <p id="adminStatus" class="adminStatus"></p>
-      </div>
-
-      <div class="setCat" data-cat="main">
-        <button class="setCatHead" type="button" aria-expanded="false"><span class="setCatIcon">⚙</span><span class="setCatName" data-i18n="catMain">Основное</span><span class="setCatArrow">›</span></button>
-        <div class="setCatBody">
-          <div class="settingRow">
-            <span class="settingLabel" data-i18n="language">Язык</span>
-            <div class="btnRow">
-              <button class="chip" data-lang="ru">Русский</button>
-              <button class="chip" data-lang="en">English</button>
-            </div>
-          </div>
-          <div class="settingRow">
-            <span class="settingLabel" data-i18n="howToLabel">Как играть</span>
-            <p class="howToText" data-i18n="hint"></p>
-          </div>
-        </div>
-      </div>
-      <div class="setCat" data-cat="gfx">
-        <button class="setCatHead" type="button" aria-expanded="false"><span class="setCatIcon">✦</span><span class="setCatName" data-i18n="catGfx">Графика и вид</span><span class="setCatArrow">›</span></button>
-        <div class="setCatBody">
-          <div class="settingRow">
-            <span class="settingLabel"><span data-i18n="gfxLabel">Графика</span> <span id="gfxNote" class="gfxNote"></span></span>
-            <div id="gfxRow" class="btnRow">
-              <button class="chip" type="button" data-gfx="auto" data-i18n="gfx_auto">Авто</button>
-              <button class="chip" type="button" data-gfx="high" data-i18n="gfx_high">Красиво</button>
-              <button class="chip" type="button" data-gfx="low" data-i18n="gfx_low">Быстро</button>
-              <button class="chip gfxUltraChip" type="button" data-gfx="ultra"><span data-i18n="gfx_ultra">Ультра</span><span class="expBadge" data-i18n="expBadge">эксперимент</span></button>
-            </div>
-            <p id="gfxUltraNote" class="gfxUltraNote hidden" data-i18n="gfxUltraNote">Экспериментальная функция: объёмные платформы и тени. На слабых телефонах может тормозить.</p>
-          </div>
-
-          <div class="settingRow" id="worldLightSetting">
-            <span class="settingLabel" data-i18n="worldLightLabel">Миры</span>
-            <div id="worldLightRow" class="btnRow">
-              <button class="chip" type="button" data-wl="0" data-i18n="wl_dark">Обычные</button>
-              <button class="chip" type="button" data-wl="1" data-i18n="wl_light">Светлые</button>
-            </div>
-          </div>
-          <div class="settingRow" id="bgColorSetting">
-            <span class="settingLabel" data-i18n="bgColorLabel">Цвет фона</span>
-            <div id="bgColorRow" class="swatchRow"></div>
-          </div>
-          <div class="settingRow">
-            <span class="settingLabel" data-i18n="platformColorLabel">Цвет платформ</span>
-            <div id="platformColorRow" class="swatchRow"></div>
-          </div>
-        </div>
-      </div>
-      <div class="setCat" data-cat="profile">
-        <button class="setCatHead" type="button" aria-expanded="false"><span class="setCatIcon">☺</span><span class="setCatName" data-i18n="catProfile">Профиль</span><span class="setCatArrow">›</span></button>
-        <div class="setCatBody">
-          <div class="settingRow">
-            <span class="settingLabel" data-i18n="nickLabel">Ник</span>
-            <div class="btnRow">
-              <button id="changeNickBtn" class="chip" data-i18n="changeNickBtn">Изменить</button>
-            </div>
-          </div>
-          <div class="settingRow">
-            <span class="settingLabel" data-i18n="avatarLabel">Аватар</span>
-            <div class="avatarPickerRow">
-              <span id="avatarPreviewFrame" class="avFrame avPreviewFrame frame-none"><span id="avatarPreview" class="avatarPreview"></span></span>
-              <button id="avatarUploadBtn" class="chip" type="button" data-i18n="avatarUpload">Фото из галереи</button>
-              <button id="avatarRemoveBtn" class="chip hidden" type="button" data-i18n="avatarRemove">Убрать фото</button>
-              <input id="avatarFileInput" type="file" accept="image/*" class="hidden">
-            </div>
-            <p id="avatarModNote" class="avatarModNote hidden" data-i18n="avatarPendingNote">Фото на проверке — пока его не одобрят, другие видят 🐰</p>
-            <div id="avatarRow" class="swatchRow avatarRow"></div>
-          </div>
-          <div class="settingRow">
-            <span class="settingLabel"><span data-i18n="frameLabel">Рамка аватара</span>: <b id="frameNameLine" class="frameNameLine"></b></span>
-            <div id="frameRow" class="frameRow"></div>
-          </div>
-        </div>
-      </div>
-      <div class="setCat" data-cat="sound">
-        <button class="setCatHead" type="button" aria-expanded="false"><span class="setCatIcon">♪</span><span class="setCatName" data-i18n="catSound">Звук</span><span class="setCatArrow">›</span></button>
-        <div class="setCatBody">
-          <div class="settingRow">
-            <span class="settingLabel" data-i18n="musicLabel">Музыка</span>
-            <div class="btnRow">
-              <button id="musicToggle" class="chip"></button>
-            </div>
-          </div>
-          <div class="settingRow hidden" id="musicTrackSetting">
-            <span class="settingLabel" data-i18n="musicTrackLabel">Песня</span>
-            <div id="musicTrackRow" class="btnRow"></div>
-          </div>
-          <div class="settingRow">
-            <span class="settingLabel" data-i18n="sfxVolumeLabel">Громкость звуков</span>
-            <div class="btnRow">
-              <input id="sfxVolumeSlider" type="range" min="0" max="100" value="80" style="width:150px;accent-color:#ff9f45;">
-            </div>
-          </div>
-          <div class="settingRow">
-            <span class="settingLabel" data-i18n="musicVolumeLabel">Громкость музыки</span>
-            <div class="btnRow">
-              <input id="musicVolumeSlider" type="range" min="0" max="100" value="28" style="width:150px;accent-color:#ff9f45;">
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="setCat" data-cat="community">
-        <button class="setCatHead" type="button" aria-expanded="false"><span class="setCatIcon">✦</span><span class="setCatName" data-i18n="catCommunity">Сообщество</span><span class="setCatArrow">›</span></button>
-        <div class="setCatBody">
-          <div class="settingRow">
-            <div class="socialRow">
-              <button id="discordBtn" class="btn ghost">Discord</button>
-              <button id="telegramBtn" class="btn ghost">Telegram</button>
-              <button id="tiktokBtn" class="btn ghost">TikTok</button>
-            </div>
-          </div>
-          <div class="settingRow">
-          </div>
-          <div class="settingRow creditBox">
-            <span class="settingLabel" data-i18n="creditTitle">Автор кэббита</span>
-            <p class="creditText" data-i18n="creditText">Персонаж кэббит, котокролик с кошачьей мордочкой, придуман и нарисован художником из Instagram koty_vezde. Спасибо за кэббитов: без них этой игры бы не было!</p>
-            <button id="creditBtn" class="btn ghost creditBtn" type="button">@koty_vezde</button>
-          </div>
-        </div>
-      </div>
-      <div class="setCat" data-cat="online">
-        <button class="setCatHead" type="button" aria-expanded="false"><span class="setCatIcon">☁</span><span class="setCatName" data-i18n="catOnline">Онлайн</span><span class="setCatArrow">›</span></button>
-        <div class="setCatBody">
-          <div class="settingRow" id="cloudSection">
-            <span class="settingLabel" data-i18n="cloudTitle">Онлайн-профиль</span>
-            <div class="cloudRow">
-              <span class="cloudCode" id="cloudCodeDisplay">------</span>
-              <button class="cloudBtn" id="cloudCopyBtn" data-i18n="cloudCopy">Копировать</button>
-            </div>
-            <div class="pwBox">
-              <span class="settingLabel" data-i18n="pwLabel">Пароль аккаунта</span>
-              <p id="pwState" class="pwState"></p>
-              <div class="cloudRow">
-                <input class="cloudInput pwInput" id="pwNewInput" type="password" maxlength="32" autocomplete="new-password" data-i18n-placeholder="pwNewPh" placeholder="Новый пароль">
-                <button class="cloudBtn" id="pwSaveBtn" data-i18n="pwSave">Сохранить</button>
-              </div>
-            </div>
-            <span class="settingLabel" data-i18n="restoreLabel">Войти в другой аккаунт</span>
-            <div class="cloudRow">
-              <input class="cloudInput" id="cloudRestoreInput" maxlength="8" data-i18n-placeholder="cloudEnterCode" placeholder="КОД">
-              <input class="cloudInput pwInput" id="cloudRestorePw" type="password" maxlength="32" autocomplete="current-password" data-i18n-placeholder="pwPh" placeholder="Пароль">
-            </div>
-            <button class="cloudBtn" id="cloudRestoreBtn" data-i18n="cloudRestore">Восстановить</button>
-            <div class="cloudStatus" id="cloudStatus"></div>
-            <span class="settingLabel" data-i18n="searchLabel">Найти игрока</span>
-            <div class="cloudRow">
-              <input class="cloudInput playerSearchInput" id="playerSearchInput" maxlength="16" data-i18n-placeholder="searchPlaceholder" placeholder="Ник или код">
-              <button class="cloudBtn" id="playerSearchBtn" data-i18n="searchBtn">Найти</button>
-            </div>
-            <div id="playerSearchRows"></div>
-            <span class="settingLabel" data-i18n="cloudTop">Рейтинг игроков</span>
-            <div id="onlineLbRows"></div>
-            <button class="cloudBtn" id="cloudRefreshBtn" data-i18n="cloudRefresh">Обновить рейтинг</button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="spacer"></div>
-  </div>
-
-  <div id="over" class="screen hidden">
-    <div class="overCard" id="overCard">
-      <div class="overBurst" id="overBurst"></div>
-      <p id="overTitle">Котокролик приземлился</p>
-      <div class="overScoreWrap"><div id="finalScore">0</div><div class="overScoreLbl" data-i18n="overPoints">очков</div></div>
-      <p id="bestLine">Рекорд: 0</p>
-      <p id="rankLine"></p>
-      <div class="overStats">
-        <div class="overStat os1"><span class="osLbl" data-i18n="overCoinsTile">Монеты</span><b id="overCoinsVal">0</b></div>
-        <div class="overStat os2"><span class="osLbl" data-i18n="overWorld">Мир</span><b id="overWorldVal">—</b></div>
-        <div class="overStat os3"><span class="osLbl" data-i18n="bossesChip">Боссы</span><b id="overBossVal">0</b></div>
-      </div>
-      <p id="coinLine" class="srOnly"></p>
-    </div>
-    <div class="btnRow overBtns">
-      <button id="retryBtn" class="btn" data-i18n="retry">Повторить</button>
-      <button id="menuBtn" class="btn ghost" data-i18n="toMenu">В меню</button>
-    </div>
-  </div>
-
-  <div id="hwModal" class="profileOverlay passOverlay hidden">
-    <div class="passFull hwFull">
-      <button id="hwClose" class="backIconBtn" aria-label="Закрыть">
-        <svg viewBox="0 0 24 24" fill="none"><path d="M6 6 L18 18 M18 6 L6 18" stroke="#fdf6e8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-      <div class="passTitle hwTitle" data-i18n="hwTitle">Ночь тыкв</div>
-      <p id="hwSub" class="passSeason"></p>
-      <div id="hwHave" class="hwHave"></div>
-      <div id="hwList" class="hwList"></div>
-      <p class="fruitHint" data-i18n="hwHint"></p>
-    </div>
-  </div>
-
-  <div id="seasonModal" class="profileOverlay passOverlay hidden">
-    <div class="passFull seasonFull">
-      <button id="seasonClose" class="backIconBtn" aria-label="Закрыть">
-        <svg viewBox="0 0 24 24" fill="none"><path d="M6 6 L18 18 M18 6 L6 18" stroke="#fdf6e8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-      <div id="seasonHead" class="seasonHead"></div>
-      <div id="seasonTabs" class="seasonTabs">
-        <button type="button" data-tab="players" data-i18n="tabPlayers">Игроки</button>
-        <button type="button" data-tab="clans" data-i18n="tabClans">Кланы</button>
-        <button type="button" data-tab="mine" data-i18n="tabMyClan">Мой клан</button>
-      </div>
-      <div id="seasonBody" class="seasonBody"></div>
-    </div>
-  </div>
-
-  <div id="bestiaryModal" class="profileOverlay passOverlay hidden">
-    <div class="passFull bestiaryFull">
-      <button id="bestiaryClose" class="backIconBtn" aria-label="Закрыть">
-        <svg viewBox="0 0 24 24" fill="none"><path d="M6 6 L18 18 M18 6 L6 18" stroke="#fdf6e8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-      <div class="passTitle" data-i18n="bestiaryTitle">Бестиарий</div>
-      <p id="bestiarySub" class="bestiarySub"></p>
-      <div id="bestiaryList" class="bestiaryList"></div>
-      <p class="fruitHint" data-i18n="bestiaryHint">Босс прилетает в конце каждого мира. Лови золотые звёзды — они бьют босса, и уворачивайся от его снарядов. За победу — монеты и фрукт.</p>
-    </div>
-  </div>
-
-  <div id="fruitModal" class="profileOverlay passOverlay hidden">
-    <div class="passFull fruitFull">
-      <button id="fruitClose" class="backIconBtn" aria-label="Закрыть">
-        <svg viewBox="0 0 24 24" fill="none"><path d="M6 6 L18 18 M18 6 L6 18" stroke="#fdf6e8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-      <div class="passTitle" data-i18n="fruitsTitle">Фрукты</div>
-      <div id="fruitEaten" class="fruitEaten"></div>
-      <div class="passQTitle" data-i18n="fruitInvTitle">Фрукты и способности</div>
-      <div id="fruitInv" class="fruitInv"></div>
-      <div class="passQTitle" data-i18n="wheelTitle">Рулетка</div>
-      <div class="wheelWrap"><canvas id="wheelCanvas" width="560" height="560"></canvas><div class="wheelPin"></div></div>
-      <button id="wheelBtn" class="btn passBuyBtn" type="button"></button>
-      <div class="wheelMulti"><button id="wheelBtn5" class="btn" type="button"></button><button id="wheelBtn10" class="btn" type="button"></button></div>
-      <button id="wheelSkipBtn" class="wheelSkip" type="button" aria-pressed="false"></button>
-      <div id="wheelResult" class="wheelResult"></div>
-      <div id="wheelOdds" class="wheelOdds"></div>
-      <p class="fruitHint" data-i18n="fruitHint">Фрукты можно поймать в забеге или выбить в рулетке. Съешь фрукт — получишь его способность. Съешь другой — старый пропадёт. Меняться фруктами можно с друзьями: кнопка ⇄ в чате.</p>
-    </div>
-  </div>
-
-  <div id="tradeModal" class="profileOverlay hidden">
-    <div class="tradeBox">
-      <div class="tradeBoxTitle" data-i18n="tradeTitle">Обмен фруктами</div>
-      <div class="passQTitle" data-i18n="tradeGiveLabel">Ты отдаёшь</div>
-      <div id="tradeGive" class="tradePick"></div>
-      <div class="passQTitle" data-i18n="tradeWantLabel">Ты хочешь</div>
-      <div id="tradeWant" class="tradePick"></div>
-      <div id="tradeNote" class="tradeNote"></div>
-      <div class="tradeBoxBtns">
-        <button id="tradeCloseBtn" class="btn ghost" type="button" data-i18n="back">Назад</button>
-        <button id="tradeSendBtn" class="btn" type="button" data-i18n="tradeSend">Предложить</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="howToModal" class="profileOverlay hidden">
-    <div class="profileCard dailyCard">
-      <div class="dailyTitle" data-i18n="howToLabel">Как играть</div>
-      <p class="howToText" data-i18n="hint"></p>
-      <button id="howToOk" class="btn dailyClaim" type="button" data-i18n="howToOk">Понятно!</button>
-    </div>
-  </div>
-
-  <div id="dailyModal" class="profileOverlay hidden">
-    <div class="profileCard dailyCard">
-      <button id="dailyClose" class="backIconBtn" aria-label="Закрыть">
-        <svg viewBox="0 0 24 24" fill="none"><path d="M6 6 L18 18 M18 6 L6 18" stroke="#fdf6e8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-      <div class="dailyTitle" data-i18n="dailyTitle">Ежедневная награда</div>
-      <div id="dailySub" class="dailySub"></div>
-      <div id="dailyGrid" class="dailyGrid"></div>
-      <button id="dailyClaimBtn" class="btn dailyClaim" type="button"></button>
-    </div>
-  </div>
-
-  <div id="trophyModal" class="profileOverlay hidden">
-    <div class="profileCard">
-      <button id="trophyClose" class="backIconBtn" aria-label="Закрыть">
-        <svg viewBox="0 0 24 24" fill="none"><path d="M6 6 L18 18 M18 6 L6 18" stroke="#fdf6e8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-      <div id="trophyInfo" class="trophyInfo"></div>
-    </div>
-  </div>
-
-  <div id="profileModal" class="profileOverlay hidden">
-    <div class="profileCard">
-      <button id="profileClose" class="backIconBtn" aria-label="Закрыть">
-        <svg viewBox="0 0 24 24" fill="none"><path d="M6 6 L18 18 M18 6 L6 18" stroke="#fdf6e8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-      <div class="profileCanvasWrap">
-        <canvas id="profileCanvas" width="220" height="220"></canvas>
-        <span id="profileAvatarFrame" class="avFrame profileAvatarFrame frame-none"><span id="profileAvatar" class="avatarPreview profileAvatarBadge"></span></span>
-      </div>
-      <div class="profileNickRow">
-        <div id="profileNick" class="profileNick"></div>
-        <img id="profileBadge" class="nickBadge hidden" alt="">
-        <span id="profileOnlineDot" class="onlineDot hidden"></span>
-      </div>
-      <div id="profileTitleLine" class="profileTitleLine"></div>
-      <div class="profileStats">
-        <span id="profileBest"></span>
-        <span id="profileCoins"></span>
-      </div>
-      <div class="profileFriendRow">
-        <button id="profileMessageBtn" class="btn ghost profileMessageBtn hidden">Написать</button>
-        <button id="profileUnfriendBtn" class="profileUnfriendBtn hidden" type="button" aria-label="Удалить из друзей">✕ 👤</button>
-      </div>
-      <div class="profileComments">
-        <div class="profileCommentsLabel" data-i18n="profileCommentsLabel">Комментарии</div>
-        <div id="profileCommentsList" class="profileCommentsList"></div>
-        <div class="profileCommentForm">
-          <input id="profileCommentInput" type="text" maxlength="140" data-i18n-placeholder="profileCommentPlaceholder" placeholder="Оставить комментарий...">
-          <button id="profileCommentSendBtn" data-i18n="profileCommentSend">Отправить</button>
-        </div>
-        <div id="profileCommentStatus" class="profileCommentStatus"></div>
-      </div>
-    </div>
-  </div>
-
-  <div id="inboxModal" class="profileOverlay hidden">
-    <div class="chatCard inboxCard">
-      <button id="inboxClose" class="backIconBtn" aria-label="Закрыть">
-        <svg viewBox="0 0 24 24" fill="none"><path d="M6 6 L18 18 M18 6 L6 18" stroke="#fdf6e8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-      <div class="inboxTitle" data-i18n="inboxTitle">Сообщения</div>
-      <div id="inboxList" class="inboxList"></div>
-    </div>
-  </div>
-
-  <div id="chatModal" class="profileOverlay hidden">
-    <div class="chatCard">
-      <button id="chatBackBtn" class="chatBackBtn hidden" type="button" aria-label="К диалогам">
-        <svg viewBox="0 0 24 24" fill="none"><path d="M15 5 L8 12 L15 19" stroke="#fdf6e8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-      <button id="chatClose" class="backIconBtn" aria-label="Закрыть">
-        <svg viewBox="0 0 24 24" fill="none"><path d="M6 6 L18 18 M18 6 L6 18" stroke="#fdf6e8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-      <button id="chatMoreBtn" class="chatMoreBtn" type="button" aria-label="Ещё">
-        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="5.5" r="2.1" fill="#fdf6e8"/><circle cx="12" cy="12" r="2.1" fill="#fdf6e8"/><circle cx="12" cy="18.5" r="2.1" fill="#fdf6e8"/></svg>
-      </button>
-      <div id="chatMoreMenu" class="chatMoreMenu hidden">
-        <div class="chatMoreTitle" data-i18n="chatThemeTitle">Тема чата</div>
-        <div id="chatThemeList" class="chatThemeList"></div>
-        <button id="chatUnfriendBtn" class="chatUnfriendBtn hidden" type="button"></button>
-        <button id="chatBlockBtn" class="chatBlockBtn" type="button"></button>
-      </div>
-      <div class="chatHeader">
-        <span id="chatWithAvatar" class="chatHeaderAv"></span>
-        <div class="chatHeaderText">
-          <div class="chatWithNickRow">
-            <div id="chatWithNick" class="chatWithNick"></div>
-            <img id="chatBadge" class="nickBadge hidden" alt="">
-            <span id="chatOnlineDot" class="onlineDot hidden"></span>
-          </div>
-          <div id="chatPresence" class="chatPresence"></div>
-        </div>
-      </div>
-      <div id="chatMessagesList" class="chatMessagesList"></div>
-      <div id="stickerPanel" class="stickerPanel hidden"></div>
-      <div class="chatForm">
-        <button id="chatStickerBtn" class="chatToolBtn" type="button" aria-label="Стикеры">
-          <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fdf6e8" stroke-width="2"/><circle cx="9" cy="10" r="1.3" fill="#fdf6e8"/><circle cx="15" cy="10" r="1.3" fill="#fdf6e8"/><path d="M8 14.5 Q12 18 16 14.5" stroke="#fdf6e8" stroke-width="2" stroke-linecap="round"/></svg>
-        </button>
-        <button id="chatTradeBtn" class="chatToolBtn" type="button" aria-label="Обмен">
-          <svg viewBox="0 0 24 24" fill="none"><path d="M4 8 H17 M13 4 L17 8 L13 12" stroke="#fdf6e8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 16 H7 M11 12 L7 16 L11 20" stroke="#fdf6e8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-        <input id="chatInput" type="text" maxlength="200" enterkeyhint="send" autocomplete="off" data-i18n-placeholder="chatPlaceholder" placeholder="Написать сообщение...">
-        <button id="chatSendBtn" type="button" aria-label="Отправить">
-          <svg viewBox="0 0 24 24" fill="none"><path d="M4 12 L20 4 L14 20 L11 13 Z" fill="#3a2400"/></svg>
-        </button>
-      </div>
-      <div id="chatStatus" class="chatStatus"></div>
-      <div id="chatMsgMenu" class="chatMsgMenu hidden"><div id="chatMsgMenuPanel" class="chatMsgMenuPanel"></div></div>
-    </div>
-  </div>
-
-  <div id="adminChoiceModal" class="profileOverlay hidden">
-    <div class="adminChoiceCard">
-      <div id="adminChoiceNick" class="adminChoiceNick"></div>
-      <button id="adminChoiceProfileBtn" class="btn" data-i18n="adminChoiceProfile">Профиль</button>
-      <button id="adminChoicePanelBtn" class="btn ghost" data-i18n="adminChoicePanel">Админ панель</button>
-      <button id="adminChoiceCancelBtn" class="btn ghost" data-i18n="adminChoiceCancel">Отмена</button>
-    </div>
-  </div>
-
-  <div id="linkChoiceModal" class="profileOverlay hidden">
-    <div class="adminChoiceCard">
-      <div id="linkChoiceTitle" class="adminChoiceNick"></div>
-      <button id="linkChoiceOpenBtn" class="btn" data-i18n="linkChoiceOpen">Открыть</button>
-      <button id="linkChoiceCopyBtn" class="btn ghost" data-i18n="linkChoiceCopy">Скопировать ссылку</button>
-      <button id="linkChoiceCancelBtn" class="btn ghost" data-i18n="adminChoiceCancel">Отмена</button>
-    </div>
-  </div>
+<canvas id="game"></canvas>
+<div class="vignette" id="vignette"></div>
+<div class="hidden" id="rotateOverlay">
+<div class="rotateIcon">⟲</div>
+<p data-i18n="rotateMsg">Переверни телефон вертикально</p>
 </div>
-
-<button id="adminFab" class="adminFab" type="button" hidden>Админ панель</button>
-<div id="adminQuick" class="adminQuick" hidden>
-  <div class="aqHead"><span class="aqTitle">Админ панель</span><button id="aqClose" class="aqClose" type="button" aria-label="Закрыть">×</button></div>
-  <div class="aqLbl">Прыгнуть в мир</div>
-  <div class="aqRow" id="aqWorlds"></div>
-  <div class="aqLbl">Забег и себе</div>
-  <div class="aqRow">
-    <button id="aqBoss" class="aqKey" type="button">Босс сейчас</button>
-    <button id="aqGod" class="aqKey" type="button" aria-pressed="false">Бессмертие</button>
-    <button id="aqCoins" class="aqKey" type="button">+5000 монет</button>
-  </div>
-  <div class="aqLbl">Выдать себе фрукт</div>
-  <div class="aqRow" id="aqFruits"></div>
-  <button id="aqSettings" class="aqKey aqWide" type="button">Выдать игроку (админка в настройках)</button>
+<div class="onlineCounter hidden" id="onlineCounter"><i></i><span id="onlineCounterText"></span></div>
+<div class="hidden" id="toastBanner" style="position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:400;background:rgba(20,10,40,.92);color:#ffd34d;padding:10px 18px;border-radius:14px;font-weight:800;font-size:13px;pointer-events:none;transition:opacity .3s;max-width:88vw;text-align:center;"></div>
+<button aria-label="Пауза" class="hidden" id="pauseBtn">
+<svg fill="none" viewbox="0 0 24 24"><rect fill="#fdf6e8" height="16" rx="1" width="4" x="6" y="4"></rect><rect fill="#fdf6e8" height="16" rx="1" width="4" x="14" y="4"></rect></svg>
+</button>
+<button aria-label="Влево" class="hidden ctrlBtn" id="leftBtn">
+<svg fill="none" viewbox="0 0 24 24"><path d="M15 5 L8 12 L15 19" stroke="#fdf6e8" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path></svg>
+</button>
+<button aria-label="Вправо" class="hidden ctrlBtn" id="rightBtn">
+<svg fill="none" viewbox="0 0 24 24"><path d="M9 5 L16 12 L9 19" stroke="#fdf6e8" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path></svg>
+</button>
+<button class="hidden" data-i18n="tapPrompt" id="hitBtn">ЖМИ!</button>
+<button aria-label="Копьё" class="hidden" id="spearBtn" type="button">
+<svg fill="none" viewbox="0 0 24 24"><path d="M5 19 L16 8" stroke="#fdf6e8" stroke-linecap="round" stroke-width="2.6"></path><path d="M14 5 L20 4 L19 10 Z" fill="#fdf6e8" stroke="#fdf6e8" stroke-linejoin="round" stroke-width="1.6"></path><path d="M4 16 L8 20" stroke="#fdf6e8" stroke-linecap="round" stroke-width="2.2"></path></svg>
+<span id="spearCd"></span>
+</button>
+<div id="bootSplash"><b>Cabbit Jump!</b><i></i></div>
+<script>setTimeout(function(){var b=document.getElementById("bootSplash");if(b)b.remove();},9000);</script>
+<div class="screen hidden" id="nickname">
+<div class="pop" id="nickBox">
+<h2 data-i18n="nickTitle" style="font-size:20px;font-weight:800;">Как тебя зовут?</h2>
+<input data-i18n-placeholder="nickPlaceholder" id="nickInput" maxlength="14" placeholder="Ник котокролика" type="text"/>
+<button class="btn" data-i18n="nickConfirm" id="nickConfirm">Готово</button>
 </div>
-
-<div id="unlockFx" class="unlockFx" hidden>
-  <div class="chain c1"><i></i><i></i></div><div class="chain c2"><i></i><i></i></div><div class="chain c3"><i></i><i></i></div><div class="chain c4"><i></i><i></i></div>
-  <div class="ufGlow"></div>
-  <div class="ufLock"><svg class="lockSvg" viewBox="0 0 120 150" aria-hidden="true">
-        <defs>
-          <linearGradient id="lkBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe07a"/><stop offset="1" stop-color="#e08a1a"/></linearGradient>
-          <linearGradient id="lkShackle" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#c9ccd8"/><stop offset=".5" stop-color="#ffffff"/><stop offset="1" stop-color="#9aa0b4"/></linearGradient>
-        </defs>
-        <g id="lockShackle" class="lockShackle"><path d="M32 70 V44 a28 28 0 0 1 56 0 V70" fill="none" stroke="url(#lkShackle)" stroke-width="13" stroke-linecap="round"/></g>
-        <rect x="14" y="66" width="92" height="74" rx="18" fill="url(#lkBody)" stroke="#7a3a0a" stroke-width="4"/>
-        <rect x="22" y="72" width="76" height="8" rx="4" fill="#fff6c4" opacity=".6"/>
-        <circle cx="60" cy="98" r="10" fill="#3a1f00"/>
-        <rect x="56" y="100" width="8" height="22" rx="4" fill="#3a1f00"/>
-      </svg></div>
-  <div class="ufKey"><svg class="keySvg" id="unlockKey" viewBox="0 0 60 130" aria-hidden="true">
-        <circle cx="30" cy="24" r="20" fill="none" stroke="#ffd34d" stroke-width="9"/>
-        <rect x="26" y="40" width="8" height="78" rx="4" fill="#ffd34d"/>
-        <rect x="34" y="92" width="14" height="7" rx="3" fill="#ffd34d"/>
-        <rect x="34" y="106" width="10" height="7" rx="3" fill="#ffd34d"/>
-      </svg></div>
-  <div class="ufSparks" id="ufSparks"></div>
 </div>
-<div id="unlockFlash" class="unlockFlash" hidden>
-  <div class="flashMsg" id="flashMsg">
-    <p class="fmHead">Здравствуйте, игроки!</p>
-    <p>Я увидел, что вы очень расстроились из-за того, что я закрыл игру. Но так как я довольно нетерпелив, я открываю её уже сегодня.</p>
-    <p>Спасибо за поддержку! Я подготовил обновление, которое должно вас удивить.</p>
-    <p class="fmLinks">Для связи: TikTok, Telegram или Discord</p>
-    <p class="fmTap">Нажми, чтобы продолжить</p>
-  </div>
+<div class="screen hidden cm" id="menu">
+<div id="secretZone" style="position:absolute;top:0;left:0;width:48px;height:48px;z-index:50;"></div>
+<div class="cmSky"></div>
+<div class="cmCoins"><i class="coinDot"></i><b id="menuCoins">0</b></div>
+<div class="cmIcons"><button aria-label="Ежедневная награда" class="menuIconBtn" id="dailyBtn" type="button"><svg fill="none" viewbox="0 0 24 24"><rect height="10" rx="2" stroke="#fdf6e8" stroke-width="2" width="16" x="4" y="10"></rect><rect height="4" rx="1.5" stroke="#fdf6e8" stroke-width="2" width="18" x="3" y="7"></rect><path d="M12 7 V20" stroke="#fdf6e8" stroke-width="2"></path><path d="M12 7 C 10 3.5 6.5 4 7.5 6.2 C 8.2 7.4 12 7 12 7 Z M12 7 C 14 3.5 17.5 4 16.5 6.2 C 15.8 7.4 12 7 12 7 Z" stroke="#fdf6e8" stroke-linejoin="round" stroke-width="1.8"></path></svg><span class="dot hidden" id="dailyDot"></span></button><button aria-label="Сообщения" class="inboxBtn hidden" id="inboxBtn" type="button">
+<svg fill="none" viewbox="0 0 24 24"><path d="M4 5.5 C4 4.7 4.7 4 5.5 4 H18.5 C19.3 4 20 4.7 20 5.5 V15 C20 15.8 19.3 16.5 18.5 16.5 H10 L6 20 V16.5 H5.5 C4.7 16.5 4 15.8 4 15 Z" fill="#fdf6e8"></path></svg>
+<span class="inboxBadge hidden" id="inboxBadge">0</span>
+</button><button hidden="" id="menuGearBtn" type="button"></button></div>
+<canvas class="cmHero" height="220" id="menuPreview" width="220"></canvas>
+<h1 class="cmLogo">Cabbit<br/>Jump!</h1>
+<p class="cmPause" data-i18n="pauseLabel">Пауза</p>
+<div class="cmEvents"><button class="seasonCard hwCard rise d2 hidden" id="hwCard" type="button">
+<span class="seasonTop"><span class="seasonLogo hwLogo" id="hwCardTitle">Ночь тыкв</span><span class="seasonDays" id="hwCardDays"></span></span>
+<span class="seasonBottom"><span class="seasonEv" id="hwCardNext"></span><span class="seasonBestWrap"><b id="hwCardCount">0</b> <span id="hwCardWord">конфет</span></span></span>
+</button></div>
+<div class="cmPanel">
+<svg aria-hidden="true" class="cmCut" preserveaspectratio="none" viewbox="-10 -10 250 320"><path d="M-2.5,-4.9 L33.3,-6.0 L62.9,-1.9 L87.3,0.1 L118.2,-0.9 L149.9,-5.7 L186.0,4.6 L213.0,-3.9 L231.8,25.7 L231.1,49.1 L236.7,75.4 L235.0,110.0 L225.0,138.8 L227.3,179.7 L225.5,207.6 L231.9,235.9 L230.7,262.7 L223.8,295.9 L201.3,299.0 L165.0,301.2 L135.8,297.2 L109.4,302.8 L70.5,301.0 L43.3,305.3 L15.0,297.0 L6.7,275.2 L-1.1,253.0 L-4.9,218.1 L-6.5,189.4 L3.7,156.9 L5.3,122.1 L2.7,94.9 L1.1,61.7 L4.8,37.4Z" fill="#fff" stroke="#fff" stroke-linejoin="round" stroke-width="18"></path><path d="M-2.5,-4.9 L33.3,-6.0 L62.9,-1.9 L87.3,0.1 L118.2,-0.9 L149.9,-5.7 L186.0,4.6 L213.0,-3.9 L231.8,25.7 L231.1,49.1 L236.7,75.4 L235.0,110.0 L225.0,138.8 L227.3,179.7 L225.5,207.6 L231.9,235.9 L230.7,262.7 L223.8,295.9 L201.3,299.0 L165.0,301.2 L135.8,297.2 L109.4,302.8 L70.5,301.0 L43.3,305.3 L15.0,297.0 L6.7,275.2 L-1.1,253.0 L-4.9,218.1 L-6.5,189.4 L3.7,156.9 L5.3,122.1 L2.7,94.9 L1.1,61.7 L4.8,37.4Z" fill="#fff" stroke="#1c1630" stroke-linejoin="round" stroke-width="3.5"></path></svg>
+<nav class="cmList" id="cmList"><i class="cmTape" id="cmTape"></i>
+<button class="cmItem cmBig" data-cap="play" data-i18n="play" id="playBtn">Играть</button>
+<button class="cmItem cmBig" data-cap="cont" data-i18n="cont" disabled="" id="continueBtn">Продолжить</button>
+<button class="cmItem" data-cap="wardrobe" data-i18n="wardrobe" id="wardrobeBtn">Гардероб</button>
+<button class="cmItem" data-cap="fruits" data-i18n="fruitsBtn" id="fruitsBtn">Фрукты</button>
+<button class="cmItem" data-cap="season" id="seasonCard" type="button"><span id="seasonCardTitle">Сезон</span><span hidden="" id="seasonCardDays"></span><span hidden="" id="seasonCardBest"></span></button>
+<button class="cmItem" data-cap="settings" data-i18n="settings" id="settingsBtn">Настройки</button>
+<button class="cmItem" data-cap="quit" data-i18n="pauseMenu" id="pauseMenuBtn">Меню</button>
+</nav>
 </div>
-<div id="welcomeDlg" class="welcomeDlg" hidden role="dialog" aria-modal="true" aria-labelledby="welcomeTitle">
-  <div class="welcomeCard">
-    <div class="welcomeKicker" data-i18n="welcomeKicker">Игра открыта</div>
-    <h2 id="welcomeTitle" class="welcomeTitle">Cabbit Jump!<span class="welcomeSplash">Remastered</span></h2>
-    <ul class="welcomeList">
-      <li data-i18n="welcome1">Боссы в конце каждого мира</li>
-      <li data-i18n="welcome2">Новая графика пяти миров</li>
-      <li data-i18n="welcome3">Сезон 1 и свои кланы</li>
-      <li data-i18n="welcome4">Бестиарий и новые фрукты</li>
-    </ul>
-    <p class="welcomeNote" data-i18n="welcomeNote">Все ваши рекорды, монеты и покупки на месте.</p>
-    <button id="welcomeBtn" class="btn" type="button" data-i18n="welcomeBtn">Играть</button>
-  </div>
+<div class="cmCap"><svg aria-hidden="true" preserveaspectratio="none" viewbox="-6 -6 202 122"><path d="M-0.3,2.0 L17.8,2.4 L47.9,5.9 L73.1,-2.6 L90.9,2.0 L109.7,-0.5 L134.5,-4.6 L156.2,3.2 L180.2,-3.0 L188.7,22.1 L185.0,40.2 L190.6,68.4 L193.8,91.3 L187.3,109.0 L165.2,114.6 L149.3,105.8 L116.9,106.8 L94.5,109.8 L75.7,107.2 L45.6,109.0 L26.9,110.8 L10.8,112.3 L0.2,93.7 L2.1,63.9 L4.8,49.5 L4.5,26.7Z" fill="#1c1630"></path></svg><p id="cmCapText"></p></div>
+<div class="cmRec"><div><small data-i18n="bestChip">рекорд</small><b id="menuBest">0</b></div></div>
+<button class="cmBoss" id="bossChipBtn" type="button"><span data-i18n="bossesChip">Боссы</span> <b id="menuBossChip">0</b></button>
+<span hidden="" id="menuBestChip"></span>
+<p class="hidden" id="menuHint"></p>
 </div>
-
-<div id="banScreen" role="dialog" aria-modal="true" aria-labelledby="banTitle" hidden>
-  <div class="closedCard banCard">
-    <h2 id="banTitle" class="closedTitle">Доступ закрыт</h2>
-    <p class="closedText">Это устройство заблокировано за нарушение правил игры, например за использование читов.</p>
-    <div class="closedTimerLbl">Код устройства</div>
-    <div class="banDevCode" id="banDevCode">-</div>
-    <p class="closedBye">Если это ошибка, напиши в Telegram или Discord и назови этот код.</p>
-  </div>
+<div class="screen hidden" id="wardrobe">
+<button aria-label="Назад" class="backIconBtn" id="wardrobeBack">
+<svg fill="none" viewbox="0 0 24 24"><path d="M15 5 L8 12 L15 19" stroke="#fdf6e8" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path></svg>
+</button>
+<div class="spacer"></div>
+<h1 class="title pop" data-i18n="wardrobe" style="font-size:clamp(24px,7vw,40px);">Гардероб</h1>
+<div class="charSwitcher rise d1">
+<button aria-label="Предыдущий персонаж" class="charArrow" id="charPrev">‹</button>
+<canvas class="heroBob" height="220" id="preview2" width="220"></canvas>
+<button aria-label="Следующий персонаж" class="charArrow" id="charNext">›</button>
 </div>
-<div id="closedScreen" role="dialog" aria-modal="true" aria-labelledby="closedTitle">
-  <div class="closedCard" id="closedCard">
-    <h2 id="closedTitle" class="closedTitle" data-i18n="closedTitle">Скоро открытие!</h2>
-    <p class="closedText" data-i18n="closedText">Cabbit Jump! возвращается с самым большим обновлением: боссы, новая графика, сезоны и кланы. Все ваши рекорды, монеты и покупки на месте.</p>
-    <div class="closedTimerLbl" data-i18n="closedTimerLbl">До открытия</div>
-    <div class="closedTimer" id="closedTimer">--:--:--</div>
-    <div class="closedBye" data-i18n="closedBye">Сегодня в 15:15 по Москве</div>
-    <div id="closedAdmin" class="closedAdmin" hidden>
-      <input id="closedEmail" class="adminInput" type="email" placeholder="Почта" autocomplete="off">
-      <input id="closedPass" class="adminInput" type="password" placeholder="Пароль" autocomplete="off">
-      <button id="closedPinBtn" class="btn small" type="button">Войти</button>
-    </div>
-  </div>
+<div class="charInfo rise d1" id="charInfo"></div>
+<p class="stats rise d1">
+<span><i class="coinDot"></i><span class="coinNum" id="wardrobeCoins">0</span></span>
+</p>
+<div class="shopTabs rise d2" id="shopTabs"></div>
+<div class="buyAllRow rise d2 hidden" id="buyAllRow">
+<button class="buyAllBtn" id="buyAllBtn" type="button"></button>
+<span class="buyAllCost" id="buyAllCost"></span>
 </div>
-
-<script src="js/01-core.js?v=20261013b"></script>
-<script src="js/02-badges.js?v=20261013b"></script>
-<script src="js/03-audio.js?v=20261015a"></script>
-<script src="js/04-outfits.js?v=20261013b"></script>
-<script src="js/04b-halloween.js?v=20261013b"></script>
-  <script src="js/04c-collab.js?v=20261013b"></script>
-<script src="js/05-rig.js?v=20261013b"></script>
-<script src="js/06-world.js?v=20261013b"></script>
-<script src="js/07-fruits.js?v=20261013b"></script>
-<script src="js/08-bosses.js?v=20261013b"></script>
-<script src="js/09-seasons.js?v=20261013b"></script>
-<script src="js/10-physics.js?v=20261013b"></script>
-<script src="js/11-render-world.js?v=20261013b"></script>
-<script src="js/12-render-hero.js?v=20261013b"></script>
-<script src="js/13-render-hud.js?v=20261013b"></script>
-<script src="js/14-ui.js?v=20261013b"></script>
-<script src="js/15-events.js?v=20261013b"></script>
-<script src="js/16-cloud.js?v=20261013b"></script>
-<script src="js/17-device.js?v=20261013b"></script>
-<script src="js/18-profile-chat.js?v=20261013b"></script>
-<script src="js/19-inbox.js?v=20261013b"></script>
-<script src="js/20-admin.js?v=20261015a"></script>
-<script src="js/21-settings.js?v=20261013b"></script>
+<div class="rise d2" id="shop"></div>
+<div class="hidden" id="lockedPanel"></div>
+<div class="spacer"></div>
+</div>
+<div class="screen hidden" id="settings">
+<button aria-label="Назад" class="backIconBtn" id="settingsBack">
+<svg fill="none" viewbox="0 0 24 24"><path d="M15 5 L8 12 L15 19" stroke="#fdf6e8" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path></svg>
+</button>
+<div class="spacer"></div>
+<h1 class="title pop" data-i18n="settings" id="settingsTitle" style="font-size:clamp(24px,7vw,40px);">Настройки</h1>
+<div class="rise d1" id="settingsBox">
+<button class="adminSaveBtn settingsSaveBtn" data-i18n="settingsSave" id="settingsSaveBtn" type="button">✓ Сохранить</button>
+<p class="settingsSaveStatus" id="settingsSaveStatus"></p>
+<div class="adminGate hidden" id="adminGate">
+<input autocomplete="off" class="adminInput" id="adminEmailInput" placeholder="Почта" type="email"/>
+<input autocomplete="off" class="adminInput" id="adminPassInput" placeholder="Пароль" type="password"/>
+<button class="btn small" id="adminPinBtn">Войти</button>
+</div>
+<div class="adminPanel hidden" id="adminTool">
+<div class="adminHeader">
+<span class="adminHeaderTitle" id="adminHeaderTitle">⚒ Админка</span>
+<button class="btn small" id="adminLogoutBtn" type="button">Выйти</button>
+<p class="adminHint">Открой раздел «Онлайн» ниже и тапни по игроку в рейтинге, чтобы выдать ему вещи или монеты</p>
+</div>
+<div class="adminSearchRow">
+<input class="adminInput" id="adminCodeInput" placeholder="Код игрока" type="text"/>
+<button aria-label="Загрузить" class="adminIconBtn" id="adminLoadBtn">↓</button>
+</div>
+<div class="adminCard adminOnly">
+<div class="adminCardTitle">Аккаунт Claude</div>
+<button class="adminPwResetBtn" id="adminClaudeBtn" type="button">Создать аккаунт Claude</button>
+<p class="adminRoleHint" id="adminClaudeStatus"></p>
+</div>
+<div class="adminCard">
+<div class="adminCardTitle">Фото на проверке</div>
+<button class="adminPwResetBtn" id="adminPhotoLoadBtn" type="button">Показать фото аватаров</button>
+<div class="adminPhotoList" id="adminPhotoList"></div>
+</div>
+<div class="adminPlayerBox hidden" id="adminPlayerBox">
+<p class="adminCodeLine" id="adminCodeLine"></p>
+<div class="adminCard adminOnly">
+<div class="adminCardTitle">Игрок</div>
+<label class="adminField">
+<span>Ник</span>
+<input class="adminInput" id="adminNickInput" maxlength="14" type="text"/>
+</label>
+<label class="adminField">
+<span>Запрет на фото в чате</span>
+<input id="adminNoImages" type="checkbox"/>
+</label>
+<div class="adminField">
+<span>Аватар</span>
+<button class="adminPwResetBtn" id="adminAvatarBtn" type="button">Поставить фото</button>
+<input accept="image/*" class="hidden" id="adminAvatarInput" type="file"/>
+</div>
+</div>
+<div class="adminCard adminOnly">
+<div class="adminCardTitle">Роль</div>
+<div class="adminRoleRow" id="adminRoleRow">
+<button class="adminRoleOpt" data-role="" type="button">Игрок</button>
+<button class="adminRoleOpt" data-role="mod" type="button">Помощник</button>
+<button class="adminRoleOpt" data-role="admin" type="button">Админ</button>
+</div>
+<p class="adminRoleHint">Помощник может выдавать только обычные вещи, монеты и очки рекорда</p>
+</div>
+<div class="adminCard">
+<div class="adminCardTitle">Статистика</div>
+<label class="adminField">
+<span>Монеты</span>
+<input class="adminInput adminInputNum" id="adminCoinsInput" maxlength="16" placeholder="число или слово" type="text"/>
+</label>
+<label class="adminField">
+<span>Рекорд</span>
+<input class="adminInput adminInputNum" id="adminBestInput" maxlength="16" placeholder="число или слово" type="text"/>
+</label>
+<label class="adminField hidden">
+<span>Кубки</span>
+<input class="adminInput adminInputNum" id="adminTrophiesInput" maxlength="16" placeholder="число или слово" type="text"/>
+</label>
+</div>
+<div class="adminCard adminOnly">
+<div class="adminCardTitle">Титул</div>
+<label class="adminField">
+<span>Текст</span>
+<input class="adminInput" id="adminTitleInput" maxlength="16" placeholder="слово" type="text"/>
+</label>
+<label class="adminField">
+<span>Цвет</span>
+<input class="adminInput adminInputMono" id="adminTitleColorInput" placeholder="#ffd34d или gradient(...)" type="text"/>
+</label>
+<div class="adminGradientPresets" id="adminGradientPresets"></div>
+</div>
+<div class="adminCard adminOnly">
+<div class="adminCardTitle">Галочка</div>
+<div class="adminBadgePreviewRow">
+<span class="adminBadgeNickPreview" id="adminBadgeNickPreview">Ник</span>
+<img alt="" class="nickBadge hidden" id="adminBadgePreview"/>
+<span class="adminBadgeHint" id="adminBadgeHint"></span>
+</div>
+<div class="adminBadgeGrid" id="adminBadgeGrid"></div>
+</div>
+<div class="adminCard">
+<div class="adminCardTitle">Предметы</div>
+<div class="adminItemsGrid" id="adminItemsGrid"></div>
+</div>
+<div class="adminCard adminOnly">
+<div class="adminCardTitle">Фрукты</div>
+<div class="adminFruitGrid" id="adminFruitGrid"></div>
+<p class="adminRoleHint">Число — сколько фруктов лежит у игрока. Кружок справа — какой фрукт сейчас съеден.</p>
+</div>
+<div class="adminCard adminOnly">
+<div class="adminCardTitle">Сезон</div>
+<label class="adminField">
+<span>Рекорд сезона</span>
+<input class="adminInput adminInputNum" id="adminSeasonInput" inputmode="numeric" maxlength="9" type="text"/>
+</label>
+</div>
+<button class="adminSaveBtn" id="adminSaveBtn" type="button">Проверить и выдать</button>
+<div class="adminCard hidden" id="adminConfirm">
+<div class="adminCardTitle">Подтверди выдачу</div>
+<p class="adminRoleHint" id="adminConfirmWho"></p>
+<ul class="adminConfirmList" id="adminConfirmList"></ul>
+<button class="adminSaveBtn" id="adminConfirmOk" type="button">Выдать</button>
+<button class="adminPwResetBtn" id="adminConfirmCancel" type="button">Отмена</button>
+</div>
+<div class="adminRoleHint adminGrantLog" id="adminGrantLog"></div>
+<button class="adminPwResetBtn adminOnly" id="adminPwResetBtn" type="button">Сбросить пароль игрока</button>
+<div class="adminCard adminOnly">
+<div class="adminCardTitle">Бан по устройству</div>
+<p class="adminRoleHint" id="adminBanInfo"></p>
+<button class="adminDeleteBtn" id="adminBanBtn" type="button">Забанить устройство</button>
+<button class="adminPwResetBtn" id="adminUnbanBtn" type="button">Снять бан</button>
+</div>
+<div class="adminDangerZone adminOnly">
+<div class="adminDangerLabel">Опасная зона</div>
+<button class="adminDeleteBtn" id="adminDeleteBtn" type="button">Удалить аккаунт</button>
+</div>
+</div>
+<p class="adminStatus" id="adminStatus"></p>
+</div>
+<div class="setCat" data-cat="main">
+<button aria-expanded="false" class="setCatHead" type="button"><span class="setCatIcon">⚙</span><span class="setCatName" data-i18n="catMain">Основное</span><span class="setCatArrow">›</span></button>
+<div class="setCatBody">
+<div class="settingRow">
+<span class="settingLabel" data-i18n="language">Язык</span>
+<div class="btnRow">
+<button class="chip" data-lang="ru">Русский</button>
+<button class="chip" data-lang="en">English</button>
+</div>
+</div>
+<div class="settingRow">
+<span class="settingLabel" data-i18n="howToLabel">Как играть</span>
+<p class="howToText" data-i18n="hint"></p>
+</div>
+</div>
+</div>
+<div class="setCat" data-cat="gfx">
+<button aria-expanded="false" class="setCatHead" type="button"><span class="setCatIcon">✦</span><span class="setCatName" data-i18n="catGfx">Графика и вид</span><span class="setCatArrow">›</span></button>
+<div class="setCatBody">
+<div class="settingRow">
+<span class="settingLabel"><span data-i18n="gfxLabel">Графика</span> <span class="gfxNote" id="gfxNote"></span></span>
+<div class="btnRow" id="gfxRow">
+<button class="chip" data-gfx="auto" data-i18n="gfx_auto" type="button">Авто</button>
+<button class="chip" data-gfx="high" data-i18n="gfx_high" type="button">Красиво</button>
+<button class="chip" data-gfx="low" data-i18n="gfx_low" type="button">Быстро</button>
+<button class="chip gfxUltraChip" data-gfx="ultra" type="button"><span data-i18n="gfx_ultra">Ультра</span><span class="expBadge" data-i18n="expBadge">эксперимент</span></button>
+</div>
+<p class="gfxUltraNote hidden" data-i18n="gfxUltraNote" id="gfxUltraNote">Экспериментальная функция: объёмные платформы и тени. На слабых телефонах может тормозить.</p>
+</div>
+<div class="settingRow" id="worldLightSetting">
+<span class="settingLabel" data-i18n="worldLightLabel">Миры</span>
+<div class="btnRow" id="worldLightRow">
+<button class="chip" data-i18n="wl_dark" data-wl="0" type="button">Обычные</button>
+<button class="chip" data-i18n="wl_light" data-wl="1" type="button">Светлые</button>
+</div>
+</div>
+<div class="settingRow" id="bgColorSetting">
+<span class="settingLabel" data-i18n="bgColorLabel">Цвет фона</span>
+<div class="swatchRow" id="bgColorRow"></div>
+</div>
+<div class="settingRow">
+<span class="settingLabel" data-i18n="platformColorLabel">Цвет платформ</span>
+<div class="swatchRow" id="platformColorRow"></div>
+</div>
+</div>
+</div>
+<div class="setCat" data-cat="profile">
+<button aria-expanded="false" class="setCatHead" type="button"><span class="setCatIcon">☺</span><span class="setCatName" data-i18n="catProfile">Профиль</span><span class="setCatArrow">›</span></button>
+<div class="setCatBody">
+<div class="settingRow">
+<span class="settingLabel" data-i18n="nickLabel">Ник</span>
+<div class="btnRow">
+<button class="chip" data-i18n="changeNickBtn" id="changeNickBtn">Изменить</button>
+</div>
+</div>
+<div class="settingRow">
+<span class="settingLabel" data-i18n="avatarLabel">Аватар</span>
+<div class="avatarPickerRow">
+<span class="avFrame avPreviewFrame frame-none" id="avatarPreviewFrame"><span class="avatarPreview" id="avatarPreview"></span></span>
+<button class="chip" data-i18n="avatarUpload" id="avatarUploadBtn" type="button">Фото из галереи</button>
+<button class="chip hidden" data-i18n="avatarRemove" id="avatarRemoveBtn" type="button">Убрать фото</button>
+<input accept="image/*" class="hidden" id="avatarFileInput" type="file"/>
+</div>
+<p class="avatarModNote hidden" data-i18n="avatarPendingNote" id="avatarModNote">Фото на проверке — пока его не одобрят, другие видят 🐰</p>
+<div class="swatchRow avatarRow" id="avatarRow"></div>
+</div>
+<div class="settingRow">
+<span class="settingLabel"><span data-i18n="frameLabel">Рамка аватара</span>: <b class="frameNameLine" id="frameNameLine"></b></span>
+<div class="frameRow" id="frameRow"></div>
+</div>
+</div>
+</div>
+<div class="setCat" data-cat="sound">
+<button aria-expanded="false" class="setCatHead" type="button"><span class="setCatIcon">♪</span><span class="setCatName" data-i18n="catSound">Звук</span><span class="setCatArrow">›</span></button>
+<div class="setCatBody">
+<div class="settingRow">
+<span class="settingLabel" data-i18n="musicLabel">Музыка</span>
+<div class="btnRow">
+<button class="chip" id="musicToggle"></button>
+</div>
+</div>
+<div class="settingRow hidden" id="musicTrackSetting">
+<span class="settingLabel" data-i18n="musicTrackLabel">Песня</span>
+<div class="btnRow" id="musicTrackRow"></div>
+</div>
+<div class="settingRow">
+<span class="settingLabel" data-i18n="sfxVolumeLabel">Громкость звуков</span>
+<div class="btnRow">
+<input id="sfxVolumeSlider" max="100" min="0" style="width:150px;accent-color:#ff9f45;" type="range" value="80"/>
+</div>
+</div>
+<div class="settingRow">
+<span class="settingLabel" data-i18n="musicVolumeLabel">Громкость музыки</span>
+<div class="btnRow">
+<input id="musicVolumeSlider" max="100" min="0" style="width:150px;accent-color:#ff9f45;" type="range" value="28"/>
+</div>
+</div>
+</div>
+</div>
+<div class="setCat" data-cat="community">
+<button aria-expanded="false" class="setCatHead" type="button"><span class="setCatIcon">✦</span><span class="setCatName" data-i18n="catCommunity">Сообщество</span><span class="setCatArrow">›</span></button>
+<div class="setCatBody">
+<div class="settingRow">
+<div class="socialRow">
+<button class="btn ghost" id="discordBtn">Discord</button>
+<button class="btn ghost" id="telegramBtn">Telegram</button>
+<button class="btn ghost" id="tiktokBtn">TikTok</button>
+</div>
+</div>
+<div class="settingRow">
+</div>
+<div class="settingRow creditBox">
+<span class="settingLabel" data-i18n="creditTitle">Автор кэббита</span>
+<p class="creditText" data-i18n="creditText">Персонаж кэббит, котокролик с кошачьей мордочкой, придуман и нарисован художником из Instagram koty_vezde. Спасибо за кэббитов: без них этой игры бы не было!</p>
+<button class="btn ghost creditBtn" id="creditBtn" type="button">@koty_vezde</button>
+</div>
+</div>
+</div>
+<div class="setCat" data-cat="online">
+<button aria-expanded="false" class="setCatHead" type="button"><span class="setCatIcon">☁</span><span class="setCatName" data-i18n="catOnline">Онлайн</span><span class="setCatArrow">›</span></button>
+<div class="setCatBody">
+<div class="settingRow" id="cloudSection">
+<span class="settingLabel" data-i18n="cloudTitle">Онлайн-профиль</span>
+<div class="cloudRow">
+<span class="cloudCode" id="cloudCodeDisplay">------</span>
+<button class="cloudBtn" data-i18n="cloudCopy" id="cloudCopyBtn">Копировать</button>
+</div>
+<div class="pwBox">
+<span class="settingLabel" data-i18n="pwLabel">Пароль аккаунта</span>
+<p class="pwState" id="pwState"></p>
+<div class="cloudRow">
+<input autocomplete="new-password" class="cloudInput pwInput" data-i18n-placeholder="pwNewPh" id="pwNewInput" maxlength="32" placeholder="Новый пароль" type="password"/>
+<button class="cloudBtn" data-i18n="pwSave" id="pwSaveBtn">Сохранить</button>
+</div>
+</div>
+<span class="settingLabel" data-i18n="restoreLabel">Войти в другой аккаунт</span>
+<div class="cloudRow">
+<input class="cloudInput" data-i18n-placeholder="cloudEnterCode" id="cloudRestoreInput" maxlength="8" placeholder="КОД"/>
+<input autocomplete="current-password" class="cloudInput pwInput" data-i18n-placeholder="pwPh" id="cloudRestorePw" maxlength="32" placeholder="Пароль" type="password"/>
+</div>
+<button class="cloudBtn" data-i18n="cloudRestore" id="cloudRestoreBtn">Восстановить</button>
+<div class="cloudStatus" id="cloudStatus"></div>
+<span class="settingLabel" data-i18n="searchLabel">Найти игрока</span>
+<div class="cloudRow">
+<input class="cloudInput playerSearchInput" data-i18n-placeholder="searchPlaceholder" id="playerSearchInput" maxlength="16" placeholder="Ник или код"/>
+<button class="cloudBtn" data-i18n="searchBtn" id="playerSearchBtn">Найти</button>
+</div>
+<div id="playerSearchRows"></div>
+<span class="settingLabel" data-i18n="cloudTop">Рейтинг игроков</span>
+<div id="onlineLbRows"></div>
+<button class="cloudBtn" data-i18n="cloudRefresh" id="cloudRefreshBtn">Обновить рейтинг</button>
+</div>
+</div>
+</div>
+</div>
+<div class="spacer"></div>
+</div>
+<div class="screen hidden co" id="over">
+<div class="cmSky"></div>
+<p class="coPlop" id="overTitle">ПЛЮХ!</p>
+<div class="coBoom"><svg aria-hidden="true" viewbox="-125 -125 250 250"><path d="M114.5,0.0 L73.9,16.9 L97.7,47.0 L61.8,49.3 L67.0,84.1 L30.9,64.1 L24.6,107.9 L0.0,72.5 L-25.2,110.6 L-30.8,63.9 L-66.2,83.0 L-56.5,45.1 L-97.6,47.0 L-73.4,16.8 L-106.7,0.0 L-80.4,-18.4 L-107.4,-51.7 L-56.5,-45.1 L-69.6,-87.2 L-32.6,-67.6 L-25.4,-111.1 L-0.0,-71.9 L27.6,-121.1 L36.5,-75.8 L72.4,-90.8 L60.2,-48.0 L97.3,-46.9 L69.8,-15.9Z" fill="#fff" stroke="#fff" stroke-linejoin="round" stroke-width="16"></path><path d="M114.5,0.0 L73.9,16.9 L97.7,47.0 L61.8,49.3 L67.0,84.1 L30.9,64.1 L24.6,107.9 L0.0,72.5 L-25.2,110.6 L-30.8,63.9 L-66.2,83.0 L-56.5,45.1 L-97.6,47.0 L-73.4,16.8 L-106.7,0.0 L-80.4,-18.4 L-107.4,-51.7 L-56.5,-45.1 L-69.6,-87.2 L-32.6,-67.6 L-25.4,-111.1 L-0.0,-71.9 L27.6,-121.1 L36.5,-75.8 L72.4,-90.8 L60.2,-48.0 L97.3,-46.9 L69.8,-15.9Z" fill="#ffe03a" stroke="#1c1630" stroke-linejoin="round" stroke-width="3.5"></path></svg>
+<div class="coIn"><b id="finalScore">0</b><small><span id="overCoinsVal">+0</span> <span data-i18n="overCoinsTile">монет</span></small></div></div>
+<div class="coNew" id="overBurst"><div><small data-i18n="coNewSticker">новая наклейка</small><b data-i18n="coRecord">рекорд</b></div></div>
+<p class="coBest" id="bestLine"></p>
+<p class="coRank" id="rankLine"></p>
+<p class="coWorld"><span id="overWorldVal"></span> · <span data-i18n="bossesChip">боссы</span> <b id="overBossVal">0</b></p>
+<p class="srOnly" id="coinLine"></p>
+<div class="coActs"><button class="coBtn coMain" data-i18n="retry" id="retryBtn">Ещё раз</button><button class="coBtn" data-i18n="toMenu" id="menuBtn">Меню</button></div>
+</div>
+<div class="profileOverlay passOverlay hidden" id="hwModal">
+<div class="passFull hwFull">
+<button aria-label="Закрыть" class="backIconBtn" id="hwClose">
+<svg fill="none" viewbox="0 0 24 24"><path d="M6 6 L18 18 M18 6 L6 18" stroke="#fdf6e8" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path></svg>
+</button>
+<div class="passTitle hwTitle" data-i18n="hwTitle">Ночь тыкв</div>
+<p class="passSeason" id="hwSub"></p>
+<div class="hwHave" id="hwHave"></div>
+<div class="hwList" id="hwList"></div>
+<p class="fruitHint" data-i18n="hwHint"></p>
+</div>
+</div>
+<div class="profileOverlay passOverlay hidden" id="seasonModal">
+<div class="passFull seasonFull">
+<button aria-label="Закрыть" class="backIconBtn" id="seasonClose">
+<svg fill="none" viewbox="0 0 24 24"><path d="M6 6 L18 18 M18 6 L6 18" stroke="#fdf6e8" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path></svg>
+</button>
+<div class="seasonHead" id="seasonHead"></div>
+<div class="seasonTabs" id="seasonTabs">
+<button data-i18n="tabPlayers" data-tab="players" type="button">Игроки</button>
+<button data-i18n="tabClans" data-tab="clans" type="button">Кланы</button>
+<button data-i18n="tabMyClan" data-tab="mine" type="button">Мой клан</button>
+</div>
+<div class="seasonBody" id="seasonBody"></div>
+</div>
+</div>
+<div class="profileOverlay passOverlay hidden" id="bestiaryModal">
+<div class="passFull bestiaryFull">
+<button aria-label="Закрыть" class="backIconBtn" id="bestiaryClose">
+<svg fill="none" viewbox="0 0 24 24"><path d="M6 6 L18 18 M18 6 L6 18" stroke="#fdf6e8" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path></svg>
+</button>
+<div class="passTitle" data-i18n="bestiaryTitle">Бестиарий</div>
+<p class="bestiarySub" id="bestiarySub"></p>
+<div class="bestiaryList" id="bestiaryList"></div>
+<p class="fruitHint" data-i18n="bestiaryHint">Босс прилетает в конце каждого мира. Лови золотые звёзды — они бьют босса, и уворачивайся от его снарядов. За победу — монеты и фрукт.</p>
+</div>
+</div>
+<div class="profileOverlay passOverlay hidden" id="fruitModal">
+<div class="passFull fruitFull">
+<button aria-label="Закрыть" class="backIconBtn" id="fruitClose">
+<svg fill="none" viewbox="0 0 24 24"><path d="M6 6 L18 18 M18 6 L6 18" stroke="#fdf6e8" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path></svg>
+</button>
+<div class="passTitle" data-i18n="fruitsTitle">Фрукты</div>
+<div class="fruitEaten" id="fruitEaten"></div>
+<div class="passQTitle" data-i18n="fruitInvTitle">Фрукты и способности</div>
+<div class="fruitInv" id="fruitInv"></div>
+<div class="passQTitle" data-i18n="wheelTitle">Рулетка</div>
+<div class="wheelWrap"><canvas height="560" id="wheelCanvas" width="560"></canvas><div class="wheelPin"></div></div>
+<button class="btn passBuyBtn" id="wheelBtn" type="button"></button>
+<div class="wheelMulti"><button class="btn" id="wheelBtn5" type="button"></button><button class="btn" id="wheelBtn10" type="button"></button></div>
+<button aria-pressed="false" class="wheelSkip" id="wheelSkipBtn" type="button"></button>
+<div class="wheelResult" id="wheelResult"></div>
+<div class="wheelOdds" id="wheelOdds"></div>
+<p class="fruitHint" data-i18n="fruitHint">Фрукты можно поймать в забеге или выбить в рулетке. Съешь фрукт — получишь его способность. Съешь другой — старый пропадёт. Меняться фруктами можно с друзьями: кнопка ⇄ в чате.</p>
+</div>
+</div>
+<div class="profileOverlay hidden" id="tradeModal">
+<div class="tradeBox">
+<div class="tradeBoxTitle" data-i18n="tradeTitle">Обмен фруктами</div>
+<div class="passQTitle" data-i18n="tradeGiveLabel">Ты отдаёшь</div>
+<div class="tradePick" id="tradeGive"></div>
+<div class="passQTitle" data-i18n="tradeWantLabel">Ты хочешь</div>
+<div class="tradePick" id="tradeWant"></div>
+<div class="tradeNote" id="tradeNote"></div>
+<div class="tradeBoxBtns">
+<button class="btn ghost" data-i18n="back" id="tradeCloseBtn" type="button">Назад</button>
+<button class="btn" data-i18n="tradeSend" id="tradeSendBtn" type="button">Предложить</button>
+</div>
+</div>
+</div>
+<div class="profileOverlay hidden" id="howToModal">
+<div class="profileCard dailyCard">
+<div class="dailyTitle" data-i18n="howToLabel">Как играть</div>
+<p class="howToText" data-i18n="hint"></p>
+<button class="btn dailyClaim" data-i18n="howToOk" id="howToOk" type="button">Понятно!</button>
+</div>
+</div>
+<div class="profileOverlay hidden" id="dailyModal">
+<div class="profileCard dailyCard">
+<button aria-label="Закрыть" class="backIconBtn" id="dailyClose">
+<svg fill="none" viewbox="0 0 24 24"><path d="M6 6 L18 18 M18 6 L6 18" stroke="#fdf6e8" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path></svg>
+</button>
+<div class="dailyTitle" data-i18n="dailyTitle">Ежедневная награда</div>
+<div class="dailySub" id="dailySub"></div>
+<div class="dailyGrid" id="dailyGrid"></div>
+<button class="btn dailyClaim" id="dailyClaimBtn" type="button"></button>
+</div>
+</div>
+<div class="profileOverlay hidden" id="trophyModal">
+<div class="profileCard">
+<button aria-label="Закрыть" class="backIconBtn" id="trophyClose">
+<svg fill="none" viewbox="0 0 24 24"><path d="M6 6 L18 18 M18 6 L6 18" stroke="#fdf6e8" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path></svg>
+</button>
+<div class="trophyInfo" id="trophyInfo"></div>
+</div>
+</div>
+<div class="profileOverlay hidden" id="profileModal">
+<div class="profileCard">
+<button aria-label="Закрыть" class="backIconBtn" id="profileClose">
+<svg fill="none" viewbox="0 0 24 24"><path d="M6 6 L18 18 M18 6 L6 18" stroke="#fdf6e8" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path></svg>
+</button>
+<div class="profileCanvasWrap">
+<canvas height="220" id="profileCanvas" width="220"></canvas>
+<span class="avFrame profileAvatarFrame frame-none" id="profileAvatarFrame"><span class="avatarPreview profileAvatarBadge" id="profileAvatar"></span></span>
+</div>
+<div class="profileNickRow">
+<div class="profileNick" id="profileNick"></div>
+<img alt="" class="nickBadge hidden" id="profileBadge"/>
+<span class="onlineDot hidden" id="profileOnlineDot"></span>
+</div>
+<div class="profileTitleLine" id="profileTitleLine"></div>
+<div class="profileStats">
+<span id="profileBest"></span>
+<span id="profileCoins"></span>
+</div>
+<div class="profileFriendRow">
+<button class="btn ghost profileMessageBtn hidden" id="profileMessageBtn">Написать</button>
+<button aria-label="Удалить из друзей" class="profileUnfriendBtn hidden" id="profileUnfriendBtn" type="button">✕ 👤</button>
+</div>
+<div class="profileComments">
+<div class="profileCommentsLabel" data-i18n="profileCommentsLabel">Комментарии</div>
+<div class="profileCommentsList" id="profileCommentsList"></div>
+<div class="profileCommentForm">
+<input data-i18n-placeholder="profileCommentPlaceholder" id="profileCommentInput" maxlength="140" placeholder="Оставить комментарий..." type="text"/>
+<button data-i18n="profileCommentSend" id="profileCommentSendBtn">Отправить</button>
+</div>
+<div class="profileCommentStatus" id="profileCommentStatus"></div>
+</div>
+</div>
+</div>
+<div class="profileOverlay hidden" id="inboxModal">
+<div class="chatCard inboxCard">
+<button aria-label="Закрыть" class="backIconBtn" id="inboxClose">
+<svg fill="none" viewbox="0 0 24 24"><path d="M6 6 L18 18 M18 6 L6 18" stroke="#fdf6e8" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path></svg>
+</button>
+<div class="inboxTitle" data-i18n="inboxTitle">Сообщения</div>
+<div class="inboxList" id="inboxList"></div>
+</div>
+</div>
+<div class="profileOverlay hidden" id="chatModal">
+<div class="chatCard">
+<button aria-label="К диалогам" class="chatBackBtn hidden" id="chatBackBtn" type="button">
+<svg fill="none" viewbox="0 0 24 24"><path d="M15 5 L8 12 L15 19" stroke="#fdf6e8" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path></svg>
+</button>
+<button aria-label="Закрыть" class="backIconBtn" id="chatClose">
+<svg fill="none" viewbox="0 0 24 24"><path d="M6 6 L18 18 M18 6 L6 18" stroke="#fdf6e8" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path></svg>
+</button>
+<button aria-label="Ещё" class="chatMoreBtn" id="chatMoreBtn" type="button">
+<svg fill="none" viewbox="0 0 24 24"><circle cx="12" cy="5.5" fill="#fdf6e8" r="2.1"></circle><circle cx="12" cy="12" fill="#fdf6e8" r="2.1"></circle><circle cx="12" cy="18.5" fill="#fdf6e8" r="2.1"></circle></svg>
+</button>
+<div class="chatMoreMenu hidden" id="chatMoreMenu">
+<div class="chatMoreTitle" data-i18n="chatThemeTitle">Тема чата</div>
+<div class="chatThemeList" id="chatThemeList"></div>
+<button class="chatUnfriendBtn hidden" id="chatUnfriendBtn" type="button"></button>
+<button class="chatBlockBtn" id="chatBlockBtn" type="button"></button>
+</div>
+<div class="chatHeader">
+<span class="chatHeaderAv" id="chatWithAvatar"></span>
+<div class="chatHeaderText">
+<div class="chatWithNickRow">
+<div class="chatWithNick" id="chatWithNick"></div>
+<img alt="" class="nickBadge hidden" id="chatBadge"/>
+<span class="onlineDot hidden" id="chatOnlineDot"></span>
+</div>
+<div class="chatPresence" id="chatPresence"></div>
+</div>
+</div>
+<div class="chatMessagesList" id="chatMessagesList"></div>
+<div class="stickerPanel hidden" id="stickerPanel"></div>
+<div class="chatForm">
+<button aria-label="Стикеры" class="chatToolBtn" id="chatStickerBtn" type="button">
+<svg fill="none" viewbox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke="#fdf6e8" stroke-width="2"></circle><circle cx="9" cy="10" fill="#fdf6e8" r="1.3"></circle><circle cx="15" cy="10" fill="#fdf6e8" r="1.3"></circle><path d="M8 14.5 Q12 18 16 14.5" stroke="#fdf6e8" stroke-linecap="round" stroke-width="2"></path></svg>
+</button>
+<button aria-label="Обмен" class="chatToolBtn" id="chatTradeBtn" type="button">
+<svg fill="none" viewbox="0 0 24 24"><path d="M4 8 H17 M13 4 L17 8 L13 12" stroke="#fdf6e8" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"></path><path d="M20 16 H7 M11 12 L7 16 L11 20" stroke="#fdf6e8" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"></path></svg>
+</button>
+<input autocomplete="off" data-i18n-placeholder="chatPlaceholder" enterkeyhint="send" id="chatInput" maxlength="200" placeholder="Написать сообщение..." type="text"/>
+<button aria-label="Отправить" id="chatSendBtn" type="button">
+<svg fill="none" viewbox="0 0 24 24"><path d="M4 12 L20 4 L14 20 L11 13 Z" fill="#3a2400"></path></svg>
+</button>
+</div>
+<div class="chatStatus" id="chatStatus"></div>
+<div class="chatMsgMenu hidden" id="chatMsgMenu"><div class="chatMsgMenuPanel" id="chatMsgMenuPanel"></div></div>
+</div>
+</div>
+<div class="profileOverlay hidden" id="adminChoiceModal">
+<div class="adminChoiceCard">
+<div class="adminChoiceNick" id="adminChoiceNick"></div>
+<button class="btn" data-i18n="adminChoiceProfile" id="adminChoiceProfileBtn">Профиль</button>
+<button class="btn ghost" data-i18n="adminChoicePanel" id="adminChoicePanelBtn">Админ панель</button>
+<button class="btn ghost" data-i18n="adminChoiceCancel" id="adminChoiceCancelBtn">Отмена</button>
+</div>
+</div>
+<div class="profileOverlay hidden" id="linkChoiceModal">
+<div class="adminChoiceCard">
+<div class="adminChoiceNick" id="linkChoiceTitle"></div>
+<button class="btn" data-i18n="linkChoiceOpen" id="linkChoiceOpenBtn">Открыть</button>
+<button class="btn ghost" data-i18n="linkChoiceCopy" id="linkChoiceCopyBtn">Скопировать ссылку</button>
+<button class="btn ghost" data-i18n="adminChoiceCancel" id="linkChoiceCancelBtn">Отмена</button>
+</div>
+</div>
+</div>
+<button class="adminFab" hidden="" id="adminFab" type="button">Админ панель</button>
+<div class="adminQuick" hidden="" id="adminQuick">
+<div class="aqHead"><span class="aqTitle">Админ панель</span><button aria-label="Закрыть" class="aqClose" id="aqClose" type="button">×</button></div>
+<div class="aqLbl">Прыгнуть в мир</div>
+<div class="aqRow" id="aqWorlds"></div>
+<div class="aqLbl">Забег и себе</div>
+<div class="aqRow">
+<button class="aqKey" id="aqBoss" type="button">Босс сейчас</button>
+<button aria-pressed="false" class="aqKey" id="aqGod" type="button">Бессмертие</button>
+<button class="aqKey" id="aqCoins" type="button">+5000 монет</button>
+</div>
+<div class="aqLbl">Выдать себе фрукт</div>
+<div class="aqRow" id="aqFruits"></div>
+<button class="aqKey aqWide" id="aqSettings" type="button">Выдать игроку (админка в настройках)</button>
+</div>
+<div aria-labelledby="banTitle" aria-modal="true" hidden="" id="banScreen" role="dialog">
+<div class="closedCard banCard">
+<h2 class="closedTitle" id="banTitle">Доступ закрыт</h2>
+<p class="closedText">Это устройство заблокировано за нарушение правил игры, например за использование читов.</p>
+<div class="closedTimerLbl">Код устройства</div>
+<div class="banDevCode" id="banDevCode">-</div>
+<p class="closedBye">Если это ошибка, напиши в Telegram или Discord и назови этот код.</p>
+</div>
+</div>
+<script src="js/00-auth.js?v=20261102"></script><script src="js/01-core.js?v=20261102"></script>
+<script src="js/02-badges.js?v=20261102"></script>
+<script src="js/03-audio.js?v=20261102"></script>
+<script src="js/04-outfits.js?v=20261102"></script>
+<script src="js/04b-halloween.js?v=20261102"></script>
+<script src="js/05-rig.js?v=20261102"></script>
+<script src="js/06-world.js?v=20261102"></script>
+<script src="js/07-fruits.js?v=20261102"></script>
+<script src="js/08-bosses.js?v=20261102"></script>
+<script src="js/09-seasons.js?v=20261102"></script>
+<script src="js/10-physics.js?v=20261102"></script>
+<script src="js/11-render-world.js?v=20261102"></script>
+<script src="js/12-render-hero.js?v=20261102"></script>
+<script src="js/13-render-hud.js?v=20261102"></script>
+<script src="js/14-ui.js?v=20261102"></script>
+<script src="js/15-events.js?v=20261102"></script>
+<script src="js/16-cloud.js?v=20261102"></script>
+<script src="js/17-device.js?v=20261102"></script>
+<script src="js/18-profile-chat.js?v=20261102"></script>
+<script src="js/19-inbox.js?v=20261102"></script>
+<script src="js/20-admin.js?v=20261102"></script>
+<script src="js/21-settings.js?v=20261102"></script><script src="js/22-comic.js?v=20261102"></script>
 </body>
 </html>

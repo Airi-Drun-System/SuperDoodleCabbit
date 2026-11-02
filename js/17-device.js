@@ -236,11 +236,8 @@ async function savePassword(){
   if (!cloudReady()){ setCloudStatus(t('cloudErr')); return; }
   const hash = hashPassword(cloudCode, pw);
   try {
-    const res = await fetch(cloudBase() + '/players/' + cloudCode + '?updateMask.fieldPaths=pwHash&key=' + CLOUD.apiKey, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ fields: { pwHash: { stringValue: hash } } })
-    });
+    if (!(await cjWriteSecret(cloudCode, hash))){ setCloudStatus(t('cloudErr')); return; }
+    const res = await cjSetPwFlag(cloudCode, true);
     if (!res.ok){ setCloudStatus(t('cloudErr')); return; }
     myPwSet = true;
     Store.set('pwSet', '1');
@@ -263,17 +260,21 @@ async function cloudRestore(rawCode, rawPw){
     const doc = await res.json();
     const f = (doc && doc.fields) || {};
     if (f.deleted && f.deleted.booleanValue){ setCloudStatus(t('cloudNotFound')); return; }
-    const storedHash = (f.pwHash && f.pwHash.stringValue) || '';
-    if (storedHash){
+    const hasPw = !!((f.pwSet && f.pwSet.booleanValue) || (f.pwHash && f.pwHash.stringValue));
+    let proof = '';
+    if (hasPw){
       const pw = String(rawPw || '');
       if (!pw){ setCloudStatus(t('pwNeed')); return; }
-      if (hashPassword(code, pw) !== storedHash){
-        restoreLockUntil = Date.now() + 3000;
-        setCloudStatus(t('pwWrong'));
-        return;
-      }
+      proof = hashPassword(code, pw);
     }
-    myPwSet = !!storedHash;
+    // пароль сверяет сервер: если доказательство не подошло, он не впустит это устройство в аккаунт
+    if (!(await cjClaim(code, f, proof))){
+      restoreLockUntil = Date.now() + 3000;
+      setCloudStatus(hasPw ? t('pwWrong') : t('pwNeedOld'));
+      return;
+    }
+    cjOwner = true;
+    myPwSet = hasPw;
     Store.set('pwSet', myPwSet ? '1' : '0');
     coinsSpent = remoteSpent(f); Store.set('spent', coinsSpent);
     fruitState = parseFruitState(f.fruits && f.fruits.stringValue); Store.set('fruits', fruitStr());

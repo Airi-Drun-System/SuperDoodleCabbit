@@ -268,7 +268,7 @@ async function adminLoad(codeOverride){
       hat2: (f.hat2 && f.hat2.stringValue) || 'none',
       acc2: (f.acc2 && f.acc2.stringValue) || 'none'
     };
-    document.getElementById('adminCodeLine').textContent = 'Код: ' + code + (isModOnly() ? '' : ' · пароль: ' + ((f.pwHash && f.pwHash.stringValue) ? 'есть' : 'нет'));
+    document.getElementById('adminCodeLine').textContent = 'Код: ' + code + (isModOnly() ? '' : ' · пароль: ' + (((f.pwSet && f.pwSet.booleanValue) || (f.pwHash && f.pwHash.stringValue)) ? 'есть' : 'нет'));
     document.getElementById('adminNickInput').value = (f.nick && f.nick.stringValue) || '';
     adminCurrentNums = {
       coins: parseInt((f.coins && f.coins.integerValue) || '0', 10) || 0,
@@ -798,10 +798,12 @@ document.getElementById('adminPhotoLoadBtn').addEventListener('click', adminLoad
 async function adminResetPassword(){
   if (!adminCurrentCode || !cloudReady() || !adminMode) return;
   try {
-    const res = await sfetch(cloudBase() + '/players/' + adminCurrentCode + '?updateMask.fieldPaths=pwHash&key=' + CLOUD.apiKey, {
+    // сброс: стираем секрет и список устройств, игрок заново привяжет аккаунт по коду на своём устройстве
+    await sfetch(cloudBase() + '/secrets/' + adminCurrentCode + '?key=' + CLOUD.apiKey, { method: 'DELETE' });
+    const res = await sfetch(cloudBase() + '/players/' + adminCurrentCode + '?updateMask.fieldPaths=pwHash&updateMask.fieldPaths=pwSet&updateMask.fieldPaths=uids&updateMask.fieldPaths=resetOpen&key=' + CLOUD.apiKey, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ fields: { pwHash: { stringValue: '' } } })
+      body: JSON.stringify({ fields: { pwSet: { booleanValue: false }, resetOpen: { booleanValue: true } } })
     });
     adminSetStatus(res.ok ? 'Пароль сброшен ✓ — игрок может войти по коду и поставить новый' : 'Не удалось сбросить пароль');
     if (res.ok) document.getElementById('adminCodeLine').textContent = 'Код: ' + adminCurrentCode + ' · пароль: нет';
@@ -934,35 +936,8 @@ document.getElementById('adminLoadBtn').addEventListener('click', () => adminLoa
 document.getElementById('adminSaveBtn').addEventListener('click', adminSave);
 document.getElementById('adminConfirmOk').addEventListener('click', adminConfirmGrant);
 document.getElementById('adminConfirmCancel').addEventListener('click', adminHideConfirm);
-function adminOpenGame(){
-  if (!GAME_CLOSED) return;
-  GAME_CLOSED = false;
-  try { window.localStorage.setItem('doodlecabbit.welcomeRemaster', '1'); } catch (e) {}
-  const s = document.getElementById('closedScreen');
-  if (s) s.hidden = true;
-}
 staffRestore();
 
-let closedTaps = 0, closedTapT = null;
-(function closedAdminEntry(){
-  const timer = document.getElementById('closedTimer');
-  const box = document.getElementById('closedAdmin');
-  const em = document.getElementById('closedEmail');
-  const pw = document.getElementById('closedPass');
-  const btn = document.getElementById('closedPinBtn');
-  if (!timer || !box || !em || !pw || !btn) return;
-  timer.addEventListener('click', () => {
-    closedTaps++;
-    clearTimeout(closedTapT);
-    closedTapT = setTimeout(() => { closedTaps = 0; }, 2000);
-    if (closedTaps >= 5){ closedTaps = 0; box.hidden = false; em.focus(); }
-  });
-  const tryLogin = () => staffLoginFrom(em, pw, () => {
-    if (adminMode){ adminOpenGame(); refreshAdminQuick(); }
-  });
-  btn.addEventListener('click', tryLogin);
-  pw.addEventListener('keydown', (e) => { if (e.key === 'Enter') tryLogin(); });
-})();
 
 let adminGod = false;
 const adminRealFatal = handleFatalEvent;
@@ -980,7 +955,7 @@ function refreshAdminQuick(){
   if (!fab || !panel) return;
   const setEl = document.getElementById('settings'), wEl = document.getElementById('wardrobe');
   const busy = (setEl && !setEl.classList.contains('hidden')) || (wEl && !wEl.classList.contains('hidden'));
-  const show = adminMode && !GAME_CLOSED && !busy && state !== STATE.PLAY && state !== STATE.DYING;
+  const show = adminMode && !busy && state !== STATE.PLAY && state !== STATE.DYING;
   fab.hidden = !show;
   if (!adminMode || state === STATE.PLAY) panel.hidden = true;
 }

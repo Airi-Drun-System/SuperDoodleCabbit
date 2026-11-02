@@ -1,0 +1,218 @@
+/* Cabbit Jump: комикс-наклейки. Меню, пауза, конец забега, кнопки в забеге. */
+@font-face{font-family:'RB';src:url('../fonts/RubikBubbles-Regular.ttf') format('truetype');font-display:swap}
+:root{--nv:#1c1630;--or:#ff6a2b;--ye:#ffe03a;--paper:#fff;--ease:cubic-bezier(.23,1,.32,1)}
+
+/* ---------- фон-небо с полутоном и лучами ---------- */
+.cm,.co{background:none!important;padding:0!important;justify-content:flex-start!important;overflow:hidden;container-type:size;color:var(--nv)}
+.cmSky{position:absolute;inset:0;background:var(--or);z-index:-1;overflow:hidden}
+.cmSky::before{content:"";position:absolute;inset:0;background:radial-gradient(circle,#c8401a 1.6px,transparent 2px) 0 0/9px 9px;-webkit-mask:linear-gradient(170deg,transparent 30%,#000 95%);mask:linear-gradient(170deg,transparent 30%,#000 95%)}
+.cmSky::after{content:"";position:absolute;inset:-20%;background:repeating-conic-gradient(from 0deg at 72% 108%,rgba(255,255,255,.13) 0 3deg,transparent 3deg 11deg);animation:cmRays 60s linear infinite}
+@keyframes cmRays{to{transform:rotate(8deg)}}
+
+/* все размеры от меньшей стороны экрана, чтобы на любом телефоне композиция держалась */
+.cm,.co{--u:min(1cqw,.52cqh)}
+
+/* ---------- меню ---------- */
+.cmLogo{position:absolute;left:calc(5*var(--u));top:calc(7*var(--u));font:400 calc(14*var(--u))/.84 'RB',sans-serif;color:#fff;-webkit-text-stroke:calc(.9*var(--u)) var(--nv);paint-order:stroke fill;rotate:-6deg;text-shadow:calc(1.4*var(--u)) calc(1.6*var(--u)) 0 var(--nv);margin:0;z-index:2}
+.cmHero{position:absolute;right:calc(-14*var(--u));top:calc(16*var(--u));width:calc(88*var(--u))!important;height:calc(88*var(--u))!important;rotate:-6deg;pointer-events:none;animation:none!important;
+  filter:drop-shadow(5px 0 0 #fff) drop-shadow(-5px 0 0 #fff) drop-shadow(0 5px 0 #fff) drop-shadow(0 -5px 0 #fff) drop-shadow(2.5px 0 0 var(--nv)) drop-shadow(-2.5px 0 0 var(--nv)) drop-shadow(0 2.5px 0 var(--nv)) drop-shadow(0 -2.5px 0 var(--nv))}
+.cmCoins{position:absolute;right:calc(5*var(--u));top:calc(6*var(--u));display:flex;align-items:center;gap:8px;background:#fff;padding:6px 14px;border-radius:999px;box-shadow:0 0 0 3px var(--nv);font-size:calc(5*var(--u));z-index:3;rotate:3deg}
+.cmCoins b{font-weight:400}
+
+.cmPanel{position:absolute;left:calc(5*var(--u));top:calc(66*var(--u));width:calc(64*var(--u));rotate:-3deg;z-index:2}
+.cmCut{position:absolute;inset:calc(-4*var(--u));width:calc(100% + 8*var(--u));height:calc(100% + 8*var(--u));overflow:visible}
+.cmList{position:relative;display:flex;flex-direction:column;gap:calc(1.2*var(--u));padding:calc(6*var(--u)) calc(6*var(--u)) calc(7*var(--u))}
+.cmItem{all:unset;position:relative;z-index:1;cursor:pointer;font:400 calc(7*var(--u))/1.15 'RB',sans-serif;color:var(--nv);padding:calc(1*var(--u)) 0;transition:transform .2s var(--ease)}
+.cmItem.cmBig{font-size:calc(10.5*var(--u))}
+.cmItem.on{transform:translateX(calc(2.4*var(--u)))}
+.cmItem:active{transform:translateX(calc(2.4*var(--u))) scale(.95)}
+.cmItem:focus-visible{outline:3px dashed var(--nv);outline-offset:4px}
+.cmTape{position:absolute;left:calc(3*var(--u));right:calc(-7*var(--u));top:0;height:calc(12*var(--u));background:var(--ye);z-index:0;rotate:-2deg;pointer-events:none;
+  clip-path:polygon(0 8%,3% 0,5% 10%,8% 2%,92% 0,95% 9%,97% 1%,100% 12%,98% 90%,100% 100%,96% 92%,93% 100%,6% 100%,4% 91%,1% 100%,2% 88%);
+  transition:transform .26s var(--ease),height .26s var(--ease)}
+.cmTape::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(0,0,0,.05) 0 2px,transparent 2px 6px)}
+
+.cmCap{position:absolute;left:calc(7*var(--u));top:calc(66*var(--u) + 72*var(--u));width:calc(56*var(--u));rotate:2deg;z-index:2}
+.cmCap svg{position:absolute;inset:calc(-3*var(--u));width:calc(100% + 6*var(--u));height:calc(100% + 6*var(--u));overflow:visible}
+.cmCap p{position:relative;margin:0;padding:calc(4*var(--u)) calc(5*var(--u));font-size:calc(4.1*var(--u));line-height:1.25;color:#fff;min-height:calc(12*var(--u))}
+.cmRec{position:absolute;right:calc(6*var(--u));top:calc(66*var(--u) + 66*var(--u));width:calc(26*var(--u));aspect-ratio:1;border-radius:50%;display:grid;place-items:center;text-align:center;line-height:1;rotate:14deg;z-index:2;
+  background:conic-gradient(from var(--a,0deg),#ffd6f5,#c6f3ff,#d9ffcf,#fff3b5,#ffd6f5);box-shadow:0 0 0 calc(1.4*var(--u)) #fff,0 0 0 calc(2.2*var(--u)) var(--nv)}
+.cmRec small{font-size:calc(3*var(--u));display:block}.cmRec b{font:400 calc(7*var(--u)) 'RB',sans-serif}
+.cmPause{display:none;position:absolute;left:calc(6*var(--u));top:calc(36*var(--u));font:400 calc(9*var(--u)) 'RB',sans-serif;color:var(--ye);-webkit-text-stroke:calc(.7*var(--u)) var(--nv);paint-order:stroke fill;rotate:-4deg;margin:0;z-index:2}
+
+/* пауза: видно замерший забег, меню поверх */
+#menu.paused .cmSky{background:rgba(28,22,48,.72)}
+#menu.paused .cmSky::before,#menu.paused .cmSky::after,#menu.paused .cmHero,#menu.paused .cmRec,#menu.paused .cmCoins,#menu.paused .cmIcons,#menu.paused .cmEvents,#menu.paused .cmBoss{display:none!important}
+#menu.paused .cmPause{display:block}
+#menu:not(.paused) #continueBtn,#menu:not(.paused) #pauseMenuBtn,#menu.paused #playBtn,#menu.paused #clansBtn{display:none}
+#menu.paused{background:none!important}
+
+/* ---------- конец забега ---------- */
+.co .cmSky{background:#3a2a7a}
+.co .cmSky::before{background:radial-gradient(circle,#24195a 1.6px,transparent 2px) 0 0/9px 9px}
+.coPlop{position:absolute;left:calc(6*var(--u));top:calc(10*var(--u));margin:0;font:400 calc(15*var(--u))/.8 'RB',sans-serif;color:var(--ye);-webkit-text-stroke:calc(.9*var(--u)) var(--nv);paint-order:stroke fill;text-shadow:calc(1.4*var(--u)) calc(1.6*var(--u)) 0 var(--nv);rotate:-10deg}
+.coBoom{position:absolute;left:50%;top:calc(32*var(--u));translate:-50% 0;width:calc(84*var(--u));aspect-ratio:1;rotate:-8deg;animation:coPop .45s var(--ease) both}
+.coBoom svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.coIn{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.coIn b{font:400 calc(17*var(--u))/.85 'RB',sans-serif;color:var(--nv)}
+.coIn small{font-size:calc(4.4*var(--u));margin-top:calc(2*var(--u))}
+@keyframes coPop{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
+.coNew{display:none;position:absolute;right:calc(5*var(--u));top:calc(100*var(--u));width:calc(30*var(--u));aspect-ratio:1;border-radius:50%;place-items:center;text-align:center;font-size:calc(3.4*var(--u));line-height:1.1;rotate:16deg;color:var(--nv);
+  background:conic-gradient(from var(--a,0deg),#ffd6f5,#c6f3ff,#d9ffcf,#fff3b5,#ffd6f5);box-shadow:0 0 0 calc(1.4*var(--u)) #fff,0 0 0 calc(2.2*var(--u)) var(--nv)}
+.coNew.on{display:grid;animation:coSlap .5s var(--ease) .35s both}
+.coNew b{font:400 calc(6*var(--u)) 'RB',sans-serif;display:block}
+@keyframes coSlap{from{transform:scale(1.7);opacity:0}to{transform:scale(1);opacity:1}}
+.coBest,.coRank,.coWorld{position:absolute;left:calc(7*var(--u));margin:0;color:#fff;font-size:calc(4.4*var(--u))}
+.coBest{top:calc(118*var(--u))}.coRank{top:calc(125*var(--u))}.coWorld{top:calc(132*var(--u));opacity:.85}
+.coBest .newbest{color:var(--ye)}
+.coActs{position:absolute;right:calc(6*var(--u));bottom:calc(9*var(--u));display:flex;flex-direction:column;align-items:flex-end;gap:calc(4*var(--u))}
+.coBtn{all:unset;cursor:pointer;font:400 calc(8*var(--u)) 'RB',sans-serif;color:#fff;-webkit-text-stroke:calc(.7*var(--u)) var(--nv);paint-order:stroke fill;transition:transform .16s var(--ease)}
+.coBtn.coMain{font-size:calc(13*var(--u));color:var(--ye);rotate:-4deg}
+.coBtn:active{transform:scale(.95)}
+.coBtn:focus-visible{outline:3px dashed #fff;outline-offset:4px}
+
+/* ---------- кнопки в забеге: наклейки ---------- */
+#pauseBtn,.ctrlBtn{background:#fff!important;border:none!important;box-shadow:0 0 0 3px var(--nv),4px 5px 0 3px rgba(28,22,48,.25)!important;backdrop-filter:none!important}
+#pauseBtn svg rect{fill:var(--nv)}
+.ctrlBtn svg path{stroke:var(--nv)}
+#pauseBtn:active,.ctrlBtn:active{transform:scale(.94)}
+
+@media (prefers-reduced-motion:reduce){.cmSky::after,.coBoom,.coNew.on{animation:none}.cmItem,.cmTape{transition:none}}
+
+/* ---------- перебиваем старые стили на тех же id (уберутся в шаге 2 вместе со старым CSS) ---------- */
+#menu .cmItem{all:unset;position:relative;z-index:1;cursor:pointer;display:block!important;width:auto!important;text-align:left!important;padding:calc(1*var(--u)) 0!important;
+  font:400 calc(7*var(--u))/1.15 'RB',sans-serif!important;color:var(--nv)!important;background:none!important;box-shadow:none!important;border:0!important;text-shadow:none!important;transition:transform .2s var(--ease)}
+#menu .cmItem.cmBig{font-size:calc(10.5*var(--u))!important}
+#menu.paused .cmItem.cmBig{font-size:calc(8.5*var(--u))!important}
+#menu .cmItem::before,#menu .cmItem::after{content:none!important;display:none!important}
+#menu .cmItem.on{transform:translateX(calc(2.4*var(--u)))}
+#over #overTitle{font:400 calc(15*var(--u))/.8 'RB',sans-serif;opacity:1;color:var(--ye)}
+#over #finalScore{font:400 calc(17*var(--u))/.85 'RB',sans-serif!important;color:var(--nv)!important;background:none!important;-webkit-text-fill-color:var(--nv)!important;text-shadow:none!important;-webkit-text-stroke:0}
+#over #bestLine,#over #rankLine{opacity:1;font-size:calc(4.4*var(--u));margin:0}
+#over #retryBtn,#over #menuBtn{all:unset;cursor:pointer;font:400 calc(8*var(--u)) 'RB',sans-serif;color:#fff;-webkit-text-stroke:calc(.7*var(--u)) var(--nv);paint-order:stroke fill;transition:transform .16s var(--ease)}
+#over #retryBtn{font-size:calc(13*var(--u));color:var(--ye);rotate:-4deg}
+#over #retryBtn:active,#over #menuBtn:active{transform:scale(.95)}
+#menu:not(.paused) .cmList #continueBtn,#menu:not(.paused) .cmList #pauseMenuBtn,
+#menu.paused .cmList #playBtn,#menu.paused .cmList #seasonCard,#menu.paused .cmList #fruitsBtn,#menu.paused .cmList #wardrobeBtn,#menu.paused .cmList #settingsBtn,
+#menu .cmList .cmItem.hidden{display:none!important}
+/* на широком экране композиция стоит колонкой по центру, небо на всю ширину */
+.cm,.co{left:0!important;right:0!important;margin:0 auto!important;width:min(100vw,60dvh)!important;max-width:none!important;overflow:visible!important}
+.cmSky{left:calc(50% - 50vw);right:calc(50% - 50vw)}
+
+/* ---------- наклейки-значки: подарок, сообщения, боссы, ивенты ---------- */
+.cmIcons{position:absolute;right:calc(5*var(--u));top:calc(17*var(--u));display:flex;gap:calc(3.5*var(--u));z-index:4}
+#menu .cmIcons .menuIconBtn,#menu .cmIcons .inboxBtn{position:relative!important;inset:auto!important;width:calc(11*var(--u))!important;height:calc(11*var(--u))!important;border-radius:50%!important;
+  background:#fff!important;border:0!important;box-shadow:0 0 0 3px var(--nv),3px 4px 0 3px rgba(28,22,48,.25)!important;display:grid!important;place-items:center;cursor:pointer;rotate:-6deg;transition:transform .16s var(--ease)}
+#menu .cmIcons .inboxBtn{rotate:5deg}
+#menu .cmIcons .inboxBtn.hidden{display:none!important}
+#menu .cmIcons svg{width:58%!important;height:58%!important}
+#menu .cmIcons svg [stroke="#fdf6e8"]{stroke:var(--nv)}#menu .cmIcons svg [fill="#fdf6e8"]{fill:var(--nv)}
+#menu .cmIcons button:active{transform:scale(.92)}
+#menu .cmIcons .dot,#menu .cmIcons .inboxBadge{position:absolute;top:-4px;right:-4px}
+#menu .cmIcons #dailyBtn.can{background:var(--ye)!important}
+
+.cmBoss{all:unset;position:absolute;right:calc(7*var(--u));top:calc(166*var(--u));z-index:3;cursor:pointer;background:#fff;color:var(--nv);padding:calc(1.6*var(--u)) calc(4*var(--u));border-radius:999px;font-size:calc(4.2*var(--u));
+  box-shadow:0 0 0 3px var(--nv),3px 4px 0 3px rgba(28,22,48,.25);rotate:-5deg;transition:transform .16s var(--ease)}
+.cmBoss b{font-weight:400;color:#d8323a}
+.cmBoss:active{transform:scale(.94)}
+
+.cmEvents{position:absolute;left:calc(5*var(--u));width:calc(60*var(--u));top:calc(160*var(--u));display:flex;flex-direction:column;gap:calc(3*var(--u));z-index:3;align-items:flex-start}
+#menu .cmEvents .seasonCard{all:unset;cursor:pointer;display:flex;flex-direction:column;gap:2px;background:var(--ye);color:var(--nv);padding:calc(2.4*var(--u)) calc(4.5*var(--u));border-radius:calc(3*var(--u));
+  box-shadow:0 0 0 3px #fff,0 0 0 5.5px var(--nv),4px 5px 0 5px rgba(28,22,48,.25);font-size:calc(3.8*var(--u));rotate:-2deg;max-width:calc(56*var(--u));font-size:calc(3.3*var(--u));transition:transform .16s var(--ease)}
+#menu .cmEvents .seasonCard.hidden{display:none!important}
+#menu .cmEvents .hwCard{background:#ff9a3c}
+#menu .cmEvents .cpCard{background:#ffb6d0;rotate:2deg}
+#menu .cmEvents .seasonCard *{color:var(--nv)!important;background:none!important;text-shadow:none!important}
+#menu .cmEvents .seasonLogo{font:400 calc(5.2*var(--u)) 'RB',sans-serif!important}
+#menu .cmEvents .seasonCard:active{transform:scale(.96)}
+#menu .cmEvents .seasonCard{flex-direction:row;align-items:center;gap:calc(3*var(--u));padding:calc(1.6*var(--u)) calc(4*var(--u))}
+#menu .cmEvents .seasonTop,#menu .cmEvents .seasonBottom{display:flex;align-items:center;gap:calc(2*var(--u))}
+#menu .cmEvents .seasonDays,#menu .cmEvents .seasonEv{display:none!important}
+#menu .cmEvents .seasonLogo{font-size:calc(4.2*var(--u))!important;white-space:nowrap}
+
+/* =====================================================================
+   Шаг 2: весь остальной интерфейс в стиле комикс-наклеек.
+   Бумага: белая, тёмный контур 3px, сдвинутая тень. Небо: оранжевый полутон.
+   ===================================================================== */
+:root{--sky:radial-gradient(circle,rgba(200,64,26,.55) 1.6px,transparent 2px) 0 0/9px 9px,repeating-conic-gradient(from 0deg at 72% 108%,rgba(255,255,255,.12) 0 3deg,transparent 3deg 11deg),#ff6a2b;
+  --paper-shadow:0 0 0 3px var(--nv),5px 6px 0 3px rgba(28,22,48,.25)}
+
+/* фоны экранов и окон */
+html body #nickname,html body #wardrobe,html body #settings,html body .passOverlay,html body .profileOverlay:not(.passOverlay){background:var(--sky)!important}
+html body .profileOverlay:not(.passOverlay){background:rgba(28,22,48,.55)!important}
+html body .passFull{background:transparent!important;color:var(--nv)}
+
+/* бумажные поверхности */
+html body #nickBox,html body .profileCard,html body .chatCard,html body .dailyCard,html body .adminChoiceCard,html body .setCat,html body #shop,
+html body .fruitCard,html body .bossCard,html body .clanCard,html body .tradeCard,html body .lbRow,html body .inboxRow,html body .hwRow,html body .lockedRow,
+html body #wardrobe .shopTabs,html body .seasonTabs,html body .seasonList,html body .cloudRow,html body .styleCard{
+  background:#fff!important;color:var(--nv)!important;border:0!important;box-shadow:var(--paper-shadow)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+html body #nickBox,html body .profileCard,html body .chatCard,html body .dailyCard{border-radius:18px!important;rotate:-1deg}
+html body .lbRow,html body .inboxRow{border-radius:12px!important;margin-bottom:8px}
+
+/* текст на бумаге тёмный */
+html body :is(#nickBox,.profileCard,.chatCard,.dailyCard,.adminChoiceCard,.setCat,#shop,.fruitCard,.bossCard,.clanCard,.tradeCard,.lbRow,.inboxRow,.hwRow,.lockedRow,.seasonList,.styleCard)
+  :is(p,span,div,b,small,label,h2,h3,li,strong,i:not(.coinDot)){color:var(--nv)!important;text-shadow:none!important;-webkit-text-fill-color:currentColor}
+html body .passFull :is(.passTitle,.seasonHead,.passSeason,.fruitHint,.dailyTitle,h2){color:#fff!important;-webkit-text-stroke:0;text-shadow:2px 2px 0 var(--nv)!important}
+html body .passTitle,html body #nickBox h2,html body .dailyTitle,html body .howToTitle,html body .settingsTitle,html body #settingsTitle{font-family:'RB',sans-serif!important;font-weight:400!important;letter-spacing:0}
+html body .passTitle{font-size:clamp(28px,8vw,40px)!important;rotate:-3deg}
+
+/* кнопки: жёлтая наклейка */
+html body .btn{background:var(--ye)!important;color:var(--nv)!important;border:0!important;border-radius:999px!important;font-family:'RB',sans-serif!important;font-weight:400!important;letter-spacing:0!important;
+  box-shadow:0 0 0 3px var(--nv),4px 5px 0 3px rgba(28,22,48,.25)!important;text-shadow:none!important;transition:transform .14s var(--ease)}
+html body .btn::before,html body .btn::after{display:none!important}
+html body .btn:active{transform:scale(.96)}
+html body .btn.ghost,html body .btn.small.ghost{background:#fff!important}
+html body .btn:disabled{opacity:.5}
+
+/* фишки, вкладки */
+html body .chip,html body .shopTab,html body .seasonTabs button,html body .clanJoinBtn,html body .fruitEatBtn{background:#fff!important;color:var(--nv)!important;border:0!important;box-shadow:0 0 0 2.5px var(--nv)!important;text-shadow:none!important}
+html body .chip[aria-pressed="true"],html body .shopTab.active,html body .seasonTabs button.active,html body .seasonTabs button[aria-pressed="true"]{background:var(--ye)!important;box-shadow:0 0 0 2.5px var(--nv),3px 4px 0 2.5px rgba(28,22,48,.25)!important}
+html body #wardrobe .shopTabs{padding:6px!important;border-radius:16px!important}
+html body #wardrobe .chip{border-radius:14px!important;padding:10px!important}
+html body #wardrobe .chip .chipIcon{background:#fff3e6!important;border-radius:50%!important;box-shadow:0 0 0 2px var(--nv)}
+html body #wardrobe .chip .price{background:var(--nv)!important;color:var(--ye)!important}
+html body #wardrobe .chip :is(.iname,.idesc){color:var(--nv)!important}
+html body #wardrobe .chip.unowned{background:#fffaf0!important}
+html body #wardrobe #shop{background:transparent!important;box-shadow:none!important}
+html body #wardrobe .charSwitcher::before,html body #wardrobe .charSwitcher::after{display:none}
+html body #wardrobe #preview2{filter:drop-shadow(4px 0 0 #fff) drop-shadow(-4px 0 0 #fff) drop-shadow(0 4px 0 #fff) drop-shadow(0 -4px 0 #fff) drop-shadow(2px 0 0 var(--nv)) drop-shadow(-2px 0 0 var(--nv)) drop-shadow(0 2px 0 var(--nv)) drop-shadow(0 -2px 0 var(--nv))}
+html body #wardrobe #charInfo,html body #wardrobe #charInfo *{color:#fff!important;text-shadow:2px 2px 0 var(--nv)!important}
+
+/* круглые кнопки «назад/закрыть» и стрелки */
+html body .backIconBtn,html body #wardrobe .charArrow,html body .cloudBtn.iconOnly{background:#fff!important;color:var(--nv)!important;box-shadow:0 0 0 3px var(--nv),3px 4px 0 3px rgba(28,22,48,.25)!important;border:0!important}
+html body .backIconBtn svg path,html body .charArrow svg path{stroke:var(--nv)!important}
+
+/* поля ввода */
+html body input:not([type=range]):not([type=checkbox]):not([type=radio]),html body textarea,html body select{background:#fff!important;color:var(--nv)!important;border:0!important;box-shadow:0 0 0 2.5px var(--nv)!important;border-radius:12px!important}
+
+/* настройки */
+html body .setCatHead,html body .setCatHead *{color:var(--nv)!important}
+html body .setCatIcon{background:var(--ye)!important;box-shadow:0 0 0 2px var(--nv)!important}
+html body .setCat{border-radius:16px!important;margin-bottom:6px}
+html body .settingLabel{color:var(--nv)!important;opacity:.8}
+
+/* у одного стиля нет выбора темы интерфейса */
+html body #styleRow,html body .styleRow,html body [data-setting="uiStyle"]{display:none!important}
+
+/* монеты и счётчики в гардеробе */
+html body .topPill{background:#fff!important;color:var(--nv)!important;box-shadow:0 0 0 3px var(--nv)!important}
+
+@media (prefers-reduced-motion:reduce){html body .btn{transition:none}}
+html body .dailyTile,html body .seasonRewards>*,html body .wheelWrap{background:#fff!important;color:var(--nv)!important;box-shadow:0 0 0 2.5px var(--nv)!important;border:0!important}
+html body .dailyTile *{color:var(--nv)!important}
+html body .dailyTile.today{background:var(--ye)!important}
+html body .dailyTile.done{opacity:.45}
+html body .cloudBtn,html body #settingsSaveBtn{background:var(--ye)!important;color:var(--nv)!important;border:0!important;box-shadow:0 0 0 2.5px var(--nv)!important;text-shadow:none!important}
+html body .toast,html body #toastBanner,html body .toastBox,html body [class*="toast"]:not(#toastBanner.hidden){background:#fff!important;color:var(--nv)!important;box-shadow:0 0 0 3px var(--nv),4px 5px 0 3px rgba(28,22,48,.25)!important;border:0!important}
+html body [class*="toast"] *{color:var(--nv)!important}
+
+/* ---------- админка и быстрая панель ---------- */
+html body .adminCard,html body .adminQuick,html body .adminChoiceCard{background:#fff!important;color:var(--nv)!important;border:0!important;box-shadow:var(--paper-shadow)!important;border-radius:16px!important}
+html body :is(.adminCard,.adminQuick) :is(p,span,div,b,small,label,h2,h3){color:var(--nv)!important;text-shadow:none!important}
+html body .adminCardTitle,html body .aqTitle{font-family:'RB',sans-serif!important;font-weight:400!important}
+html body .adminFab{background:var(--nv)!important;color:var(--ye)!important;box-shadow:0 0 0 3px #fff,0 0 0 5.5px var(--nv)!important;border:0!important}
+html body .aqKey,html body .adminItemChip,html body .adminRoleOpt,html body .adminBadgeOpt,html body .adminGradientChip{background:#fff!important;color:var(--nv)!important;box-shadow:0 0 0 2px var(--nv)!important;border:0!important}
+html body .aqKey[aria-pressed="true"],html body .adminRoleOpt.active,html body .adminRoleOpt[aria-pressed="true"]{background:var(--ye)!important}
+html body .adminDeleteBtn{background:#ff5a5a!important;color:#fff!important}
+html body .adminCard button:not(.adminRoleOpt):not(.adminBadgeOpt):not(.adminGradientChip):not(.adminDeleteBtn),html body .adminPwResetBtn{background:var(--ye)!important;color:var(--nv)!important;box-shadow:0 0 0 2.5px var(--nv)!important;border:0!important;text-shadow:none!important;opacity:1!important}

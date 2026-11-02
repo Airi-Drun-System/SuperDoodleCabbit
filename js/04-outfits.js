@@ -55,7 +55,13 @@ const OUTFITS = {
     scarf:    { price: 95 },
     backpack: { price: 320 },
     vampire:  { price: 0, locked: true },
-    hooves:   { price: 0, locked: true }
+    hooves:   { price: 0, locked: true },
+    carrot:   { price: 140 },
+    bell:     { price: 160 },
+    lei:      { price: 180 },
+    medal:    { price: 240 },
+    shades:   { price: 260 },
+    monocle:  { price: 380 }
   },
   tool: {
     none: { price: 0 },

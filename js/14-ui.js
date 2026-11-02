@@ -459,7 +459,7 @@ function refreshShopState(){
   const paused = state === STATE.PAUSED;
 
   const setBtnVisible = (wrapEl, rawEl, visible) => {
-    wrapEl.classList.toggle('hidden', !visible);
+    if (wrapEl) wrapEl.classList.toggle('hidden', !visible);
     rawEl.classList.toggle('hidden', !visible);
   };
 

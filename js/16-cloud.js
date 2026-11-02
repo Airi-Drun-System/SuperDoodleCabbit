@@ -56,12 +56,13 @@ async function cloudFetchOwnTitle(){
   if (!cloudReady() || accountGone) return;
   try {
     const res = await fetch(cloudBase() + '/players/' + cloudCode + '?key=' + CLOUD.apiKey);
-    if (res.status === 404){ checkAccountAlive(404, null); ownDocChecked = true; return; }
+    if (res.status === 404){ checkAccountAlive(404, null); ownDocChecked = true; cjDocMissing = true; return; }
     if (!res.ok) return;
     const doc = await res.json();
     const f = (doc && doc.fields) || {};
     if (!checkAccountAlive(res.status || 200, f)) return;
     ownDocChecked = true;
+    await cjAfterOwnDoc(f);
     const rSpent = remoteSpent(f);
     if (rSpent > coinsSpent){
       coins = Math.max(0, coins - (rSpent - coinsSpent));
@@ -105,7 +106,7 @@ async function cloudFetchOwnTitle(){
       }).catch(() => {});
       if (typeof refreshAvatarPreview === 'function'){ refreshAvatarRow(); refreshAvatarPreview(); }
     }
-    myPwSet = !!(f.pwHash && f.pwHash.stringValue);
+    myPwSet = !!((f.pwSet && f.pwSet.booleanValue) || (f.pwHash && f.pwHash.stringValue));
     Store.set('pwSet', myPwSet ? '1' : '0');
     if (typeof refreshPwState === 'function') refreshPwState();
     myRole = ['mod', 'admin'].indexOf((f.role && f.role.stringValue) || '') !== -1 ? f.role.stringValue : '';
@@ -147,8 +148,6 @@ async function cloudPush(){
     perk:  { stringValue: outfit.perk },
     hat2:  { stringValue: outfit.hat2 },
     acc2:  { stringValue: outfit.acc2 },
-    title:      { stringValue: myTitle || '' },
-    titleColor: { stringValue: myTitleColor || '' },
     avatar: { stringValue: avatar },
     avatarPending: { booleanValue: isCustomAvatar(avatar) && !myAvatarOk },
     frame:  { stringValue: avatarFrame },
@@ -158,6 +157,7 @@ async function cloudPush(){
     spent: { integerValue: String(coinsSpent) },
     fruits: { stringValue: fruitStr() }
   };
+  if (cjDocMissing){ await playerToken(); fields.uids = { arrayValue: { values: [{ stringValue: myUid() }] } }; } // новый аккаунт сразу принадлежит этому устройству
   const mask = Object.keys(fields).map(k => 'updateMask.fieldPaths=' + k).join('&');
   try {
     const pr = await fetch(cloudBase() + '/players/' + cloudCode + '?' + mask + '&key=' + CLOUD.apiKey, {
@@ -165,7 +165,7 @@ async function cloudPush(){
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ fields })
     });
-    if (pr && pr.ok){ Store.set('cloudSeen', cloudCode); pushSeasonFields(); pushDeviceFields(); pushHwFields(); }
+    if (pr && pr.ok){ cjDocMissing = false; cjOwner = true; Store.set('cloudSeen', cloudCode); pushSeasonFields(); pushDeviceFields(); pushHwFields(); }
   } catch (e) {  }
 }
 // поля ивента отдельным запросом, чтобы ошибка в них не ломала основное сохранение

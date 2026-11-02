@@ -17,7 +17,7 @@ function paintAccessory(c, w, h, kind, A){
   if (!kind || kind === 'none') return;
   if (!A || !isFinite(w) || !isFinite(h)) return;
   if (!(A.accRot || A.accS || A.eyeRot) || kind === 'backpack' || kind === 'hooves') return paintAccessoryRaw(c, w, h, kind, A);
-  const eye = kind === 'hearteye';
+  const eye = kind === 'hearteye' || kind === 'shades' || kind === 'monocle';
   const cxN = eye ? (A.eyeCx != null ? A.eyeCx : A.cx) : (A.accCx != null ? A.accCx : A.cx);
   const px = cxN * w, py = (eye ? A.eyeY : A.neckY) * h;
   const k = eye ? 1 : (A.accS || 1);
@@ -668,6 +668,101 @@ function paintAccessoryRaw(c, w, h, kind, A){
     c.lineWidth = 1.5;
     hoof(cx - w * 0.27, fy - h * 0.06, 0.95);
     hoof(cx + w * 0.09, fy - h * 0.195, 1.05);
+    c.restore();
+
+  } else if (kind === 'shades'){
+    const y = A.eyeY * h, dx = A.eyeDX * w, r = dx * 0.78;
+    c.save();
+    c.fillStyle = '#1c1630'; c.strokeStyle = '#1c1630'; c.lineWidth = 1.8;
+    for (const side of [-1, 1]){
+      const ex = cx + side * dx;
+      c.beginPath(); c.ellipse(ex, y, r, r * 0.78, 0, 0, 6.2832); c.fill();
+      const g = c.createLinearGradient(ex - r, y - r, ex + r, y + r);
+      g.addColorStop(0, 'rgba(255,120,200,.55)'); g.addColorStop(0.5, 'rgba(120,200,255,.35)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+      c.fillStyle = g; c.beginPath(); c.ellipse(ex, y, r * 0.86, r * 0.64, 0, 0, 6.2832); c.fill();
+      c.fillStyle = 'rgba(255,255,255,.75)';
+      c.beginPath(); c.ellipse(ex - r * 0.35, y - r * 0.28, r * 0.2, r * 0.12, -0.5, 0, 6.2832); c.fill();
+      c.fillStyle = '#1c1630';
+    }
+    c.beginPath(); c.moveTo(cx - dx + r * 0.8, y - r * 0.2); c.quadraticCurveTo(cx, y - r * 0.55, cx + dx - r * 0.8, y - r * 0.2); c.stroke();
+    c.restore();
+
+  } else if (kind === 'monocle'){
+    const y = A.eyeY * h, ex = cx + A.eyeDX * w, r = A.eyeDX * w * 0.82;
+    c.save();
+    c.strokeStyle = '#d9a520'; c.lineWidth = 2.2;
+    c.fillStyle = 'rgba(200,235,255,.28)';
+    c.beginPath(); c.arc(ex, y, r, 0, 6.2832); c.fill(); c.stroke();
+    c.fillStyle = 'rgba(255,255,255,.7)';
+    c.beginPath(); c.ellipse(ex - r * 0.35, y - r * 0.35, r * 0.25, r * 0.13, -0.6, 0, 6.2832); c.fill();
+    c.strokeStyle = '#d9a520'; c.lineWidth = 1;
+    c.beginPath(); c.moveTo(ex + r * 0.7, y + r * 0.7);
+    c.bezierCurveTo(ex + r * 1.4, y + r * 2.2, ex + r * 0.2, y + r * 3.0, ex + r * 1.1, y + r * 4.2); c.stroke();
+    c.restore();
+
+  } else if (kind === 'medal'){
+    const y = A.neckY * h, s = w * 0.2;
+    c.save();
+    c.lineWidth = 1.2; c.strokeStyle = 'rgba(30,20,60,.45)';
+    c.fillStyle = '#3b6fe0';
+    c.beginPath(); c.moveTo(cx - s * 0.75, y - s * 0.55); c.lineTo(cx - s * 0.12, y + s * 0.55); c.lineTo(cx + s * 0.12, y + s * 0.55); c.lineTo(cx + s * 0.75, y - s * 0.55);
+    c.lineTo(cx + s * 0.4, y - s * 0.55); c.lineTo(cx, y + s * 0.15); c.lineTo(cx - s * 0.4, y - s * 0.55); c.closePath(); c.fill(); c.stroke();
+    const my = y + s * 0.95, mr = s * 0.48;
+    const g = c.createRadialGradient(cx - mr * 0.4, my - mr * 0.4, 0.5, cx, my, mr);
+    g.addColorStop(0, '#fff3b0'); g.addColorStop(0.6, '#ffc93d'); g.addColorStop(1, '#d48a10');
+    c.fillStyle = g; c.beginPath(); c.arc(cx, my, mr, 0, 6.2832); c.fill(); c.stroke();
+    c.fillStyle = '#fff6cf';
+    c.beginPath();
+    for (let i = 0; i < 10; i++){ const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? mr * 0.24 : mr * 0.55; c.lineTo(cx + Math.cos(a) * rr, my + Math.sin(a) * rr); }
+    c.closePath(); c.fill();
+    c.restore();
+
+  } else if (kind === 'bell'){
+    const y = A.neckY * h, s = w * 0.26;
+    c.save();
+    c.lineWidth = 1.2; c.strokeStyle = 'rgba(30,20,60,.45)';
+    c.fillStyle = '#e0304a';
+    c.beginPath(); c.moveTo(cx - s, y - s * 0.32); c.quadraticCurveTo(cx, y + s * 0.18, cx + s, y - s * 0.32);
+    c.lineTo(cx + s, y - s * 0.08); c.quadraticCurveTo(cx, y + s * 0.42, cx - s, y - s * 0.08); c.closePath(); c.fill(); c.stroke();
+    const by = y + s * 0.42, br = s * 0.3;
+    const g = c.createRadialGradient(cx - br * 0.4, by - br * 0.4, 0.4, cx, by, br);
+    g.addColorStop(0, '#fff6c0'); g.addColorStop(0.55, '#ffcc33'); g.addColorStop(1, '#c7860c');
+    c.fillStyle = g; c.beginPath(); c.arc(cx, by, br, 0, 6.2832); c.fill(); c.stroke();
+    c.strokeStyle = '#7a4a00'; c.lineWidth = 1;
+    c.beginPath(); c.moveTo(cx - br * 0.7, by); c.lineTo(cx + br * 0.7, by); c.stroke();
+    c.fillStyle = '#7a4a00'; c.beginPath(); c.arc(cx, by + br * 0.38, br * 0.16, 0, 6.2832); c.fill();
+    c.restore();
+
+  } else if (kind === 'lei'){
+    const y = A.neckY * h, n = 7, spread = w * 0.32;
+    const cols = ['#ff6f91', '#ffd34d', '#ff9f45', '#c9a8ff', '#7be0b4'];
+    c.save();
+    c.lineWidth = 0.8; c.strokeStyle = 'rgba(30,20,60,.35)';
+    for (let i = 0; i < n; i++){
+      const tI = i / (n - 1), px = cx + lerp(-spread, spread, tI), py = y + Math.sin(tI * Math.PI) * h * 0.06, r = w * 0.055;
+      c.fillStyle = cols[i % cols.length];
+      for (let p = 0; p < 5; p++){
+        const a = p * 1.2566 + i;
+        c.beginPath(); c.ellipse(px + Math.cos(a) * r * 0.55, py + Math.sin(a) * r * 0.55, r * 0.5, r * 0.32, a, 0, 6.2832); c.fill(); c.stroke();
+      }
+      c.fillStyle = '#fff6cf'; c.beginPath(); c.arc(px, py, r * 0.22, 0, 6.2832); c.fill();
+    }
+    c.restore();
+
+  } else if (kind === 'carrot'){
+    const y = A.neckY * h, s = w * 0.22;
+    c.save();
+    c.strokeStyle = '#8a5a2b'; c.lineWidth = 1.1;
+    c.beginPath(); c.moveTo(cx - s * 0.9, y - s * 0.45); c.quadraticCurveTo(cx, y + s * 0.35, cx + s * 0.9, y - s * 0.45); c.stroke();
+    const py = y + s * 0.1;
+    c.lineWidth = 1.2; c.strokeStyle = 'rgba(90,30,0,.5)';
+    c.fillStyle = '#ff8a2a';
+    c.beginPath(); c.moveTo(cx - s * 0.26, py + s * 0.05); c.quadraticCurveTo(cx, py - s * 0.08, cx + s * 0.26, py + s * 0.05);
+    c.quadraticCurveTo(cx + s * 0.12, py + s * 0.6, cx, py + s * 0.95); c.quadraticCurveTo(cx - s * 0.12, py + s * 0.6, cx - s * 0.26, py + s * 0.05); c.closePath(); c.fill(); c.stroke();
+    c.strokeStyle = 'rgba(160,60,0,.55)'; c.lineWidth = 0.9;
+    for (const k of [0.3, 0.5, 0.7]){ c.beginPath(); c.moveTo(cx - s * 0.18 * (1 - k), py + s * k); c.lineTo(cx + s * 0.06, py + s * k + s * 0.03); c.stroke(); }
+    c.fillStyle = '#5fc24a'; c.strokeStyle = 'rgba(20,70,10,.5)';
+    for (const a of [-0.5, 0, 0.5]){ c.beginPath(); c.ellipse(cx + a * s * 0.25, py - s * 0.15, s * 0.07, s * 0.2, a, 0, 6.2832); c.fill(); c.stroke(); }
     c.restore();
 
   } else if (kind === 'backpack'){
